@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: vitalia-app
+  profiles:
+    active: dev
+  messages:
+    basename: messages
+    encoding: UTF-8
+#    cache-duration: 3600
+  servlet:
+    multipart:
+      max-file-size: 10MB       # Upload file size limit
+      max-request-size: 10MB    # Request size limit
+  datasource:
+    url: jdbc:mysql://localhost:3307/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: bolivia
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      open-in-view: false
+
+  springdoc:
+    default-produces-media-type: application/json # Default response type
+
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8088
+  servlet:
+    context-path: /api/v1  # Base path for the API
+
+springdoc:
+  api-docs:
+    resolve-extensions-properties: false
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  override-with-generic-response: false
+
+
+#springdoc:
+#  swagger-ui:
+#    path: /vitalia-documentation
+#  api-docs:
+#    path: /vitalia-api-docs
+
+security:
+  jwt:
+    secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+    expiration-time: 3600000
+
+

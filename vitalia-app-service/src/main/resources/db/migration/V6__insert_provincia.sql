@@ -1,0 +1,11 @@
+-- Inserción de datos en la tabla Provincia
+INSERT INTO PROVINCIA (ID, NOMBRE, POBLACION, SUPERFICIE, FK_ID_DEPARTAMENTO, CREATED_BY, CREATED_DATE, LAST_MODIFIED_BY, LAST_MODIFIED_DATE) VALUES
+(1, 'Cercado', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(2, 'Vaca Diez', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(3, 'Jose Ballivian', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(4, 'Yacuma', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(5, 'Moxos', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(6, 'Marban', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(7, 'Mamore', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP),
+(8, 'Itenes', 0, '1000000', 8, "admin", CURRENT_TIMESTAMP, "admin", CURRENT_TIMESTAMP);
+commit;

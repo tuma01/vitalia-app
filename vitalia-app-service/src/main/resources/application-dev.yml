@@ -1,0 +1,67 @@
+spring:
+  security:
+    enabled: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: bolivia
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        discriminator:
+          ignore_explicit_for_joined: true
+        dialect: org.hibernate.dialect.MySQL8Dialect    # MySQL 8
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect    # MySQL 8
+    open-in-view: false
+  mail:
+    host: localhost
+    port: 1025
+    username: maildev
+    password: maildev
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: false
+        starttls:
+          enable: false
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+
+security:
+  jwt:
+    secret-key: 3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b
+    expiration-time: 3600000
+
+mailing:
+  frontend:
+    activation-url: http://localhost:4200/#/activate-account
+
+
+#  springdoc:
+#    swagger-ui:
+#      path: /hospital-documentation
+#    api-docs:
+#      path: /hospital-api-docs
+#hospital:
+#  openapi:
+#    dev-url: http://localhost:8088
+#    prod-url: https://hospital-api.com
+
+#  flyway:
+#    url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+#    user: root
+#    password: bolivia
+#    enabled: true
+#    baseline-on-migrate: true
+#    baseline-description: Baseline for hospital database
+#    baseline-version: 1.0.0
