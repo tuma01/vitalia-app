@@ -46,16 +46,33 @@ mailing:
   frontend:
     activation-url: http://localhost:4200/#/activate-account
 
+# Configuración de avatares
+app:
+  avatar:
+    max-size: 1048576 # 1MB
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - image/gif
+    default-path: classpath:templates/avatars/default-avatar.jpg
+    storage: Error al almacenar el avatar {0}
+    processing: Error al procesar el avatar {0}
+    default:
+      load: No se pudo cargar la imagen de perfil por defecto
 
-#  springdoc:
-#    swagger-ui:
-#      path: /hospital-documentation
-#    api-docs:
-#      path: /hospital-api-docs
-#hospital:
-#  openapi:
-#    dev-url: http://localhost:8088
-#    prod-url: https://hospital-api.com
+## OpenAPI configuration
+openapi:
+  title: OpenAPI specification - ${spring.application.name}
+  version: 1.0
+  description: This API exposes endpoints to manage ${spring.application.name}
+  terms-of-service: https://www.amachi.com/terms
+  license:
+    name: MIT License
+    url: https://www.amachi.com/license
+  contact:
+    name: Juan Amachi
+    email: juan.amachi@gmail.com
+    url: https://www.amachi.com
 
 #  flyway:
 #    url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false

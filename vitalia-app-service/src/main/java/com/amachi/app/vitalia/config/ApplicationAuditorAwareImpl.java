@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.config;
 
 
-import com.amachi.app.vitalia.authentication.entity.User;
+import com.amachi.app.vitalia.user.entity.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +21,5 @@ public class ApplicationAuditorAwareImpl implements AuditorAware<String> {
         }
         User userPrincipal = (User) authentication.getPrincipal();
         return Optional.ofNullable(userPrincipal.getName());
-//        return Optional.of("system");
     }
 }

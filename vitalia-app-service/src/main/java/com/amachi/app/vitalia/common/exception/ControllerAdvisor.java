@@ -1,114 +1,264 @@
 package com.amachi.app.vitalia.common.exception;
 
+import com.amachi.app.vitalia.avatar.exception.AvatarProcessingException;
+import com.amachi.app.vitalia.avatar.exception.AvatarStorageException;
+import com.amachi.app.vitalia.avatar.exception.DefaultAvatarLoadException;
 import com.amachi.app.vitalia.common.dto.ApiResponse;
+import com.amachi.app.vitalia.utils.AppConstants;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
-@RestControllerAdvice
-@RequiredArgsConstructor
+import static com.amachi.app.vitalia.utils.AppConstants.Patterns.DUPLICATE_ENTRY_PREFIX;
+
+/**
+ * Manejador centralizado de excepciones para la API.
+ * Transforma excepciones en respuestas estandarizadas.
+ */
+@Hidden
 @Slf4j
-public class ControllerAdvisor extends ResponseEntityExceptionHandler {
+@RequiredArgsConstructor
+@RestControllerAdvice
+public class ControllerAdvisor {
 
-    @Autowired
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<?>> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-        String userMessage; // Mensaje final para el usuario
-        String defaultGenericMessage = "Error de integridad de datos. Un registro con datos duplicados ya existe."; // Mensaje genérico de fallback
+    // ================== Manejo de excepciones de validación ================== //
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(
+            MethodArgumentNotValidException ex, WebRequest request) {
 
-        Throwable rootCause = ex.getRootCause();
-        String rootCauseMessage = (rootCause != null) ? rootCause.getMessage() : ex.getMessage();
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), resolveMessage(error, request.getLocale()))
+        );
 
-        // Loguear el error técnico completo
-        log.error("DataIntegrityViolationException caught. Root cause message: {}", rootCauseMessage, ex);
-
-        // --- Intentar parsear el valor duplicado del mensaje ---
-        String duplicatedValue = null;
-        String duplicateEntryPrefix = "Duplicate entry '"; // Prefijo común en mensajes de MySQL
-
-        if (rootCauseMessage != null && rootCauseMessage.contains(duplicateEntryPrefix)) {
-            try {
-                int startIndex = rootCauseMessage.indexOf(duplicateEntryPrefix) + duplicateEntryPrefix.length();
-                int endIndex = rootCauseMessage.indexOf("'", startIndex); // Buscar la siguiente comilla simple
-
-                if (startIndex > duplicateEntryPrefix.length() -1 && endIndex != -1) { // Asegurarse de que se encontraron ambas comillas
-                    duplicatedValue = rootCauseMessage.substring(startIndex, endIndex);
-                    log.debug("Extracted duplicated value: {}", duplicatedValue);
-                }
-            } catch (Exception parseException) {
-                // Si algo sale mal durante el parsing (ej. formato inesperado)
-                log.warn("Failed to parse duplicated value from DB error message: {}", rootCauseMessage, parseException);
-                duplicatedValue = null; // Asegurarse de que duplicatedValue sea null para usar el mensaje genérico
-            }
-        }
-        // --- Fin Lógica de Parsing ---
-
-        // Construir el mensaje para el usuario
-        if (duplicatedValue != null) {
-            // Usar una clave de mensaje que espera un argumento (el valor duplicado)
-            String messageKey = "error.data.integrity.violation.value"; // Ej: "El valor '{0}' ya existe."
-            // Obtener el mensaje localizado, pasando el valor como argumento
-            userMessage = messageSource.getMessage(messageKey, new Object[]{duplicatedValue}, defaultGenericMessage, request.getLocale());
-            log.debug("Mensaje construido con valor: {}", userMessage);
-        } else {
-            // Si no se pudo extraer el valor (parsing falló o formato diferente), usar el mensaje genérico
-            String messageKey = "error.data.integrity.violation.generic"; // Clave para el mensaje genérico
-            userMessage = messageSource.getMessage(messageKey, null, defaultGenericMessage, request.getLocale());
-        }
-        ApiResponse<?> response = new ApiResponse<>(HttpStatus.CONFLICT.value(), userMessage, null);
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST,
+                        messageSource.getMessage(
+                                AppConstants.ErrorMessages.PARAM_FORMAT_ERROR,
+                                null,
+                                "Validation errors",
+                                request.getLocale()),
+                        errors));
     }
 
+    private String resolveMessage(FieldError error, Locale locale) {
+        return Optional.ofNullable(error.getDefaultMessage())
+                .map(msg -> messageSource.getMessage(msg, error.getArguments(), msg, locale))
+                .orElse("Invalid field value");
+    }
 
+    // ================== Manejo de integridad de datos ================== //
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex, WebRequest request) {
+
+        String rootCause = Optional.ofNullable(ex.getRootCause())
+                .map(Throwable::getMessage)
+                .orElse(ex.getMessage());
+
+        log.error("Data integrity violation: {}", rootCause);
+
+        String message = extractDuplicatedValue(rootCause)
+                .map(value -> messageSource.getMessage(
+                        AppConstants.ErrorMessages.DATA_INTEGRITY_VALUE,
+                        new Object[]{value},
+                        "Duplicate value: " + value,
+                        request.getLocale()))
+                .orElseGet(() -> messageSource.getMessage(
+                        AppConstants.ErrorMessages.DATA_INTEGRITY_GENERIC,
+                        null,
+                        "Data integrity violation",
+                        request.getLocale()));
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(HttpStatus.CONFLICT, message));
+    }
+
+    private Optional<String> extractDuplicatedValue(String message) {
+        if (message == null || !message.contains(DUPLICATE_ENTRY_PREFIX)) {
+            return Optional.empty();
+        }
+
+        try {
+            int start = message.indexOf(DUPLICATE_ENTRY_PREFIX) + DUPLICATE_ENTRY_PREFIX.length();
+            int end = message.indexOf("'", start);
+            return Optional.of(message.substring(start, end));
+        } catch (Exception e) {
+            log.warn("Error parsing duplicate value", e);
+            return Optional.empty();
+        }
+    }
+
+    // ================== Manejo de excepciones personalizadas ================== //
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<?>> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-        String message = messageSource.getMessage(ex.getKey(), ex.getArgs(), request.getLocale());
-        ApiResponse<?> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), message, null);
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(
+            ResourceNotFoundException ex, WebRequest request) {
+
+        String message = messageSource.getMessage(
+                ex.getKey(),
+                ex.getArgs(),
+                ex.getMessage(),
+                request.getLocale());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error(HttpStatus.NOT_FOUND, message));
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponse<?>> handleBadRequestException(BadRequestException ex, WebRequest request) {
-        String message = messageSource.getMessage(ex.getKey(), ex.getArgs(), request.getLocale());
-        ApiResponse<?> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), message, null);
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
+    public ResponseEntity<ApiResponse<Void>> handleBadRequest(
+            BadRequestException ex, WebRequest request) {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<?>> handleGlobalException(Exception ex, WebRequest request) {
-        String message = messageSource.getMessage("error.internal.server", null, request.getLocale());
-        ApiResponse<?> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), message, null);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        String message = messageSource.getMessage(
+                ex.getKey(),
+                ex.getArgs(),
+                ex.getMessage(),
+                request.getLocale());
+
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST, message));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiResponse<?>> handleUnauthorizedException(UnauthorizedException ex, WebRequest request) {
-        String message = messageSource.getMessage(ex.getKey(), ex.getArgs(), request.getLocale());
-        ApiResponse<?> response = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), message, null);
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponse<Void>> handleUnauthorized(
+            UnauthorizedException ex, WebRequest request) {
+
+        String message = messageSource.getMessage(
+                ex.getKey(),
+                ex.getArgs(),
+                ex.getMessage(),
+                request.getLocale());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(HttpStatus.UNAUTHORIZED, message));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(
+            AuthenticationException ex, WebRequest request) {
+
+        String userMessage = messageSource.getMessage(
+                ex.getErrorCode(),
+                null,
+                ex.getMessage(),
+                request.getLocale());
+
+        return ResponseEntity.status(ex.getHttpStatus())
+                .body(ApiResponse.error(ex.getHttpStatus(), userMessage));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleInvalidTokenException(
+            InvalidTokenException ex, WebRequest request) {
+
+        String userMessage = messageSource.getMessage(
+                ex.getErrorCode(),
+                null,
+                ex.getMessage(),
+                request.getLocale());
+
+        Map<String, String> details = new HashMap<>();
+        details.put("error_type", ex.getErrorType().getErrorCode());
+        details.put("description", ex.getErrorType().getDescription());
+
+        return ResponseEntity.status(ex.getHttpStatus())
+                .body(ApiResponse.error(ex.getHttpStatus(), userMessage, details));
+    }
+
+    @ExceptionHandler(DefaultAvatarLoadException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDefaultAvatarLoadException(
+            DefaultAvatarLoadException ex, WebRequest request) {
+
+        String message = messageSource.getMessage(
+                "error.avatar.default.load",
+                null,
+                "No se pudo cargar la imagen de perfil por defecto",
+                request.getLocale()
+        );
+
+        log.warn("Error en carga de avatar por defecto: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        message
+                ));
+    }
+
+    @ExceptionHandler(AvatarProcessingException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAvatarProcessingException(
+            AvatarProcessingException ex, WebRequest request) {
+        String message = messageSource.getMessage(
+                "error.avatar.processing",
+                new Object[]{ex.getMessage()},
+                "Error al procesar el avatar: " + ex.getMessage(),
+                request.getLocale()
+        );
+        log.error("Error al procesar avatar: {}", ex.getMessage(), ex);
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST, message));
+    }
+
+    @ExceptionHandler(AvatarStorageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAvatarStorageException(
+            AvatarStorageException ex, WebRequest request) {
+        String message = messageSource.getMessage(
+                "error.avatar.storage",
+                new Object[]{ex.getMessage()},
+                "Error al almacenar el avatar: " + ex.getMessage(),
+                request.getLocale()
+        );
+
+        log.error("Error de almacenamiento de avatar: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, message));
+    }
+
+    // ================== Manejo de excepciones técnicas ================== //
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMessageNotReadable(
+            HttpMessageNotReadableException ex, WebRequest request) {
+
+        String message = messageSource.getMessage(
+                AppConstants.ErrorMessages.HEADER_FORMAT_ERROR,
+                null,
+                "Malformed request",
+                request.getLocale());
+
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(HttpStatus.BAD_REQUEST, message));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGlobalException(
+            Exception ex, WebRequest request) {
+
+        log.error("Unhandled exception: ", ex);
+
+        String message = messageSource.getMessage(
+                AppConstants.ErrorMessages.INTERNAL_SERVER_ERROR,
+                null,
+                "Internal server error",
+                request.getLocale());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, message));
     }
 }
-
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<String> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-////        ErrorMessage errorMessage = errorService.generateErrorMessage(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false));
-//        return new ResponseEntity<>("errorMessage", HttpStatus.NOT_FOUND);
-//    }
-
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<ErrorMessage> resourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
-//        ErrorMessage errorMessage = errorService.generateErrorMessage(HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getDescription(false));
-//        return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.NOT_FOUND);
-//    }
 

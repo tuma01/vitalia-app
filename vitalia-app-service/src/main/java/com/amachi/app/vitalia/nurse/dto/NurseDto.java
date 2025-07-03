@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.nurse.dto;
 
-import com.amachi.app.vitalia.dto.PersonDto;
+import com.amachi.app.vitalia.user.dto.PersonDto;
 import com.amachi.app.vitalia.nurseprofessionspeciality.dto.NurseProfessionSpecialityDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;

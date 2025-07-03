@@ -1,6 +1,5 @@
 package com.amachi.app.vitalia.authentication.controller;
 
-
 import com.amachi.app.vitalia.authentication.dto.AuthenticationRequest;
 import com.amachi.app.vitalia.authentication.dto.AuthenticationResponse;
 import com.amachi.app.vitalia.authentication.dto.UserRegisterDto;

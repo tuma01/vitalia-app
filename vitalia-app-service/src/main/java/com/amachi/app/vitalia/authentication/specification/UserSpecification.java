@@ -1,8 +1,8 @@
 package com.amachi.app.vitalia.authentication.specification;
 
 
-import com.amachi.app.vitalia.authentication.dto.search.UserSearchDto;
-import com.amachi.app.vitalia.authentication.entity.User;
+import com.amachi.app.vitalia.user.dto.search.UserSearchDto;
+import com.amachi.app.vitalia.user.entity.User;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

@@ -1,7 +1,7 @@
-package com.amachi.app.vitalia.authentication.dto;
+package com.amachi.app.vitalia.user.dto;
 
-import com.amachi.app.vitalia.entities.Person;
-import com.amachi.app.vitalia.entities.Role;
+import com.amachi.app.vitalia.user.entity.Person;
+import com.amachi.app.vitalia.role.entity.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;

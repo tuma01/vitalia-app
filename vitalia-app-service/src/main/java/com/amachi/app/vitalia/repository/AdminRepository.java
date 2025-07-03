@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.repository;
 
 
-import com.amachi.app.vitalia.entities.Admin;
+import com.amachi.app.vitalia.admin.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
