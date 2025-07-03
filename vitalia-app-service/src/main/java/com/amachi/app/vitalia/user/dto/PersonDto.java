@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.dto;
+package com.amachi.app.vitalia.user.dto;
 
 import com.amachi.app.vitalia.address.dto.AddressDto;
 import com.amachi.app.vitalia.common.utils.EstadoCivilEnum;
@@ -30,7 +30,7 @@ public class PersonDto {
     )
     private Long id;
 
-    private PersonType personType = PersonType.USER;
+    private PersonType personType = PersonType.PATIENT;
 
     @Valid
     @JsonProperty
@@ -68,27 +68,6 @@ public class PersonDto {
             description = "Nombre Completo de la Persona", example = "Jose Larico"
     )
     private String nombreCompleto;
-
-    @Valid
-    @JsonProperty
-    @Schema(
-            description = "El dia de nacimiento de la Persona", example = "24"
-    )
-    private Integer diaNacimiento;
-
-    @Valid
-    @JsonProperty
-    @Schema(
-            description = "El mes de nacimiento de la Persona", example = "06"
-    )
-    private Integer mesNacimiento;
-
-    @Valid
-    @JsonProperty
-    @Schema(
-            description = "El ano de nacimiento de la Persona", example = "2000"
-    )
-    private Integer anoNacimiento;
 
     @Valid
     @JsonProperty

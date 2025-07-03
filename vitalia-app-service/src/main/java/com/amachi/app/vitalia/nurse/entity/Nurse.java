@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.nurse.entity;
 
-import com.amachi.app.vitalia.entities.Person;
+import com.amachi.app.vitalia.user.entity.Person;
 import com.amachi.app.vitalia.nurseprofessionspeciality.entity.NurseProfessionSpeciality;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,19 +8,15 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
-import static com.amachi.app.vitalia.utils.AppConstants.USER_NURSE;
-
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode(callSuper = true)
-@SuperBuilder//(toBuilder = true) // ,buildMethodName = "buildInternal"
 @Entity
 @Table(name = "NURSE")
-@DiscriminatorValue(USER_NURSE)
-@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue("NURSE")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 public class Nurse extends Person {
 
     @Lob

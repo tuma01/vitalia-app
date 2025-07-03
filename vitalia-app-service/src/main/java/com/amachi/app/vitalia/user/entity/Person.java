@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.entities;
+package com.amachi.app.vitalia.user.entity;
 
 import com.amachi.app.vitalia.address.entity.Address;
 import com.amachi.app.vitalia.common.utils.EstadoCivilEnum;
@@ -13,22 +13,22 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.io.Serial;
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-// NE MARCHE PAS, a ete desactive, on va inserer manuellement le type de personne
-//@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "PERSON_TYPE")
-@SuperBuilder //genera un constructor con todos los parámetros
-@NoArgsConstructor(force = true)
+@DiscriminatorColumn(name = "PERSON_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "PERSON")
-@EqualsAndHashCode(callSuper=true)
-@Data
-public class Person extends Auditable<String> implements Model {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+public abstract class Person extends Auditable<String> implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +36,12 @@ public class Person extends Auditable<String> implements Model {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "PERSON_TYPE", nullable = false)
+    @Column(name = "PERSON_TYPE", nullable = false) //, insertable = false, updatable = false
     private PersonType personType;
-
 
     @NotBlank(message = "Nombre {err.required}")
     @Size(min = 3, max = 50)
-    @Column(name = "NOMBRE", length = 50, nullable = false)
+    @Column(name = "NOMBRE", nullable = false)
     private String nombre;
 
     @Column(name = "SEGUNDO_NOMBRE", length = 50)
@@ -55,20 +54,8 @@ public class Person extends Auditable<String> implements Model {
     @Column(name = "APELLIDO_MATERNO", length = 50)
     private String apellidoMaterno;
 
-    @Column(name = "NOMBRE_COMPLETO", length = 100)
-    private String nombreCompleto;
-
-    @Column(name = "DIA_NACIMIENTO", length = 2)
-    private Integer diaNacimiento;
-
-    @Column(name = "MES_NACIMIENTO", length = 2)
-    private Integer mesNacimiento;
-
-    @Column(name = "ANO_NACIMIENTO", length = 4)
-    private Integer anoNacimiento;
-
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @Column(name = "FECHA_NACIMIENTO", length = 10)
+    @Column(name = "FECHA_NACIMIENTO")
     private LocalDate fechaNacimiento;
 
     @Enumerated(EnumType.STRING)
@@ -80,7 +67,7 @@ public class Person extends Auditable<String> implements Model {
     private GeneroEnum genero;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FK_ID_ADDRESS", foreignKey = @ForeignKey(name = "FK_PERSON_ADDRESS"), referencedColumnName = "ID")
+    @JoinColumn(name = "FK_ID_ADDRESS", foreignKey = @ForeignKey(name = "FK_PERSON_ADDRESS"))
     private Address address;
 
     @Column(name = "TELEFONO", length = 50)
@@ -88,4 +75,12 @@ public class Person extends Auditable<String> implements Model {
 
     @Column(name = "CELULAR", length = 50)
     private String celular;
+
+    // Opción para construir nombre completo
+    @Transient
+    public String getNombreCompleto() {
+        return Stream.of(nombre, segundoNombre, apellidoPaterno, apellidoMaterno)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" "));
+    }
 }

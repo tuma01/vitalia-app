@@ -1,7 +1,6 @@
 package com.amachi.app.vitalia.config;
 
-
-import com.amachi.app.vitalia.authentication.repository.UserRepository;
+import com.amachi.app.vitalia.user.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

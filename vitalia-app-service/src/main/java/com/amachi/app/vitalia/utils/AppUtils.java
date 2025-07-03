@@ -11,9 +11,9 @@ public abstract class AppUtils {
 
     @Hidden
     public static Sort getSort(String sort, String defaultSort) {
-        Sort sorting = Sort.by(AppConstants.DEFAULT_SORT_DIRECTION, defaultSort);
+        Sort sorting = Sort.by(AppConstants.Pagination.DEFAULT_SORT_DIRECTION, defaultSort);
         if (StringUtils.isNotEmpty(sort)) {
-            sorting = Sort.by(AppConstants.DEFAULT_SORT_DIRECTION, sort);
+            sorting = Sort.by(AppConstants.Pagination.DEFAULT_SORT_DIRECTION, sort);
         }
         return sorting;
     }

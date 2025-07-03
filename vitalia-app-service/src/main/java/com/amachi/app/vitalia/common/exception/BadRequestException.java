@@ -1,5 +1,8 @@
 package com.amachi.app.vitalia.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public class BadRequestException extends RuntimeException {
     private final String key;
     private final Object[] args;
@@ -9,11 +12,4 @@ public class BadRequestException extends RuntimeException {
         this.args = args;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
 }

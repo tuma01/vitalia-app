@@ -24,7 +24,6 @@ spring:
   springdoc:
     default-produces-media-type: application/json # Default response type
 
-
   flyway:
     enabled: true
 

@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.repository;
 
-import com.amachi.app.vitalia.entities.Role;
+import com.amachi.app.vitalia.role.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

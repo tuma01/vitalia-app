@@ -1,6 +1,7 @@
 package com.amachi.app.vitalia.authentication.entity;
 
 import com.amachi.app.vitalia.common.entities.Model;
+import com.amachi.app.vitalia.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

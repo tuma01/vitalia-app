@@ -16,7 +16,8 @@ public enum RoleEnum {
     CONTENT_CREATOR("ROLE_CONTENT_CREATOR", "User who can create content"),
     CONTENT_EDITOR("ROLE_CONTENT_EDITOR", "User who can edit content"),
     SUPPORT("ROLE_SUPPORT", "User who provides support"),
-    ANALYST("ROLE_ANALYST", "User who can analyze data");
+    ANALYST("ROLE_ANALYST", "User who can analyze data"),
+    RECEPTIONIST("ROLE_RECEPTIONIST", "Receptionist with access to manage appointments and patient records");
 
     private final String name;
     private final String description;

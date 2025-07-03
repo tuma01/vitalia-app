@@ -1,3 +1,3 @@
 # vitalia-app
-Sitio Web de gestion hospitalaria
+Vitalia App de gestion hospitalaria
 # Instalación

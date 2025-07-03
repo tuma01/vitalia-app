@@ -1,5 +1,8 @@
 package com.amachi.app.vitalia.common.exception;
 
+import lombok.Getter;
+
+@Getter
 public class UnauthorizedException extends RuntimeException {
     private final String key;
     private final Object[] args;
@@ -10,11 +13,4 @@ public class UnauthorizedException extends RuntimeException {
         this.args = args;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
 }
