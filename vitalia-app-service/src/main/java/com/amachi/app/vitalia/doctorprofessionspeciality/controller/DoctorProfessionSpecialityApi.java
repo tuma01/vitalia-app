@@ -21,7 +21,7 @@ import static com.amachi.app.vitalia.common.controller.BaseController.ID;
 @Tag(name = "DoctorProfessionSpeciality", description = "Rest API SIIM APP to CREATE, UPDATE, FETCH and DELETE DoctorProfessionSpeciality details")
 public interface DoctorProfessionSpecialityApi extends GenericApi<DoctorProfessionSpecialityDto> {
 
-    String nameAPi = "DoctorProfessionSpeciality";
+    String NAME_API = "DoctorProfessionSpeciality";
 
     @Operation(
             summary = "Obtener un doctorProfessionSpeciality por ID",

@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -73,6 +73,10 @@ openapi:
     name: Juan Amachi
     email: juan.amachi@gmail.com
     url: https://www.amachi.com
+
+hospital:
+  default:
+    code: "HOSPITAL_CLINICA_MULHOUSE"
 
 #  flyway:
 #    url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false

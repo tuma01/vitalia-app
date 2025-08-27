@@ -19,11 +19,11 @@ import static com.amachi.app.vitalia.common.controller.BaseController.*;
 
 @Tag(name = "Country", description = "REST API para gestionar detalles de países: crear, actualizar, obtener y eliminar.")
 public interface CountryApi extends GenericApi<CountryDto> {
-    String nameAPi = "Country";
+    String NAME_API = "Pais";
 
     @Operation(
-            summary = "Obtener un país por ID",
-            description = "Devuelve un objeto Country por ID especificado.",
+            summary = "Obtener un " + NAME_API + " por ID",
+            description = "Devuelve un objeto " + NAME_API + " por ID especificado.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "País encontrado con éxito."),
                     @ApiResponse(responseCode = "404", description = "País no encontrado."),
@@ -32,12 +32,12 @@ public interface CountryApi extends GenericApi<CountryDto> {
     )
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<CountryDto> getCountryById(
-            @Parameter(description = "ID del país a recuperar.", required = true)
+            @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
             @PathVariable("id") Long id
     );
 
     @Operation(
-            summary = "Crear un país",
+            summary = "Crear un nuevo " + NAME_API,
             description = "Crea un nuevo país usando los datos proporcionados en el cuerpo de la solicitud.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "País creado con éxito."),

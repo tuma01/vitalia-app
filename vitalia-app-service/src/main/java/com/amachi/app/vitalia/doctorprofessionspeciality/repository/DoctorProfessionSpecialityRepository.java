@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DoctorProfessionSpecialityRepository extends JpaRepository<DoctorProfessionSpeciality, Long>, JpaSpecificationExecutor<DoctorProfessionSpeciality> {
-//    default Page<DoctorProfessionSpeciality> getDoctorProfessionalActivities(DoctorProfessionSpecialitySearchDto doctorProfessionSpecialitySearchDto, Pageable pageable) {
-//        return findAll(new DoctorProfessionSpecialitySpecification(doctorProfessionSpecialitySearchDto), pageable);
-//    }
+
     Page<DoctorProfessionSpeciality> findByNameLike(String name, Pageable pageable);
 }

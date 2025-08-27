@@ -19,7 +19,7 @@ import static com.amachi.app.vitalia.common.controller.BaseController.*;
 
 @Tag(name = "Provincia", description = "REST API para gestionar detalles de provincias: crear, actualizar, obtener y eliminar.")
 public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
-    String nameAPi = "Provincia";
+    String NAME_API = "Provincia";
 
     @Operation(
             summary = "Obtener una provincia por ID",
@@ -37,7 +37,7 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
     );
 
     @Operation(
-            summary = "Crear una provincia",
+            summary = "Crear una nueva " + NAME_API,
             description = "Crea una nueva provincia usando los datos proporcionados en el cuerpo de la solicitud.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Provincia creado con éxito."),

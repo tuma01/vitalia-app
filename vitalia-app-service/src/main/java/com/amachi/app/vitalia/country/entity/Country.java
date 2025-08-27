@@ -6,15 +6,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * Represents a country entity with ISO codes and related metadata.
  */
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "COUNTRY", uniqueConstraints = {

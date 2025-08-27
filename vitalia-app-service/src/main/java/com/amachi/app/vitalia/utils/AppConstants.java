@@ -26,7 +26,8 @@ public final class AppConstants {
         // Mensajes específicos para integridad de datos
         public static final String DATA_INTEGRITY_GENERIC = "error.data.integrity.violation.generic";
         public static final String DATA_INTEGRITY_VALUE = "error.data.integrity.violation.value";
-
+        public static final String ID_MUST_NOT_BE_NULL = "ID must not be null";
+        public static final String ENTITY_MUST_NOT_BE_NULL = "Entity must not be null";
         private ErrorMessages() {}
     }
 

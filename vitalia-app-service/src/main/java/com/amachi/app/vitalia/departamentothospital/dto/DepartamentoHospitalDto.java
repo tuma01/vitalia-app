@@ -1,33 +1,33 @@
 package com.amachi.app.vitalia.departamentothospital.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@Builder
 @Schema(name = "DepartamentoHospital", description = "Schema to hold DepartamentoHospital information")
 public class DepartamentoHospitalDto {
 
-    @Schema(description = "id of Department ", example = "1")
+    @Schema(description = "Unique identifier of the department", example = "1")
     private Long id;
 
-    @JsonProperty
-    @Schema(
-            description = "Name of Department", example = "Pediatría"
-    )
-    @NotBlank(message = "Name {err.required}")
-    private String name;
+    @Schema(description ="Hospital where the Department is located", example = "1")
+    private Long hospitalId;
 
-    @JsonProperty
-    @Schema(
-            description = "Description of Department", example = "Departamento enfocado en el cuidado de niños y adolescentes."
-    )
+    @Schema(description = "Type of Department", example = "Cardiology")
+    private DepartamentoTipoDto departamentoTipo;
+
+    @Schema(description ="Description of the Department", example = "Department specializing in heart-related conditions")
     private String description;
+
+    @Schema(description = "floor of the Department", example = "3rd Floor")
+    private String floor;
+
+    @Schema(description = "Contact phone number of the Department", example = "+1234567890")
+    private String contactPhone;
+
+    @Schema(description = "Head Doctor of the Department")
+    private Long headDoctorId;
 }

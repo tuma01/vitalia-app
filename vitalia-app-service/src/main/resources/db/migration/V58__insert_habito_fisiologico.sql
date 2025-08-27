@@ -1,0 +1,6 @@
+INSERT INTO HABITO_FISIOLOGICO (
+    NUTRICION, URINACION, DEFECACION, SUENO, SEXUALIDAD, ALERGIAS, ACTIVIDADES_DEPORTIVAS, OTROS
+) VALUES (
+    'Equilibrada', 'Normal', 'Normal', '8 horas', 'Activa', 'No', 'Correr', 'Ninguno'
+);
+COMMIT;

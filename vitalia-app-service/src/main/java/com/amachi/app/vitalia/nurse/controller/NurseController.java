@@ -7,7 +7,7 @@ import com.amachi.app.vitalia.nurse.dto.search.NurseSearchDto;
 import com.amachi.app.vitalia.nurse.entity.Nurse;
 import com.amachi.app.vitalia.nurse.mapper.NurseMapper;
 import com.amachi.app.vitalia.nurse.service.impl.NurseServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/nurses")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class NurseController extends BaseController implements NurseApi {
 
-    private NurseServiceImpl service;
-    private NurseMapper mapper;
+    private final NurseServiceImpl service;
+    private final NurseMapper mapper;
 
 
     @Override

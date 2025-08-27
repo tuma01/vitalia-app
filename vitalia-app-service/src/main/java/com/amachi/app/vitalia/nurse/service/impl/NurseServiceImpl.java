@@ -2,8 +2,6 @@ package com.amachi.app.vitalia.nurse.service.impl;
 
 import com.amachi.app.vitalia.common.exception.ResourceNotFoundException;
 import com.amachi.app.vitalia.common.service.GenericService;
-import com.amachi.app.vitalia.municipio.entity.Municipio;
-import com.amachi.app.vitalia.municipio.specification.MunicipioSpecification;
 import com.amachi.app.vitalia.nurse.dto.search.NurseSearchDto;
 import com.amachi.app.vitalia.nurse.entity.Nurse;
 import com.amachi.app.vitalia.nurse.repository.NurseRepository;
@@ -19,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
@@ -41,7 +41,7 @@ public class NurseServiceImpl  implements GenericService<Nurse, NurseSearchDto> 
 
     @Override
     public Optional<Nurse> getById(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         Optional<Nurse> nurseOptional = nurseRepository.findById(id);
         if (nurseOptional.isEmpty()) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
@@ -51,14 +51,14 @@ public class NurseServiceImpl  implements GenericService<Nurse, NurseSearchDto> 
 
     @Override
     public Nurse create(Nurse entity) {
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         return nurseRepository.save(entity);
     }
 
     @Override
     public Nurse update(Long id, Nurse entity) {
-        requireNonNull(id, "ID must not be null");
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         if (!nurseRepository.existsById(id)) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
         }
@@ -68,7 +68,7 @@ public class NurseServiceImpl  implements GenericService<Nurse, NurseSearchDto> 
 
     @Override
     public boolean delete(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return nurseRepository.findById(id)
                 .map(municipio -> {
                     nurseRepository.delete(municipio);
@@ -76,56 +76,4 @@ public class NurseServiceImpl  implements GenericService<Nurse, NurseSearchDto> 
                 })
                 .orElse(false);
     }
-
-
-//    @Override
-//    public Nurse getNurse(Long idNurse) {
-//        checkNotNull(idNurse);
-//        Optional<Nurse> nurseOptional = nurseRepository.findById(idNurse);
-//        if (nurseOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idNurse);
-//        }
-//        return nurseOptional.get();
-//    }
-//
-//    @Override
-//    public Nurse addNurse(Nurse nurse) {
-//        checkNotNull(nurse);
-//        return nurseRepository.save(nurse);
-//    }
-//
-//    @Override
-//    public Nurse updateNurse(Long idNurse, Nurse nurse) {
-//        checkNotNull(idNurse);
-//
-//        Optional<Nurse> nurseOptional = nurseRepository.findById(idNurse);
-//        if (nurseOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idNurse);
-//        }
-//        return nurseRepository.save(nurse);
-//    }
-//
-//    @Override
-//    public void deleteNurse(Long idNurse) {
-//        checkNotNull(idNurse);
-//        Optional<Nurse> nurseOptional = nurseRepository.findById(idNurse);
-//        if (nurseOptional.isEmpty()) {
-//            return;
-//        }
-//        nurseRepository.delete(nurseOptional.get());
-//    }
-//
-//    @Override
-//    public Page<Nurse> getNurses(NurseSearchDto nurseSearchDto, Integer pageNumber, Integer pageSize, String sort) {
-//        checkNotNull(nurseSearchDto);
-//        var sortById = AppConstants.DEFAULT_SORT_BY;
-////        var sortById = AppConstants.DEFAULT_SORT_BY + Nurse.class.getSimpleName();
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize, AppUtils.getSort(sort, sortById));
-//        return nurseRepository.getNurses(nurseSearchDto, pageable);
-//    }
-//
-//    @Override
-//    public List<Nurse> findAllNurses() {
-//        return nurseRepository.findAll();
-//    }
 }

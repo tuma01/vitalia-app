@@ -21,14 +21,14 @@ import static com.amachi.app.vitalia.common.controller.BaseController.ID;
 @Tag(name = "DepartamentoHospital", description = "Rest API Vitalia APP to CREATE, UPDATE, FETCH and DELETE DepartamentoHospital details")
 public interface DepartamentoHospitalApi extends GenericApi<DepartamentoHospitalDto> {
 
-    String nameAPi = "DepartamentoHospital";
+    String NAME_API = "DepartamentoHospital";
 
     @Operation(
             summary = "Obtener un departamentoHospital por ID",
             description = "Devuelve un objeto DepartamentoHospital por ID especificado.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " encontrado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " encontrado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
@@ -42,14 +42,14 @@ public interface DepartamentoHospitalApi extends GenericApi<DepartamentoHospital
             summary = "Crear un departamentoHospital",
             description = "Crea un nuevo departamentoHospital usando los datos proporcionados en el cuerpo de la solicitud.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = nameAPi + " creado con éxito."),
+                    @ApiResponse(responseCode = "201", description = NAME_API + " creado con éxito."),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<DepartamentoHospitalDto> createDepartamentoHospital(
-            @Parameter(description = "Detalles del " + nameAPi + " a crear.", required = true)
+            @Parameter(description = "Detalles del " + NAME_API + " a crear.", required = true)
             @Valid @RequestBody DepartamentoHospitalDto dto
     );
 
@@ -57,40 +57,40 @@ public interface DepartamentoHospitalApi extends GenericApi<DepartamentoHospital
             summary = "Actualizar un departamentoHospital por ID",
             description = "Actualiza un departamentoHospital existente usando su ID y los datos proporcionados.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " actualizado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " actualizado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<DepartamentoHospitalDto> updateDepartamentoHospital(
-            @Parameter(description = "ID del " + nameAPi + " a actualizar.", required = true)
+            @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
             @PathVariable("id") Long id,
             @Parameter(description = "Nuevos detalles del departamentoHospital.", required = true)
             @Valid @RequestBody DepartamentoHospitalDto dto
     );
 
     @Operation(
-            summary = nameAPi + " a eliminar por ID",
-            description = "Elimina un " + nameAPi + " existente usando su ID.",
+            summary = NAME_API + " a eliminar por ID",
+            description = "Elimina un " + NAME_API + " existente usando su ID.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " eliminado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " eliminado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteDepartamentoHospital(
-            @Parameter(description = "ID del " + nameAPi + " a eliminar.", required = true)
+            @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
             @PathVariable("id") Long id
     );
 
     @Operation(
-            summary = "Obtener todos los " + nameAPi,
-            description = "Devuelve la lista completa de " + nameAPi,
+            summary = "Obtener todos los " + NAME_API,
+            description = "Devuelve la lista completa de " + NAME_API,
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de " + nameAPi + " recuperada con éxito."),
+                    @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API + " recuperada con éxito."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
@@ -98,10 +98,10 @@ public interface DepartamentoHospitalApi extends GenericApi<DepartamentoHospital
     ResponseEntity<List<DepartamentoHospitalDto>> getAllDepartamentoHospital();
 
     @Operation(
-            summary = "Obtener una lista con paginación de " + nameAPi,
-            description = "Devuelve una lista paginada de " + nameAPi,
+            summary = "Obtener una lista con paginación de " + NAME_API,
+            description = "Devuelve una lista paginada de " + NAME_API,
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de " + nameAPi + " recuperada con éxito."),
+                    @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API + " recuperada con éxito."),
                     @ApiResponse(responseCode = "400", description = "Parámetros de paginación inválidos."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
