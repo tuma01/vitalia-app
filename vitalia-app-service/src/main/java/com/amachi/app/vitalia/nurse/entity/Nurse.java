@@ -2,6 +2,7 @@ package com.amachi.app.vitalia.nurse.entity;
 
 import com.amachi.app.vitalia.user.entity.Person;
 import com.amachi.app.vitalia.nurseprofessionspeciality.entity.NurseProfessionSpeciality;
+import com.amachi.app.vitalia.user.entity.UserProfile;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -11,8 +12,7 @@ import java.util.Set;
 @Entity
 @Table(name = "NURSE")
 @DiscriminatorValue("NURSE")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -31,4 +31,8 @@ public class Nurse extends Person {
             joinColumns = @JoinColumn(name = "ID_NURSE", referencedColumnName = "ID"),
             inverseJoinColumns = @JoinColumn(name = "ID_NURSE_PROFESSION_SPECIALITY", referencedColumnName = "ID"))
     private Set<NurseProfessionSpeciality> nurseProfessionSpecialities;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "FK_ID_USERPROFILE", nullable = false, foreignKey = @ForeignKey(name = "FK_NURSE_USERPROFILE"))
+    private UserProfile profile;
 }

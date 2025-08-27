@@ -50,7 +50,6 @@ public class DepartamentoServiceImpl implements GenericService<Departamento, Dep
         checkNotNull(id);
         Optional<Departamento> departamentoOptional = departamentoRepository.findById(id);
         if (departamentoOptional.isEmpty()) {
-//            throw new VitaliaException(ApiErrorEnum.OBJECT_NOT_FOUND, id);
             throw new ResourceNotFoundException("error.resource.not.found", id);
         }
         Hibernate.initialize(departamentoOptional.get().getCountry());
@@ -94,98 +93,4 @@ public class DepartamentoServiceImpl implements GenericService<Departamento, Dep
                 })
                 .orElse(false);
     }
-
-
-//    @Override
-//    public Departamento getDepartamento(Integer idDepartamento) {
-//        checkNotNull(idDepartamento);
-//        Optional<Departamento> departamentoOptional = departamentoRepository.findById(idDepartamento);
-//        if (departamentoOptional.isEmpty()) {
-//            throw new HospitalException(ApiErrorEnum.OBJECT_NOT_FOUND, idDepartamento);
-//        }
-//        return departamentoOptional.get();
-//    }
-//
-//    @Override
-//    public Departamento addDepartamento(Departamento departamento) {
-//        checkNotNull(departamento);
-//        return departamentoRepository.save(departamento);
-//    }
-//
-//    @Override
-//    public Departamento updateDepartamento(Integer idDepartamento, Departamento departamento) {
-//        checkNotNull(idDepartamento);
-//        if (departamentoRepository.findById(idDepartamento).isEmpty()) {
-//            throw new HospitalException(ApiErrorEnum.OBJECT_NOT_FOUND, idDepartamento);
-//        }
-//        departamento.setIdDepartamento(idDepartamento);
-//        return departamentoRepository.save(departamento);
-//    }
-//
-//    @Override
-//    public void deleteDepartamento(Integer idDepartamento) {
-//        checkNotNull(idDepartamento);
-//        Optional<Departamento> departamentoOptional = departamentoRepository.findById(idDepartamento);
-//        if (departamentoOptional.isEmpty()) {
-//            return;
-//        }
-//        departamentoRepository.delete(departamentoOptional.get());
-//    }
-
-
-
-//    @Override
-//    public List<Departamento> findAllCountries() {
-//        return departamentoRepository.findAll();
-//    }
-//
-//    @Override
-//    public Page<Departamento> getCountries(Integer pageIndex, Integer pageSize) {
-//        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createdDate").descending());
-//        return departamentoRepository.findAll(pageable);
-//    }
-
-//    @Override
-//    public PageResponse<DepartamentoDto> getCountries(Integer page, Integer size) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        Page<Departamento> countries = departamentoRepository.findAll(pageable);
-//        List<DepartamentoDto> departamentoDtos = countries.map(departamento -> DepartamentoDto.builder()
-//                .idDepartamento(departamento.getIdDepartamento())
-//                .name(departamento.getName())
-//                .iso(departamento.getIso())
-//                .iso3(departamento.getIso3())
-//                .niceName(departamento.getNiceName())
-//                .numCode(departamento.getNumCode())
-//                .phoneCode(departamento.getPhoneCode())
-//                .build()).toList();
-//        return new PageResponse<>(departamentoDtos,
-//                countries.getNumber(),
-//                countries.getSize(),
-//                countries.getTotalElements(),
-//                countries.getTotalPages(),
-//                countries.isFirst(),
-//                countries.isLast());
-//    }
-
-//    @Override
-//    public PageResponse<DepartamentoDto> getCountries(Integer page, Integer size) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-//        Page<Departamento> countries = departamentoRepository.findAll(pageable);
-//        List<DepartamentoDto> departamentoDtos = countries.map(departamento -> DepartamentoDto.builder()
-//                .idDepartamento(departamento.getIdDepartamento())
-//                .name(departamento.getName())
-//                .iso(departamento.getIso())
-//                .iso3(departamento.getIso3())
-//                .niceName(departamento.getNiceName())
-//                .numCode(departamento.getNumCode())
-//                .phoneCode(departamento.getPhoneCode())
-//                .build()).toList();
-//        return new PageResponse<>(departamentoDtos,
-//                countries.getNumber(),
-//                countries.getSize(),
-//                countries.getTotalElements(),
-//                countries.getTotalPages(),
-//                countries.isFirst(),
-//                countries.isLast());
-//    }
 }

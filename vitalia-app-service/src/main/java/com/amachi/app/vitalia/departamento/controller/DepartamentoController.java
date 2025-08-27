@@ -27,7 +27,6 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 public class DepartamentoController extends BaseController implements DepartamentoApi {
-//public class DepartamentoController  implements DepartamentoApi {
 
     private DepartamentoServiceImpl service;
     private DepartamentoMapper mapper;

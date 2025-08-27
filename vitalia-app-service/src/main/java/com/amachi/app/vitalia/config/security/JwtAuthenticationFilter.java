@@ -22,7 +22,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
 
     @Override
     protected void doFilterInternal(
@@ -72,8 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-//        } catch (UnauthorizedException ex) {
-//            handlerExceptionResolver.resolveException(request, response, null, ex);
         } catch (Exception exception) {
             handlerExceptionResolver.resolveException(request, response, null, new UnauthorizedException("error.internal.auth", "Ocurrió un error en la autenticación"));
         }

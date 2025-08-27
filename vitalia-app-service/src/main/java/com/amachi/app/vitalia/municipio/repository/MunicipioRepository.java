@@ -9,9 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MunicipioRepository extends JpaRepository<Municipio, Long>, JpaSpecificationExecutor<Municipio> {
-//    default Page<Municipio> getMunicipios(MunicipioSearchDto provinciaSearchDto, Pageable pageable) {
-//        return findAll(new MunicipioSpecification(provinciaSearchDto), pageable);
-//    }
 
     Page<Municipio> findByNombreLike(String nombre, Pageable pageable);
 }

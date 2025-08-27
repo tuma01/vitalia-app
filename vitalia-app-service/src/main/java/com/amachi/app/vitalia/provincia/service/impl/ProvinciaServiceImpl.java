@@ -20,7 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
@@ -44,8 +45,7 @@ public class ProvinciaServiceImpl implements GenericService<Provincia, Provincia
 
     @Override
     public Optional<Provincia> getById(Long id) {
-//        checkNotNull(id);
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         Optional<Provincia> provinciaOptional = provinciaRepository.findById(id);
         if (provinciaOptional.isEmpty()) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
@@ -56,7 +56,7 @@ public class ProvinciaServiceImpl implements GenericService<Provincia, Provincia
     @Override
     public Provincia create(Provincia entity) {
         // Use requireNonNull for clearer intent and standard Java utility
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         requireNonNull(entity.getDepartamento(), "Departamento must not be null");
         requireNonNull(entity.getDepartamento().getId(), "Departamento ID must not be null");
 
@@ -102,67 +102,3 @@ public class ProvinciaServiceImpl implements GenericService<Provincia, Provincia
                 .orElse(false);
     }
 }
-
-//
-//    @Override
-//    public Provincia getProvincia(Integer idProvincia) {
-//        checkNotNull(idProvincia);
-//        Optional<Provincia> provinciaOptional = provinciaRepository.findById(idProvincia);
-//        if (provinciaOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idProvincia);
-//        }
-//        return provinciaOptional.get();
-//    }
-//
-//    @Override
-//    public Provincia addProvincia(Provincia provincia) {
-//        checkNotNull(provincia);
-//        checkNotNull(provincia.getDepartamento());
-//        Optional<Departamento> departamentoOptional = departamentoRepository.findById(provincia.getDepartamento().getIdDepartamento());
-//        if (departamentoOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, provincia.getDepartamento().getIdDepartamento());
-//        }
-//        provincia.setDepartamento(departamentoOptional.get());
-//        return provinciaRepository.save(provincia);
-//    }
-//
-//    @Override
-//    public Provincia updateProvincia(Integer idProvincia, Provincia provincia) {
-//        checkNotNull(idProvincia);
-//        checkNotNull(provincia.getDepartamento());
-//
-//        Optional<Provincia> provinciaOptional = provinciaRepository.findById(idProvincia);
-//        if (provinciaOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idProvincia);
-//        }
-//        Optional<Departamento> departamentoOptional = departamentoRepository.findById(provincia.getDepartamento().getIdDepartamento());
-//        if (departamentoOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, provincia.getDepartamento().getIdDepartamento());
-//        }
-//        provincia.setDepartamento(departamentoOptional.get());
-//        return provinciaRepository.save(provincia);
-//    }
-//
-//    @Override
-//    public void deleteProvincia(Integer idProvincia) {
-//        checkNotNull(idProvincia);
-//        Optional<Provincia> provinciaOptional = provinciaRepository.findById(idProvincia);
-//        if (provinciaOptional.isEmpty()) {
-//            return;
-//        }
-//        provinciaRepository.delete(provinciaOptional.get());
-//    }
-//
-//    @Override
-//    public Page<Provincia> getProvincias(ProvinciaSearchDto provinciaSearchDto, Integer pageNumber, Integer pageSize, String sort) {
-//        checkNotNull(provinciaSearchDto);
-//        var sortById = AppConstants.DEFAULT_SORT_BY + Provincia.class.getSimpleName();
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize, AppUtils.getSort(sort, sortById));
-//        return provinciaRepository.getProvincias(provinciaSearchDto, pageable);
-//    }
-//
-//    @Override
-//    public List<Provincia> findAllProvincias() {
-//        return provinciaRepository.findAll();
-//    }
-

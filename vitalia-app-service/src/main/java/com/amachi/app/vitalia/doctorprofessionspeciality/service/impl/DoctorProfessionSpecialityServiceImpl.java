@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 
@@ -40,7 +42,7 @@ public class DoctorProfessionSpecialityServiceImpl implements GenericService<Doc
 
     @Override
     public Optional<DoctorProfessionSpeciality> getById(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         Optional<DoctorProfessionSpeciality> doctorProfessionSpecialityOptional = doctorProfessionSpecialityRepository.findById(id);
         if (doctorProfessionSpecialityOptional.isEmpty()) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
@@ -50,14 +52,14 @@ public class DoctorProfessionSpecialityServiceImpl implements GenericService<Doc
 
     @Override
     public DoctorProfessionSpeciality create(DoctorProfessionSpeciality entity) {
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         return doctorProfessionSpecialityRepository.save(entity);
     }
 
     @Override
     public DoctorProfessionSpeciality update(Long id, DoctorProfessionSpeciality entity) {
-        requireNonNull(id, "ID must not be null");
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         if (!doctorProfessionSpecialityRepository.existsById(id)) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
         }
@@ -67,7 +69,7 @@ public class DoctorProfessionSpecialityServiceImpl implements GenericService<Doc
 
     @Override
     public boolean delete(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return doctorProfessionSpecialityRepository.findById(id)
                 .map(municipio -> {
                     doctorProfessionSpecialityRepository.delete(municipio);
@@ -75,53 +77,4 @@ public class DoctorProfessionSpecialityServiceImpl implements GenericService<Doc
                 })
                 .orElse(false);
     }
-
-//    @Override
-//    public DoctorProfessionSpeciality getDoctorProfessionSpeciality(Integer idDoctorProfessionSpeciality) {
-//        checkNotNull(idDoctorProfessionSpeciality);
-//        Optional<DoctorProfessionSpeciality> doctorProfessionSpecialityOptional = doctorProfessionSpecialityRepository.findById(idDoctorProfessionSpeciality);
-//        if (doctorProfessionSpecialityOptional.isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idDoctorProfessionSpeciality);
-//        }
-//        return doctorProfessionSpecialityOptional.get();
-//    }
-//
-//    @Override
-//    public DoctorProfessionSpeciality addDoctorProfessionSpeciality(DoctorProfessionSpeciality doctorProfessionSpeciality) {
-//        checkNotNull(doctorProfessionSpeciality);
-//        return doctorProfessionSpecialityRepository.save(doctorProfessionSpeciality);
-//    }
-//
-//    @Override
-//    public DoctorProfessionSpeciality updateDoctorProfessionSpeciality(Integer idDoctorProfessionSpeciality, DoctorProfessionSpeciality doctorProfessionSpeciality) {
-//        checkNotNull(idDoctorProfessionSpeciality);
-//        if (doctorProfessionSpecialityRepository.findById(idDoctorProfessionSpeciality).isEmpty()) {
-//            throw new HospitalException(ErrorEnum.OBJECT_NOT_FOUND, idDoctorProfessionSpeciality);
-//        }
-//        doctorProfessionSpeciality.setIdDoctorProfessionSpeciality(idDoctorProfessionSpeciality);
-//        return doctorProfessionSpecialityRepository.save(doctorProfessionSpeciality);
-//    }
-//
-//    @Override
-//    public void deleteDoctorProfessionSpeciality(Integer idDoctorProfessionSpeciality) {
-//        checkNotNull(idDoctorProfessionSpeciality);
-//        Optional<DoctorProfessionSpeciality> doctorProfessionSpecialityOptional = doctorProfessionSpecialityRepository.findById(idDoctorProfessionSpeciality);
-//        if (doctorProfessionSpecialityOptional.isEmpty()) {
-//            return;
-//        }
-//        doctorProfessionSpecialityRepository.delete(doctorProfessionSpecialityOptional.get());
-//    }
-//
-//    @Override
-//    public Page<DoctorProfessionSpeciality> getDoctorProfessionSpecialities(DoctorProfessionSpecialitySearchDto doctorProfessionSpecialitySearchDTO, Integer pageNumber, Integer pageSize, String sort) {
-//        checkNotNull(doctorProfessionSpecialitySearchDTO);
-//        var sortById = AppConstants.DEFAULT_SORT_BY + DoctorProfessionSpeciality.class.getSimpleName();
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize, AppUtils.getSort(sort, sortById));
-//        return doctorProfessionSpecialityRepository.getDoctorProfessionalActivities(doctorProfessionSpecialitySearchDTO, pageable);
-//    }
-//
-//    @Override
-//    public List<DoctorProfessionSpeciality> findAllDoctorProfessionSpecialities() {
-//        return doctorProfessionSpecialityRepository.findAll();
-//    }
 }

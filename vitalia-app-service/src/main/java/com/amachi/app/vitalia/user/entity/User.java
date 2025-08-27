@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,11 +22,10 @@ import java.util.stream.Collectors;
 @Table(name = "USER", uniqueConstraints = {
         @UniqueConstraint(name = "UK_EMAIL_USER", columnNames = "EMAIL")
 })
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @ToString(exclude = "person")
 public class User extends Auditable<String> implements UserDetails, Principal {
 
@@ -55,9 +55,8 @@ public class User extends Auditable<String> implements UserDetails, Principal {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ROLES",
-            joinColumns = @JoinColumn(name = "USER_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ROLE_ID")
-    )
+            joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"),
+            inverseJoinColumns = @JoinColumn(name = "ROLE_ID", referencedColumnName = "ID"))
     private Set<Role> roles = new HashSet<>();
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
@@ -89,7 +88,9 @@ public class User extends Auditable<String> implements UserDetails, Principal {
     }
 
     public void addRole(Role role) {
+        if (roles == null) {
+            roles = new HashSet<>();
+        }
         roles.add(role);
     }
-
 }

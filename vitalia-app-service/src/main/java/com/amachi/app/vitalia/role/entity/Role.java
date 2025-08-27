@@ -5,12 +5,13 @@ import com.amachi.app.vitalia.common.entities.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "ROLE")
 @EqualsAndHashCode(callSuper=false)
@@ -24,8 +25,4 @@ public class Role extends Auditable<String> implements Model {
     @NotBlank(message = "Name {err.required}")
     @Column(name = "NAME", unique = true, nullable = false)
     private String name;
-
-    public Role(String name) {
-        this.name = name;
-    }
 }

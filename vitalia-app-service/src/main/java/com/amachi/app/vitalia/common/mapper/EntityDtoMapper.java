@@ -1,7 +1,5 @@
 package com.amachi.app.vitalia.common.mapper;
 
-import org.mapstruct.MapperConfig;
-import org.mapstruct.ReportingPolicy;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.stream.Collectors;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
-@MapperConfig(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR, unmappedSourcePolicy = ReportingPolicy.WARN)
+//@MapperConfig(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.ERROR, unmappedSourcePolicy = ReportingPolicy.WARN)
 public interface EntityDtoMapper<E, D> {
 
     E toEntity(D dto);

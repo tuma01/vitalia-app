@@ -1,5 +1,7 @@
 package com.amachi.app.vitalia.authentication.service.impl;
 
+import com.amachi.app.vitalia.hospital.entity.Hospital;
+import com.amachi.app.vitalia.hospital.service.HospitalConfigService;
 import com.amachi.app.vitalia.user.entity.Person;
 import com.amachi.app.vitalia.authentication.entity.Token;
 import com.amachi.app.vitalia.avatar.service.AvatarService;
@@ -55,6 +57,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AvatarService avatarService;
 
+    private final HospitalConfigService hospitalConfigService;
+
     @Value("${mailing.frontend.activation-url}")
     private String activationUrl;
 
@@ -63,7 +67,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Transactional
     public void register(UserRegisterDto dto) throws MessagingException {
+        // Crear la persona del tipo correspondiente
         Person person = personFactory.create(dto);
+        // Obtener hospital por defecto
+        Hospital hospitalPorDefecto = hospitalConfigService.getHospitalPorDefecto();
+        // Asociar hospital a la persona
+        person.setHospitalPrincipal(hospitalPorDefecto);
+        person.getHospitales().add(hospitalPorDefecto);
 
         Role defaultRole = roleRepository
                 .findByName("ROLE_" + dto.getPersonType().name())

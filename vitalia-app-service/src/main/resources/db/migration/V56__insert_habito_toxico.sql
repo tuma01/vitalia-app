@@ -1,0 +1,6 @@
+INSERT INTO HABITO_TOXICO (
+    ALCOHOL, TABACO, DROGAS, INFUSIONES, CAFEINA, COMIDA_CHATARRA, SEDENTARISMO, OTROS
+) VALUES (
+    'Moderado', 'No', 'No', 'Té verde', 'Bajo', 'No', 'No', 'Ninguno'
+);
+COMMIT;

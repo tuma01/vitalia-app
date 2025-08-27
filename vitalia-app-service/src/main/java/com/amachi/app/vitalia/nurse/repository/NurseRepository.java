@@ -9,9 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NurseRepository extends JpaRepository<Nurse, Long>, JpaSpecificationExecutor<Nurse> {
-//    default Page<Nurse> getNurses(NurseSearchDto nurseSearchDto, Pageable pageable) {
-//        return findAll(new NurseSpecification(nurseSearchDto), pageable);
-//    }
 
     Page<Nurse> findByNombreLike(String nombre, Pageable pageable);
 }

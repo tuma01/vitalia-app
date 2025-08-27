@@ -6,8 +6,7 @@ import com.amachi.app.vitalia.departamento.entity.Departamento;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

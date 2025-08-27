@@ -4,12 +4,13 @@ import com.amachi.app.vitalia.common.entities.Auditable;
 import com.amachi.app.vitalia.common.entities.Model;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "NURSE_PROFESSION_SPECIALITY")

@@ -9,19 +9,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter @Setter
+@SuperBuilder
 @Schema(name = "Person", description = "Schema to hold Person information")
-public class PersonDto {
+public abstract class PersonDto {
 
     @Valid
     @JsonProperty
@@ -64,13 +65,6 @@ public class PersonDto {
 
     @Valid
     @JsonProperty
-    @Schema(
-            description = "Nombre Completo de la Persona", example = "Jose Larico"
-    )
-    private String nombreCompleto;
-
-    @Valid
-    @JsonProperty
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Schema(
             description = "La fecha de nacimiento de la Persona", example = "24-06-2000"
@@ -106,5 +100,24 @@ public class PersonDto {
             description = "Celular de la Persona", example = "514 236 7944"
     )
     private String celular;
+
+    @Schema(
+            description = "Lista de hospitales asociados a la Persona"
+    )
+    @JsonProperty
+    private Set<Long> hospitalesIds = new HashSet<>();
+
+    @JsonProperty
+    @Schema(
+            description = "Hospital principal de la Persona"
+    )
+    private Long hospitalPrincipalId;
+
+    @Valid
+    @JsonProperty
+    @Schema(
+            description = "Usuario asociado a la Persona"
+    )
+    private UserDto user;
 
 }

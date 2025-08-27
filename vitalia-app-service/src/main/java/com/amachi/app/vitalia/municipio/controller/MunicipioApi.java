@@ -20,7 +20,7 @@ import static com.amachi.app.vitalia.common.controller.BaseController.ID;
 
 @Tag(name = "Municipio", description = "REST API para gestionar detalles del municipio: crear, actualizar, obtener y eliminar.")
 public interface MunicipioApi extends GenericApi<MunicipioDto> {
-    String nameAPi = "Municipio";
+    String NAME_API = "Municipio";
 
     @Operation(
             summary = "Obtener una municipio por ID",

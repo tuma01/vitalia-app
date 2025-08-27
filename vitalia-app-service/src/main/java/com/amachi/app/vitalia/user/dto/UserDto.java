@@ -1,9 +1,9 @@
 package com.amachi.app.vitalia.user.dto;
 
-import com.amachi.app.vitalia.user.entity.Person;
-import com.amachi.app.vitalia.role.entity.Role;
+import com.amachi.app.vitalia.role.dto.RoleDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -12,8 +12,7 @@ import java.util.Set;
 import lombok.experimental.Accessors;
 
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -45,23 +44,25 @@ public class UserDto {
     @Schema(description = "Indicates whether the user is enabled", example = "true")
     private boolean enabled;
 
+    @Lob
+    @Schema(description = "User avatar image in byte array format", example = "Base64 encoded image string")
+    private byte[] avatar;
+
     @NotNull(message = "Roles cannot be null")
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Schema(description = "User roles assigned", example = "[\"ADMIN\", \"USER\"]")
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleDto> roles = new HashSet<>();
 
     @NotNull(message = "Person information is required")
-    @Schema(description = "Personal details associated with the user")
-    private Person person;
+    @Schema(description = "Personal details associated with the user", example = "234L")
+    private Long personId;
 
-    public void addRole(Role role) {
+    public void addRole(RoleDto role) {
         if (roles == null) {
             roles = new HashSet<>();
         }
         roles.add(role);
     }
-
-    private byte[] avatar;
 }

@@ -19,76 +19,76 @@ import static com.amachi.app.vitalia.common.controller.BaseController.ID;
 
 @Tag(name = "Nurse", description = "Rest API Hospital APP to CREATE, UPDATE, FETCH and DELETE Nurse details")
 public interface NurseApi {
-    String nameAPi = "Nurse";
+    String NAME_API = "Nurse";
 
     @Operation(
-            summary = nameAPi + " a obtener por ID",
-            description = "Devuelve un objeto " + nameAPi + " por ID especificado.",
+            summary = NAME_API + " a obtener por ID",
+            description = "Devuelve un objeto " + NAME_API + " por ID especificado.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " encontrado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " encontrado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NurseDto> getNurseById(
-            @Parameter(description = "ID  " + nameAPi + " a recuperar.", required = true)
+            @Parameter(description = "ID  " + NAME_API + " a recuperar.", required = true)
             @PathVariable("id") Long id
     );
 
     @Operation(
-            summary = nameAPi + " a crear",
-            description = "Crea un nuevo " + nameAPi + " usando los datos proporcionados en el cuerpo de la solicitud.",
+            summary = NAME_API + " a crear",
+            description = "Crea un nuevo " + NAME_API + " usando los datos proporcionados en el cuerpo de la solicitud.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = nameAPi + " creado con éxito."),
+                    @ApiResponse(responseCode = "201", description = NAME_API + " creado con éxito."),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NurseDto> createNurse(
-            @Parameter(description = "Detalles del " + nameAPi + " a crear.", required = true)
+            @Parameter(description = "Detalles del " + NAME_API + " a crear.", required = true)
             @Valid @RequestBody NurseDto dto
     );
 
     @Operation(
-            summary = nameAPi + " a actualizar mediante el ID",
-            description = "Actualiza " + nameAPi + " existente usando su ID y los datos proporcionados.",
+            summary = NAME_API + " a actualizar mediante el ID",
+            description = "Actualiza " + NAME_API + " existente usando su ID y los datos proporcionados.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " actualizado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " actualizado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NurseDto> updateNurse(
-            @Parameter(description = "ID del " + nameAPi + " a actualizar.", required = true)
+            @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
             @PathVariable("id") Long id,
-            @Parameter(description = "Nuevos detalles del " +  nameAPi + ".", required = true)
+            @Parameter(description = "Nuevos detalles del " + NAME_API + ".", required = true)
             @Valid @RequestBody NurseDto dto
     );
 
     @Operation(
-            summary = nameAPi + " a eliminar por ID",
-            description = "Elimina un " + nameAPi + " existente usando su ID.",
+            summary = NAME_API + " a eliminar por ID",
+            description = "Elimina un " + NAME_API + " existente usando su ID.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = nameAPi + " eliminado con éxito."),
-                    @ApiResponse(responseCode = "404", description = nameAPi + " no encontrado."),
+                    @ApiResponse(responseCode = "200", description = NAME_API + " eliminado con éxito."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteNurse(
-            @Parameter(description = "ID del " + nameAPi + " a eliminar.", required = true)
+            @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
             @PathVariable("id") Long id
     );
 
     @Operation(
-            summary = "Obtener todos los " + nameAPi,
-            description = "Devuelve la lista completa de " + nameAPi,
+            summary = "Obtener todos los " + NAME_API,
+            description = "Devuelve la lista completa de " + NAME_API,
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de " + nameAPi + " recuperada con éxito."),
+                    @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API + " recuperada con éxito."),
                     @ApiResponse(responseCode = "500", description = "Error del servidor.")
             }
     )
@@ -96,8 +96,8 @@ public interface NurseApi {
     ResponseEntity<List<NurseDto>> getAllNurses();
 
     @Operation(
-            summary = "Obtener una lista con paginación de " + nameAPi,
-            description = "Devuelve una lista paginada de " + nameAPi,
+            summary = "Obtener una lista con paginación de " + NAME_API,
+            description = "Devuelve una lista paginada de " + NAME_API,
             responses = {
                     @ApiResponse(responseCode = "200", description = "Lista de nurseProfessionSpecialities recuperada con éxito."),
                     @ApiResponse(responseCode = "400", description = "Parámetros de paginación inválidos."),

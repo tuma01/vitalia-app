@@ -1,12 +1,11 @@
 package com.amachi.app.vitalia.doctorprofessionspeciality.dto;
 
-import com.amachi.app.vitalia.common.dto.search.BaseSearchDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -30,5 +29,4 @@ public class DoctorProfessionSpecialityDto {
             description = "Description of DoctorProfessionSpeciality", example = "Diagnosis and treatment of eye conditions"
     )
     private String description;
-
 }

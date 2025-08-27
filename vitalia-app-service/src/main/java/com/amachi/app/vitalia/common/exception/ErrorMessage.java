@@ -11,7 +11,6 @@ import java.util.Date;
 @Builder
 public class ErrorMessage {
     private int statusCode;
-//    private final HttpStatus status;
     private Date timestamp;
     private String message;
     private String description;

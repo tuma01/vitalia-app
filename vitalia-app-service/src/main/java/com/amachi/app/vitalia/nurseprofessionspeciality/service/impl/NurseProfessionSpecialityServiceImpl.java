@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
+import static com.amachi.app.vitalia.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class NurseProfessionSpecialityServiceImpl implements GenericService<Nurs
 
     @Override
     public Optional<NurseProfessionSpeciality> getById(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         Optional<NurseProfessionSpeciality> nurseProfessionSpecialityOptional = nurseProfessionSpecialityRepository.findById(id);
         if (nurseProfessionSpecialityOptional.isEmpty()) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
@@ -49,14 +51,14 @@ public class NurseProfessionSpecialityServiceImpl implements GenericService<Nurs
 
     @Override
     public NurseProfessionSpeciality create(NurseProfessionSpeciality entity) {
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         return nurseProfessionSpecialityRepository.save(entity);
     }
 
     @Override
     public NurseProfessionSpeciality update(Long id, NurseProfessionSpeciality entity) {
-        requireNonNull(id, "ID must not be null");
-        requireNonNull(entity, "Entity must not be null"); // Ensure the entity itself isn't null
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL); // Ensure the entity itself isn't null
         if (!nurseProfessionSpecialityRepository.existsById(id)) {
             throw new ResourceNotFoundException("error.resource.not.found", id);
         }
@@ -66,7 +68,7 @@ public class NurseProfessionSpecialityServiceImpl implements GenericService<Nurs
 
     @Override
     public boolean delete(Long id) {
-        requireNonNull(id, "ID must not be null");
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return nurseProfessionSpecialityRepository.findById(id)
                 .map(municipio -> {
                     nurseProfessionSpecialityRepository.delete(municipio);

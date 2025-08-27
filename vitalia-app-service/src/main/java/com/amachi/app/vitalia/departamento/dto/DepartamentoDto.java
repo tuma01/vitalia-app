@@ -1,6 +1,5 @@
 package com.amachi.app.vitalia.departamento.dto;
 
-import com.amachi.app.vitalia.country.dto.CountryDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -48,6 +47,5 @@ public class DepartamentoDto {
     @Schema(
             description = "Pais al que pertenece el Departamento"
     )
-    private CountryDto country;
-
+    private Long countryId;
 }
