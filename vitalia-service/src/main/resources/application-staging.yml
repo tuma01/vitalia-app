@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: vitalia-app
+
+  profiles:
+    active: staging
+
+server:
+  port: 8088
+  servlet:
+    context-path: /api/v1
+
+# Configuración general del sistema
+app:
+  bootstrap:
+    tenant:
+      code: HOSP_A
+      name: "Hospital A"
+      type: HOSPITAL
+      fallbackHeader: X-Tenant-Code
+      allowLocal: false              # ✅ permite usar tenant por defecto si es localhost
+      defaultDomain: vitalia.bo      # ✅ dominio base (para construir subdominios)
+    superAdmin:
+      email: "admin@hospitala.com"
+      password: "ChangeMe123!"
+      firstName: "System"
+      lastName: "Administrator"
+      personType: EMPLOYEE
+    tenantAdmin:
+      email: "admin.tenant@hospitala.com"
+      password: "ChangeMe123!"
+      firstName: "Tenant"
+      lastName: "Administrator"
+      personType: EMPLOYEE

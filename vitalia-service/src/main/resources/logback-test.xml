@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+    <!-- Basic settings -->
+    <property name="LOGS" value="/tmp/vitalia-api"/>
+    <property name="LOG_PATTERN" value="%d{ISO8601} %-5level [%t] %C{1}.%M:%L - %msg%n"/>
+
+    <!-- Console Appender: Only INFO and above (reduces noise in local/dev) -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+        <!--            <level>INFO</level>-->
+        <!--        </filter>-->
+    </appender>
+
+    <!-- File Appender: DEBUG and above (for troubleshooting, with rotation) -->
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/app.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Compressed rotated logs (saves space) -->
+            <fileNamePattern>${LOGS}/archived/app-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>50MB</maxFileSize>  <!-- Rotate after 50MB -->
+            <maxHistory>7</maxHistory>       <!-- Keep logs for 7 days -->
+        </rollingPolicy>
+    </appender>
+
+    <!-- Application-specific logger (DEBUG level for your code) -->
+    <logger name="com.amachi.app.vitalia" level="DEBUG" additivity="false">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="RollingFile"/>
+    </logger>
+
+    <!-- Reduce noise from verbose frameworks -->
+    <logger name="org.springframework" level="WARN"/>  <!-- Only show Spring warnings/errors -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.flywaydb" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+    <logger name="jakarta.validation" level="ERROR"/>
+
+    <!-- Root logger (safety net for other libraries) -->
+    <root level="INFO">
+        <appender-ref ref="Console"/>  <!-- File appender excluded to avoid duplication -->
+    </root>
+</configuration>

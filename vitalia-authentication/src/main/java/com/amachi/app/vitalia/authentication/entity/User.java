@@ -1,0 +1,81 @@
+package com.amachi.app.vitalia.authentication.entity;
+
+import com.amachi.app.vitalia.common.entity.Auditable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+
+/**
+ * Entidad principal que representa la cuenta del usuario en el sistema.
+ * Hereda la funcionalidad de auditoría de Auditable.
+ */
+@Entity
+@Table(name = "USER")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class User extends Auditable<String> implements UserDetails, Principal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", updatable = false, nullable = false)
+    private Long id;
+
+    @NotBlank(message = "Email {err.required}")
+    @Email(message = "El email debe tener un formato válido")
+    @Column(name = "EMAIL", nullable = false, length = 100, unique = true)
+    private String email;
+
+    @NotBlank(message = "Password {err.required}")
+    @Column(name = "PASSWORD", nullable = false)
+    private String password;
+
+    @Column(name = "ACCOUNT_LOCKED", nullable = false)
+    private boolean accountLocked;
+
+    @Column(name = "ENABLED", nullable = false)
+    private boolean enabled;
+
+    @Column(name = "LAST_LOGIN")
+    private LocalDateTime lastLogin;
+
+    @Column(name = "PERSON_ID")
+    private Long personId;
+
+    // Métodos de seguridad
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //  TODO🔹 Ahora debes mapear authorities dinámicamente desde UserTenantRole
+        return Collections.emptyList();
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return !this.accountLocked; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isEnabled() { return this.enabled; }
+
+    @Override
+    public String getName() {
+        return this.email;
+    }
+}

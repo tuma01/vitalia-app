@@ -1,0 +1,28 @@
+-- ============================================================
+-- Script: V1_2_0__create_country.sql
+-- Módulo: vitalia-geography
+-- Descripción: Creación de la tabla DEPARTAMENTO con metadatos, auditoría y restricciones.
+-- Autor: Juan Amachi
+-- Fecha: 2025-11-02
+-- Compatibilidad: MySQL 8.0+
+-- ============================================================
+DROP TABLE IF EXISTS DEPARTAMENTO;
+CREATE TABLE DEPARTAMENTO (
+    ID BIGINT PRIMARY KEY AUTO_INCREMENT,
+    NOMBRE VARCHAR(100) NOT NULL,
+    POBLACION INT DEFAULT NULL,
+    SUPERFICIE DECIMAL(38,2) DEFAULT NULL,
+    FK_ID_COUNTRY BIGINT DEFAULT NULL,
+    -- ===============================
+    -- Auditoría
+    -- ===============================
+    CREATED_BY VARCHAR(100) NOT NULL,
+    CREATED_DATE TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    LAST_MODIFIED_BY VARCHAR(100) NULL,
+    LAST_MODIFIED_DATE TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT FK_DEPARTAMENTO_COUNTRY FOREIGN KEY (FK_ID_COUNTRY) REFERENCES COUNTRY(ID),
+    UNIQUE KEY UK_NOMBRE_DEPARTAMENTO (NOMBRE)
+)ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+COMMIT;

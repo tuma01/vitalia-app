@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: bolivia
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  mail:
+    host: localhost
+    port: 1025
+    username: maildev
+    password: maildev
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+          auth: false
+          starttls:
+            enable: false
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+# Dirección "from" por defecto
+mail.from: no-reply@vitalia.com
+
+mailing:
+  frontend:
+    base-url: http://localhost:4200
+    activation-path: /#/activate-account
+
+#hospital:
+#  default:
+#    code: "HOSPITAL_CLINICA_MULHOUSE"
