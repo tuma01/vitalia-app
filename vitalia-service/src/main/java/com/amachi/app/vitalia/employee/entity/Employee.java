@@ -1,6 +1,5 @@
 package com.amachi.app.vitalia.employee.entity;
 
-import com.amachi.app.vitalia.authentication.entity.Role;
 import com.amachi.app.vitalia.authentication.entity.User;
 import com.amachi.app.vitalia.common.entity.Tenant;
 import com.amachi.app.vitalia.common.enums.EmployeeStatus;
@@ -20,13 +19,14 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "EMPLOYEE")
 @PrimaryKeyJoinColumn(name = "ID")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Entity
+@Table(name = "EMPLOYEE")
 public class Employee extends Person {
 
     // -------------------------------------------------------
@@ -91,17 +91,6 @@ public class Employee extends Person {
     public Set<Tenant> getTenants() {
         return getPersonTenants().stream()
                 .map(PersonTenant::getTenant)
-                .collect(Collectors.toSet());
-    }
-
-    /**
-     * Obtiene roles dentro de un tenant específico
-     */
-    @Transient
-    public Set<Role> getRolesByTenant(Long tenantId) {
-        return getPersonTenants().stream()
-                .filter(pt -> pt.getTenant().getId().equals(tenantId))
-                .flatMap(pt -> pt.getRoles().stream())
                 .collect(Collectors.toSet());
     }
 

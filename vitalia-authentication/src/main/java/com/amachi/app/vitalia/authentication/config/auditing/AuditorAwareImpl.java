@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.auditing;
 
 import com.amachi.app.vitalia.authentication.entity.SecurityUser;
 import org.springframework.data.domain.AuditorAware;

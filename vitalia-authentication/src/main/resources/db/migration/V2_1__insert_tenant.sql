@@ -1,9 +1,6 @@
- -- ***********************************************
- --  Insert ROLE (Datos de prueba)
- -- ***********************************************
 
-INSERT INTO TENANT (ID, CODE, NAME, TYPE, IS_ACTIVE, CREATED_BY, CREATED_DATE)
-VALUES
-  (1, 'HOSP_A', 'Hospital A', 'HOSPITAL', TRUE, 'system', CURRENT_TIMESTAMP),
-  (2, 'HOSP_B', 'Hospital B', 'HOSPITAL', TRUE, 'system', CURRENT_TIMESTAMP),
-  (3, 'CLINIC_X', 'Clínica X', 'CLINICA', TRUE, 'system', CURRENT_TIMESTAMP);
+--INSERT INTO TENANT (ID, CODE, NAME, TYPE, IS_ACTIVE, CREATED_BY, CREATED_DATE)
+--VALUES
+--  (1, 'HOSP_A', 'Hospital A', 'HOSPITAL', TRUE, 'system', CURRENT_TIMESTAMP),
+--  (2, 'HOSP_B', 'Hospital B', 'HOSPITAL', TRUE, 'system', CURRENT_TIMESTAMP),
+--  (3, 'CLINIC_X', 'Clínica X', 'CLINICA', TRUE, 'system', CURRENT_TIMESTAMP);

@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.authentication.service.impl;
 
+import com.amachi.app.vitalia.authentication.auditevent.service.AuditService;
 import com.amachi.app.vitalia.authentication.bridge.AvatarBridge;
 import com.amachi.app.vitalia.authentication.bridge.EmailBridge;
 import com.amachi.app.vitalia.authentication.bridge.PersonBridge;
@@ -11,28 +12,26 @@ import com.amachi.app.vitalia.authentication.dto.UserRegisterRequest;
 import com.amachi.app.vitalia.authentication.entity.*;
 import com.amachi.app.vitalia.authentication.exception.AppSecurityException;
 import com.amachi.app.vitalia.authentication.repository.*;
-import com.amachi.app.vitalia.authentication.service.AuthenticationService;
-import com.amachi.app.vitalia.authentication.service.JwtService;
-import com.amachi.app.vitalia.authentication.service.RefreshTokenService;
-import com.amachi.app.vitalia.authentication.service.TokenService;
+import com.amachi.app.vitalia.authentication.service.*;
 import com.amachi.app.vitalia.common.dto.*;
 import com.amachi.app.vitalia.common.entity.Tenant;
+import com.amachi.app.vitalia.common.enums.AuditEventType;
 import com.amachi.app.vitalia.common.error.ErrorCode;
+import com.amachi.app.vitalia.common.utils.AppConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +53,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final RoleRepository roleRepository;
     private final EmailBridge emailBridge;
     private final ActivationTokenRepository activationTokenRepository;
+    private final AuditService auditService;
+    private final UserTenantRoleService userTenantRoleService;
+//    private final PersonRepository
 
     @Override
     @Transactional
@@ -108,11 +110,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         log.debug("🔹 UserAccount creado con id {} para userId {} en tenant {}", userAccount.getId(), user.getId(), tenant.getCode());
 
         Long personTenantId = personTenantBridge.create(personId,request.getTenantCode(), request.getPersonType());
-//        PersonTenant personTenant = new PersonTenant();
-//        personTenant.setPerson(person);
-//        personTenant.setTenant(tenant);
-//        personTenant.setDateRegistered(LocalDateTime.now());
-//        personTenant.setRelationStatus(RelationStatus.ACTIVE);
 
         // 6️⃣ Asignar rol por defecto según tipo de persona (ej: ROLE_DOCTOR)
         Role defaultRole = roleRepository.findByName("ROLE_" + request.getPersonType().name())
@@ -126,6 +123,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         userAccount.getRoles().add(defaultRole);
         userAccountRepository.save(userAccount);
+
+        // <-- persist user_tenant_role aquí: asegurar UserTenantRole para el nuevo user
+        userTenantRoleService.assignRolesToUserAndTenant(user, tenant, Set.of(defaultRole));
 
         // 7️⃣ Crear avatar por defecto vía bridge
         avatarBridge.createDefaultAvatar(user.getId(), tenant.getCode());
@@ -163,31 +163,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("🔐 Autenticando usuario [{}] en tenant [{}]", request.getEmail(), request.getTenantCode());
-        // 1️⃣ Validar Tenant
-        Tenant tenant = tenantRepository.findByCode(request.getTenantCode())
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_TENANT_NOT_FOUND,
-                        "security.tenant.not_found",
-                        request.getTenantCode()
-                ));
+        log.info("🔐 Autenticación iniciada para email='{}' tenant='{}'",
+                request.getEmail(), request.getTenantCode());
 
-        // 2️⃣ Autenticar credenciales con Spring Security
-        Authentication authentication;
-        try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception ex) {
-            log.warn("🚫 Fallo de autenticación para [{}] en tenant [{}]: {}", request.getEmail(), tenant.getCode(), ex.getMessage());
-            throw new AppSecurityException(
-                    ErrorCode.SEC_INVALID_OPERATION,
-                    "security.invalid_credentials",
-                    request.getEmail()
-            );
+        // 1) Validación básica
+        if (request.getEmail() == null || request.getPassword() == null) {
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.auth.missing_credentials");
         }
-        // 3️⃣ Buscar usuario
+
+        // 2) Recuperar user por email (independiente de tenant)
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppSecurityException(
                         ErrorCode.SEC_INVALID_OPERATION,
@@ -195,46 +179,154 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         request.getEmail()
                 ));
 
-        // 4️⃣ Verificar roles activos del usuario en el tenant
-        List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user, tenant.getCode());
-        if (roles.isEmpty()) {
-            log.warn("⚠️ Usuario [{}] no tiene roles activos en tenant [{}]", user.getEmail(), tenant.getCode());
-            throw new AppSecurityException(
-                    ErrorCode.SEC_FORBIDDEN,
-                    "security.user.no_roles_in_tenant",
-                    tenant.getCode()
-            );
+        // 3) Determinar tenant efectivo (aplica GLOBAL para superadmins si no se envió tenantCode)
+        String effectiveTenantCode = resolveTenantForLogin(user, request.getTenantCode());
+
+        // 4) Cargar tenant y validar estado
+        Tenant tenant = tenantRepository.findByCode(effectiveTenantCode)
+                .orElseThrow(() -> new AppSecurityException(
+                        ErrorCode.SEC_TENANT_NOT_FOUND,
+                        "security.tenant.not_found",
+                        effectiveTenantCode
+                ));
+        if (Boolean.FALSE.equals(tenant.getIsActive())) {
+            throw new AppSecurityException(ErrorCode.SEC_TENANT_DISABLED, "security.tenant.disabled", tenant.getCode());
         }
 
-        // 🕓 5️⃣ Actualizar fecha/hora de último login
+        // 5) Autenticar credenciales (delegar a Spring Security)
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
+        } catch (Exception ex) {
+            log.warn("❌ Credenciales inválidas para {} : {}", request.getEmail(), ex.getMessage());
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_CREDENTIALS, "security.auth.invalid_credentials");
+        }
+
+        // 6) Validar que el usuario tenga cuenta en el tenant y obtener UserAccount
+        UserAccount userAccount = validateTenantAccess(user, tenant);
+
+        // 7) Normalizar roles desde UserAccount
+        List<String> roles = normalizeRoles(userAccount);
+
+        if (roles.isEmpty()) {
+            throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_roles_in_tenant", tenant.getCode());
+        }
+
+        // 7.1) Convertir roles a GrantedAuthority y ponerlos en el contexto
+        List<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toUnmodifiableList());
+
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // 8) Actualizar lastLogin
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
 
-        // 6️⃣ Construcción del contexto JWT
-        JwtUserDto jwtUserDto = JwtUserDto.builder()
+        // 9) Construir respuesta: generar tokens y summary
+        return buildAuthenticationResponse(user, userAccount, tenant, roles);
+    }
+
+    /* -------------------- auxiliares -------------------- */
+
+    private String resolveTenantForLogin(User user, String tenantCodeFromRequest) {
+        // Si se recibió tenantCode explícito, lo usamos (se validará después)
+        if (tenantCodeFromRequest != null && !tenantCodeFromRequest.isBlank()) {
+            return tenantCodeFromRequest;
+        }
+
+        // Si no se envió tenantCode: permitir solo para superadmins → usan GLOBAL
+        boolean isSuperAdmin = userTenantRoleRepository.findActiveRolesByUser(user).stream()
+                .anyMatch(r -> r.equalsIgnoreCase(AppConstants.Bootstrap.SUPER_ADMIN) || r.equalsIgnoreCase("ROLE_SUPER_ADMIN"));
+
+        if (isSuperAdmin) {
+            return "GLOBAL";
+        }
+
+        // Si no es superadmin y no envió tenantCode → error
+        throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.tenant.required_for_user");
+    }
+
+    private UserAccount validateTenantAccess(User user, Tenant tenant) {
+        // Buscar UserAccount por user + tenant
+        Optional<UserAccount> maybeAccount = userAccountRepository.findByUserAndTenantCode(user, tenant.getCode());
+
+        if (maybeAccount.isEmpty()) {
+            log.warn("⚠️ Usuario {} no tiene cuenta en tenant {}", user.getEmail(), tenant.getCode());
+            throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_account_in_tenant", tenant.getCode());
+        }
+
+        UserAccount account = maybeAccount.get();
+
+        // Validaciones de estado
+        if (!user.isEnabled()) {
+            throw new AppSecurityException(ErrorCode.SEC_USER_DISABLED, "security.user.disabled", user.getEmail());
+        }
+        if (user.isAccountLocked()) {
+            throw new AppSecurityException(ErrorCode.SEC_USER_LOCKED, "security.user.locked", user.getEmail());
+        }
+
+        return account;
+    }
+
+    private List<String> normalizeRoles(UserAccount account) {
+        return account.getRoles().stream()
+                .map(Role::getName)
+                .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name)
+                .distinct()
+                .toList();
+    }
+
+    private AuthenticationResponse buildAuthenticationResponse(User user, UserAccount account, Tenant tenant, List<String> roles) {
+        // Construir JWT payload DTO
+        JwtUserDto jwtUser = JwtUserDto.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .tenantCode(tenant.getCode())
                 .roles(roles)
                 .build();
 
-        // 7️⃣ Generación y persistencia de tokens
-        TokenPairDto tokens = tokenService.generateAndStoreTokenPair(jwtUserDto, user, tenant);
+        // Generar pair (access + refresh) usando tu JwtService impl
+        TokenPairDto tokenPair = jwtService.generateTokenPair(jwtUser);
 
-        // 8️⃣ Preparar respuesta resumida
-        UserSummaryDto userSummary = UserSummaryDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .tenantCode(tenant.getCode())
-                .roles(roles)
-                .build();
+        // Persistir refresh token si tienes un servicio (opcional)
+        if (refreshTokenService != null) {
+            try {
+                refreshTokenService.createRefreshToken(user.getId(),
+                        tenant.getId(),
+                        tokenPair.getRefreshToken());
+            } catch (Exception ex) {
+                log.warn("⚠️ No se pudo persistir refreshToken: {}", ex.getMessage());
+                // No abortar autenticación por fallo de persistencia de refresh token salvo que lo desees
+            }
+        }
 
-        log.info("✅ Usuario [{}] autenticado exitosamente en tenant [{}]", user.getEmail(), tenant.getCode());
+        // Registrar auditoría (si tienes auditService)
+        if (auditService != null) {
+            try {
+                auditService.registerEvent(AuditEventType.USER_LOGIN, user.getId(), tenant.getId(),
+                        "User logged in");
+            } catch (Exception ignored) {
+            }
+        }
+
+        // Construir user summary
+        UserSummaryDto summary = personBridge.buildUserSummary(user, tenant);
+        // 🔥 Sobrescribir roles desde los roles normalizados
+        summary.setRoles(roles);
+
+        // Responder
         return AuthenticationResponse.builder()
-                .tokens(tokens)
-                .user(userSummary)
+                .tokens(tokenPair)
+                .user(summary)
                 .build();
     }
+
+
+
 
     @Override
     @Transactional
@@ -288,8 +380,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-
-
     /**
      * Genera y guarda el token de activación temporal.
      */
@@ -307,20 +397,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         activationTokenRepository.save(activationToken);
         return token;
-    }
-
-    /**
-     * Genera un código numérico aleatorio (para activación).
-     */
-    private String generateRandomNumericCode(int length) {
-//        SecureRandom random = new SecureRandom();
-//        String chars = "0123456789";
-//        StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < length; i++) {
-//            sb.append(chars.charAt(random.nextInt(chars.length())));
-//        }
-//        return sb.toString();
-        return null;
     }
 
     /**

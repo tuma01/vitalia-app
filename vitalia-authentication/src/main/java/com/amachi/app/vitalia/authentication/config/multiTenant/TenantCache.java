@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.multiTenant;
 
 import com.amachi.app.vitalia.authentication.exception.AppSecurityException;
 import com.amachi.app.vitalia.authentication.repository.TenantRepository;

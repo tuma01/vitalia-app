@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -65,4 +66,11 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long>,
     Set<UserAccount> findByUserId(Long userId);
 
     Optional<UserAccount> findByUserAndTenantCode(User user, String tenantCode);
+
+    // Encuentra todos los UserAccount de un tenant específico
+    List<UserAccount> findByTenantId(Long tenantId);
+
+    // Opcional: filtrar por rol si quieres precisión
+    @Query("SELECT ua FROM UserAccount ua JOIN ua.roles r WHERE ua.tenant.id = :tenantId AND r.name = :roleName")
+    List<UserAccount> findByTenantIdAndRoleName(@Param("tenantId") Long tenantId, @Param("roleName") String roleName);
 }
