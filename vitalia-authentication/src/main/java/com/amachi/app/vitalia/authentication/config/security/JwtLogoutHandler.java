@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.security;
 
 import com.amachi.app.vitalia.authentication.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.config.bootstrap;
+package com.amachi.app.vitalia.common.config;
 
 import lombok.Getter;
 import lombok.Setter;

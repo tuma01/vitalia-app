@@ -1,5 +1,4 @@
 package com.amachi.app.vitalia.person.entity;
-import com.amachi.app.vitalia.authentication.entity.Role;
 import com.amachi.app.vitalia.common.entity.Auditable;
 import com.amachi.app.vitalia.common.entity.Model;
 import com.amachi.app.vitalia.common.entity.Tenant;
@@ -13,8 +12,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "PERSON_TENANT",
@@ -59,9 +56,9 @@ public class PersonTenant extends Auditable<String> implements Model {
     @Column(name = "RELATION_STATUS", nullable = false, length = 20)
     private RelationStatus relationStatus; // ACTIVO, INACTIVO, SUSPENDIDO, etc.
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "PERSON_TENANT_ROLE",
-            joinColumns = @JoinColumn(name = "PERSON_TENANT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    private Set<Role> roles = new HashSet<>();
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "PERSON_TENANT_ROLE",
+//            joinColumns = @JoinColumn(name = "PERSON_TENANT_ID"),
+//            inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
+//    private Set<Role> roles = new HashSet<>();
 }

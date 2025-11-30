@@ -48,7 +48,8 @@ public final class AppConstants {
         public static final String DOCTOR = "doctor";
         public static final String NURSE = "nurse";
         public static final String ADMIN = "admin";
-        public static final String[] ALL_ROLES = {PATIENT, DOCTOR, NURSE, ADMIN};
+        public static final String SUPER_ADMIN = "super_admin";
+        public static final String[] ALL_ROLES = {PATIENT, DOCTOR, NURSE, ADMIN, SUPER_ADMIN};
 
         private UserRoles() {}
     }
@@ -96,8 +97,8 @@ public final class AppConstants {
     }
 
     public static final class Bootstrap {
-        public static final String SUPER_ADMIN = "superAdmin";
-        public static final String TENANT_ADMIN = "tenantAdmin";
+        public static final String SUPER_ADMIN = "SUPER_ADMIN";
+        public static final String TENANT_ADMIN = "TENANT_ADMIN";
 
         private Bootstrap() {}
     }

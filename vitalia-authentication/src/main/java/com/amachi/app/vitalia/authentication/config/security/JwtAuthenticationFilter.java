@@ -1,5 +1,6 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.security;
 
+import com.amachi.app.vitalia.authentication.config.multiTenant.TenantCache;
 import com.amachi.app.vitalia.authentication.service.JwtService;
 import com.amachi.app.vitalia.authentication.service.impl.JwtServiceImpl;
 import com.amachi.app.vitalia.common.api.ApiResponse;

@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.config.bootstrap;
 
+import com.amachi.app.vitalia.authentication.dto.UserRegisterRequest;
 import com.amachi.app.vitalia.authentication.entity.Role;
 import com.amachi.app.vitalia.authentication.entity.User;
 import com.amachi.app.vitalia.authentication.entity.UserAccount;
@@ -7,18 +8,26 @@ import com.amachi.app.vitalia.authentication.repository.RoleRepository;
 import com.amachi.app.vitalia.authentication.repository.TenantRepository;
 import com.amachi.app.vitalia.authentication.repository.UserAccountRepository;
 import com.amachi.app.vitalia.authentication.repository.UserRepository;
+import com.amachi.app.vitalia.authentication.service.UserTenantRoleService;
+import com.amachi.app.vitalia.common.config.AppBootstrapProperties;
 import com.amachi.app.vitalia.common.entity.Tenant;
 import com.amachi.app.vitalia.common.enums.PersonType;
+import com.amachi.app.vitalia.common.enums.RelationStatus;
+import com.amachi.app.vitalia.common.enums.RoleContext;
 import com.amachi.app.vitalia.common.enums.TenantType;
 import com.amachi.app.vitalia.common.utils.AppConstants;
 import com.amachi.app.vitalia.person.entity.Person;
+import com.amachi.app.vitalia.person.entity.PersonTenant;
 import com.amachi.app.vitalia.person.factory.PersonFactory;
+import com.amachi.app.vitalia.person.repository.PersonRepository;
+import com.amachi.app.vitalia.person.repository.PersonTenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,27 +39,30 @@ public class BootstrapService {
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final UserAccountRepository userAccountRepository;
+    private final PersonTenantRepository personTenantRepository;
     private final RoleRepository roleRepository;
     private final PersonFactory personFactory;
     private final PasswordEncoder passwordEncoder;
     private final AppBootstrapProperties appBootstrapProperties;
+    private final PersonRepository personRepository;
+    private final UserTenantRoleService userTenantRoleService;
 
     @Transactional
     public void runBootstrap() {
 
         // 1️⃣ Crear Tenant GLOBAL
-        Tenant globalTenant = createGlobalTenantIfAbsent();
+        Tenant globalTenant = createTenantIfAbsent(appBootstrapProperties.getTenant().getTenantGlobal());
 
-        // 2️⃣ Crear SUPER_ADMIN (vinculado al tenant GLOBAL)
+        // 2️⃣ Crear SUPER_ADMIN y persistir Person + PersonTenant + UserAccount
         User superAdmin = createUserIfAbsent(appBootstrapProperties.getSuperAdmin());
-        createUserAccountIfAbsent(superAdmin, globalTenant, appBootstrapProperties.getSuperAdmin(), AppConstants.Bootstrap.SUPER_ADMIN);
+        createUserAccountAndPersonTenant(superAdmin, globalTenant, appBootstrapProperties.getSuperAdmin(), RoleContext.SUPER_ADMIN);
 
         // 3️⃣ Crear Tenant LOCAL (HOSP_A)
-        Tenant localTenant = createLocalTenantIfAbsent();
+        Tenant localTenant = createTenantIfAbsent(appBootstrapProperties.getTenant().getTenantLocal());
 
-        // 4️⃣ Crear TenantAdmin local (ADMIN del tenant HOSP_A)
+        // 4️⃣ Crear TENANT_ADMIN y persistir Person + PersonTenant + UserAccount
         User tenantAdmin = createUserIfAbsent(appBootstrapProperties.getTenantAdmin());
-        createUserAccountIfAbsent(tenantAdmin, localTenant, appBootstrapProperties.getTenantAdmin(), AppConstants.Bootstrap.TENANT_ADMIN);
+        createUserAccountAndPersonTenant(tenantAdmin, localTenant, appBootstrapProperties.getTenantAdmin(), RoleContext.TENANT_ADMIN);
 
         log.info("🚀 Bootstrap finalizado con éxito");
     }
@@ -59,37 +71,31 @@ public class BootstrapService {
     //  T E N A N T S
     // -------------------------------------------------------
 
-    private Tenant createGlobalTenantIfAbsent() {
-        AppBootstrapProperties.TenantGlobal cfg = appBootstrapProperties.getTenant().getTenantGlobal();
+    private Tenant createTenantIfAbsent(Object cfg) {
+        String code = cfg instanceof AppBootstrapProperties.TenantGlobal ?
+                ((AppBootstrapProperties.TenantGlobal) cfg).getCode() :
+                ((AppBootstrapProperties.TenantLocal) cfg).getCode();
 
-        return tenantRepository.findByCode(cfg.getCode())
-                .orElseGet(() -> {
-                    log.info("🌍 Creando Tenant GLOBAL [{}]...", cfg.getCode());
-                    Tenant t = Tenant.builder()
-                            .code(cfg.getCode())
-                            .name(cfg.getName())
-                            .type(TenantType.GLOBAL)
-                            .description(cfg.getDescription())
-                            .isActive(true)
-                            .build();
-                    return tenantRepository.save(t);
-                });
-    }
+        return tenantRepository.findByCode(code).orElseGet(() -> {
+            String name = cfg instanceof AppBootstrapProperties.TenantGlobal ?
+                    ((AppBootstrapProperties.TenantGlobal) cfg).getName() :
+                    ((AppBootstrapProperties.TenantLocal) cfg).getName();
 
-    private Tenant createLocalTenantIfAbsent() {
-        AppBootstrapProperties.TenantLocal cfg = appBootstrapProperties.getTenant().getTenantLocal();
+            String description = cfg instanceof AppBootstrapProperties.TenantGlobal ?
+                    ((AppBootstrapProperties.TenantGlobal) cfg).getDescription() : null;
 
-        return tenantRepository.findByCode(cfg.getCode())
-                .orElseGet(() -> {
-                    log.info("🏥 Creando Tenant LOCAL [{}]...", cfg.getCode());
-                    Tenant t = Tenant.builder()
-                            .code(cfg.getCode())
-                            .name(cfg.getName())
-                            .type(TenantType.HOSPITAL)
-                            .isActive(true)
-                            .build();
-                    return tenantRepository.save(t);
-                });
+            TenantType type = cfg instanceof AppBootstrapProperties.TenantGlobal ? TenantType.GLOBAL : TenantType.HOSPITAL;
+
+            log.info("🏢 Creando Tenant [{}]...", code);
+            Tenant t = Tenant.builder()
+                    .code(code)
+                    .name(name)
+                    .description(description)
+                    .type(type)
+                    .isActive(true)
+                    .build();
+            return tenantRepository.save(t);
+        });
     }
 
     // -------------------------------------------------------
@@ -97,62 +103,73 @@ public class BootstrapService {
     // -------------------------------------------------------
 
     private User createUserIfAbsent(AppBootstrapProperties.AdminProperties config) {
-
         return userRepository.findByEmail(config.getEmail())
                 .orElseGet(() -> {
                     log.info("👤 Creando usuario {}", config.getEmail());
-
                     User user = User.builder()
                             .email(config.getEmail())
                             .password(passwordEncoder.encode(config.getPassword()))
                             .enabled(true)
                             .accountLocked(false)
                             .build();
-
                     return userRepository.save(user);
                 });
     }
 
     // -------------------------------------------------------
-    //  U S E R   A C C O U N T S   (Persona + Roles)
+    //  U S E R   A C C O U N T + P E R S O N + P E R S O N_TENANT
     // -------------------------------------------------------
 
-    private void createUserAccountIfAbsent(User user, Tenant tenant, AppBootstrapProperties.AdminProperties config, String adminType) {
+    private void createUserAccountAndPersonTenant(User user, Tenant tenant, AppBootstrapProperties.AdminProperties config, RoleContext roleContext) {
 
         if (userAccountRepository.existsByUserAndTenant(user, tenant)) {
             log.info("✔ UserAccount ya existe para {} en tenant {}", user.getEmail(), tenant.getCode());
             return;
         }
 
-        // Crear la persona concreta por tipo
-        PersonType type = PersonType.valueOf(config.getPersonType());
-        Person person = personFactory.create(type);
+        // Construir DTO
+        UserRegisterRequest dto = UserRegisterRequest.builder()
+                .nombre(config.getFirstName())
+                .apellidoPaterno(config.getLastName())
+                .personType(PersonType.valueOf(config.getPersonType()))
+                .tenantCode(tenant.getCode())
+                .build();
 
-        // Asignar roles de acuerdo al tipo de admin
-        Set<Role> roles = resolveRoles(adminType);
+        // 1️⃣ Crear la persona concreta usando PersonFactory
+        Person person = personFactory.create(dto.getPersonType(), dto);
+        person = personRepository.save(person); // Persistir Person
 
-        log.info("🛠 Creando UserAccount → user={}, tenant={}, roles={}",
-                user.getEmail(), tenant.getCode(), roles.stream().map(Role::getName).toList());
+        // 2️⃣ Crear PersonTenant (relación Person + Tenant)
+        PersonTenant pt = PersonTenant.builder()
+                .person(person)
+                .tenant(tenant)
+                .roleContext(roleContext)
+                .relationStatus(RelationStatus.ACTIVE)
+                .dateRegistered(LocalDateTime.now())
+                .build();
+        personTenantRepository.save(pt); // Persistir PersonTenant
 
+        // 3️⃣ Crear UserAccount
+        Set<Role> roles = resolveRoles(roleContext);
         UserAccount account = UserAccount.builder()
                 .user(user)
                 .personId(person.getId())
                 .tenant(tenant)
                 .roles(roles)
                 .build();
+        userAccountRepository.save(account); // Persistir UserAccount
 
-        userAccountRepository.save(account);
+        // <-- persist user_tenant_role aquí: asigna las roles correspondientes
+        userTenantRoleService.assignRolesToUserAndTenant(user, tenant, roles);
+
+        log.info("🛠 Creado UserAccount → user={}, tenant={}, roles={}",
+                user.getEmail(), tenant.getCode(), roles.stream().map(Role::getName).toList());
     }
 
-    private Set<Role> resolveRoles(String adminType) {
+    private Set<Role> resolveRoles(RoleContext roleContext) {
         Set<Role> roles = new HashSet<>();
-
-        String roleName = adminType.equalsIgnoreCase(AppConstants.Bootstrap.SUPER_ADMIN)
-                ? AppConstants.Roles.ROLE_SUPER_ADMIN
-                : AppConstants.Roles.ROLE_ADMIN;
-
+        String roleName = roleContext == RoleContext.SUPER_ADMIN ? AppConstants.Roles.ROLE_SUPER_ADMIN : AppConstants.Roles.ROLE_ADMIN;
         roleRepository.findByName(roleName).ifPresent(roles::add);
-
         return roles;
     }
 }

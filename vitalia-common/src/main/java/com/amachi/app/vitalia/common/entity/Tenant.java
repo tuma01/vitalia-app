@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-@Entity
 @Table(name = "TENANT")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Entity
 @Inheritance(strategy = InheritanceType.JOINED) // <-- JOINED strategy
 public class Tenant extends Auditable<String> implements Model {
 

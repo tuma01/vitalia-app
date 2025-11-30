@@ -21,7 +21,7 @@ public interface PersonTenantRepository extends JpaRepository<PersonTenant, Long
     Page<PersonTenant> findByTenantId(Long tenantId, Pageable pageable);
     Optional<PersonTenant> findByPersonIdAndTenantId(Long personId, Long tenantId);
 
-    PersonTenant findByCode(String tenantCode);
+//    PersonTenant findByCode(String tenantCode);
 
     Optional<PersonTenant> findByPersonAndTenantAndRoleContext(Person person, Tenant tenant, RoleContext roleContext);
     Optional<PersonTenant> findByNationalHealthIdAndTenant(String nationalHealthId, Tenant tenant);

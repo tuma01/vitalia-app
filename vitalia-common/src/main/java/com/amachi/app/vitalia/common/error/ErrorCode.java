@@ -37,7 +37,12 @@ public enum ErrorCode {
     SECURITY_ERROR("SEC_006", "Security error"),
     SEC_INVALID_OPERATION("SEC_007", "Invalid security operation"),
     SEC_TENANT_NOT_FOUND("SEC_008", "Tenant not found"),
-    SEC_AUTHENTICATION_ERROR("SEC_009", "Authentication process failed");
+    SEC_AUTHENTICATION_ERROR("SEC_009", "Authentication process failed"),
+    SEC_USER_NOT_FOUND("SEC_010", "User not found"),
+    SEC_USER_DISABLED("SEC_011", "User account is disabled"),
+    SEC_USER_LOCKED("SEC_012", "User account is locked"),
+    SEC_INVALID_CREDENTIALS("SEC_013", "Invalid username or password"),
+    SEC_TENANT_DISABLED("SEC_014", "Tenant account is disabled");
 
     private final String code;
     private final String description;

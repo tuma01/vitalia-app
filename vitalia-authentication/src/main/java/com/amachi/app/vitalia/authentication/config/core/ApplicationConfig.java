@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.core;
 
 
 import com.amachi.app.vitalia.authentication.repository.UserRepository;
