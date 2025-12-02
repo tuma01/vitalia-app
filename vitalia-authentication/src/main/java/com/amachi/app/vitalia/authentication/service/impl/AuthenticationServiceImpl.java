@@ -109,7 +109,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userAccountRepository.save(userAccount);
         log.debug("🔹 UserAccount creado con id {} para userId {} en tenant {}", userAccount.getId(), user.getId(), tenant.getCode());
 
+        // 5.1 Vincular Person-Tenant en Core (bridge)
         Long personTenantId = personTenantBridge.create(personId,request.getTenantCode(), request.getPersonType());
+        log.debug("🔹 PersonTenant creado con id {}", personTenantId);
 
         // 6️⃣ Asignar rol por defecto según tipo de persona (ej: ROLE_DOCTOR)
         Role defaultRole = roleRepository.findByName("ROLE_" + request.getPersonType().name())
@@ -118,13 +120,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         "security.role.not_found",
                         request.getPersonType().name()
                 ));
-        if (userAccount.getRoles() == null || userAccount.getRoles().isEmpty()) {
-            userAccount.setRoles(new HashSet<>());
-        }
-        userAccount.getRoles().add(defaultRole);
-        userAccountRepository.save(userAccount);
 
         // <-- persist user_tenant_role aquí: asegurar UserTenantRole para el nuevo user
+        // 6.1️⃣ Guardar en USER_TENANT_ROLE (nuevo mecanismo)
         userTenantRoleService.assignRolesToUserAndTenant(user, tenant, Set.of(defaultRole));
 
         // 7️⃣ Crear avatar por defecto vía bridge
@@ -273,11 +271,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private List<String> normalizeRoles(UserAccount account) {
-        return account.getRoles().stream()
-                .map(Role::getName)
+        List<String> roleNames = userTenantRoleRepository
+                .findActiveRolesByUserAndTenant(account.getUser(), account.getTenant())
+                .stream()
                 .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name)
                 .distinct()
                 .toList();
+
+        return roleNames;
     }
 
     private AuthenticationResponse buildAuthenticationResponse(User user, UserAccount account, Tenant tenant, List<String> roles) {

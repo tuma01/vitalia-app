@@ -155,7 +155,6 @@ public class BootstrapService {
                 .user(user)
                 .personId(person.getId())
                 .tenant(tenant)
-                .roles(roles)
                 .build();
         userAccountRepository.save(account); // Persistir UserAccount
 
