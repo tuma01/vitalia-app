@@ -10,16 +10,21 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserTenantRoleRepository extends JpaRepository<UserTenantRole, Long> {
 
-//    @Query("SELECT utr.role.name FROM UserTenantRole utr WHERE utr.user = :user AND utr.tenant.code = :tenantCode AND utr.active = true AND utr.revokedAt IS NULL")
-//    List<String> findActiveRolesByUserAndTenantCode(@Param("user") User user, @Param("tenantCode") String tenantCode);
+    @Query("SELECT utr.role.name FROM UserTenantRole utr WHERE utr.user = :user AND utr.tenant.code = :tenantCode AND utr.active = true AND utr.revokedAt IS NULL")
+    List<String> findActiveRolesByUserAndTenantCode(@Param("user") User user, @Param("tenantCode") String tenantCode);
 
     // Nuevo método para buscar roles activos por usuario (sin filtrar por tenant)
-//    @Query("SELECT utr.role.name FROM UserTenantRole utr WHERE utr.user = :user AND utr.active = true AND utr.revokedAt IS NULL")
-//    List<String> findActiveRolesByUser(@Param("user") User user);
+    @Query("SELECT utr.role.name FROM UserTenantRole utr WHERE utr.user = :user AND utr.active = true AND utr.revokedAt IS NULL")
+    List<String> findActiveRolesByUser(@Param("user") User user);
+
+    @Query("SELECT utr.role.name FROM UserTenantRole utr " +
+            "WHERE utr.user = :user AND utr.tenant = :tenant AND utr.active = true AND utr.revokedAt IS NULL")
+    List<String> findActiveRolesByUserAndTenant(@Param("user") User user, @Param("tenant") Tenant tenant);
 
     // Método adicional para verificar directamente si es SUPER_ADMIN
     default boolean isUserSuperAdmin(User user) {
@@ -28,12 +33,6 @@ public interface UserTenantRoleRepository extends JpaRepository<UserTenantRole, 
     }
 
     boolean existsByUserAndTenantAndRole(User user, Tenant tenant, Role role);
-
-    @Query("select r.role.name from UserTenantRole r where r.user = :user and r.tenant.code = :tenantCode and r.active = true")
-    List<String> findActiveRolesByUserAndTenantCode(@Param("user") User user, @Param("tenantCode") String tenantCode);
-
-    @Query("select r.role.name from UserTenantRole r where r.user = :user and r.active = true")
-    List<String> findActiveRolesByUser(@Param("user") User user);
 
     @Query("""
         SELECT r.name
@@ -45,4 +44,6 @@ public interface UserTenantRoleRepository extends JpaRepository<UserTenantRole, 
     """)
     List<String> findActiveRoleNamesByUserAndTenant(@Param("userId") Long userId,
                                                     @Param("tenantId") Long tenantId);
+
+    Optional<UserTenantRole> findFirstByTenantIdAndRoleId(Long tenantId, Long roleId);
 }
