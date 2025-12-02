@@ -7,11 +7,11 @@ import com.amachi.app.vitalia.common.enums.PersonType;
 import com.amachi.app.vitalia.common.enums.RelationStatus;
 import com.amachi.app.vitalia.common.enums.RoleContext;
 import com.amachi.app.vitalia.common.exception.ResourceNotFoundException;
-import com.amachi.app.vitalia.geography.departamento.entity.Departamento;
 import com.amachi.app.vitalia.person.entity.Person;
 import com.amachi.app.vitalia.person.entity.PersonTenant;
 import com.amachi.app.vitalia.person.repository.PersonRepository;
 import com.amachi.app.vitalia.person.repository.PersonTenantRepository;
+import com.amachi.app.vitalia.util.PersonTypeValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -35,8 +35,9 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
         Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new ResourceNotFoundException(Person.class.getName(), "error.resource.not.found", personId));
 
-        if (person.getPersonType() != personType) {
-            throw new IllegalStateException("PersonType no coincide para personId=" + personId);
+        // ✅ Validar usando instancia concreta
+        if (!PersonTypeValidator.matches(person, personType)) {
+            throw new IllegalStateException("El personType enviado no coincide con el tipo real de la entidad");
         }
 
         Tenant tenant = tenantRepository.findByCode(tenantCode)
@@ -75,7 +76,7 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
     private RoleContext mapPersonTypeToRoleContext(PersonType personType) {
         return switch (personType) {
             case SUPER_ADMIN -> RoleContext.SUPER_ADMIN;
-            case ADMIN       -> RoleContext.ADMIN;
+            case TENANT_ADMIN -> RoleContext.TENANT_ADMIN;
             case DOCTOR      -> RoleContext.DOCTOR;
             case NURSE       -> RoleContext.NURSE;
             case PATIENT     -> RoleContext.PATIENT;
@@ -85,14 +86,4 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
             );
         };
     }
-
-//    private RoleContext mapPersonTypeToRoleContext(PersonType personType) {
-//        try {
-//            return RoleContext.valueOf(personType.name());
-//        } catch (IllegalArgumentException ex) {
-//            throw new IllegalStateException(
-//                    "No existe un RoleContext equivalente para PersonType: " + personType
-//            );
-//        }
-//    }
 }

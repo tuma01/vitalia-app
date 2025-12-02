@@ -3,11 +3,8 @@ package com.amachi.app.vitalia;
 import lombok.extern.slf4j.Slf4j;
 import org.flywaydb.core.Flyway;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -20,18 +17,19 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 //                ManagementWebSecurityAutoConfiguration.class
 //        }
 //)
-//@SpringBootApplication
-@SpringBootApplication(
+@SpringBootApplication
+//@SpringBootApplication(
 //        scanBasePackages = {
 //                "com.amachi.app.vitalia.common",
 //                "com.amachi.app.vitalia.service",
 //                "com.amachi.app.vitalia.authentication",
 //                "com.amachi.app.vitalia.geography"
 //        },
-        exclude = { ManagementWebSecurityAutoConfiguration.class }
-)
+//        exclude = { ManagementWebSecurityAutoConfiguration.class }
+//)
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 @Slf4j
+//@EnableConfigurationProperties(AppBootstrapProperties.class)
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

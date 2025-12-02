@@ -42,7 +42,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         hbm2ddl.auto: none
-        discriminator.ignore_explicit_for_joined: true
+        discriminator.ignore_explicit_for_joined: false
 
   flyway:
     enabled: true
@@ -79,7 +79,7 @@ app:
     # TENANT GLOBAL (solo para SUPER_ADMIN)
     # ======================================================
     tenant:
-      global:
+      tenantGlobal:
         code: GLOBAL
         name: "Global System Tenant"
         type: GLOBAL
@@ -88,7 +88,7 @@ app:
       # ======================================================
       # TENANT LOCAL PRINCIPAL (Hospital A)
       # ======================================================
-      local:
+      tenantLocal:
         code: HOSP_A
         name: "Hospital A"
         type: HOSPITAL
@@ -114,7 +114,7 @@ app:
       password: "ChangeMe123!"
       firstName: "Tenant"
       lastName: "Administrator"
-      personType: ADMIN
+      personType: TENANT_ADMIN
 
   avatar:
     max-size: 1048576

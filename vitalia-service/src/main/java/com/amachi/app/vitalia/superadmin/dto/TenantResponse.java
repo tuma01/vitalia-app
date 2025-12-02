@@ -1,0 +1,25 @@
+package com.amachi.app.vitalia.superadmin.dto;
+
+import com.amachi.app.vitalia.common.enums.TenantType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+@Schema(name = "TenantResponse")
+public class TenantResponse {
+    private Long tenantId;
+    private String code;
+    private String name;
+    private TenantType type;
+    private String description;
+    private Boolean isActive;
+    private String fallbackHeader;
+    private Boolean allowLocal;
+    private String defaultDomain;
+    private LocalDateTime createdAt;
+}
+

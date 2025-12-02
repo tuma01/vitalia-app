@@ -21,13 +21,14 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "PERSON")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED) // <-- JOINED strategy
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "PERSON_TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class Person extends Auditable<String> implements Model {
 
@@ -43,7 +44,7 @@ public abstract class Person extends Auditable<String> implements Model {
     private String nationalHealthId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "PERSON_TYPE", nullable = false) //, insertable = false, updatable = false
+    @Column(name = "PERSON_TYPE", nullable = false, insertable = false, updatable = false)
     private PersonType personType;
 
     @NotBlank(message = "Nombre {err.required}")

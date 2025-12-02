@@ -1,15 +1,12 @@
-package com.amachi.app.vitalia.authentication.config;
+package com.amachi.app.vitalia.authentication.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 //import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,33 +38,16 @@ public class SecurityConfig {
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;
 
-//    /**
-//     * ✅ Definición del provider principal de autenticación
-//     */
-//    @Bean
-//    public AuthenticationProvider authenticationProvider() {
-//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-//        provider.setUserDetailsService(userDetailsService);
-//        provider.setPasswordEncoder(passwordEncoder);
-//        return provider;
-//    }
-
     /**
      * ✅ Configuración principal del filtro de seguridad
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 // 🔹 Desactivar CSRF para APIs JWT
                 .csrf(AbstractHttpConfigurer::disable)
-
-                // 🔹 Política de sesión sin estado (JWT)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 // 🔹 Autorizaciones por endpoint
                 .authorizeHttpRequests(auth -> auth
-
                         // --- 🔓 ENDPOINTS PÚBLICOS ---
                         .requestMatchers(
                                 "/auth/**",          // login, register, refresh
@@ -76,16 +56,20 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
+                        .requestMatchers("/api/v1/super-admin/tenants/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/v1/employee/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/v1/doctor/**").hasRole("DOCTOR")
 
                         .requestMatchers("/api/v1/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
                         .requestMatchers("/api/v1/patient/**").hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
-                        .requestMatchers("/api/v1/employee/**").hasRole("ADMIN")
 
                         // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
                         .anyRequest().authenticated()
                 )
+                // 🔹 Política de sesión sin estado (JWT)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // 🔹 Provider personalizado
                 .authenticationProvider(authenticationProvider)
@@ -109,14 +93,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-//    /**
-//     * ✅ AuthenticationManager para login controller
-//     */
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

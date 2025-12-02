@@ -26,7 +26,7 @@ public class EmployeeCreator implements PersonCreator {
                 .apellidoMaterno(dto.getApellidoMaterno())
                 .employeeType(EmployeeType.TECNICO)
                 .employeeStatus(EmployeeStatus.ACTIVO)
-                .personType(PersonType.EMPLOYEE)
+//                .personType(PersonType.EMPLOYEE)
                 .build();
     }
 }
