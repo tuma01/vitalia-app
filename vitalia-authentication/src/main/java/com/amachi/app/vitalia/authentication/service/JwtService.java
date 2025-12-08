@@ -5,6 +5,8 @@ import com.amachi.app.vitalia.authentication.dto.JwtUserDto;
 import com.amachi.app.vitalia.common.dto.TokenPairDto;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.List;
+
 public interface JwtService {
 
     /**
@@ -46,6 +48,8 @@ public interface JwtService {
      * Extrae tenantCode del token
      */
     String extractTenantCode(String token);
+
+    List<String> extractRoles(String token);
 
     /**
      * Verifica si el token está expirado

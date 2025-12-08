@@ -105,7 +105,7 @@ public class TenantManagementServiceImpl implements TenantManagementService {
                 .nombre(req.getAdminFirstName())
                 .apellidoPaterno(req.getAdminLastName())
                 .personType(PersonType.valueOf(
-                        Optional.ofNullable(req.getAdminPersonType()).orElse("ADMIN")
+                        Optional.ofNullable(req.getAdminPersonType()).orElse("TENANT_ADMIN")
                 ))
                 .tenantCode(tenant.getCode())
                 .email(req.getAdminEmail())
@@ -324,7 +324,6 @@ public class TenantManagementServiceImpl implements TenantManagementService {
         t.setIsActive(false);
         tenantRepository.save(t);
     }
-
 
     private String generateRandomPassword() {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 12);
