@@ -56,14 +56,14 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
-                        .requestMatchers("/api/v1/super-admin/tenants/**").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/v1/employee/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/doctor/**").hasRole("DOCTOR")
+                        .requestMatchers("/super-admin/tenants/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/employee/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/doctor/**").hasRole("DOCTOR")
 
-                        .requestMatchers("/api/v1/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
-                        .requestMatchers("/api/v1/patient/**").hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
+                        .requestMatchers("/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
+                        .requestMatchers("/patient/**").hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
 
                         // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
                         .anyRequest().authenticated()

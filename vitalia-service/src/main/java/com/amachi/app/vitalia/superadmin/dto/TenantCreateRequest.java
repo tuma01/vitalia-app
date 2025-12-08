@@ -12,16 +12,18 @@ import lombok.Setter;
 public class TenantCreateRequest {
 
     // Tenant
-    @NotBlank @Size(max = 100)
-    @Schema(example = "HOSP_B", required = true)
+    @NotBlank(message = "El código es obligatorio")
+    @Size(max = 100, message = "El código no puede exceder 100 caracteres")
+    @Schema(example = "HOSP_B")
     private String code;
 
-    @NotBlank @Size(max = 200)
-    @Schema(example = "Hospital B", required = true)
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 200, message = "El nombre no puede exceder 200 caracteres")
+    @Schema(example = "Hospital B")
     private String name;
 
-    @NotNull
-    @Schema(example = "HOSPITAL", required = true, allowableValues = {"HOSPITAL","CLINIC","LABORATORY","PHARMACY","GLOBAL"})
+    @NotBlank(message = "El typo es obligatorio")
+    @Schema(example = "HOSPITAL", allowableValues = {"HOSPITAL","CLINIC","LABORATORY","PHARMACY","GLOBAL"})
     private TenantType type;
 
     @Size(max = 1000)
@@ -41,7 +43,7 @@ public class TenantCreateRequest {
 
     // Tenant Admin (primer admin)
     @NotBlank @Email @Size(max = 100)
-    @Schema(example = "admin@hospitalb.com", required = true)
+    @Schema(example = "admin@hospitalb.com")
     private String adminEmail;
 
     @Size(min = 8, max = 100)
@@ -56,7 +58,7 @@ public class TenantCreateRequest {
     @Schema(example = "Administrator")
     private String adminLastName;
 
-    @Schema(example = "ADMIN")
-    private String adminPersonType = "ADMIN";
+    @Schema(example = "TENANT_ADMIN")
+    private String adminPersonType = "TENANT_ADMIN";
 }
 

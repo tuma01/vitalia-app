@@ -71,6 +71,6 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long>,
     List<UserAccount> findByTenantId(Long tenantId);
 
     // Opcional: filtrar por rol si quieres precisión
-    @Query("SELECT ua FROM UserAccount ua JOIN ua.roles r WHERE ua.tenant.id = :tenantId AND r.name = :roleName")
-    List<UserAccount> findByTenantIdAndRoleName(@Param("tenantId") Long tenantId, @Param("roleName") String roleName);
+//    @Query("SELECT ua FROM UserAccount ua JOIN ua.roles r WHERE ua.tenant.id = :tenantId AND r.name = :roleName")
+//    List<UserAccount> findByTenantIdAndRoleName(@Param("tenantId") Long tenantId, @Param("roleName") String roleName);
 }

@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -140,6 +137,18 @@ public class JwtServiceImpl implements JwtService {
     public String extractTenantCode(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get(CLAIM_TENANT_CODE, String.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> extractRoles(String token) {
+        Object rolesObj = extractAllClaims(token).get("roles");
+        if (rolesObj instanceof List<?>) {
+            return ((List<?>) rolesObj).stream()
+                    .map(Object::toString)
+                    .toList();
+        }
+        return Collections.emptyList();
     }
 
     @Override

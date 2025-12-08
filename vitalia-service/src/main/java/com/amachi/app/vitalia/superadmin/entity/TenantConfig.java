@@ -54,6 +54,34 @@ public class TenantConfig implements Model {
     @Column(name = "EXTRA_JSON", columnDefinition = "TEXT")
     private String extraJson;
 
+    // --- NUEVOS CAMPOS DE THEME ---
+    @Column(name = "LOGO_URL", length = 1000)
+    private String logoUrl;
+
+    @Column(name = "PRIMARY_COLOR", length = 20)
+    private String primaryColor;
+
+    @Column(name = "ACCENT_COLOR", length = 20)
+    private String accentColor;
+
+    @Column(name = "TEXT_COLOR", length = 20)
+    private String textColor;
+
+    @Column(name = "BACKGROUND_COLOR", length = 20)
+    private String backgroundColor;
+
+    @Column(name = "LINK_COLOR", length = 20)
+    private String linkColor;
+
+    @Column(name = "BUTTON_TEXT_COLOR", length = 20)
+    private String buttonTextColor;
+
+    @Column(name = "THEME_MODE", length = 10)
+    private String themeMode; // LIGHT | DARK | AUTO
+
+    @Column(name = "CUSTOM_CSS", columnDefinition = "TEXT")
+    private String customCss;
+
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
 
