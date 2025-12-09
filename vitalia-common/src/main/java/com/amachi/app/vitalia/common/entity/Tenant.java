@@ -1,6 +1,7 @@
 package com.amachi.app.vitalia.common.entity;
 
 import com.amachi.app.vitalia.common.enums.TenantType;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -42,6 +43,10 @@ public class Tenant extends Auditable<String> implements Model {
     @Column(name = "IS_ACTIVE", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
 
-    @Column(name="DESCRIPTION")
+    @Column(name = "DESCRIPTION")
     private String description;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "THEME_ID")
+    private Theme theme;
 }
