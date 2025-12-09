@@ -6,7 +6,3 @@
 --VALUES
 --(1, 'HOSP_MAIN', 'Hospital Principal', 'HOSPITAL', 1, 'system', CURRENT_TIMESTAMP),
 --(2, 'HOSP_SEC', 'Hospital Secundario', 'HOSPITAL', 1, 'system', CURRENT_TIMESTAMP);
-
-
-
-

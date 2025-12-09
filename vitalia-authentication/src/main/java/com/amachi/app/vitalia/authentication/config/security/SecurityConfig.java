@@ -1,11 +1,11 @@
 package com.amachi.app.vitalia.authentication.config.security;
 
+import com.amachi.app.vitalia.authentication.config.multiTenant.MultiTenantFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-//import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,6 +30,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final MultiTenantFilter multiTenantFilter; // Injected
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final LogoutHandler logoutHandler;
@@ -50,10 +51,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // --- 🔓 ENDPOINTS PÚBLICOS ---
                         .requestMatchers(
-                                "/auth/**",          // login, register, refresh
-                                "/public/**",        // healthcheck o documentación
-                                "/v3/api-docs/**", "/swagger-ui/**"
-                        ).permitAll()
+                                "/auth/**", // login, register, refresh
+                                "/public/**", // healthcheck o documentación
+                                "/v3/api-docs/**", "/swagger-ui/**")
+                        .permitAll()
 
                         // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
                         .requestMatchers("/super-admin/tenants/**").hasRole("SUPER_ADMIN")
@@ -66,8 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/patient/**").hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
 
                         // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 // 🔹 Política de sesión sin estado (JWT)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -76,6 +76,9 @@ public class SecurityConfig {
 
                 // 🔹 Incluir filtro JWT antes del UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                // 🔹 Incluir MultiTenantFilter antes del JWT Filter (para tener el contexto
+                // listo)
+                .addFilterBefore(multiTenantFilter, JwtAuthenticationFilter.class)
 
                 // 🔹 Configurar logout (invalidate token, limpiar contexto)
                 .logout(logout -> logout
@@ -83,8 +86,7 @@ public class SecurityConfig {
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> {
                             response.setStatus(200);
-                        })
-                );
+                        }));
 
         // 🔹 Configuraciones especiales para entorno dev
         if ("dev".equalsIgnoreCase(activeProfile)) {
@@ -101,8 +103,7 @@ public class SecurityConfig {
         // 🔹 En local, permite subdominios y front Angular
         configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
-                "http://*.localhost:*"
-        ));
+                "http://*.localhost:*"));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Tenant-Code"));

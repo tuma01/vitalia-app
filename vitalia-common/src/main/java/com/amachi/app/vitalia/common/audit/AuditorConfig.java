@@ -3,12 +3,11 @@ package com.amachi.app.vitalia.common.audit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.Optional;
 
 @Configuration
-//@EnableJpaAuditing(auditorAwareRef = "auditorAware")
+// @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class AuditorConfig {
 
     /**
@@ -18,6 +17,6 @@ public class AuditorConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> Optional.of("system");
-//        return new ApplicationAuditorAwareImpl();
+        // return new ApplicationAuditorAwareImpl();
     }
 }
