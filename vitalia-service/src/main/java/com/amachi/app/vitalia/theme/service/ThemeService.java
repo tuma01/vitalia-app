@@ -43,7 +43,15 @@ public class ThemeService {
     public ThemeDTO getThemeForTenant(String tenantCode) {
         return themeRepository.findByTenant_Code(tenantCode)
                 .map(themeMapper::toDto)
-                .orElseThrow(() -> new EntityNotFoundException("Theme not found for tenant: " + tenantCode));
+                .orElseGet(() -> ThemeDTO.builder()
+                        .name("Default Theme")
+                        .primaryColor("#3f51b5")
+                        .accentColor("#ff4081")
+                        .warnColor("#f44336")
+                        .themeMode(ThemeMode.LIGHT)
+                        .logoUrl("")
+                        .faviconUrl("favicon.ico")
+                        .build());
     }
 
     @Transactional
