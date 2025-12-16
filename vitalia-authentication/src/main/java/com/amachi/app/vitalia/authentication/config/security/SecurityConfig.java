@@ -49,15 +49,17 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 🔹 Autorizaciones por endpoint
                 .authorizeHttpRequests(auth -> auth
-                        // --- 🔓 ENDPOINTS PÚBLICOS ---
                         .requestMatchers(
                                 "/auth/**", // login, register, refresh
+                                "/tenants/**", // Permitir listar tenants públicamente para login
                                 "/public/**", // healthcheck o documentación
                                 "/v3/api-docs/**", "/swagger-ui/**")
                         .permitAll()
 
                         // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
                         .requestMatchers("/super-admin/tenants/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**", "/municipios/**")
+                        .hasRole("SUPER_ADMIN")
                         .requestMatchers("/employee/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
                         .requestMatchers(HttpMethod.GET, "/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
@@ -90,7 +92,7 @@ public class SecurityConfig {
 
         // 🔹 Configuraciones especiales para entorno dev
         if ("dev".equalsIgnoreCase(activeProfile)) {
-            http.cors(AbstractHttpConfigurer::disable); // en dev, permitir CORS desde localhost frontend
+            http.cors(cors -> cors.configurationSource(corsConfigurationSource())); // Habilitar CORS en dev
         }
 
         return http.build();

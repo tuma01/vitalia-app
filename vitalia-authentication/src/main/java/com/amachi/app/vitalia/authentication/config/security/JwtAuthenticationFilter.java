@@ -48,7 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         "/api/v1/public/",
                         "/api/v1/v3/api-docs",
                         "/api/v1/swagger-ui",
-                        "/api/v1/super-admin/tenants");
+                        "/api/v1/super-admin/tenants",
+                        "/api/v1/tenants");
 
         @Override
         protected void doFilterInternal(HttpServletRequest request,
@@ -125,7 +126,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 return;
                         }
 
-                } else if (!isGlobalEndpoint) {
+                } else if (!isGlobalEndpoint && !path.contains("/tenants")) {
                         // 🔹 Endpoint protegido sin token
                         writeErrorResponse(response, ErrorCode.SEC_AUTHENTICATION_ERROR,
                                         Translator.toLocale("security.auth.missing.token", null), path);
