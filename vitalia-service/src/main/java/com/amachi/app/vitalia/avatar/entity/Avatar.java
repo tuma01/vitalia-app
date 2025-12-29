@@ -36,7 +36,7 @@ public class Avatar extends Auditable<String> implements Model {
     private String mimeType;
 
     @Lob
-    @Column(name = "CONTENT")
+    @Column(name = "CONTENT", columnDefinition = "LONGBLOB")
     private byte[] content;
 
     @Column(name = "SIZE")

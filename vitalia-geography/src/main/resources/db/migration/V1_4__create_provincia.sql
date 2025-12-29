@@ -1,15 +1,10 @@
 -- ============================================================
--- Script: V1_4_0__create_country.sql
+-- Script: V1_4__create_provincia.sql
 -- Módulo: vitalia-geography
--- Descripción: Creación de la tabla PROVINCIA con metadatos, auditoría y restricciones.
--- Autor: Juan Amachi
--- Fecha: 2025-11-02
--- Compatibilidad: MySQL 8.0+
+-- Descripción: Creación de la tabla PROVINCIA con restricciones de jerarquía.
 -- ============================================================
 
-DROP TABLE IF EXISTS PROVINCIA;
-
-CREATE TABLE PROVINCIA (
+CREATE TABLE IF NOT EXISTS PROVINCIA (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     NOMBRE VARCHAR(100) NOT NULL,
     POBLACION INT,
@@ -27,7 +22,6 @@ CREATE TABLE PROVINCIA (
 
     -- Constraints
     CONSTRAINT UK_NOMBRE_PROVINCIA UNIQUE (NOMBRE),
-    CONSTRAINT FK_PROVINCIA_DEPARTAMENTO FOREIGN KEY (FK_ID_DEPARTAMENTO)
-        REFERENCES DEPARTAMENTO (ID) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT FK_PROVINCIA_DEPARTAMENTO FOREIGN KEY (FK_ID_DEPARTAMENTO) REFERENCES DEPARTAMENTO (ID) ON DELETE CASCADE
 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -4,7 +4,7 @@ import com.amachi.app.vitalia.authentication.dto.UserRegisterRequest;
 import com.amachi.app.vitalia.common.enums.PersonType;
 import com.amachi.app.vitalia.common.enums.TenantAdminLevel;
 import com.amachi.app.vitalia.person.entity.Person;
-import com.amachi.app.vitalia.tenant.entity.TenantAdmin;
+import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class TenantAdminCreator implements PersonCreator {
 
     @Override
     public PersonType getSupportedType() {
-        return PersonType.TENANT_ADMIN;
+        return PersonType.ADMIN;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class TenantAdminCreator implements PersonCreator {
                 .nombre(dto.getNombre())
                 .apellidoPaterno(dto.getApellidoPaterno())
                 .apellidoMaterno(dto.getApellidoMaterno())
-                .tenantCode(dto.getTenantCode())
+                // Tenant association is handled by the caller (BootstrapService)
                 .adminLevel(TenantAdminLevel.LEVEL_1)
                 .build();
     }

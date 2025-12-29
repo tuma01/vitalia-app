@@ -5,6 +5,7 @@ import com.amachi.app.vitalia.theme.dto.ThemeDTO;
 import com.amachi.app.vitalia.theme.service.ThemeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ThemeController {
     private final ThemeService themeService;
 
     // Public: returns theme by tenantCode (from path or header)
-    @GetMapping("/{tenantCode}/theme")
+    @GetMapping(value = "/{tenantCode}/theme", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ThemeDTO> getTheme(@PathVariable String tenantCode) {
         ThemeDTO dto = themeService.getThemeForTenant(tenantCode);
         return ResponseEntity.ok(dto);
@@ -28,7 +29,7 @@ public class ThemeController {
     // param)
     // Removed specific TenantResolver logic to keep it simple as per request, but
     // kept the endpoint structure
-    @GetMapping("/config")
+    @GetMapping(value = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ThemeDTO> getThemeByResolvedTenant(
             @RequestHeader(value = "X-Tenant-ID", required = true) String tenantCode) {
         return ResponseEntity.ok(themeService.getThemeForTenant(tenantCode));
@@ -36,7 +37,7 @@ public class ThemeController {
 
     // Update: only tenant admin or super-admin
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
-    @PutMapping("/{tenantCode}/theme")
+    @PutMapping(value = "/{tenantCode}/theme", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ThemeDTO> updateTheme(@PathVariable String tenantCode,
             @Valid @RequestBody TenantThemeUpdateRequest req) {
         return ResponseEntity.ok(themeService.updateTheme(tenantCode, req));
@@ -44,7 +45,7 @@ public class ThemeController {
 
     // Upload logo (multipart): only ADMIN or SUPER_ADMIN
     @PreAuthorize("hasAnyRole('SUPER_ADMIN','ADMIN')")
-    @PostMapping("/{tenantCode}/theme/logo")
+    @PostMapping(value = "/{tenantCode}/theme/logo", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ThemeDTO> uploadLogo(@PathVariable String tenantCode,
             @RequestParam("file") MultipartFile file) {
         ThemeDTO dto = themeService.uploadLogo(tenantCode, file);

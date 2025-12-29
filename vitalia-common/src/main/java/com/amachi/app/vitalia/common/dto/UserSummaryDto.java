@@ -1,4 +1,5 @@
 package com.amachi.app.vitalia.common.dto;
+
 import com.amachi.app.vitalia.common.enums.PersonType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,9 @@ public class UserSummaryDto {
 
     @Schema(description = "Código del tenant (hospital) actual", example = "HSP001")
     private String tenantCode;
+
+    @Schema(description = "Nombre del tenant (hospital) actual", example = "Hospital Central")
+    private String tenantName;
 
     @Schema(description = "Tipo de persona (DOCTOR, NURSE, PATIENT, etc.)")
     private PersonType personType;

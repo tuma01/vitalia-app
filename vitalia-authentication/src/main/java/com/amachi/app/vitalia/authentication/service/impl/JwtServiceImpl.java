@@ -139,6 +139,11 @@ public class JwtServiceImpl implements JwtService {
         return claims.get(CLAIM_TENANT_CODE, String.class);
     }
 
+    @Override
+    public java.util.Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<String> extractRoles(String token) {
@@ -168,12 +173,6 @@ public class JwtServiceImpl implements JwtService {
         return "password_reset".equals(claims.get(CLAIM_TOKEN_TYPE, String.class));
     }
 
-    @Override
-    public void invalidateToken(String token) {
-        // Implementar lógica de invalidación si es necesaria
-        log.debug("Token invalidated: {}", token.substring(0, Math.min(20, token.length())) + "...");
-    }
-
     // ========== MÉTODOS PRIVADOS ==========
 
     private String generateAccessToken(JwtUserDto userDto) {
@@ -194,10 +193,6 @@ public class JwtServiceImpl implements JwtService {
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(signingKey)
                 .compact();
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

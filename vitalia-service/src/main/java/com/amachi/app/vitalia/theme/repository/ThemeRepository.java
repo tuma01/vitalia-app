@@ -1,7 +1,6 @@
 package com.amachi.app.vitalia.theme.repository;
 
 import com.amachi.app.vitalia.common.entity.Theme;
-import com.amachi.app.vitalia.superadmin.entity.TenantConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

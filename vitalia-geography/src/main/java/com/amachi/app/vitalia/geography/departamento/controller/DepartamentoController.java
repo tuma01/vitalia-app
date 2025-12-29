@@ -8,6 +8,7 @@ import com.amachi.app.vitalia.geography.departamento.entity.Departamento;
 import com.amachi.app.vitalia.geography.departamento.mapper.DepartamentoMapper;
 import com.amachi.app.vitalia.geography.departamento.service.impl.DepartamentoServiceImpl;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/departamentos")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class DepartamentoController extends BaseController implements DepartamentoApi {
 
-    private DepartamentoServiceImpl service;
-    private DepartamentoMapper mapper;
+    private final DepartamentoServiceImpl service;
+    private final DepartamentoMapper mapper;
 
     @Override
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,11 +46,10 @@ public class DepartamentoController extends BaseController implements Departamen
 
     @Override
     public ResponseEntity<DepartamentoDto> updateDepartamento(Long id, DepartamentoDto dto) {
-        Departamento entity = mapper.toEntity(dto);
-        Departamento updatedEntity = service.update(id, entity);
-
-        return updatedEntity != null ? ResponseEntity.ok(mapper.toDto(updatedEntity))
-                : ResponseEntity.notFound().build();
+        Departamento existingEntity = service.getById(id);
+        mapper.updateEntityFromDto(dto, existingEntity);
+        Departamento updatedEntity = service.update(id, existingEntity);
+        return ResponseEntity.ok(mapper.toDto(updatedEntity));
     }
 
     @Override
@@ -61,20 +61,20 @@ public class DepartamentoController extends BaseController implements Departamen
     @Override
     public ResponseEntity<List<DepartamentoDto>> getAllDepartamentos() {
         List<Departamento> entities = service.getAll();
-        List<DepartamentoDto> dtos =  entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+        List<DepartamentoDto> dtos = entities.stream()
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponseDto<DepartamentoDto>> getPaginatedDepartamentos(DepartamentoSearchDto departamentoSearchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<DepartamentoDto>> getPaginatedDepartamentos(
+            DepartamentoSearchDto departamentoSearchDto, Integer pageIndex, Integer pageSize) {
         Page<Departamento> page = service.getAll(departamentoSearchDto, pageIndex, pageSize);
         List<DepartamentoDto> dtos = page.getContent()
                 .stream()
                 .map(mapper::toDto)
                 .toList();
-
 
         PageResponseDto<DepartamentoDto> response = PageResponseDto.<DepartamentoDto>builder()
                 .content(dtos)

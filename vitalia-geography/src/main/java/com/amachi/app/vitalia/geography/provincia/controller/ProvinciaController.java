@@ -41,11 +41,10 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
 
     @Override
     public ResponseEntity<ProvinciaDto> updateProvincia(Long id, ProvinciaDto dto) {
-        Provincia entity = mapper.toEntity(dto);
-        Provincia updatedEntity = service.update(id, entity);
-
-        return updatedEntity != null ? ResponseEntity.ok(mapper.toDto(updatedEntity))
-                : ResponseEntity.notFound().build();
+        Provincia existingEntity = service.getById(id);
+        mapper.updateEntityFromDto(dto, existingEntity);
+        Provincia updatedEntity = service.update(id, existingEntity);
+        return ResponseEntity.ok(mapper.toDto(updatedEntity));
     }
 
     @Override
@@ -63,7 +62,8 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(ProvinciaSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(ProvinciaSearchDto searchDto,
+            Integer pageIndex, Integer pageSize) {
         Page<Provincia> page = service.getAll(searchDto, pageIndex, pageSize);
         List<ProvinciaDto> dtos = page.getContent()
                 .stream()
@@ -84,4 +84,3 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
         return ResponseEntity.ok(response);
     }
 }
-

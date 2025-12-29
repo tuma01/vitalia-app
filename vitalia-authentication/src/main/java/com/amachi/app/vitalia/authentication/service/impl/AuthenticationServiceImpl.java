@@ -1,10 +1,7 @@
 package com.amachi.app.vitalia.authentication.service.impl;
 
 import com.amachi.app.vitalia.authentication.auditevent.service.AuditService;
-import com.amachi.app.vitalia.authentication.bridge.AvatarBridge;
-import com.amachi.app.vitalia.authentication.bridge.EmailBridge;
-import com.amachi.app.vitalia.authentication.bridge.PersonBridge;
-import com.amachi.app.vitalia.authentication.bridge.PersonTenantBridge;
+import com.amachi.app.vitalia.authentication.bridge.*;
 import com.amachi.app.vitalia.authentication.dto.AuthenticationRequest;
 import com.amachi.app.vitalia.authentication.dto.AuthenticationResponse;
 import com.amachi.app.vitalia.authentication.dto.JwtUserDto;
@@ -38,392 +35,402 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UserRepository userRepository;
-    private final TenantRepository tenantRepository;
-    private final UserTenantRoleRepository userTenantRoleRepository;
-    private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService;
-    private final JwtService jwtService;
-    private final RefreshTokenService refreshTokenService;
-    private final PersonBridge personBridge;
-    private final PersonTenantBridge personTenantBridge;
-    private final PasswordEncoder passwordEncoder;
-    private final AvatarBridge avatarBridge;
-    private final UserAccountRepository userAccountRepository;
-    private final RoleRepository roleRepository;
-    private final EmailBridge emailBridge;
-    private final ActivationTokenRepository activationTokenRepository;
-    private final AuditService auditService;
-    private final UserTenantRoleService userTenantRoleService;
-//    private final PersonRepository
+        private final UserRepository userRepository;
+        private final TenantBridge tenantBridge;
+        private final UserTenantRoleRepository userTenantRoleRepository;
+        private final AuthenticationManager authenticationManager;
+        private final TokenService tokenService;
+        private final JwtService jwtService;
+        private final RefreshTokenService refreshTokenService;
+        private final PersonBridge personBridge;
+        private final PersonTenantBridge personTenantBridge;
+        private final PasswordEncoder passwordEncoder;
+        private final AvatarBridge avatarBridge;
+        private final UserAccountRepository userAccountRepository;
+        private final RoleRepository roleRepository;
+        private final EmailBridge emailBridge;
+        private final ActivationTokenRepository activationTokenRepository;
+        private final AuditService auditService;
+        private final UserTenantRoleService userTenantRoleService;
 
-    @Override
-    @Transactional
-    public AuthenticationResponse register(UserRegisterRequest request) {
-        log.info("🆕 Registro solicitado para usuario [{}] en tenant [{}]", request.getEmail(), request.getTenantCode());
+        @Override
+        @Transactional
+        public AuthenticationResponse register(UserRegisterRequest request) {
+                log.info("🆕 Registro solicitado para usuario [{}] en tenant [{}]", request.getEmail(),
+                                request.getTenantCode());
 
-        // 1️⃣ Validar duplicidad de email
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppSecurityException(
-                    ErrorCode.SEC_INVALID_OPERATION,
-                    "validation.email.already_in_use",
-                    request.getEmail()
-            );
+                // 1️⃣ Validar duplicidad de email
+                if (userRepository.existsByEmail(request.getEmail())) {
+                        throw new AppSecurityException(
+                                        ErrorCode.SEC_INVALID_OPERATION,
+                                        "validation.email.already_in_use",
+                                        request.getEmail());
+                }
+
+                // 2️⃣ Validar existencia del tenant
+                Tenant tenant = tenantBridge.findByCode(request.getTenantCode());
+
+                // 3️⃣ Crear la persona a través del bridge
+                Long personId = personBridge.createPerson(request);
+                if (personId == null || personId <= 0) {
+                        throw new AppSecurityException(
+                                        ErrorCode.SEC_INVALID_OPERATION,
+                                        "security.person.creation_failed");
+                }
+                log.info("👤 Persona creada exitosamente con ID [{}]", personId);
+
+                // 4️⃣ Crear el User
+                User user = User.builder()
+                                .email(request.getEmail())
+                                .password(passwordEncoder.encode(request.getPassword()))
+                                .enabled(false) // aún no activado
+                                .accountLocked(false)
+                                .personId(personId)
+                                .build();
+                userRepository.save(user);
+                log.debug("🔹 Usuario creado con id {}", user.getId());
+
+                // 5️⃣ Crear el UserAccount (user + tenant + roles)
+                UserAccount userAccount = UserAccount.builder()
+                                .user(user)
+                                .tenant(tenant)
+                                .personId(personId)
+                                .build();
+                userAccountRepository.save(userAccount);
+                log.debug("🔹 UserAccount creado con id {} para userId {} en tenant {}", userAccount.getId(),
+                                user.getId(),
+                                tenant.getCode());
+
+                // 5.1 Vincular Person-Tenant en Core (bridge)
+                Long personTenantId = personTenantBridge.create(personId, request.getTenantCode(),
+                                request.getPersonType());
+                log.debug("🔹 PersonTenant creado con id {}", personTenantId);
+
+                // 6️⃣ Asignar rol por defecto según tipo de persona (ej: ROLE_DOCTOR)
+                Role defaultRole = roleRepository.findByName("ROLE_" + request.getPersonType().name())
+                                .orElseThrow(() -> new AppSecurityException(
+                                                ErrorCode.SEC_INVALID_OPERATION,
+                                                "security.role.not_found",
+                                                request.getPersonType().name()));
+
+                // <-- persist user_tenant_role aquí: asegurar UserTenantRole para el nuevo user
+                // 6.1️⃣ Guardar en USER_TENANT_ROLE (nuevo mecanismo)
+                userTenantRoleService.assignRolesToUserAndTenant(user, tenant, Set.of(defaultRole));
+
+                // 7️⃣ Crear avatar por defecto vía bridge
+                avatarBridge.createDefaultAvatar(user.getId(), tenant.getCode());
+
+                // 8️⃣ Generar token de activación
+                String token = generateAndSaveActivationToken(user, tenant);
+
+                // 9️⃣ Enviar email de activación (link al frontend)
+                emailBridge.sendActivationEmail(
+                                user.getEmail(),
+                                request.getEmail(), // o nombre de usuario si lo tienes
+                                token);
+
+                // 🔟 Retornar respuesta resumida (no se generan JWT ni refresh tokens hasta
+                // activar cuenta)
+                UserSummaryDto userSummary = UserSummaryDto.builder()
+                                .id(user.getId())
+                                .email(user.getEmail())
+                                .personName(request.getNombre() + " " + request.getApellidoPaterno())
+                                .tenantCode(tenant.getCode())
+                                .personType(request.getPersonType())
+                                .roles(List.of(defaultRole.getName()))
+                                .enabled(user.isEnabled())
+                                .build();
+
+                log.info("✅ Usuario [{}] registrado exitosamente en tenant [{}], pendiente activación", user.getEmail(),
+                                tenant.getCode());
+
+                return AuthenticationResponse.builder()
+                                .tokens(null) // JWT solo tras activación
+                                .user(userSummary)
+                                .build();
         }
 
-        // 2️⃣ Validar existencia del tenant
-        Tenant tenant = tenantRepository.findByCode(request.getTenantCode())
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_TENANT_NOT_FOUND,
-                        "security.tenant.not_found",
-                        request.getTenantCode()
-                ));
+        @Override
+        @Transactional
+        public AuthenticationResponse authenticate(AuthenticationRequest request) {
+                log.info("🔐 Autenticación iniciada para email='{}' tenant='{}'",
+                                request.getEmail(), request.getTenantCode());
 
-        // 3️⃣ Crear la persona a través del bridge
-        Long personId = personBridge.createPerson(request);
-        if (personId == null || personId <= 0) {
-            throw new AppSecurityException(
-                    ErrorCode.SEC_INVALID_OPERATION,
-                    "security.person.creation_failed"
-            );
-        }
-        log.info("👤 Persona creada exitosamente con ID [{}]", personId);
+                // 1) Validación básica
+                if (request.getEmail() == null || request.getPassword() == null) {
+                        throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION,
+                                        "security.auth.missing_credentials");
+                }
 
-        // 4️⃣ Crear el User
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .enabled(false) // aún no activado
-                .accountLocked(false)
-                .personId(personId)
-                .build();
-        userRepository.save(user);
-        log.debug("🔹 Usuario creado con id {}", user.getId());
+                // 2) Recuperar user por email (independiente de tenant)
+                User user = userRepository.findByEmail(request.getEmail())
+                                .orElseThrow(() -> new AppSecurityException(
+                                                ErrorCode.SEC_INVALID_OPERATION,
+                                                "security.user.not_found",
+                                                request.getEmail()));
 
-        // 5️⃣ Crear el UserAccount (user + tenant + roles)
-        UserAccount userAccount = UserAccount.builder()
-                .user(user)
-                .tenant(tenant)
-                .personId(personId)
-                .build();
-        userAccountRepository.save(userAccount);
-        log.debug("🔹 UserAccount creado con id {} para userId {} en tenant {}", userAccount.getId(), user.getId(), tenant.getCode());
+                // 3) Determinar tenant efectivo
+                String effectiveTenantCode = resolveTenantForLogin(user, request.getTenantCode());
 
-        // 5.1 Vincular Person-Tenant en Core (bridge)
-        Long personTenantId = personTenantBridge.create(personId,request.getTenantCode(), request.getPersonType());
-        log.debug("🔹 PersonTenant creado con id {}", personTenantId);
+                // 4) Cargar tenant y validar estado
+                Tenant tenant = tenantBridge.findByCode(effectiveTenantCode);
 
-        // 6️⃣ Asignar rol por defecto según tipo de persona (ej: ROLE_DOCTOR)
-        Role defaultRole = roleRepository.findByName("ROLE_" + request.getPersonType().name())
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_INVALID_OPERATION,
-                        "security.role.not_found",
-                        request.getPersonType().name()
-                ));
+                if (Boolean.FALSE.equals(tenant.getIsActive())) {
+                        throw new AppSecurityException(ErrorCode.SEC_TENANT_DISABLED, "security.tenant.disabled",
+                                        tenant.getCode());
+                }
 
-        // <-- persist user_tenant_role aquí: asegurar UserTenantRole para el nuevo user
-        // 6.1️⃣ Guardar en USER_TENANT_ROLE (nuevo mecanismo)
-        userTenantRoleService.assignRolesToUserAndTenant(user, tenant, Set.of(defaultRole));
+                // 5) Autenticar credenciales
+                try {
+                        authenticationManager.authenticate(
+                                        new UsernamePasswordAuthenticationToken(request.getEmail(),
+                                                        request.getPassword()));
+                } catch (Exception ex) {
+                        log.warn("❌ Credenciales inválidas para {} : {}", request.getEmail(), ex.getMessage());
+                        throw new AppSecurityException(ErrorCode.SEC_INVALID_CREDENTIALS,
+                                        "security.auth.invalid_credentials");
+                }
 
-        // 7️⃣ Crear avatar por defecto vía bridge
-        avatarBridge.createDefaultAvatar(user.getId(), tenant.getCode());
+                // 6) Validar cuenta
+                UserAccount userAccount = validateTenantAccess(user, tenant);
 
-        // 8️⃣ Generar token de activación
-        String token = generateAndSaveActivationToken(user, tenant);
+                // 7) Cargar Autoridades Efectivas (Roles + Permisos)
+                List<String> authorities = loadEffectiveAuthorities(userAccount);
 
-        // 9️⃣ Enviar email de activación (link al frontend)
-        emailBridge.sendActivationEmail(
-                user.getEmail(),
-                request.getEmail(), // o nombre de usuario si lo tienes
-                token
-        );
+                if (authorities.isEmpty()) {
+                        throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_roles_in_tenant",
+                                        tenant.getCode());
+                }
 
-        // 🔟 Retornar respuesta resumida (no se generan JWT ni refresh tokens hasta activar cuenta)
-        UserSummaryDto userSummary = UserSummaryDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .personName(request.getNombre() + " " + request.getApellidoPaterno())
-                .tenantCode(tenant.getCode())
-                .personType(request.getPersonType())
-                .roles(List.of(defaultRole.getName()))
-                .enabled(user.isEnabled())
-                .build();
+                // 7.1) Poner en Security Context
+                List<GrantedAuthority> grantedAuthorities = authorities.stream()
+                                .map(SimpleGrantedAuthority::new).collect(Collectors.toUnmodifiableList());
 
-        log.info("✅ Usuario [{}] registrado exitosamente en tenant [{}], pendiente activación", user.getEmail(), tenant.getCode());
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
+                                grantedAuthorities);
 
-        return AuthenticationResponse.builder()
-                .tokens(null) // JWT solo tras activación
-                .user(userSummary)
-                .build();
-    }
+                SecurityContextHolder.getContext().setAuthentication(authToken);
 
+                // 8) Actualizar lastLogin
+                user.setLastLogin(LocalDateTime.now());
+                userRepository.save(user);
 
-    @Override
-    @Transactional
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        log.info("🔐 Autenticación iniciada para email='{}' tenant='{}'",
-                request.getEmail(), request.getTenantCode());
-
-        // 1) Validación básica
-        if (request.getEmail() == null || request.getPassword() == null) {
-            throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.auth.missing_credentials");
+                // 9) Construir respuesta delegando a TokenService
+                return buildAuthenticationResponse(user, tenant, authorities);
         }
 
-        // 2) Recuperar user por email (independiente de tenant)
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_INVALID_OPERATION,
-                        "security.user.not_found",
-                        request.getEmail()
-                ));
+        /* -------------------- auxiliares -------------------- */
 
-        // 3) Determinar tenant efectivo (aplica GLOBAL para superadmins si no se envió tenantCode)
-        String effectiveTenantCode = resolveTenantForLogin(user, request.getTenantCode());
+        private String resolveTenantForLogin(User user, String tenantCodeFromRequest) {
+                // Si se recibió tenantCode explícito, lo usamos (se validará después)
+                if (tenantCodeFromRequest != null && !tenantCodeFromRequest.isBlank()) {
+                        return tenantCodeFromRequest;
+                }
 
-        // 4) Cargar tenant y validar estado
-        Tenant tenant = tenantRepository.findByCode(effectiveTenantCode)
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_TENANT_NOT_FOUND,
-                        "security.tenant.not_found",
-                        effectiveTenantCode
-                ));
-        if (Boolean.FALSE.equals(tenant.getIsActive())) {
-            throw new AppSecurityException(ErrorCode.SEC_TENANT_DISABLED, "security.tenant.disabled", tenant.getCode());
+                // Si no se envió tenantCode: permitir solo para superadmins → usan GLOBAL
+                boolean isSuperAdmin = userTenantRoleRepository.findActiveRolesByUser(user).stream()
+                                .anyMatch(r -> r.equalsIgnoreCase("SUPER_ADMIN")
+                                                || r.equalsIgnoreCase(AppConstants.Roles.ROLE_SUPER_ADMIN));
+
+                if (isSuperAdmin) {
+                        return "GLOBAL";
+                }
+
+                // Si no es superadmin y no envió tenantCode → error
+                throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.tenant.required_for_user");
         }
 
-        // 5) Autenticar credenciales (delegar a Spring Security)
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-        } catch (Exception ex) {
-            log.warn("❌ Credenciales inválidas para {} : {}", request.getEmail(), ex.getMessage());
-            throw new AppSecurityException(ErrorCode.SEC_INVALID_CREDENTIALS, "security.auth.invalid_credentials");
+        private UserAccount validateTenantAccess(User user, Tenant tenant) {
+                // Buscar UserAccount por user + tenant
+                Optional<UserAccount> maybeAccount = userAccountRepository.findByUserAndTenantCode(user,
+                                tenant.getCode());
+
+                if (maybeAccount.isEmpty()) {
+                        log.warn("⚠️ Usuario {} no tiene cuenta en tenant {}", user.getEmail(), tenant.getCode());
+                        throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_account_in_tenant",
+                                        tenant.getCode());
+                }
+
+                UserAccount account = maybeAccount.get();
+
+                // Validaciones de estado
+                if (!user.isEnabled()) {
+                        throw new AppSecurityException(ErrorCode.SEC_USER_DISABLED, "security.user.disabled",
+                                        user.getEmail());
+                }
+                if (user.isAccountLocked()) {
+                        throw new AppSecurityException(ErrorCode.SEC_USER_LOCKED, "security.user.locked",
+                                        user.getEmail());
+                }
+
+                return account;
         }
 
-        // 6) Validar que el usuario tenga cuenta en el tenant y obtener UserAccount
-        UserAccount userAccount = validateTenantAccess(user, tenant);
+        private List<String> loadEffectiveAuthorities(UserAccount account) {
+                // 1. Obtener Roles
+                List<String> roles = userTenantRoleRepository
+                                .findActiveRolesByUserAndTenant(account.getUser(), account.getTenant())
+                                .stream()
+                                .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name)
+                                .collect(Collectors.toList());
 
-        // 7) Normalizar roles desde UserAccount
-        List<String> roles = normalizeRoles(userAccount);
+                // 2. Obtener Permisos Granulares
+                List<String> permissions = userTenantRoleRepository.findActivePermissionsNamesByUserAndTenant(
+                                account.getUser(),
+                                account.getTenant());
 
-        if (roles.isEmpty()) {
-            throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_roles_in_tenant", tenant.getCode());
+                // 3. Combinar (Roles + Permisos)
+                roles.addAll(permissions);
+
+                return roles.stream().distinct().toList();
         }
 
-        // 7.1) Convertir roles a GrantedAuthority y ponerlos en el contexto
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new).collect(Collectors.toUnmodifiableList());
+        private AuthenticationResponse buildAuthenticationResponse(User user, Tenant tenant,
+                        List<String> roles) {
+                // Construir JWT payload DTO
+                JwtUserDto jwtUser = JwtUserDto.builder()
+                                .userId(user.getId())
+                                .email(user.getEmail())
+                                .tenantCode(tenant.getCode())
+                                .roles(roles)
+                                .build();
 
-        UsernamePasswordAuthenticationToken authToken =
-                new UsernamePasswordAuthenticationToken(user, null, authorities);
+                // 🔥 Delegación Óptima: TokenService maneja la generación y persistencia
+                TokenPairDto tokenPair = tokenService.generateAndStoreTokenPair(jwtUser, user, tenant);
 
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+                // Registrar auditoría (si tienes auditService)
+                if (auditService != null) {
+                        try {
+                                auditService.registerEvent(AuditEventType.USER_LOGIN, user.getId(), tenant.getId(),
+                                                "User logged in");
+                        } catch (Exception ignored) {
+                        }
+                }
 
-        // 8) Actualizar lastLogin
-        user.setLastLogin(LocalDateTime.now());
-        userRepository.save(user);
+                // Construir user summary
+                UserSummaryDto summary = personBridge.buildUserSummary(user, tenant);
+                // 🔥 Sobrescribir roles desde los roles normalizados
+                summary.setRoles(roles);
 
-        // 9) Construir respuesta: generar tokens y summary
-        return buildAuthenticationResponse(user, userAccount, tenant, roles);
-    }
-
-    /* -------------------- auxiliares -------------------- */
-
-    private String resolveTenantForLogin(User user, String tenantCodeFromRequest) {
-        // Si se recibió tenantCode explícito, lo usamos (se validará después)
-        if (tenantCodeFromRequest != null && !tenantCodeFromRequest.isBlank()) {
-            return tenantCodeFromRequest;
+                // Responder
+                return AuthenticationResponse.builder()
+                                .tokens(tokenPair)
+                                .user(summary)
+                                .build();
         }
 
-        // Si no se envió tenantCode: permitir solo para superadmins → usan GLOBAL
-        boolean isSuperAdmin = userTenantRoleRepository.findActiveRolesByUser(user).stream()
-                .anyMatch(r -> r.equalsIgnoreCase(AppConstants.Bootstrap.SUPER_ADMIN) || r.equalsIgnoreCase("ROLE_SUPER_ADMIN"));
+        @Override
+        @Transactional
+        public AuthenticationResponse refreshToken(String refreshToken) {
+                log.debug("♻️ Solicitando refresh de token...");
 
-        if (isSuperAdmin) {
-            return "GLOBAL";
+                TokenPairDto newTokenPair = tokenService.refreshTokenPair(refreshToken);
+
+                // ⚠️ Recuperar usuario según el token
+                RefreshToken existingToken = refreshTokenService.findByToken(refreshToken)
+                                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION,
+                                                "security.token.invalid_token"));
+
+                User user = existingToken.getUser();
+                Tenant tenant = existingToken.getTenant();
+
+                List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user,
+                                tenant.getCode());
+
+                UserSummaryDto userSummary = UserSummaryDto.builder()
+                                .id(user.getId())
+                                .email(user.getEmail())
+                                .tenantCode(tenant.getCode())
+                                .roles(roles)
+                                .build();
+
+                return AuthenticationResponse.builder()
+                                .tokens(newTokenPair)
+                                .user(userSummary)
+                                .build();
         }
 
-        // Si no es superadmin y no envió tenantCode → error
-        throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.tenant.required_for_user");
-    }
+        @Override
+        @Transactional
+        public void logout(String refreshToken, String accessToken) {
+                log.info("🚪 Cerrando sesión. Invalida Access Token y borra Refresh Tokens.");
 
-    private UserAccount validateTenantAccess(User user, Tenant tenant) {
-        // Buscar UserAccount por user + tenant
-        Optional<UserAccount> maybeAccount = userAccountRepository.findByUserAndTenantCode(user, tenant.getCode());
+                // 1. Invalidar Access Token (Blacklist)
+                if (accessToken != null && !accessToken.isBlank()) {
+                        try {
+                                tokenService.invalidateToken(accessToken);
+                                log.debug("☑️ Access Token invalidado.");
+                        } catch (Exception e) {
+                                log.warn("⚠️ Error al invalidar access token en logout: {}", e.getMessage());
+                        }
+                }
 
-        if (maybeAccount.isEmpty()) {
-            log.warn("⚠️ Usuario {} no tiene cuenta en tenant {}", user.getEmail(), tenant.getCode());
-            throw new AppSecurityException(ErrorCode.SEC_FORBIDDEN, "security.user.no_account_in_tenant", tenant.getCode());
+                // 2. Borrar Refresh Tokens del usuario
+                refreshTokenService.findByToken(refreshToken).ifPresent(token -> {
+                        refreshTokenService.deleteByUserIdAndTenantId(
+                                        token.getUser().getId(),
+                                        token.getTenant().getId());
+                        log.debug("☑️ Refresh tokens eliminados para user {} en tenant {}",
+                                        token.getUser().getEmail(), token.getTenant().getCode());
+                });
+
+                // 3. Limpiar contexto
+                SecurityContextHolder.clearContext();
         }
 
-        UserAccount account = maybeAccount.get();
-
-        // Validaciones de estado
-        if (!user.isEnabled()) {
-            throw new AppSecurityException(ErrorCode.SEC_USER_DISABLED, "security.user.disabled", user.getEmail());
-        }
-        if (user.isAccountLocked()) {
-            throw new AppSecurityException(ErrorCode.SEC_USER_LOCKED, "security.user.locked", user.getEmail());
-        }
-
-        return account;
-    }
-
-    private List<String> normalizeRoles(UserAccount account) {
-        List<String> roleNames = userTenantRoleRepository
-                .findActiveRolesByUserAndTenant(account.getUser(), account.getTenant())
-                .stream()
-                .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name)
-                .distinct()
-                .toList();
-
-        return roleNames;
-    }
-
-    private AuthenticationResponse buildAuthenticationResponse(User user, UserAccount account, Tenant tenant, List<String> roles) {
-        // Construir JWT payload DTO
-        JwtUserDto jwtUser = JwtUserDto.builder()
-                .userId(user.getId())
-                .email(user.getEmail())
-                .tenantCode(tenant.getCode())
-                .roles(roles)
-                .build();
-
-        // Generar pair (access + refresh) usando tu JwtService impl
-        TokenPairDto tokenPair = jwtService.generateTokenPair(jwtUser);
-
-        // Persistir refresh token si tienes un servicio (opcional)
-        if (refreshTokenService != null) {
-            try {
-                refreshTokenService.createRefreshToken(user.getId(),
-                        tenant.getId(),
-                        tokenPair.getRefreshToken());
-            } catch (Exception ex) {
-                log.warn("⚠️ No se pudo persistir refreshToken: {}", ex.getMessage());
-                // No abortar autenticación por fallo de persistencia de refresh token salvo que lo desees
-            }
+        @Override
+        @Transactional(readOnly = true)
+        public void validateToken(String token) {
+                log.debug("🧩 Validando token JWT...");
+                if (!jwtService.validateToken(token)) {
+                        throw new AppSecurityException(ErrorCode.SEC_INVALID_TOKEN, "security.invalid.token");
+                }
         }
 
-        // Registrar auditoría (si tienes auditService)
-        if (auditService != null) {
-            try {
-                auditService.registerEvent(AuditEventType.USER_LOGIN, user.getId(), tenant.getId(),
-                        "User logged in");
-            } catch (Exception ignored) {
-            }
+        /**
+         * Genera y guarda el token de activación temporal.
+         */
+        private String generateAndSaveActivationToken(User user, Tenant tenant) {
+                String token = UUID.randomUUID().toString(); // más seguro que 6 dígitos
+
+                ActivationToken activationToken = ActivationToken.builder()
+                                .token(token)
+                                .user(user)
+                                .tenant(tenant)
+                                .createdAt(LocalDateTime.now())
+                                .expiresAt(LocalDateTime.now().plusHours(24)) // token válido 24h
+                                .used(false)
+                                .build();
+
+                activationTokenRepository.save(activationToken);
+                return token;
         }
 
-        // Construir user summary
-        UserSummaryDto summary = personBridge.buildUserSummary(user, tenant);
-        // 🔥 Sobrescribir roles desde los roles normalizados
-        summary.setRoles(roles);
-
-        // Responder
-        return AuthenticationResponse.builder()
-                .tokens(tokenPair)
-                .user(summary)
-                .build();
-    }
-
-
-
-
-    @Override
-    @Transactional
-    public AuthenticationResponse refreshToken(String refreshToken) {
-        log.debug("♻️ Solicitando refresh de token...");
-
-        TokenPairDto newTokenPair = tokenService.refreshTokenPair(refreshToken);
-
-        // ⚠️ Recuperar usuario según el token
-        RefreshToken existingToken = refreshTokenService.findByToken(refreshToken)
-                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.token.invalid_token"));
-
-        User user = existingToken.getUser();
-        Tenant tenant = existingToken.getTenant();
-
-        List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user, tenant.getCode());
-
-        UserSummaryDto userSummary = UserSummaryDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .tenantCode(tenant.getCode())
-                .roles(roles)
-                .build();
-
-        return AuthenticationResponse.builder()
-                .tokens(newTokenPair)
-                .user(userSummary)
-                .build();
-    }
-    // TODO para realizar
-    @Override
-    @Transactional
-    public void logout(String refreshToken) {
-        log.info("🚪 Cerrando sesión para token: {}", refreshToken);
-
-        refreshTokenService.findByToken(refreshToken).ifPresent(token -> {
-            refreshTokenService.verifyExpiration(token);
-            refreshTokenService.deleteByUserIdAndTenantId(
-                    token.getUser().getId(),
-                    token.getTenant().getId()
-            );
-        });
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public void validateToken(String token) {
-        log.debug("🧩 Validando token JWT...");
-        if (!jwtService.validateToken(token)) {
-            throw new AppSecurityException(ErrorCode.SEC_INVALID_TOKEN, "security.invalid.token");
+        /**
+         * Envía el correo de activación de cuenta al usuario.
+         */
+        private void sendActivationEmail(User user, String token) {
+                // try {
+                // String activationLink = activationUrl + "?token=" + token;
+                //
+                // emailService.sendEmail(
+                // user.getEmail(),
+                // user.getPersonName() != null ? user.getPersonName() : user.getEmail(),
+                // EmailTemplateName.ACTIVATION_ACCOUNT,
+                // activationLink,
+                // token,
+                // "Account activation"
+                // );
+                //
+                // log.info("📩 Email de activación enviado a {}", user.getEmail());
+                // } catch (Exception e) {
+                // log.error("❌ Error al enviar correo de activación a {}: {}", user.getEmail(),
+                // e.getMessage());
+                // throw new AppSecurityException(
+                // ErrorCode.SEC_ACCOUNT_ACTIVATION_FAILED,
+                // "security.activation_email_failed",
+                // user.getEmail()
+                // );
+                // }
         }
-    }
-
-    /**
-     * Genera y guarda el token de activación temporal.
-     */
-    private String generateAndSaveActivationToken(User user, Tenant tenant) {
-        String token = UUID.randomUUID().toString(); // más seguro que 6 dígitos
-
-        ActivationToken activationToken = ActivationToken.builder()
-                .token(token)
-                .user(user)
-                .tenant(tenant)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusHours(24)) // token válido 24h
-                .used(false)
-                .build();
-
-        activationTokenRepository.save(activationToken);
-        return token;
-    }
-
-    /**
-     * Envía el correo de activación de cuenta al usuario.
-     */
-    private void sendActivationEmail(User user, String token) {
-//        try {
-//            String activationLink = activationUrl + "?token=" + token;
-//
-//            emailService.sendEmail(
-//                    user.getEmail(),
-//                    user.getPersonName() != null ? user.getPersonName() : user.getEmail(),
-//                    EmailTemplateName.ACTIVATION_ACCOUNT,
-//                    activationLink,
-//                    token,
-//                    "Account activation"
-//            );
-//
-//            log.info("📩 Email de activación enviado a {}", user.getEmail());
-//        } catch (Exception e) {
-//            log.error("❌ Error al enviar correo de activación a {}: {}", user.getEmail(), e.getMessage());
-//            throw new AppSecurityException(
-//                    ErrorCode.SEC_ACCOUNT_ACTIVATION_FAILED,
-//                    "security.activation_email_failed",
-//                    user.getEmail()
-//            );
-//        }
-    }
 }

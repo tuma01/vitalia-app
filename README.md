@@ -1,67 +1,59 @@
-# Vitalia App 🏥
+# Vitalia Backend Architecture
 
-**Vitalia App** es un sistema integral de **Gestión Hospitalaria** diseñado para administrar operaciones médicas, personal y pacientes de manera eficiente y escalable.
+## 🛡️ Security & Multi-Tenancy
 
-## 📖 Descripción General
+### Zero Trust Data Isolation
+The application implements a strict **Zero Trust** data isolation strategy to prevent cross-tenant data leakage.
 
-El proyecto está construido como una aplicación modular en **Java**, utilizando **Maven** para la gestión de dependencias y **Docker** para la orquestación de servicios locales (Base de datos y Servidor de Correo).
+#### 1. Database-Level Enforcement (Hibernate Filters)
+*   Entities like `Person` (which can be shared across tenants) are protected by a Hibernate `@Filter`.
+*   **The Rule:** A Person is only visible if a record exists in the `PERSON_TENANT` table linking them to the *Current Tenant*.
+*   **Default Behavior:** If no Tenant is selected (e.g. valid global login but no context), the filter defaults to `tenantId = -1`, ensuring **NO DATA** is returned.
 
-## 🏗️ Arquitectura y Módulos
+#### 2. Automatic Enforcement (AOP)
+*   **`TenantFilterAspect`**: Automatically intercepts every `@Transactional` method or Service execution using an `@Around` advice to ensure cleanup.
+*   **Lifecycle:** Enables filter -> Executes Method -> Disables filter (finally block).
+*   **Zero Trust:** If Context is empty using `tenantId = -1`.
+*   **Security Guarantee:** Developers do NOT need to manually add `WHERE tenant_id = ?`. The isolation is transparent.
+*   **🚨 ARCHITECTURE RULE:** Developers are **STRICTLY FORBIDDEN** from calling `session.disableFilter("tenantFilter")` in Services or Repositories. Filter lifecycle is exclusive to the Infrastructure Layer.
 
-El sistema sigue una arquitectura modular para separar responsabilidades:
+#### 3. Role Protection (Last Man Standing)
+*   **SuperAdmin**: Cannot delete the last remaining SuperAdmin.
+*   **TenantAdmin**: Cannot delete the last remaining Administrator of a Tenant (prevents lockout).
 
-*   **`vitalia-authentication`**: Módulo encargado de la seguridad, autenticación y gestión de sesiones de usuarios.
-*   **`vitalia-service`**: Contiene la lógica de negocio principal ("Core"). Gestiona:
-    *   Pacientes (`patient`)
-    *   Empleados (`employee`)
-    *   Administración y Super Admin (`superadmin`)
-    *   Gestión de Personas (`person`)
-    *   Tenencia Múltiple (`tenant`)
-    *   Avatares y Perfiles (`avatar`)
-    *   Notificaciones y Correos (`email`)
-*   **`vitalia-geography`**: Gestión de datos geográficos, direcciones o ubicaciones de sedes.
-*   **`vitalia-common`**: Utilidades compartidas, DTOs y modelos base utilizados por otros módulos.
-*   **`vitalia-test`**: Módulo dedicado a pruebas de integración y unitarias.
+### Authentication
+*   **JWT & Refresh Token:** Standard secure flow.
+*   **Tenant Scoped:** Login is always contextual to a Tenant (or Global for SuperAdmin).
+*   **Tenant Soft Delete:** Deleting a tenant (`delete()`) performs a Soft Delete (`isActive = false`). The Authentication service strictly blocks login for any user belonging to an inactive tenant.
 
-## 🚀 Stack Tecnológico
+### ✅ Verification Guide (Manual Test)
 
-*   **Lenguaje**: Java
-*   **Gestión de Proyectos**: Maven
-*   **Base de Datos**: MySQL 8.0
-*   **Contenedores**: Docker & Docker Compose
-*   **Herramientas Desarrollo**: Lombok, MapStruct
-*   **Pruebas de Correo**: MailDev
+Since automated tests are isolated in a specific profile, you can verify this behavior manually in your Development environment using HTTP Clients (Postman/Curl).
 
-## 🛠️ Configuración y Ejecución Local
+#### 1. Setup Data
+Assume we have:
+- **Tenant A (ID: 100)** -> Has Person "Juan"
+- **Tenant B (ID: 200)** -> Has Person "Pedro"
+- **SuperAdmin** -> Global Access (but strictly filtered by Context)
 
-### Prerrequisitos
-*   Java JDK instalado
-*   Maven instalado
-*   Docker y Docker Compose instalados
+#### 2. Test Cases
 
-### Pasos para iniciar
+**Case A: Isolation (Tenant A vs B)**
+Authenticate as TenantAdmin for **Tenant A**. Call `GET /api/v1/persons`.
+- **Expected:** Returns only "Juan".
+- **Security Check:** If "Pedro" appears, **ISOLATION IS BROKEN**.
 
-1.  **Levantar servicios de infraestructura**:
-    Ejecuta el archivo `docker-compose.yml` para iniciar la base de datos MySQL y el servidor de correos MailDev.
-    ```bash
-    docker-compose up -d
-    ```
+Authenticate as TenantAdmin for **Tenant B**. Call `GET /api/v1/persons`.
+- **Expected:** Returns only "Pedro".
+- **Security Check:** If "Juan" appears, **ISOLATION IS BROKEN**.
 
-    *   **MySQL**: Puerto `3306` (Base de datos: `hospital_db`, Usuario: `root`, Pass: `bolivia`)
-    *   **MailDev**: Puerto `1080` (Interfaz Web) y `1025` (SMTP)
+**Case B: Zero Trust (No Context)**
+Authenticate as **SuperAdmin** (Global Login), assuming NO tenant is selected in header `X-Tenant-ID`.
+Call `GET /api/v1/persons`.
+- **Expected:** Returns `[]` (Empty List).
+- **Why?** Even SuperAdmin is subject to Zero Trust. To see data, SuperAdmin MUST impersonate a tenant explicitly (e.g., via `X-Tenant-ID: 100`).
 
-2.  **Compilar el proyecto**:
-    Ejecuta el siguiente comando en la raíz del proyecto para descargar dependencias y compilar los módulos.
-    ```bash
-    mvn clean install
-    ```
-
-3.  **Ejecutar la aplicación**:
-    (Instrucciones pendientes según la clase principal definida en `vitalia-service` o el módulo de arranque).
-
-## 🔐 Credenciales por Defecto (Entorno Local)
-
-*   **Base de Datos**:
-    *   User: `root`
-    *   Pass: `bolivia`
-*   **MailDev**: Acceso web en `http://localhost:1080`
+#### 3. Troubleshooting
+If you suspect data leakage:
+1. Check logs for `TenantFilterAspect`: `🛡️ Tenant Isolation ACTIVE for TenantID: 100`.
+2. Ensure you are NOT using native queries (`nativeQuery = true`) in Repositories without manually adding the join, as Hibernate Filters do not apply to native SQL.

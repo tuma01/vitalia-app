@@ -52,8 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.toMap(
                         FieldError::getField,
                         fe -> Translator.toLocale(fe.getDefaultMessage(), fe.getArguments()),
-                        (oldVal, newVal) -> oldVal + "; " + newVal
-                ));
+                        (oldVal, newVal) -> oldVal + "; " + newVal));
 
         ErrorDetail errorDetail = ErrorDetail.from(
                 ErrorCode.VAL_REQUIRED_FIELD,
@@ -61,9 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 null,
                 Map.of(
                         "errorCount", invalidFields.size(),
-                        "invalidFields", invalidFields
-                )
-        );
+                        "invalidFields", invalidFields));
 
         return buildErrorResponseObject(HttpStatusCode.BAD_REQUEST, errorDetail, request);
     }
@@ -75,20 +72,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             org.springframework.http.HttpStatusCode status,
             WebRequest request) {
 
-        // JSON mal formado, por ejemplo: campo nulo en payload
+        String fieldName = null;
+        String message = "Malformed JSON request";
+
+        if (ex.getCause() instanceof com.fasterxml.jackson.databind.JsonMappingException jsonEx) {
+            fieldName = jsonEx.getPath().stream()
+                    .map(com.fasterxml.jackson.databind.JsonMappingException.Reference::getFieldName)
+                    .collect(Collectors.joining("."));
+            message = "Invalid value for field: " + fieldName;
+        }
+
         ErrorDetail errorDetail = ErrorDetail.from(
-                ErrorCode.VAL_REQUIRED_FIELD,
+                ErrorCode.VAL_INVALID_FORMAT,
                 Translator.toLocale("validation.error.fields", null),
-                null,
+                fieldName,
                 Map.of("info", ex.getMostSpecificCause() != null
                         ? ex.getMostSpecificCause().getMessage()
-                        : ex.getMessage())
-        );
+                        : ex.getMessage()));
 
         return buildErrorResponseObject(HttpStatusCode.BAD_REQUEST, errorDetail, request);
     }
 
-    private ResponseEntity<Object> buildErrorResponseObject(HttpStatusCode status, ErrorDetail detail, WebRequest request) {
+    private ResponseEntity<Object> buildErrorResponseObject(HttpStatusCode status, ErrorDetail detail,
+            WebRequest request) {
         String path = request.getDescription(false).replace("uri=", "");
         return ResponseEntity.status(status.getCode())
                 .body(ApiResponse.error(status, detail, path));
@@ -98,27 +104,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // === BUSINESS EXCEPTIONS
     // =====================================
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex,
+            HttpServletRequest request) {
         Map<String, Object> details = Map.of(
                 "id", ex.getArgs()[0],
-                "entity", ex.getEntityName()
-        );
+                "entity", ex.getEntityName());
         ErrorDetail detail = ErrorDetail.from(
                 ErrorCode.BUS_RESOURCE_NOT_FOUND,
                 Translator.toLocale(ex.getKey(), ex.getArgs()),
                 null,
-                details
-        );
+                details);
         // 🔹 construimos primero el response manualmente
-        ResponseEntity<ApiResponse<Void>> responseEntity =
-                buildErrorResponse(HttpStatusCode.NOT_FOUND, detail, request);
+        ResponseEntity<ApiResponse<Void>> responseEntity = buildErrorResponse(HttpStatusCode.NOT_FOUND, detail,
+                request);
 
         // 🔹 registramos logs claros antes de devolverlo
         log.error("🔥 [GlobalExceptionHandler] Capturada ResourceNotFoundException: {}", ex.getMessage());
         log.error("🔥 [GlobalExceptionHandler] ResponseEntity devuelto: {}", responseEntity);
         log.error("🔥 [GlobalExceptionHandler] HTTP Status esperado: {}", HttpStatusCode.NOT_FOUND);
         return responseEntity;
-//        return buildErrorResponse(HttpStatusCode.NOT_FOUND, detail, request);
+        // return buildErrorResponse(HttpStatusCode.NOT_FOUND, detail, request);
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -127,13 +132,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ErrorCode.VAL_INVALID_FORMAT,
                 Translator.toLocale(ex.getKey(), ex.getArgs()),
                 ex.getField(),
-                Map.of("info", ex.getMessage())
-        );
+                Map.of("info", ex.getMessage()));
         return buildErrorResponse(HttpStatusCode.BAD_REQUEST, detail, request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex,
+            HttpServletRequest request) {
         String messageKey = ex.getMessage() != null && ex.getMessage().contains("duplicate")
                 ? "error.data.integrity.violation.value"
                 : "error.data.integrity.violation.generic";
@@ -142,20 +147,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ErrorCode.BUS_DUPLICATE_RESOURCE,
                 Translator.toLocale(messageKey, null),
                 null,
-                Map.of("info", ex.getMostSpecificCause().getMessage())
-        );
+                Map.of("info", ex.getMostSpecificCause().getMessage()));
 
         return buildErrorResponse(HttpStatusCode.CONFLICT, detail, request);
     }
 
     @ExceptionHandler(InvalidAvatarException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInvalidAvatarException(InvalidAvatarException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleInvalidAvatarException(InvalidAvatarException ex,
+            HttpServletRequest request) {
         ErrorDetail detail = ErrorDetail.from(
                 ErrorCode.VALIDATION_ERROR,
                 Translator.toLocale(ex.getKey(), ex.getArgs()),
                 ex.getEntityName(),
-                Map.of("info", ex.getMessage())
-        );
+                Map.of("info", ex.getMessage()));
         return buildErrorResponse(HttpStatusCode.BAD_REQUEST, detail, request);
     }
 
@@ -194,29 +198,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 errorCode,
                 Translator.toLocale(ex.getMessage(), null),
                 null,
-                Map.of("info", ex.getMessage())
-        );
+                Map.of("info", ex.getMessage()));
 
         return buildErrorResponse(status, detail, request);
     }
 
     @ExceptionHandler(AppSecurityException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAppSecurityException(AppSecurityException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleAppSecurityException(AppSecurityException ex,
+            HttpServletRequest request) {
         ErrorDetail detail = ErrorDetail.from(
                 ex.getErrorCode(),
                 Translator.toLocale(ex.getKey(), ex.getArgs()),
                 null,
-                Map.of("info", ex.getMessage())
-        );
+                Map.of("info", ex.getMessage()));
         return buildErrorResponse(HttpStatusCode.BAD_REQUEST, detail, request);
     }
 
-
     @ExceptionHandler(NestedServletException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNestedServletException(NestedServletException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleNestedServletException(NestedServletException ex,
+            HttpServletRequest request) {
         Throwable root = ex.getRootCause();
 
-        // Si la causa real es una de tus excepciones personalizadas, la reenvías al handler correspondiente
+        // Si la causa real es una de tus excepciones personalizadas, la reenvías al
+        // handler correspondiente
         if (root instanceof ResourceNotFoundException resourceNotFound) {
             return handleResourceNotFound(resourceNotFound, request);
         }
@@ -229,8 +233,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ErrorCode.SYS_INTERNAL_ERROR,
                 "Unexpected server error",
                 ex.getMessage(),
-                Map.of("cause", root != null ? root.getClass().getName() : "unknown")
-        );
+                Map.of("cause", root != null ? root.getClass().getName() : "unknown"));
 
         return buildErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, detail, request);
     }
@@ -245,7 +248,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             root = root.getCause();
         }
 
-        // ⚡ Si la causa real es ResourceNotFoundException, delegar al handler correspondiente
+        // ⚡ Si la causa real es ResourceNotFoundException, delegar al handler
+        // correspondiente
         if (root instanceof ResourceNotFoundException resourceEx) {
             return handleResourceNotFound(resourceEx, request);
         }
@@ -259,13 +263,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 ErrorCode.SYS_INTERNAL_ERROR,
                 "Unexpected server error",
                 ex.getMessage(),
-                Map.of("cause", root != null ? root.getClass().getName() : "unknown")
-        );
+                Map.of("cause", root != null ? root.getClass().getName() : "unknown"));
         return buildErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, detail, request);
     }
 
     @ExceptionHandler(InvocationTargetException.class)
-    public ResponseEntity<ApiResponse<Void>> handleInvocationTarget(InvocationTargetException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleInvocationTarget(InvocationTargetException ex,
+            HttpServletRequest request) {
         Throwable cause = ex.getTargetException();
 
         if (cause instanceof ResourceNotFoundException resourceEx) {
@@ -283,29 +287,33 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // =====================================
     // === GENERIC EXCEPTIONS
     // =====================================
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex, HttpServletRequest request) {
-//        log.error("Unexpected exception: ", ex);
-//
-//        ErrorDetail detail = ErrorDetail.from(
-//                ErrorCode.SYS_INTERNAL_ERROR,
-//                Translator.toLocale("error.internal.server", null),
-//                null,
-//                Map.of("exception", ex.getClass().getSimpleName(), "info", ex.getMessage())
-//        );
-//
-//        return buildErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, detail, request);
-//    }
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ApiResponse<Void>> handleGeneric(Exception ex,
+    // HttpServletRequest request) {
+    // log.error("Unexpected exception: ", ex);
+    //
+    // ErrorDetail detail = ErrorDetail.from(
+    // ErrorCode.SYS_INTERNAL_ERROR,
+    // Translator.toLocale("error.internal.server", null),
+    // null,
+    // Map.of("exception", ex.getClass().getSimpleName(), "info", ex.getMessage())
+    // );
+    //
+    // return buildErrorResponse(HttpStatusCode.INTERNAL_SERVER_ERROR, detail,
+    // request);
+    // }
 
     // =====================================
     // === HELPER
     // =====================================
-    private ResponseEntity<ApiResponse<Void>> buildErrorResponse(HttpStatusCode status, ErrorDetail detail, HttpServletRequest request) {
+    private ResponseEntity<ApiResponse<Void>> buildErrorResponse(HttpStatusCode status, ErrorDetail detail,
+            HttpServletRequest request) {
         return ResponseEntity.status(status.getCode())
                 .body(ApiResponse.error(status, detail, request.getRequestURI()));
     }
 
-    private ResponseEntity<ApiResponse<Void>> buildErrorResponse(HttpStatusCode status, ErrorDetail detail, WebRequest request) {
+    private ResponseEntity<ApiResponse<Void>> buildErrorResponse(HttpStatusCode status, ErrorDetail detail,
+            WebRequest request) {
         String path = request.getDescription(false).replace("uri=", "");
         return ResponseEntity.status(status.getCode())
                 .body(ApiResponse.error(status, detail, path));

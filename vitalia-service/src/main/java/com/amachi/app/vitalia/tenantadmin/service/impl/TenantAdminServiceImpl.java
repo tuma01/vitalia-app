@@ -1,0 +1,99 @@
+package com.amachi.app.vitalia.tenantadmin.service.impl;
+
+import com.amachi.app.vitalia.authentication.entity.Role;
+import com.amachi.app.vitalia.authentication.entity.User;
+import com.amachi.app.vitalia.authentication.entity.UserTenantRole;
+import com.amachi.app.vitalia.common.entity.Tenant;
+import com.amachi.app.vitalia.common.exception.ResourceNotFoundException;
+import com.amachi.app.vitalia.common.service.GenericService;
+import com.amachi.app.vitalia.common.utils.AppConstants;
+import com.amachi.app.vitalia.tenantadmin.dto.search.TenantAdminSearchDto;
+import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
+import com.amachi.app.vitalia.tenantadmin.repository.TenantAdminRepository;
+import com.amachi.app.vitalia.tenantadmin.specification.TenantAdminSpecification;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.amachi.app.vitalia.common.utils.AppConstants.ErrorMessages.*;
+import static java.util.Objects.requireNonNull;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class TenantAdminServiceImpl implements GenericService<TenantAdmin, TenantAdminSearchDto> {
+
+    private final TenantAdminRepository tenantAdminRepository;
+    private final TenantAdminDomainServiceImpl tenantAdminDomainService;
+
+    @Override
+    public List<TenantAdmin> getAll() {
+        return tenantAdminRepository.findAll(Sort.by(Sort.Direction.ASC, "tenantName"));
+    }
+
+    @Override
+    public Page<TenantAdmin> getAll(TenantAdminSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("createdDate").descending());
+        Specification<TenantAdmin> specification = new TenantAdminSpecification(searchDto);
+        return tenantAdminRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TenantAdmin getById(Long id) {
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        return tenantAdminRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(TenantAdmin.class.getName(),
+                        "error.resource.not.found", id));
+    }
+
+    @Override
+    @Transactional
+    public TenantAdmin create(TenantAdmin entity) {
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        TenantAdmin savedEntity = tenantAdminRepository.save(entity);
+        tenantAdminDomainService.completeAccountSetup(savedEntity);
+        return savedEntity;
+    }
+
+    @Override
+    @Transactional
+    public TenantAdmin update(Long id, TenantAdmin entity) {
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        tenantAdminRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(TenantAdmin.class.getName(),
+                        "error.resource.not.found", id));
+        entity.setId(id);
+        return tenantAdminRepository.save(entity);
+    }
+
+    @Override
+    public void delete(Long id) {
+        requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        TenantAdmin tenantAdmin = tenantAdminRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(TenantAdmin.class.getName(),
+                        "error.resource.not.found", id));
+
+        // 🛡️ Last Man Standing Protection (Tenant Scoped)
+        if (tenantAdmin.getTenant() != null) {
+            long adminCount = tenantAdminRepository.countByTenantId(tenantAdmin.getTenant().getId());
+            if (adminCount <= 1) {
+                throw new IllegalStateException(
+                        String.format(
+                                "Cannot delete the last administrator for Tenant '%s'. Assign a new administrator before deleting this one.",
+                                tenantAdmin.getTenant().getName()));
+            }
+        }
+
+        tenantAdminRepository.delete(tenantAdmin);
+    }
+}

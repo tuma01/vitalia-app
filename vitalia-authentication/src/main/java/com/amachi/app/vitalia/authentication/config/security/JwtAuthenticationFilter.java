@@ -2,6 +2,7 @@ package com.amachi.app.vitalia.authentication.config.security;
 
 import com.amachi.app.vitalia.authentication.config.multiTenant.TenantCache;
 import com.amachi.app.vitalia.authentication.service.JwtService;
+import com.amachi.app.vitalia.authentication.service.TokenService;
 import com.amachi.app.vitalia.authentication.service.impl.JwtServiceImpl;
 import com.amachi.app.vitalia.common.api.ApiResponse;
 import com.amachi.app.vitalia.common.entity.Tenant;
@@ -14,7 +15,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         private final JwtService jwtService;
         private final TenantCache tenantCache;
         private final UserDetailsService userDetailsService;
+        private final TokenService tokenService;
 
         // Endpoints que no requieren validación de tenant
         private static final List<String> GLOBAL_ENDPOINTS = List.of(
@@ -68,13 +69,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 // 🔹 Validar token (firma y expiración)
                                 jwtService.validateToken(token);
 
+                                // 🔹 Validar blacklist (Robustez: rechazar explícitamente tokens invalidados)
+                                if (tokenService.isTokenBlacklisted(token)) {
+                                        log.warn("⛔ Token blacklisted detected: {}",
+                                                        token.substring(0, Math.min(10, token.length())) + "...");
+                                        throw new com.amachi.app.vitalia.authentication.exception.AppSecurityException(
+                                                        ErrorCode.SEC_INVALID_TOKEN,
+                                                        "security.token.blacklisted");
+                                }
+
                                 // 🔹 Extraer datos del JWT
                                 String username = jwtService.extractUsername(token); // "sub" en tu JWT
                                 String tenantCode = jwtService.extractTenantCode(token); // "tenantCode" en tu JWT
                                 List<String> roles = jwtService.extractRoles(token); // ["ROLE_SUPER_ADMIN"]
 
                                 // 🔹 Validación de tenant solo para endpoints normales
-                                if (!isGlobalEndpoint) {
+                                boolean isSuperAdmin = roles.contains("ROLE_SUPER_ADMIN");
+                                if (!isGlobalEndpoint && !isSuperAdmin) {
 
                                         // 🚨 CRITICAL FIX: Anti-Spoofing
                                         // El tenant del Token debe coincidir con el tenant resuelto de la request
@@ -114,6 +125,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 writeErrorResponse(response, ErrorCode.SEC_INVALID_TOKEN,
                                                 Translator.toLocale("security.invalid.token",
                                                                 new Object[] { ex.getMessage() }),
+                                                path);
+                                return;
+
+                        } catch (com.amachi.app.vitalia.authentication.exception.AppSecurityException ex) {
+                                log.warn("⛔ Security Exception for path {}: {}", path, ex.getMessage());
+                                writeErrorResponse(response, ex.getErrorCode(),
+                                                Translator.toLocale(ex.getKey(), null),
                                                 path);
                                 return;
 

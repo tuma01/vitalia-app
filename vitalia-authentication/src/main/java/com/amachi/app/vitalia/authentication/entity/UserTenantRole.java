@@ -2,10 +2,7 @@ package com.amachi.app.vitalia.authentication.entity;
 
 import com.amachi.app.vitalia.common.entity.Tenant;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -58,6 +55,7 @@ public class UserTenantRole {
      * Estado del rol (activo/inactivo).
      */
     @Column(name = "ACTIVE", nullable = false)
+    @Builder.Default
     private boolean active = true;
 
     @PrePersist

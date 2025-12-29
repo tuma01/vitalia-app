@@ -1,13 +1,13 @@
 package com.amachi.app.vitalia.superadmin.dto;
 
-
 import com.amachi.app.vitalia.common.enums.TenantType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @Schema(name = "TenantCreateRequest", description = "Request para crear un Tenant y su TenantAdmin inicial")
 public class TenantCreateRequest {
 
@@ -23,7 +23,7 @@ public class TenantCreateRequest {
     private String name;
 
     @NotBlank(message = "El typo es obligatorio")
-    @Schema(example = "HOSPITAL", allowableValues = {"HOSPITAL","CLINIC","LABORATORY","PHARMACY","GLOBAL"})
+    @Schema(example = "HOSPITAL", allowableValues = { "HOSPITAL", "CLINIC", "LABORATORY", "PHARMACY", "GLOBAL" })
     private TenantType type;
 
     @Size(max = 1000)
@@ -42,7 +42,9 @@ public class TenantCreateRequest {
     private String defaultDomain;
 
     // Tenant Admin (primer admin)
-    @NotBlank @Email @Size(max = 100)
+    @NotBlank
+    @Email
+    @Size(max = 100)
     @Schema(example = "admin@hospitalb.com")
     private String adminEmail;
 
@@ -50,15 +52,16 @@ public class TenantCreateRequest {
     @Schema(example = "ChangeMe123!")
     private String adminPassword; // opcional, si null se genera
 
-    @NotBlank @Size(max = 50)
+    @NotBlank
+    @Size(max = 50)
     @Schema(example = "Tenant")
     private String adminFirstName;
 
-    @NotBlank @Size(max = 50)
+    @NotBlank
+    @Size(max = 50)
     @Schema(example = "Administrator")
     private String adminLastName;
 
-    @Schema(example = "TENANT_ADMIN")
-    private String adminPersonType = "TENANT_ADMIN";
+    @Schema(example = "ADMIN")
+    private String adminPersonType = "ADMIN";
 }
-

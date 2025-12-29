@@ -43,11 +43,10 @@ public class CountryController extends BaseController implements CountryApi {
 
     @Override
     public ResponseEntity<CountryDto> updateCountry(Long id, CountryDto dto) {
-        Country entity = mapper.toEntity(dto);
-        Country updatedEntity = service.update(id, entity);
-
-        return updatedEntity != null ? ResponseEntity.ok(mapper.toDto(updatedEntity))
-                : ResponseEntity.notFound().build();
+        Country existingEntity = service.getById(id);
+        mapper.updateEntityFromDto(dto, existingEntity);
+        Country updatedEntity = service.update(id, existingEntity);
+        return ResponseEntity.ok(mapper.toDto(updatedEntity));
     }
 
     @Override
@@ -56,18 +55,18 @@ public class CountryController extends BaseController implements CountryApi {
         return ResponseEntity.noContent().build();
     }
 
-
     @Override
     public ResponseEntity<List<CountryDto>> getAllCountries() {
         List<Country> entities = service.getAll();
-        List<CountryDto> dtos =  entities.stream()
+        List<CountryDto> dtos = entities.stream()
                 .map(entity -> mapper.toDto(entity)).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponseDto<CountryDto>> getPaginatedCountries(CountrySearchDto countrySearchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<CountryDto>> getPaginatedCountries(CountrySearchDto countrySearchDto,
+            Integer pageIndex, Integer pageSize) {
         Page<Country> page = service.getAll(countrySearchDto, pageIndex, pageSize);
         List<CountryDto> dtos = page.getContent()
                 .stream()

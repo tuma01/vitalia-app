@@ -2,9 +2,11 @@ package com.amachi.app.vitalia.geography.address.mapper;
 
 import com.amachi.app.vitalia.geography.address.dto.AddressDto;
 import com.amachi.app.vitalia.geography.address.entity.Address;
+import com.amachi.app.vitalia.geography.country.mapper.CountryMapper;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +15,7 @@ class AddressMapperTest {
     private AddressMapper addressMapper;
     @BeforeEach
     void setUp() {
-        addressMapper = new AddressMapperImpl();
+        addressMapper = Mappers.getMapper(AddressMapper.class);
     }
 
 

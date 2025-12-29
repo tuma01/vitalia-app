@@ -5,14 +5,9 @@ import com.amachi.app.vitalia.common.mapper.BaseMapperConfig;
 import com.amachi.app.vitalia.common.mapper.EntityDtoMapper;
 import com.amachi.app.vitalia.geography.departamento.dto.DepartamentoDto;
 import com.amachi.app.vitalia.geography.departamento.entity.Departamento;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
-@Mapper(
-        config = BaseMapperConfig.class,
-        builder = @Builder(disableBuilder = true)
-)
+@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
 public interface DepartamentoMapper extends EntityDtoMapper<Departamento, DepartamentoDto> {
 
     @Override
@@ -20,7 +15,14 @@ public interface DepartamentoMapper extends EntityDtoMapper<Departamento, Depart
     @Mapping(target = "country.id", source = "countryId")
     Departamento toEntity(DepartamentoDto dto);
 
+    @AuditableIgnoreConfig.IgnoreAuditableFields
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", source = "id", ignore = true)
+    @Mapping(target = "country.id", source = "countryId")
+    void updateEntityFromDto(DepartamentoDto dto, @MappingTarget Departamento entity);
+
     @Override
+    @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "countryId", source = "country.id")
     DepartamentoDto toDto(Departamento entity);
 }

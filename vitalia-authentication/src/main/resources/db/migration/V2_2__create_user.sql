@@ -1,9 +1,7 @@
 -- ==========================================================
 -- Table: USER
 -- ==========================================================
-DROP TABLE IF EXISTS USER;
-
-CREATE TABLE USER (
+CREATE TABLE IF NOT EXISTS USER (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     EMAIL VARCHAR(100) NOT NULL,
     PASSWORD VARCHAR(255) NOT NULL,

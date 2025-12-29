@@ -10,21 +10,26 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "PERSON")
-@Getter @Setter
+// 🛡️ SECURITY: Tenant Isolation Filter
+// Enforces that only Persons linked to the current Tenant (via PERSON_TENANT)
+// are visible.
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
+@Filter(name = "tenantFilter", condition = "exists (select 1 from person_tenant pt where pt.fk_id_person = id and pt.fk_id_tenant = :tenantId)")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -37,7 +42,7 @@ public abstract class Person extends Auditable<String> implements Model {
     @Column(name = "ID", updatable = false, nullable = false)
     private Long id;
 
-    @Column(name = "NATIONAL_ID", nullable = true,  length = 100, unique = true)
+    @Column(name = "NATIONAL_ID", nullable = true, length = 100, unique = true)
     private String nationalId;
 
     @Column(name = "NATIONAL_HEALTH_ID", nullable = true, length = 100, unique = true)
@@ -85,6 +90,7 @@ public abstract class Person extends Auditable<String> implements Model {
     private String celular;
 
     // 🔹 Relación con Tenant (hospital)
+    @Builder.Default
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PersonTenant> personTenants = new HashSet<>();
 

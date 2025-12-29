@@ -8,17 +8,15 @@
 -- ============================================================
 
 -- Eliminar tabla si existiera (solo en desarrollo o migraciones controladas)
-DROP TABLE IF EXISTS COUNTRY;
-
 -- ============================================
 -- Creación de la tabla COUNTRY
 -- ============================================
-CREATE TABLE COUNTRY (
+CREATE TABLE IF NOT EXISTS COUNTRY (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ISO CHAR(2) NOT NULL,
+    ISO VARCHAR(2) NOT NULL,
     NAME VARCHAR(100) NOT NULL,
     NICE_NAME VARCHAR(100) NOT NULL,
-    ISO3 CHAR(3),
+    ISO3 VARCHAR(3),
     NUM_CODE INT,
     PHONE_CODE INT NOT NULL,
 

@@ -51,14 +51,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**", // login, register, refresh
+                                "/account/activate", // Public activation
+                                "/account/request-reset-password", // Public reset request
+                                "/account/reset-password", // Public reset confirmation
                                 "/tenants/**", // Permitir listar tenants públicamente para login
                                 "/public/**", // healthcheck o documentación
                                 "/v3/api-docs/**", "/swagger-ui/**")
                         .permitAll()
 
                         // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
-                        .requestMatchers("/super-admin/tenants/**").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**", "/municipios/**")
+                        .requestMatchers("/super-admin/tenants/**", "/super-admin/tenant-admins/**")
+                        .hasRole("SUPER_ADMIN")
+                        .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**", "/municipios/**",
+                                "/addresses/**")
                         .hasRole("SUPER_ADMIN")
                         .requestMatchers("/employee/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
@@ -80,15 +85,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 // 🔹 Incluir MultiTenantFilter antes del JWT Filter (para tener el contexto
                 // listo)
-                .addFilterBefore(multiTenantFilter, JwtAuthenticationFilter.class)
-
-                // 🔹 Configurar logout (invalidate token, limpiar contexto)
-                .logout(logout -> logout
-                        .logoutUrl("/api/v1/auth/logout")
-                        .addLogoutHandler(logoutHandler)
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(200);
-                        }));
+                .addFilterBefore(multiTenantFilter, JwtAuthenticationFilter.class);
 
         // 🔹 Configuraciones especiales para entorno dev
         if ("dev".equalsIgnoreCase(activeProfile)) {

@@ -41,11 +41,10 @@ public class MunicipioController extends BaseController implements MunicipioApi 
 
     @Override
     public ResponseEntity<MunicipioDto> updateMunicipio(Long id, MunicipioDto dto) {
-        Municipio entity = mapper.toEntity(dto);
-        Municipio updatedEntity = service.update(id, entity);
-
-        return updatedEntity != null ? ResponseEntity.ok(mapper.toDto(updatedEntity))
-                : ResponseEntity.notFound().build();
+        Municipio existingEntity = service.getById(id);
+        mapper.updateEntityFromDto(dto, existingEntity);
+        Municipio updatedEntity = service.update(id, existingEntity);
+        return ResponseEntity.ok(mapper.toDto(updatedEntity));
     }
 
     @Override
@@ -63,7 +62,8 @@ public class MunicipioController extends BaseController implements MunicipioApi 
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(MunicipioSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(MunicipioSearchDto searchDto,
+            Integer pageIndex, Integer pageSize) {
         Page<Municipio> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MunicipioDto> dtos = page.getContent()
                 .stream()

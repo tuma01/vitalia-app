@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @Schema(name = "TenantResponse")
+
+//TODO a borrar cuando se use el TenantDto
 public class TenantResponse {
     private Long tenantId;
     private String code;
