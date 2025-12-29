@@ -35,15 +35,34 @@ public interface UserTenantRoleRepository extends JpaRepository<UserTenantRole, 
     boolean existsByUserAndTenantAndRole(User user, Tenant tenant, Role role);
 
     @Query("""
-        SELECT r.name
-        FROM UserTenantRole utr
-        JOIN utr.role r
-        WHERE utr.user.id = :userId
-          AND utr.tenant.id = :tenantId
-          AND utr.active = true
-    """)
+                SELECT r.name
+                FROM UserTenantRole utr
+                JOIN utr.role r
+                WHERE utr.user.id = :userId
+                  AND utr.tenant.id = :tenantId
+                  AND utr.active = true
+            """)
     List<String> findActiveRoleNamesByUserAndTenant(@Param("userId") Long userId,
-                                                    @Param("tenantId") Long tenantId);
+            @Param("tenantId") Long tenantId);
 
     Optional<UserTenantRole> findFirstByTenantIdAndRoleId(Long tenantId, Long roleId);
+
+    /**
+     * Recupera los nombres de los permisos asociados a los roles activos del
+     * usuario en el tenant.
+     * Realiza un JOIN explícito entre UserTenantRole -> Role -> RolePermission ->
+     * Permission.
+     */
+    @Query("""
+                SELECT DISTINCT p.name
+                FROM UserTenantRole utr
+                JOIN utr.role r
+                JOIN RolePermission rp ON rp.role = r
+                JOIN rp.permission p
+                WHERE utr.user = :user
+                  AND utr.tenant = :tenant
+                  AND utr.active = true
+                  AND utr.revokedAt IS NULL
+            """)
+    List<String> findActivePermissionsNamesByUserAndTenant(@Param("user") User user, @Param("tenant") Tenant tenant);
 }

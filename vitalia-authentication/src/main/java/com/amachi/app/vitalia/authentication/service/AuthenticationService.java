@@ -6,8 +6,12 @@ import com.amachi.app.vitalia.authentication.dto.UserRegisterRequest;
 
 public interface AuthenticationService {
     AuthenticationResponse authenticate(AuthenticationRequest request);
+
     AuthenticationResponse register(UserRegisterRequest request);
+
     AuthenticationResponse refreshToken(String refreshToken);
-    void logout(String refreshToken);
+
+    void logout(String refreshToken, String accessToken);
+
     void validateToken(String token);
 }

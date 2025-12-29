@@ -2,9 +2,7 @@
 -- Script de creación de tabla PERSON
 -- *******************************************************
 
-DROP TABLE IF EXISTS PERSON;
-
-CREATE TABLE PERSON (
+CREATE TABLE IF NOT EXISTS PERSON (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
 
     NATIONAL_ID VARCHAR(100) UNIQUE,

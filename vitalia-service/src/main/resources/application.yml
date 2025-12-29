@@ -18,39 +18,38 @@ spring:
   jwt:
     secret-key: ${JWT_SECRET:your-secret-key-base64-encoded-with-at-least-256-bits}
     access-token:
-      expiration: 3600000       # 1 hora
+      expiration: 3600000 # 1 hora
     refresh-token:
-      expiration: 604800000     # 7 días
+      expiration: 604800000 # 7 días
     activation-token:
-      expiration: 86400000      # 24 horas
+      expiration: 86400000 # 24 horas
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
-      minimum-idle: 2
-      idle-timeout: 30000
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
       pool-name: VitaliaHikariPool
 
   jpa:
     hibernate:
       ddl-auto: validate
     show-sql: false
-    open-in-view: false
+    open-in-view: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        hbm2ddl.auto: none
         discriminator.ignore_explicit_for_joined: false
 
   flyway:
     enabled: true
-#    locations: classpath*:db/migration
-#    validate-on-migrate: true
-#    baseline-on-migrate: true
-#    clean-disabled: true
-#    out-of-order: false
+  #    locations: classpath*:db/migration
+  #    validate-on-migrate: true
+  #    baseline-on-migrate: true
+  #    clean-disabled: true
+  #    out-of-order: false
 
   springdoc:
     default-produces-media-type: application/json
@@ -95,26 +94,33 @@ app:
         fallbackHeader: X-Tenant-Code
         allowLocal: true
         defaultDomain: localhost
+        address:
+          numero: "100"
+          direccion: "Av. Principal 123"
+          ciudad: "La Paz"
+          departamentoId: 1
+          paisId: 26
+          telefono: "+591 2 1234567"
 
     # ======================================================
     # SUPER ADMIN GLOBAL (pertenece al tenant GLOBAL)
     # ======================================================
     superAdmin:
-      email: "superadmin@system.com"
-      password: "ChangeMe123!"
+      email: "superadmin@test.com"
+      password: "password"
       firstName: "System"
       lastName: "Administrator"
-      personType: SUPER_ADMIN   # 🔥 ahora sí coincide con el tenant GLOBAL
+      personType: SUPER_ADMIN # 🔥 ahora sí coincide con el tenant GLOBAL
 
     # ======================================================
     # ADMIN DEL TENANT LOCAL (HOSP_A)
     # ======================================================
     tenantAdmin:
-      email: "admin.hospa@system.com"
-      password: "ChangeMe123!"
+      email: "admin@test.com"
+      password: "password"
       firstName: "Tenant"
       lastName: "Administrator"
-      personType: TENANT_ADMIN
+      personType: ADMIN
 
   avatar:
     max-size: 1048576

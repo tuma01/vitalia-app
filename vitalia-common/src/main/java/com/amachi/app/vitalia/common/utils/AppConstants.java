@@ -3,7 +3,8 @@ package com.amachi.app.vitalia.common.utils;
 import org.springframework.data.domain.Sort.Direction;
 
 /**
- * Clase final que contiene todas las constantes de la aplicación organizadas por categorías.
+ * Clase final que contiene todas las constantes de la aplicación organizadas
+ * por categorías.
  * Se utiliza un patrón de anidamiento para agrupar constantes relacionadas.
  */
 public final class AppConstants {
@@ -29,7 +30,10 @@ public final class AppConstants {
         public static final String ID_MUST_NOT_BE_NULL = "ID must not be null";
         public static final String TENANT_MUST_NOT_BE_NULL = "Tenant must not be null";
         public static final String ENTITY_MUST_NOT_BE_NULL = "Entity must not be null";
-        private ErrorMessages() {}
+        public static final String DATA_MUST_NOT_BE_NULL = "Data must not be null";
+
+        private ErrorMessages() {
+        }
     }
 
     // Grupo para configuración de paginación
@@ -39,7 +43,8 @@ public final class AppConstants {
         public static final String DEFAULT_SORT_BY = "id";
         public static final Direction DEFAULT_SORT_DIRECTION = Direction.ASC;
 
-        private Pagination() {}
+        private Pagination() {
+        }
     }
 
     // Grupo para roles de usuario
@@ -49,9 +54,10 @@ public final class AppConstants {
         public static final String NURSE = "nurse";
         public static final String ADMIN = "admin";
         public static final String SUPER_ADMIN = "super_admin";
-        public static final String[] ALL_ROLES = {PATIENT, DOCTOR, NURSE, ADMIN, SUPER_ADMIN};
+        public static final String[] ALL_ROLES = { PATIENT, DOCTOR, NURSE, ADMIN, SUPER_ADMIN };
 
-        private UserRoles() {}
+        private UserRoles() {
+        }
     }
 
     // Grupo para patrones comunes
@@ -60,7 +66,8 @@ public final class AppConstants {
         public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         public static final String PHONE_REGEX = "^\\+?[0-9]{10,15}$";
 
-        private Patterns() {}
+        private Patterns() {
+        }
     }
 
     // Grupo para configuraciones de seguridad
@@ -70,7 +77,8 @@ public final class AppConstants {
         public static final String TOKEN_HEADER = "Authorization";
         public static final String TOKEN_PREFIX = "Bearer ";
 
-        private Security() {}
+        private Security() {
+        }
     }
 
     /**
@@ -93,14 +101,8 @@ public final class AppConstants {
          */
         public static final int MAX_AVATAR_SIZE_BYTES = 2 * 1024 * 1024;
 
-        private Resources() {}
-    }
-
-    public static final class Bootstrap {
-        public static final String SUPER_ADMIN = "SUPER_ADMIN";
-        public static final String TENANT_ADMIN = "TENANT_ADMIN";
-
-        private Bootstrap() {}
+        private Resources() {
+        }
     }
 
     public static final class Roles {

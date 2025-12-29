@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +14,8 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entidad principal que representa la cuenta del usuario en el sistema.
@@ -57,11 +56,15 @@ public class User extends Auditable<String> implements UserDetails, Principal {
     @Column(name = "PERSON_ID")
     private Long personId;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<UserAccount> userAccounts = new HashSet<>();
+
     // Métodos de seguridad
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //  TODO🔹 Ahora debes mapear authorities dinámicamente desde UserTenantRole
+        // TODO🔹 Ahora debes mapear authorities dinámicamente desde UserTenantRole
         return Collections.emptyList();
     }
 
@@ -69,10 +72,26 @@ public class User extends Auditable<String> implements UserDetails, Principal {
     public String getUsername() {
         return this.email;
     }
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return !this.accountLocked; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return this.enabled; }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !this.accountLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 
     @Override
     public String getName() {

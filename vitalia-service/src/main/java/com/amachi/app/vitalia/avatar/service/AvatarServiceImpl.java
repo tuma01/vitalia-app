@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.avatar.service;
 
 import com.amachi.app.vitalia.authentication.entity.User;
-import com.amachi.app.vitalia.authentication.repository.TenantRepository;
+import com.amachi.app.vitalia.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.authentication.repository.UserRepository;
 import com.amachi.app.vitalia.avatar.config.AvatarProperties;
 import com.amachi.app.vitalia.avatar.entity.Avatar;

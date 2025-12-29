@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.superadmin.validation;
 
-import com.amachi.app.vitalia.authentication.repository.TenantRepository;
+import com.amachi.app.vitalia.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.authentication.repository.UserRepository;
 import com.amachi.app.vitalia.superadmin.dto.TenantCreateRequest;
 import lombok.RequiredArgsConstructor;

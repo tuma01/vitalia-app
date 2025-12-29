@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.bridge.impl;
 
 import com.amachi.app.vitalia.authentication.bridge.PersonTenantBridge;
-import com.amachi.app.vitalia.authentication.repository.TenantRepository;
+import com.amachi.app.vitalia.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.common.entity.Tenant;
 import com.amachi.app.vitalia.common.enums.PersonType;
 import com.amachi.app.vitalia.common.enums.RelationStatus;
@@ -33,7 +33,8 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
     public Long create(Long personId, String tenantCode, PersonType personType) {
 
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new ResourceNotFoundException(Person.class.getName(), "error.resource.not.found", personId));
+                .orElseThrow(() -> new ResourceNotFoundException(Person.class.getName(), "error.resource.not.found",
+                        personId));
 
         // ✅ Validar usando instancia concreta
         if (!PersonTypeValidator.matches(person, personType)) {
@@ -41,7 +42,8 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
         }
 
         Tenant tenant = tenantRepository.findByCode(tenantCode)
-                .orElseThrow(() -> new ResourceNotFoundException(Tenant.class.getName(), "error.resource.not.found",  tenantCode));
+                .orElseThrow(() -> new ResourceNotFoundException(Tenant.class.getName(), "error.resource.not.found",
+                        tenantCode));
 
         RoleContext roleContext = mapPersonTypeToRoleContext(personType);
 
@@ -58,7 +60,9 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
 
         // ❗ Evitar duplicados Person + Tenant + Rol
         personTenantRepository.findByPersonAndTenantAndRoleContext(person, tenant, roleContext)
-                .ifPresent(p -> { throw new IllegalStateException("La relación PersonTenant ya existe"); });
+                .ifPresent(p -> {
+                    throw new IllegalStateException("La relación PersonTenant ya existe");
+                });
 
         PersonTenant pt = PersonTenant.builder()
                 .person(person)
@@ -76,14 +80,13 @@ public class PersonTenantBridgeImpl implements PersonTenantBridge {
     private RoleContext mapPersonTypeToRoleContext(PersonType personType) {
         return switch (personType) {
             case SUPER_ADMIN -> RoleContext.SUPER_ADMIN;
-            case TENANT_ADMIN -> RoleContext.TENANT_ADMIN;
-            case DOCTOR      -> RoleContext.DOCTOR;
-            case NURSE       -> RoleContext.NURSE;
-            case PATIENT     -> RoleContext.PATIENT;
-            case EMPLOYEE    -> RoleContext.EMPLOYEE;
+            case ADMIN -> RoleContext.ADMIN;
+            case DOCTOR -> RoleContext.DOCTOR;
+            case NURSE -> RoleContext.NURSE;
+            case PATIENT -> RoleContext.PATIENT;
+            case EMPLOYEE -> RoleContext.EMPLOYEE;
             default -> throw new IllegalStateException(
-                    "No existe RoleContext para PersonType: " + personType
-            );
+                    "No existe RoleContext para PersonType: " + personType);
         };
     }
 }

@@ -2,7 +2,7 @@
 -- Script: V0_1__create_theme.sql
 -- Tabla: THEME
 -- ============================================
-CREATE TABLE THEME (
+CREATE TABLE IF NOT EXISTS THEME (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
     NAME VARCHAR(100) NOT NULL,
     

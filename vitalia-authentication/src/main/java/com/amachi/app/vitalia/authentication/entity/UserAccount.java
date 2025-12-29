@@ -25,7 +25,7 @@ public class UserAccount extends Auditable<String> implements Model {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;   // 🔹 credenciales
+    private User user; // 🔹 credenciales
 
     @Column(name = "PERSON_ID", nullable = false)
     private Long personId;

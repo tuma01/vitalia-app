@@ -1,0 +1,70 @@
+package com.amachi.app.vitalia.tenantadmin.mapper;
+
+import com.amachi.app.vitalia.authentication.mapper.UserMapper;
+import com.amachi.app.vitalia.common.mapper.AuditableIgnoreConfig;
+import com.amachi.app.vitalia.common.mapper.BaseMapperConfig;
+import com.amachi.app.vitalia.common.mapper.EntityDtoMapper;
+import com.amachi.app.vitalia.geography.address.entity.Address;
+import com.amachi.app.vitalia.person.mapper.PersonTenantMapper;
+import com.amachi.app.vitalia.superadmin.mapper.SuperAdminMapper;
+import com.amachi.app.vitalia.tenant.mapper.TenantMapper;
+import com.amachi.app.vitalia.tenantadmin.dto.TenantAdminDto;
+import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
+
+import org.mapstruct.AfterMapping;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+
+import com.amachi.app.vitalia.geography.address.mapper.AddressMapper;
+
+@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true), nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {
+                AddressMapper.class,
+                TenantMapper.class,
+                UserMapper.class,
+                PersonTenantMapper.class
+})
+public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAdminDto> {
+
+        @Override
+        @AuditableIgnoreConfig.IgnoreAuditableFields
+        @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
+        @Mapping(target = "address", source = "addressId")
+        @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
+        TenantAdmin toEntity(TenantAdminDto dto);
+
+        @AuditableIgnoreConfig.IgnoreAuditableFields
+        @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
+        @Mapping(target = "address", source = "addressId")
+        @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
+        @Mapping(target = "id", ignore = true)
+        void updateEntityFromDto(TenantAdminDto dto, @MappingTarget TenantAdmin entity);
+
+        @Override
+        @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
+        @Mapping(target = "addressId", source = "address.id")
+        @Mapping(target = "personTenantsIds", source = "personTenants", qualifiedByName = "personTenantSetToIds")
+        TenantAdminDto toDto(TenantAdmin entity);
+
+        default Address mapAddress(Long addressId) {
+                if (addressId == null) {
+                        return null;
+                }
+                return Address.builder().id(addressId).build();
+        }
+
+        /**
+         * Establece la relación bidireccional entre TenantAdmin y PersonTenant
+         * para que la FK no sea nula al persistir.
+         */
+        @AfterMapping
+        default void linkPersonTenants(@MappingTarget TenantAdmin entity) {
+                if (entity.getPersonTenants() != null) {
+                        entity.getPersonTenants().forEach(pt -> pt.setPerson(entity));
+                }
+        }
+}

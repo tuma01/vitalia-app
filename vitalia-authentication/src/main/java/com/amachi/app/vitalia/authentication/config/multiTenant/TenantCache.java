@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.authentication.config.multiTenant;
 
+import com.amachi.app.vitalia.authentication.bridge.TenantBridge;
 import com.amachi.app.vitalia.authentication.exception.AppSecurityException;
-import com.amachi.app.vitalia.authentication.repository.TenantRepository;
 import com.amachi.app.vitalia.common.entity.Tenant;
 import com.amachi.app.vitalia.common.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class TenantCache {
 
-    private final TenantRepository tenantRepository;
+    private final TenantBridge tenantBridge;
     private final Map<String, Tenant> tenantMap = new ConcurrentHashMap<>();
 
     public Tenant getTenant(String tenantCode) {
@@ -31,13 +31,7 @@ public class TenantCache {
      */
     private Tenant loadTenantFromDb(String tenantCode) {
         log.info("🔍 Cargando Tenant [{}] desde DB", tenantCode);
-
-        return tenantRepository.findByCode(tenantCode)
-                .orElseThrow(() -> new AppSecurityException(
-                        ErrorCode.SEC_TENANT_NOT_FOUND,
-                        "security.tenant.not_found",
-                        tenantCode
-                ));
+        return tenantBridge.findByCode(tenantCode);
     }
 
 

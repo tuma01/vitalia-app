@@ -18,7 +18,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -71,6 +70,12 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public void deleteExpiredTokens() {
         refreshTokenRepository.deleteExpiredTokens();
+    }
+
+    @Override
+    @Transactional
+    public void delete(RefreshToken token) {
+        refreshTokenRepository.delete(token);
     }
 
     @Scheduled(cron = "0 0 2 * * ?") // Cada día a las 2 AM

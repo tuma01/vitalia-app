@@ -35,11 +35,13 @@ public class UserTenantRoleServiceImpl implements UserTenantRoleService {
     @Transactional
     public void assignRolesToUserAndTenant(Long userId, Long tenantId, List<String> roleNames) {
 
-        if (roleNames == null || roleNames.isEmpty()) return;
+        if (roleNames == null || roleNames.isEmpty())
+            return;
 
         // Obtener roles existentes por nombres
         List<Role> roles = roleRepository.findByNameIn(roleNames);
-        if (roles.isEmpty()) return;
+        if (roles.isEmpty())
+            return;
 
         User userRef = em.getReference(User.class, userId);
         Tenant tenantRef = em.getReference(Tenant.class, tenantId);
@@ -50,8 +52,7 @@ public class UserTenantRoleServiceImpl implements UserTenantRoleService {
                         .tenant(tenantRef)
                         .role(role)
                         .active(true)
-                        .build()
-                )
+                        .build())
                 .collect(Collectors.toList());
         repo.saveAll(entities);
     }
@@ -73,7 +74,8 @@ public class UserTenantRoleServiceImpl implements UserTenantRoleService {
             // evitar duplicado exacto (user+tenant+role)
             boolean exists = userTenantRoleRepository.existsByUserAndTenantAndRole(userRef, tenantRef, role);
             if (exists) {
-                log.debug("UserTenantRole ya existe user={}, tenant={}, role={}", user.getId(), tenant.getCode(), role.getName());
+                log.debug("UserTenantRole ya existe user={}, tenant={}, role={}", user.getId(), tenant.getCode(),
+                        role.getName());
                 continue;
             }
 
@@ -93,5 +95,17 @@ public class UserTenantRoleServiceImpl implements UserTenantRoleService {
             return saved.stream().collect(Collectors.toSet());
         }
         return Set.of();
+    }
+
+    @Override
+    public Set<String> findRoleNamesByUserAndTenant(Long userId, Long tenantId) {
+        if (userId == null || tenantId == null) {
+            return Set.of();
+        }
+        // Assuming repo has a method or we use a custom query
+        // Let's rely on JPA naming convention if possible, or stream results
+        // Since we don't have a direct method in repo shown, we can use the repository
+        // we have
+        return new HashSet<>(userTenantRoleRepository.findActiveRoleNamesByUserAndTenant(userId, tenantId));
     }
 }

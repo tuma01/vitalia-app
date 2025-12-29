@@ -32,6 +32,7 @@ public class PasswordResetToken {
     private User user;
 
     @Column(name = "USED", nullable = false)
+    @Builder.Default
     private boolean used = false;
 
     public boolean isExpired() {

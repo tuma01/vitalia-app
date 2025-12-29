@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface BlacklistedTokenRepository extends JpaRepository<BlacklistedToken, Long> {
 
     boolean existsByToken(String token);
+
+    void deleteByExpiresAtBefore(java.time.LocalDateTime now);
 }

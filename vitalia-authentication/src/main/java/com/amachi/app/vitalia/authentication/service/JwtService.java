@@ -1,6 +1,5 @@
 package com.amachi.app.vitalia.authentication.service;
 
-
 import com.amachi.app.vitalia.authentication.dto.JwtUserDto;
 import com.amachi.app.vitalia.common.dto.TokenPairDto;
 import jakarta.validation.constraints.NotEmpty;
@@ -49,6 +48,8 @@ public interface JwtService {
      */
     String extractTenantCode(String token);
 
+    java.util.Date extractExpiration(String token);
+
     List<String> extractRoles(String token);
 
     /**
@@ -63,5 +64,4 @@ public interface JwtService {
 
     boolean isPasswordResetToken(@NotEmpty(message = "Token is required") String token);
 
-    void invalidateToken(@NotEmpty(message = "Token is required") String token);
 }

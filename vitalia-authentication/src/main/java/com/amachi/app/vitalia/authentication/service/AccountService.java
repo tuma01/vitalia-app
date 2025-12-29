@@ -8,8 +8,14 @@ import com.amachi.app.vitalia.common.dto.UserSummaryDto;
 
 public interface AccountService {
     void activateAccount(ActivationRequest request);
+
     void requestPasswordReset(PasswordResetRequest request);
+
     void resetPassword(PasswordResetConfirmationRequest request);
+
     void changePassword(ChangePasswordRequest request, Long userId);
+
+    void deleteAccount(Long userId);
+
     UserSummaryDto getProfile(Long userId);
 }

@@ -21,11 +21,10 @@ public class AvatarController {
     private final AvatarService avatarService;
     private final AvatarMapper mapper;
 
-
     // Para el usuario autenticado
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AvatarDto> uploadOwnAvatar(
-//            @AuthenticationPrincipal(expression = "id") Long userId,
+            // @AuthenticationPrincipal(expression = "id") Long userId,
             // TODO desactivar esto y activar arriba
             @RequestParam("userId") Long userId,
             @RequestParam("tenantCode") String tenantCode,
@@ -47,21 +46,21 @@ public class AvatarController {
 
     @DeleteMapping
     public ResponseEntity<Void> delete(@AuthenticationPrincipal(expression = "id") Long userId,
-                                       @RequestParam(required = false) String tenantCode) {
+            @RequestParam(required = false) String tenantCode) {
         avatarService.deleteAvatar(userId, tenantCode);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/avatar-user")
     public ResponseEntity<byte[]> getByUser(@RequestParam @NotNull Long userId,
-                                            @RequestParam(required = false) String tenantCode) {
+            @RequestParam(required = false) String tenantCode) {
         byte[] data = avatarService.getAvatar(userId, tenantCode);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
                 .body(data);
     }
 
-    @PutMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AvatarDto> updateAvatar(
             @AuthenticationPrincipal(expression = "id") Long userId,
             @RequestParam("tenantCode") String tenantCode,

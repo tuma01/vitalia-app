@@ -1,8 +1,7 @@
 -- ==============================================
 -- TABLE: ADDRESS
 -- ==============================================
-DROP TABLE IF EXISTS ADDRESS;
-CREATE TABLE IF NOT EXISTS `ADDRESS` (
+CREATE TABLE IF NOT EXISTS ADDRESS (
     ID BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     NUMERO VARCHAR(100) comment 'The first line of the address.',
     DIRECCION VARCHAR(100) comment 'The second line of address. It is Optional.',
@@ -15,12 +14,10 @@ CREATE TABLE IF NOT EXISTS `ADDRESS` (
     LOCATION VARCHAR(100) comment 'Geometry data with spatial index.',
     FK_ID_COUNTRY BIGINT,
     FK_ID_DEPARTAMENTO BIGINT,
+    
     CONSTRAINT FK_ADDRESS_COUNTRY FOREIGN KEY (FK_ID_COUNTRY) REFERENCES COUNTRY(ID),
-    CONSTRAINT FK_ADDRESS_DEPARTAMENTO FOREIGN KEY (FK_ID_DEPARTAMENTO) REFERENCES DEPARTAMENTO(ID)
+
+    -- Impide insertar un Departamento que no pertenezca al Pais indicado
+    CONSTRAINT FK_ADDRESS_HIERARCHY FOREIGN KEY (FK_ID_DEPARTAMENTO, FK_ID_COUNTRY) REFERENCES DEPARTAMENTO(ID, FK_ID_COUNTRY)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 commit;
-
-
-
-
-

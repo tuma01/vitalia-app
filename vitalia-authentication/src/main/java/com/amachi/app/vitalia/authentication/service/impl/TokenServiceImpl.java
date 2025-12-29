@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +27,7 @@ public class TokenServiceImpl implements TokenService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final BlacklistedTokenRepository blacklistedTokenRepository;
+    private final com.amachi.app.vitalia.authentication.repository.UserTenantRoleRepository userTenantRoleRepository;
 
     @Override
     @Transactional
@@ -37,8 +39,7 @@ public class TokenServiceImpl implements TokenService {
         refreshTokenService.createRefreshToken(
                 user.getId(),
                 tenant.getId(),
-                tokenPair.getRefreshToken()
-        );
+                tokenPair.getRefreshToken());
 
         return tokenPair;
     }
@@ -55,9 +56,31 @@ public class TokenServiceImpl implements TokenService {
         RefreshToken token = storedToken.get();
         refreshTokenService.verifyExpiration(token);
 
-        // Aquí se debería cargar el usuario y tenant para generar nuevo JwtUserDto
-        // Por simplicidad, asumimos que tenemos los datos necesarios
-        throw new UnsupportedOperationException("Load user and tenant to generate new token pair");
+        User user = token.getUser();
+        Tenant tenant = token.getTenant();
+
+        // Cargar Roles y Permisos (Effective Authorities)
+        List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenant(user, tenant);
+        List<String> permissions = userTenantRoleRepository.findActivePermissionsNamesByUserAndTenant(user, tenant);
+
+        // Combinar roles y permisos
+        List<String> combinedAuthorities = new java.util.ArrayList<>(roles);
+        combinedAuthorities.addAll(permissions);
+        combinedAuthorities = combinedAuthorities.stream().distinct().toList();
+
+        // Nuevo JWT user
+        JwtUserDto jwtUser = JwtUserDto.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .tenantCode(tenant.getCode())
+                .roles(combinedAuthorities)
+                .build();
+
+        // ROTACIÓN DE TOKEN: Eliminar el refresh token anterior para usar uno nuevo
+        refreshTokenService.delete(token);
+
+        // Generar y persistir nuevo par
+        return generateAndStoreTokenPair(jwtUser, user, tenant);
     }
 
     @Override
@@ -85,15 +108,32 @@ public class TokenServiceImpl implements TokenService {
     /**
      * Invalida un JWT agregándolo a la blacklist.
      */
+    /**
+     * Invalida un JWT agregándolo a la blacklist con su fecha de expiración.
+     */
     public void invalidateToken(String jwt) {
-        if (jwt == null || jwt.isBlank()) return;
+        if (jwt == null || jwt.isBlank())
+            return;
+
+        java.util.Date expirationDate = jwtService.extractExpiration(jwt);
+        // Convertir Date a LocalDateTime
+        java.time.LocalDateTime expiresAt = expirationDate.toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDateTime();
 
         BlacklistedToken token = BlacklistedToken.builder()
                 .token(jwt)
                 .blacklistedAt(java.time.LocalDateTime.now())
+                .expiresAt(expiresAt)
                 .build();
 
         blacklistedTokenRepository.save(token);
+    }
+
+    @Override
+    @Transactional
+    public void deleteExpiredTokens(java.time.LocalDateTime now) {
+        blacklistedTokenRepository.deleteByExpiresAtBefore(now);
     }
 
     /**

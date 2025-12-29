@@ -5,6 +5,6 @@ public enum PersonType {
     NURSE,
     PATIENT,
     EMPLOYEE,
-    SUPER_ADMIN,  // Admin global
-    TENANT_ADMIN // Admin del tenant
+    SUPER_ADMIN, // Admin global
+    ADMIN // Admin del tenant
 }

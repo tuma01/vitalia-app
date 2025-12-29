@@ -7,13 +7,10 @@
 -- Compatibilidad: MySQL 8.0+
 -- ============================================================
 
--- Eliminar tabla si existiera (solo en desarrollo o migraciones controladas)
-DROP TABLE IF EXISTS AVATAR;
-
 -- ============================================
 -- Creación de la tabla AVATAR
 -- ============================================
-CREATE TABLE AVATAR (
+CREATE TABLE IF NOT EXISTS AVATAR (
     ID BIGINT PRIMARY KEY AUTO_INCREMENT,
     USER_ID BIGINT NOT NULL,
     TENANT_CODE VARCHAR(100) NOT NULL,

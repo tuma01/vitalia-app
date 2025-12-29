@@ -36,6 +36,7 @@ public class ActivationToken {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean used = false;
 

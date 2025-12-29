@@ -11,7 +11,7 @@ import org.mapstruct.*;
 public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDTO> {
 
     @Override
-    @BeanMapping(ignoreByDefault = true)
+    @BeanMapping(ignoreByDefault = true, unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name")
     // Map other essential fields for creation if needed, or rely on
@@ -19,6 +19,7 @@ public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDTO> {
     Theme toEntity(ThemeDTO dto);
 
     @Override
+    @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     ThemeDTO toDto(Theme entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, ignoreByDefault = true)

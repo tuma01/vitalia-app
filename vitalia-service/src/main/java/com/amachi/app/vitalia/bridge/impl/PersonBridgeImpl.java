@@ -42,19 +42,23 @@ public class PersonBridgeImpl implements PersonBridge {
     @Override
     public UserSummaryDto buildUserSummary(User user, Tenant tenant) {
 
-        // buscar person del user
-        Person person =  personRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(Person.class.getName(), "error.resource.not.found", user.getId()));
+        // buscar person del user usando personId, no userId
+        Person person = null;
+        if (user.getPersonId() != null) {
+            person = personRepository.findById(user.getPersonId())
+                    .orElseThrow(() -> new ResourceNotFoundException(Person.class.getName(), "error.resource.not.found",
+                            user.getPersonId()));
+        }
 
         return UserSummaryDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .tenantCode(tenant.getCode())
+                .tenantName(tenant.getName()) // Populate tenantName
                 .roles(
                         user.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
-                                .toList()
-                )
+                                .toList())
                 .enabled(user.isEnabled())
                 .personName(person != null ? buildFullName(person) : null)
                 .personType(person != null ? person.getPersonType() : null)
@@ -66,7 +70,6 @@ public class PersonBridgeImpl implements PersonBridge {
                 person.getNombre(),
                 person.getSegundoNombre() != null ? person.getSegundoNombre() : "",
                 person.getApellidoPaterno(),
-                person.getApellidoMaterno() != null ? person.getApellidoMaterno() : ""
-        ).trim();
+                person.getApellidoMaterno() != null ? person.getApellidoMaterno() : "").trim();
     }
 }
