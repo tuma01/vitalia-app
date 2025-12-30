@@ -18,14 +18,12 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "address.id", source = "addressId") // Removed, handled in
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
     @Mapping(target = "user.id", source = "userId")
     SuperAdmin toEntity(SuperAdminDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "address.id", source = "addressId") // Removed, handled in
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
     @Mapping(target = "user.id", source = "userId")
     @Mapping(target = "id", source = "id", ignore = true)
@@ -34,7 +32,7 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
 
     @Override
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "addressId", source = "address.id")
+    // Eliminado mapping a addressId
     @Mapping(target = "personTenantsIds", source = "personTenants", qualifiedByName = "personTenantSetToIds")
     @Mapping(target = "userId", source = "user.id")
     SuperAdminDto toDto(SuperAdmin entity);

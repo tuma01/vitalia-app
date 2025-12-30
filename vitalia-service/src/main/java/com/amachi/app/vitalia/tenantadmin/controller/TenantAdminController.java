@@ -49,7 +49,10 @@ public class TenantAdminController extends BaseController implements TenantAdmin
         tenantAdminDomainService.handleTenantAddress(entity, dto);
         tenantAdminDomainService.encodePasswordIfNeeded(entity);
         TenantAdmin savedEntity = service.create(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(savedEntity));
+        TenantAdminDto savedDto = mapper.toDto(savedEntity);
+        // Enrich DTO to include Tenant Address which is stored by ID
+        savedDto = tenantAdminDomainService.enrichTenantAdminDto(savedEntity, savedDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
 
     @Override

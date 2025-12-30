@@ -6,7 +6,7 @@ import com.amachi.app.vitalia.common.mapper.BaseMapperConfig;
 import com.amachi.app.vitalia.common.mapper.EntityDtoMapper;
 import com.amachi.app.vitalia.geography.address.entity.Address;
 import com.amachi.app.vitalia.person.mapper.PersonTenantMapper;
-import com.amachi.app.vitalia.superadmin.mapper.SuperAdminMapper;
+
 import com.amachi.app.vitalia.tenant.mapper.TenantMapper;
 import com.amachi.app.vitalia.tenantadmin.dto.TenantAdminDto;
 import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
@@ -33,29 +33,26 @@ public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAd
         @Override
         @AuditableIgnoreConfig.IgnoreAuditableFields
         @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-        @Mapping(target = "address", source = "addressId")
+        // Eliminado mapping conflictivo: @Mapping(target = "address", source =
+        // "addressId")
+        // MapStruct mapeará automáticamente TenantAdminDto.address ->
+        // TenantAdmin.address
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
         TenantAdmin toEntity(TenantAdminDto dto);
 
         @AuditableIgnoreConfig.IgnoreAuditableFields
         @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
-        @Mapping(target = "address", source = "addressId")
+        // Eliminado mapping conflictivo para update también
+        // @Mapping(target = "address", source = "addressId")
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
         @Mapping(target = "id", ignore = true)
         void updateEntityFromDto(TenantAdminDto dto, @MappingTarget TenantAdmin entity);
 
         @Override
         @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-        @Mapping(target = "addressId", source = "address.id")
+        // Eliminado mapping a addressId porque no existe en DTO
         @Mapping(target = "personTenantsIds", source = "personTenants", qualifiedByName = "personTenantSetToIds")
         TenantAdminDto toDto(TenantAdmin entity);
-
-        default Address mapAddress(Long addressId) {
-                if (addressId == null) {
-                        return null;
-                }
-                return Address.builder().id(addressId).build();
-        }
 
         /**
          * Establece la relación bidireccional entre TenantAdmin y PersonTenant

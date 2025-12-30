@@ -77,11 +77,6 @@ public abstract class PersonDto {
 
         @Valid
         @JsonProperty
-        @Schema(description = "La direccion de la Persona")
-        private Long addressId;
-
-        @Valid
-        @JsonProperty
         @Schema(description = "Objeto Dirección Completo (Para creación inline)")
         private AddressDto address;
 
