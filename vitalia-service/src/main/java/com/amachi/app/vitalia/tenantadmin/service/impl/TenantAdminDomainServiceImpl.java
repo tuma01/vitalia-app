@@ -1,6 +1,5 @@
 package com.amachi.app.vitalia.tenantadmin.service.impl;
 
-import com.amachi.app.vitalia.authentication.dto.UserDto;
 import com.amachi.app.vitalia.authentication.entity.User;
 import com.amachi.app.vitalia.authentication.repository.UserRepository;
 import com.amachi.app.vitalia.common.exception.ResourceNotFoundException;
@@ -10,13 +9,11 @@ import com.amachi.app.vitalia.geography.address.mapper.AddressMapper;
 import com.amachi.app.vitalia.geography.address.service.impl.AddressServiceImpl;
 import com.amachi.app.vitalia.tenantadmin.dto.TenantAdminDto;
 import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
-import com.amachi.app.vitalia.tenantadmin.mapper.TenantAdminMapper;
 import com.amachi.app.vitalia.authentication.service.UserTenantRoleService;
 import com.amachi.app.vitalia.authentication.repository.RoleRepository;
 import com.amachi.app.vitalia.authentication.entity.Role;
 import com.amachi.app.vitalia.authentication.entity.UserAccount;
 import com.amachi.app.vitalia.common.utils.AppConstants;
-import com.amachi.app.vitalia.common.enums.RoleContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
@@ -24,9 +21,6 @@ import java.util.HashSet;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.amachi.app.vitalia.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
 
 @Service
 @Transactional

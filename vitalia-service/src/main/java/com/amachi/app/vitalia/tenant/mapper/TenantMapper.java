@@ -15,13 +15,13 @@ public interface TenantMapper extends EntityDtoMapper<Tenant, TenantDto> {
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @Mapping(target = "theme", source = "themeId")
-    @Mapping(target = "addressId", ignore = true)
+    @Mapping(target = "addressId", source = "address.id")
     Tenant toEntity(TenantDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "theme", source = "themeId")
-    @Mapping(target = "addressId", ignore = true)
+    @Mapping(target = "addressId", source = "address.id")
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(TenantDto dto, @MappingTarget Tenant entity);
 
