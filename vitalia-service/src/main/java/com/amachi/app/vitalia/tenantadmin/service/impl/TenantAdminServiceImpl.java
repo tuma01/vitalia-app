@@ -33,6 +33,7 @@ public class TenantAdminServiceImpl implements GenericService<TenantAdmin, Tenan
 
     private final TenantAdminRepository tenantAdminRepository;
     private final TenantAdminDomainServiceImpl tenantAdminDomainService;
+    private final com.amachi.app.vitalia.tenant.repository.TenantRepository tenantRepository;
 
     @Override
     public List<TenantAdmin> getAll() {
@@ -59,6 +60,24 @@ public class TenantAdminServiceImpl implements GenericService<TenantAdmin, Tenan
     @Transactional
     public TenantAdmin create(TenantAdmin entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+
+        // Handle existing Tenant attachment to avoid "detached entity passed to
+        // persist"
+        if (entity.getTenant() != null && entity.getTenant().getId() != null) {
+            Tenant detachedTenant = entity.getTenant();
+            Tenant existingTenant = tenantRepository.findById(detachedTenant.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException(Tenant.class.getName(),
+                            "error.resource.not.found", detachedTenant.getId()));
+
+            // Link Address if it was set on the detached entity (e.g. by
+            // handleTenantAddress)
+            if (detachedTenant.getAddressId() != null) {
+                existingTenant.setAddressId(detachedTenant.getAddressId());
+            }
+
+            entity.setTenant(existingTenant);
+        }
+
         TenantAdmin savedEntity = tenantAdminRepository.save(entity);
         tenantAdminDomainService.completeAccountSetup(savedEntity);
         return savedEntity;

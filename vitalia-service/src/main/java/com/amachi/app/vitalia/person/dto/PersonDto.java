@@ -4,7 +4,7 @@ import com.amachi.app.vitalia.common.enums.EstadoCivilEnum;
 import com.amachi.app.vitalia.common.enums.GeneroEnum;
 import com.amachi.app.vitalia.common.enums.PersonType;
 import com.amachi.app.vitalia.geography.address.dto.AddressDto;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -61,8 +61,7 @@ public abstract class PersonDto {
 
         @Valid
         @JsonProperty
-        @JsonFormat(pattern = "dd-MM-yyyy")
-        @Schema(description = "La fecha de nacimiento de la Persona", example = "24-06-2000")
+        @Schema(description = "La fecha de nacimiento de la Persona", example = "2000-06-24")
         private LocalDate fechaNacimiento;
 
         @Valid
