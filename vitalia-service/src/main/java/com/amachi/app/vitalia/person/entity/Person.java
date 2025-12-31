@@ -6,7 +6,7 @@ import com.amachi.app.vitalia.common.enums.EstadoCivilEnum;
 import com.amachi.app.vitalia.common.enums.GeneroEnum;
 import com.amachi.app.vitalia.common.enums.PersonType;
 import com.amachi.app.vitalia.geography.address.entity.Address;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -67,7 +67,6 @@ public abstract class Person extends Auditable<String> implements Model {
     @Column(name = "APELLIDO_MATERNO", length = 50)
     private String apellidoMaterno;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "FECHA_NACIMIENTO")
     private LocalDate fechaNacimiento;
 

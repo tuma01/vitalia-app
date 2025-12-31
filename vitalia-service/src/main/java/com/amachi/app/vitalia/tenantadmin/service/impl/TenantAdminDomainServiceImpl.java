@@ -14,10 +14,14 @@ import com.amachi.app.vitalia.authentication.repository.RoleRepository;
 import com.amachi.app.vitalia.authentication.entity.Role;
 import com.amachi.app.vitalia.authentication.entity.UserAccount;
 import com.amachi.app.vitalia.common.utils.AppConstants;
+import com.amachi.app.vitalia.person.entity.PersonTenant;
+import com.amachi.app.vitalia.common.enums.RoleContext;
+import com.amachi.app.vitalia.common.enums.RelationStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 import java.util.HashSet;
+import java.time.LocalDateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +37,8 @@ public class TenantAdminDomainServiceImpl {
     private final UserRepository userRepository;
     private final UserTenantRoleService userTenantRoleService;
     private final RoleRepository roleRepository;
+
+    // ... existing methods omitted for brevity as they are unchanged ...
 
     public void handleTenantAddress(TenantAdmin entity, TenantAdminDto dto) {
 
@@ -156,7 +162,18 @@ public class TenantAdminDomainServiceImpl {
         // 4. Update User with new Account and personId
         userRepository.save(user);
 
-        // 5. Assign Roles
+        // 5. Create PersonTenant (Contextual Data for Visibility)
+        PersonTenant pt = PersonTenant.builder()
+                .person(savedEntity)
+                .tenant(savedEntity.getTenant())
+                .roleContext(RoleContext.ADMIN)
+                .relationStatus(RelationStatus.ACTIVE)
+                .dateRegistered(LocalDateTime.now())
+                .build();
+
+        savedEntity.getPersonTenants().add(pt);
+
+        // 6. Assign Roles
         assignAdminRole(user, savedEntity.getTenant());
 
         log.info("✔ Account setup completed for TenantAdmin ID: {}", personId);
