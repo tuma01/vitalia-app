@@ -1,12 +1,9 @@
-package com.amachi.app.vitalia.tenantadmin.service; // Convention: test in same package as impl or generic service package (User requested service)
+package com.amachi.app.vitalia.tenantadmin.service.impl; // Convention: test in same package as impl or generic service package (User requested service)
 
 import com.amachi.app.vitalia.common.AbstractUnitTest;
-import com.amachi.app.vitalia.common.entity.Tenant;
 import com.amachi.app.vitalia.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.tenantadmin.entity.TenantAdmin;
 import com.amachi.app.vitalia.tenantadmin.repository.TenantAdminRepository;
-import com.amachi.app.vitalia.tenantadmin.service.impl.TenantAdminDomainServiceImpl;
-import com.amachi.app.vitalia.tenantadmin.service.impl.TenantAdminServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
