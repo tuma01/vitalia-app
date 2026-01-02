@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.superadmin.mapper;
 
+import com.amachi.app.vitalia.authentication.mapper.UserMapper;
 import com.amachi.app.vitalia.common.mapper.AuditableIgnoreConfig;
 import com.amachi.app.vitalia.common.mapper.BaseMapperConfig;
 import com.amachi.app.vitalia.common.mapper.EntityDtoMapper;
@@ -11,7 +12,8 @@ import org.mapstruct.*;
 
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true), uses = {
         AddressMapper.class,
-        PersonTenantMapper.class
+        PersonTenantMapper.class,
+        UserMapper.class
 })
 public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdminDto> {
 
@@ -19,21 +21,16 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
-    @Mapping(target = "user.id", source = "userId")
     SuperAdmin toEntity(SuperAdminDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
-    @Mapping(target = "user.id", source = "userId")
-    @Mapping(target = "id", source = "id", ignore = true)
-    @Mapping(target = "user.password", ignore = true) // Security Safeguard
+    @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(SuperAdminDto dto, @MappingTarget SuperAdmin entity);
 
     @Override
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-    // Eliminado mapping a addressId
     @Mapping(target = "personTenantsIds", source = "personTenants", qualifiedByName = "personTenantSetToIds")
-    @Mapping(target = "userId", source = "user.id")
     SuperAdminDto toDto(SuperAdmin entity);
 }
