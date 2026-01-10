@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.amachi.app.vitalia</groupId>
+    <artifactId>core-domain</artifactId>
+    <name>core-domain</name>
+    <description>Core domain entities for multi-app platform</description>
+    <packaging>jar</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+    <parent>
+        <artifactId>vitalia-app</artifactId>
+        <groupId>com.amachi.app.vitalia</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <!-- Módulo común interno -->
+        <dependency>
+            <groupId>com.amachi.app.vitalia</groupId>
+            <artifactId>core-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Geography (Address) -->
+        <dependency>
+            <groupId>com.amachi.app.vitalia</groupId>
+            <artifactId>core-geography</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Spring Boot JPA -->
+        <!-- Existe en Common-->
+
+        <!-- Validación -->
+        <!-- Existe en Common-->
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- MapStruct -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+
+        <!-- MapStruct Processor -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
+</project>

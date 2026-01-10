@@ -1,0 +1,108 @@
+spring:
+  config:
+    import: "classpath:bootstrap.yml"  # importa bootstrap con datos iniciales
+  application:
+    name: vitalia-app
+
+  profiles:
+    active: dev
+
+  messages:
+    basename: i18n/errors/errors,i18n/messages/messages,i18n/validation/validation,i18n/security/security
+    encoding: UTF-8
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # ==============================
+  # JWT GLOBAL CONFIGURATION
+  # ==============================
+  jwt:
+    secret-key: ${JWT_SECRET:your-secret-key-base64-encoded-with-at-least-256-bits}
+    access-token:
+      expiration: 3600000       # 1 hora
+    refresh-token:
+      expiration: 604800000     # 7 días
+    activation-token:
+      expiration: 86400000      # 24 horas
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      pool-name: VitaliaHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: true
+        discriminator.ignore_explicit_for_joined: false
+
+  flyway:
+    enabled: true
+  #    locations: classpath*:db/migration
+  #    validate-on-migrate: true
+  #    baseline-on-migrate: true
+  #    clean-disabled: true
+  #    out-of-order: false
+
+  springdoc:
+    default-produces-media-type: application/json
+    api-docs:
+      resolve-extensions-properties: false
+      path: /v3/api-docs
+    swagger-ui:
+      path: /swagger-ui.html
+    override-with-generic-response: false
+
+server:
+  port: 8088
+  servlet:
+    context-path: /api/v1
+
+security:
+  enable: false
+  jwt:
+    secret-key: ${JWT_SECRET:3cfa76ef14937c1c0ea519f8fc057a80fcd04a7420f8e8bcd0a7567c272e007b}
+    expiration-time: 3600000
+
+# ==============================
+# AVATAR CONFIGURATION
+# ==============================
+app:
+  avatar:
+    max-size: 1048576
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - image/gif
+    default-path: classpath:templates/avatars/default-avatar.jpg
+    messages:
+      storage: "Error al almacenar el avatar {0}"
+      processing: "Error al procesar el avatar {0}"
+      default-load: "No se pudo cargar la imagen de perfil por defecto"
+
+# ==============================
+# OPENAPI
+# ==============================
+openapi:
+  title: OpenAPI specification - ${spring.application.name}
+  version: 1.0.0
+  description: This API exposes endpoints to manage ${spring.application.name}
+  terms-of-service: https://www.amachi.com/terms
+  license:
+    name: MIT License
+    url: https://www.amachi.com/license
+  contact:
+    name: Juan Amachi
+    email: juan.amachi@gmail.com
+    url: https://www.amachi.com

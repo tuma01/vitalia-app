@@ -1,0 +1,9 @@
+{
+    "id": 1,
+    "code": "90.3.8.01",
+    "name": "HEMOGRAMA IV (HEMOGLOBINA, HEMATOCRITO, RECUENTO DE ERITROCITOS, INDICES ERITROCITARIOS, RECUENTO DE LEUCOCITOS, RECUENTO DIFERENCIAL DE LEUCOCITOS Y RECUENTO DE PLAQUETAS)",
+    "type": "LABORATORY",
+    "active": true,
+    "createdBy": "system",
+    "createdDate": "2024-01-01T10:00:00"
+}

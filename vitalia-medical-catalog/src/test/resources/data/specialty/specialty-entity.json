@@ -1,0 +1,10 @@
+{
+    "id": 1,
+    "code": "ESP-001",
+    "name": "Cardiología",
+    "description": "Especialidad dedicada al corazón.",
+    "targetProfession": "DOCTOR",
+    "active": true,
+    "createdBy": "system",
+    "createdDate": "2024-01-01T10:00:00"
+}

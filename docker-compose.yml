@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    build:
+      context: .
+    image: mysql:8.0.25
+    container_name: mysqldb-security
+    environment:
+      MYSQL_ROOT_PASSWORD: bolivia
+      MYSQL_DATABASE: hospital_db
+    volumes:
+      - F:/DATOS/mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    networks:
+      - security-network
+#  flyway:
+#    image: flyway/flyway:9.22.3
+#    environment:
+#      FLYWAY_URL: jdbc:mysql://mysqldb:3306/hospital_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+#      FLYWAY_USER: root
+#      FLYWAY_PASSWORD: bolivia
+#    depends_on:
+#      - mysqldb
+#    networks:
+#      - security-network
+
+  mail-dev:
+    image: maildev/maildev
+    container_name: mailhog-security
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - security-network
+
+networks:
+  security-network:
+    driver: bridge
+
+
+
+
+
+
+
+#version: '3.8'
+#services:
+#  mysqldb:
+#    image: mysql:8.0
+#    container_name: mysqldb-security
+#    environment:
+#      MYSQL_ROOT_PASSWORD: secret
+#      MYSQL_DATABASE: taskdb
+#    volumes:
+#      - F:/DATOS/mysql_data:/var/lib/mysql
+#
+#    ports:
+#      - "3307:3306"
+#    restart: always
+#    networks:
+#        - security-network
+#
+#  mail-dev:
+#    image: maildev/maildev
+#    container_name: mailhog-security
+#    ports:
+#      - "1080:1080"
+#      - "1025:1025"
+#    networks:
+#        - security-network
+#
+#  networks:
+#    security-network:
+#      driver: bridge

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOGS" value="/tmp/vitalia-app"/>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d{ISO8601} %-5level [%t] %C{1}.%M-L%L: %msg%n%throwable</Pattern>
+        </encoder>
+    </appender>
+
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="RollingFile">
+        <encoder>
+            <Pattern>%m%n</Pattern>
+        </encoder>
+        <file>${LOGS}/spring-boot-logger.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/archived/spring-boot-logger-%d{yyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <logger additivity="false" level="trace" name="com.amachi.app">
+        <appender-ref ref="RollingFile"/>
+        <appender-ref ref="Console"/>
+
+    </logger>
+
+    <appender name="ConsoleMonitoring" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="RollingFile"/>
+        <appender-ref ref="Console"/>
+    </root>
+
+    <logger name="org.apache.kafka.streams.processor.internals" level="WARN"/>
+    <logger name="org.apache.kafka.streams.processor.internals.StateDirectory" level="ERROR"/>
+</configuration>

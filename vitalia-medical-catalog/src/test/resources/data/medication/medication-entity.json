@@ -1,0 +1,11 @@
+{
+    "id": 1,
+    "genericName": "Paracetamol",
+    "commercialName": "Tylenol",
+    "concentration": "500mg",
+    "pharmaceuticalForm": "TABLET",
+    "presentation": "BOX X 30 TABLETS",
+    "active": true,
+    "createdBy": "system",
+    "createdDate": "2024-01-01T10:00:00"
+}

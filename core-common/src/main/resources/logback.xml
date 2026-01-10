@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%d{ISO8601} %highlight(%-5level) [%t] %yellow(%C{1}): %msg%n%throwable</Pattern>
+        </encoder>
+    </appender>
+    <appender name="ConsoleMonitoring" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%m%n</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+    </root>
+
+    <logger name="org.apache.kafka.streams.processor.internals" level="WARN"/>
+    <logger name="org.apache.kafka.streams.processor.internals.StateDirectory" level="ERROR"/>
+</configuration>

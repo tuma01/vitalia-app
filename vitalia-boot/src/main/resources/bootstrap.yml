@@ -1,0 +1,61 @@
+# Configuración general del sistema
+app:
+  bootstrap:
+    tenant:
+      # ======================================================
+      # TENANT GLOBAL
+      # - Tenant reservado para operaciones de SUPER_ADMIN
+      # - No tiene address
+      # ======================================================
+      tenantGlobal:
+        code: GLOBAL
+        name: "Global System Tenant"
+        type: GLOBAL
+        description: "Tenant reservado para administración global del sistema"
+
+      # ======================================================
+      # TENANT LOCAL BASE
+      # - Tenant inicial de negocio (Hospital A)
+      # - Address se define solo en perfiles (-dev, -test)
+      # ======================================================
+      tenantLocal:
+        code: HOSP_A
+        name: "Hospital A"
+        type: HOSPITAL
+        fallbackHeader: X-Tenant-Code
+        allowLocal: true
+        defaultDomain: localhost
+        # ------------------------------------------------------
+        # Dirección inicial obligatoria
+        # - Puede ser editada luego desde frontend
+        # ------------------------------------------------------
+        address:
+          numero: "100"
+          direccion: "Av. Principal 123"
+          ciudad: "La Paz"
+          departamentoId: 1
+          paisId: 26
+          telefono: "+591 2 1234567"
+
+    # ======================================================
+    # SUPER ADMIN GLOBAL
+    # - Pertenece al tenant GLOBAL
+    # - Acceso total a la plataforma
+    # ======================================================
+    superAdmin:
+      email: "superadmin@test.com"
+      password: "password"
+      firstName: "System"
+      lastName: "Administrator"
+      personType: SUPER_ADMIN
+
+    # ======================================================
+    # TENANT ADMIN LOCAL
+    # - Administrador del tenant HOSP_A
+    # ======================================================
+    tenantAdmin:
+      email: "admin@test.com"
+      password: "password"
+      firstName: "Tenant"
+      lastName: "Administrator"
+      personType: ADMIN

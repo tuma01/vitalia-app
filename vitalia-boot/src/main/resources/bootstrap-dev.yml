@@ -1,0 +1,31 @@
+app:
+  bootstrap:
+
+    # ======================================================
+    # TENANT LOCAL – OVERRIDES SOLO PARA DESARROLLO
+    # ======================================================
+    tenantLocal:
+      name: "Hospital A - DEV"
+      defaultDomain: localhost
+
+      address:
+        numero: "100-DEV"
+        direccion: "Av. Principal DEV 123"
+        ciudad: "La Paz (DEV)"
+        departamentoId: 1
+        paisId: 26
+        telefono: "+591 2 0000000"
+
+    # ======================================================
+    # SUPER ADMIN GLOBAL – DEV
+    # ======================================================
+    superAdmin:
+      email: "superadmin-dev@test.com"
+      password: "dev-password"
+
+    # ======================================================
+    # ADMIN DEL TENANT LOCAL – DEV
+    # ======================================================
+    tenantAdmin:
+      email: "admin-dev@test.com"
+      password: "dev-password"

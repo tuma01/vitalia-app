@@ -1,0 +1,42 @@
+-- ============================================
+-- Script: V3_1__create_dmn_theme.sql
+-- Tabla: DMN_THEME
+-- ============================================
+CREATE TABLE IF NOT EXISTS DMN_THEME (
+    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    CODE VARCHAR(50) NOT NULL UNIQUE,
+    NAME VARCHAR(100) NOT NULL,
+    
+    -- Branding
+    LOGO_URL VARCHAR(1000),
+    FAVICON_URL VARCHAR(1000),
+    
+    -- Colors (Angular Material Palette)
+    PRIMARY_COLOR VARCHAR(20),
+    SECONDARY_COLOR VARCHAR(20),
+    BACKGROUND_COLOR VARCHAR(20),
+    TEXT_COLOR VARCHAR(20),
+    ACCENT_COLOR VARCHAR(20),
+    WARN_COLOR VARCHAR(20),
+    LINK_COLOR VARCHAR(20),
+    BUTTON_TEXT_COLOR VARCHAR(20),
+    
+    -- Typography & Extra
+    FONT_FAMILY VARCHAR(100),
+    THEME_MODE VARCHAR(10), -- ENUM 'LIGHT', 'DARK', 'AUTO'
+
+    -- Extensibility
+    PROPERTIES_JSON TEXT,
+    CUSTOM_CSS TEXT,
+    ALLOW_CUSTOM_CSS TINYINT(1) NOT NULL DEFAULT 0,
+
+    -- Lifecycle
+    ACTIVE TINYINT(1) NOT NULL DEFAULT 1,
+
+    -- Auditoría
+    CREATED_BY VARCHAR(100) NOT NULL,
+    CREATED_DATE TIMESTAMP NOT NULL,
+    LAST_MODIFIED_BY VARCHAR(100),
+    LAST_MODIFIED_DATE TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,0 +1,17 @@
+{
+    "nombre": "Eric",
+    "apellidoPaterno": "Bouchard",
+    "user": {
+        "email": "superadmin@vitalia.com",
+        "password": "StrongPassword123!",
+        "enabled": true
+    },
+    "telefono": "555-0101",
+    "level": "LEVEL_1",
+    "globalAccess": true,
+    "address": {
+        "direccion": "123 Global HQ",
+        "ciudad": "Metropolis",
+        "countryId": 1
+    }
+}

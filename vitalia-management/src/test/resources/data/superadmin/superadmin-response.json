@@ -1,0 +1,18 @@
+{
+    "id": 1,
+    "nombre": "Eric",
+    "apellidoPaterno": "Bouchard",
+    "telefono": "555-0101",
+    "level": "LEVEL_1",
+    "globalAccess": true,
+    "address": {
+        "id": 100,
+        "direccion": "123 Global HQ",
+        "ciudad": "Metropolis",
+        "countryId": 1
+    },
+    "user": {
+        "id": 50,
+        "email": "superadmin@vitalia.com"
+    }
+}

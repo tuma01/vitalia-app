@@ -1,0 +1,13 @@
+{
+    "code": "TENANT001",
+    "name": "General Hospital",
+    "type": "HOSPITAL",
+    "description": "Main test hospital",
+    "address": {
+        "numero": "123",
+        "direccion": "Main St",
+        "ciudad": "Central City",
+        "countryId": 1,
+        "departamentoId": 2
+    }
+}

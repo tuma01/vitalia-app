@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.amachi.app.vitalia</groupId>
+    <artifactId>vitalia-app</artifactId>
+    <name>vitalia-app</name>
+
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <artifactId>amachi-bom</artifactId>
+        <groupId>com.amachi.core</groupId>
+        <version>1.0.8-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <!-- core -->
+        <module>core-common</module>
+        <module>core-auth</module>
+        <module>core-geography</module>
+        <module>core-domain</module>
+
+        <!-- business -->
+        <module>vitalia-management</module>
+        <module>vitalia-clinical</module>
+        <module>vitalia-medical-catalog</module>
+
+        <!-- boot -->
+        <module>vitalia-boot</module>
+
+        <!-- test -->
+        <module>vitalia-test</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.instancio</groupId>
+            <artifactId>instancio-core</artifactId>
+            <version>5.5.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Compiler plugin -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven_compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <release>${java.version}</release>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!-- Otros plugins comunes -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven_jar-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.spotify.fmt</groupId>
+                    <artifactId>fmt-maven-plugin</artifactId>
+                    <version>${fmt-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

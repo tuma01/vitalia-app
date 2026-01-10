@@ -1,0 +1,11 @@
+{
+    "id": 1,
+    "code": "EPS001",
+    "name": "SURA EPS",
+    "taxId": "860066942-7",
+    "email": "contact@sura.com",
+    "phone": "+573000000000",
+    "active": true,
+    "createdBy": "system",
+    "createdDate": "2024-01-01T10:00:00"
+}
