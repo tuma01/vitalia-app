@@ -4,12 +4,12 @@
 -- Descripción: Inserción de todos los grupos sanguíneos.
 -- ============================================================
 
-INSERT INTO CAT_BLOOD_TYPE (CODE, NAME, CREATED_BY) VALUES
-('A+', 'A Positivo', 'SYSTEM'),
-('A-', 'A Negativo', 'SYSTEM'),
-('B+', 'B Positivo', 'SYSTEM'),
-('B-', 'B Negativo', 'SYSTEM'),
-('AB+', 'AB Positivo', 'SYSTEM'),
-('AB-', 'AB Negativo', 'SYSTEM'),
-('O+', 'O Positivo', 'SYSTEM'),
-('O-', 'O Negativo', 'SYSTEM');
+INSERT INTO CAT_BLOOD_TYPE (CODE, NAME, CREATED_BY, CREATED_DATE) VALUES
+('A+', 'A Positivo', 'SYSTEM', CURRENT_TIMESTAMP),
+('A-', 'A Negativo', 'SYSTEM', CURRENT_TIMESTAMP),
+('B+', 'B Positivo', 'SYSTEM', CURRENT_TIMESTAMP),
+('B-', 'B Negativo', 'SYSTEM', CURRENT_TIMESTAMP),
+('AB+', 'AB Positivo', 'SYSTEM', CURRENT_TIMESTAMP),
+('AB-', 'AB Negativo', 'SYSTEM', CURRENT_TIMESTAMP),
+('O+', 'O Positivo', 'SYSTEM', CURRENT_TIMESTAMP),
+('O-', 'O Negativo', 'SYSTEM', CURRENT_TIMESTAMP);

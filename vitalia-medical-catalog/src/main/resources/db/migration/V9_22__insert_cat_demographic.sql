@@ -4,17 +4,17 @@
 -- Descripción: Inserción de Géneros y Estado Civil.
 -- ============================================================
 
-INSERT INTO CAT_GENDER (CODE, NAME, CREATED_BY) VALUES
-('M', 'Masculino', 'SYSTEM'),
-('F', 'Femenino', 'SYSTEM'),
-('NB', 'No Binario', 'SYSTEM'),
-('UNK', 'Desconocido', 'SYSTEM'),
-('OTH', 'Otro', 'SYSTEM');
+INSERT INTO CAT_GENDER (CODE, NAME, CREATED_BY, CREATED_DATE) VALUES
+('M', 'Masculino', 'SYSTEM', CURRENT_TIMESTAMP),
+('F', 'Femenino', 'SYSTEM', CURRENT_TIMESTAMP),
+('NB', 'No Binario', 'SYSTEM', CURRENT_TIMESTAMP),
+('UNK', 'Desconocido', 'SYSTEM', CURRENT_TIMESTAMP),
+('OTH', 'Otro', 'SYSTEM', CURRENT_TIMESTAMP);
 
-INSERT INTO CAT_CIVIL_STATUS (CODE, NAME, CREATED_BY) VALUES
-('SINGLE', 'Soltero/a', 'SYSTEM'),
-('MARRIED', 'Casado/a', 'SYSTEM'),
-('DIVORCED', 'Divorciado/a', 'SYSTEM'),
-('WIDOWED', 'Viudo/a', 'SYSTEM'),
-('UNION', 'Unión Libre', 'SYSTEM'),
-('NONE', 'No Reportado', 'SYSTEM');
+INSERT INTO CAT_CIVIL_STATUS (CODE, NAME, CREATED_BY, CREATED_DATE) VALUES
+('SINGLE', 'Soltero/a', 'SYSTEM', CURRENT_TIMESTAMP),
+('MARRIED', 'Casado/a', 'SYSTEM', CURRENT_TIMESTAMP),
+('DIVORCED', 'Divorciado/a', 'SYSTEM', CURRENT_TIMESTAMP),
+('WIDOWED', 'Viudo/a', 'SYSTEM', CURRENT_TIMESTAMP),
+('UNION', 'Unión Libre', 'SYSTEM', CURRENT_TIMESTAMP),
+('NONE', 'No Reportado', 'SYSTEM', CURRENT_TIMESTAMP);

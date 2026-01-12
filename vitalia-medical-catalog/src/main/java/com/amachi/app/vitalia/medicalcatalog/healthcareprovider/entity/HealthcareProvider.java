@@ -34,7 +34,7 @@ public class HealthcareProvider extends Auditable<String> implements Model {
     private String code;
 
     @NotBlank(message = "Provider Name cannot be empty")
-    @Column(name = "NAME", nullable = false, length = 200)
+    @Column(name = "NAME", nullable = false, length = 250)
     private String name;
 
     @NotBlank(message = "Tax ID cannot be empty")
@@ -44,7 +44,7 @@ public class HealthcareProvider extends Auditable<String> implements Model {
     @Column(name = "EMAIL", length = 100)
     private String email;
 
-    @Column(name = "PHONE", length = 20)
+    @Column(name = "PHONE", length = 50)
     private String phone;
 
     @Column(name = "ACTIVE", nullable = false)

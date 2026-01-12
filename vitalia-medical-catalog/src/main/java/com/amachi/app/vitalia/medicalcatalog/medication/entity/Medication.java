@@ -18,14 +18,20 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = false)
 @Entity
-@Table(name = "CAT_MEDICATION")
+@Table(name = "CAT_MEDICATION", uniqueConstraints = {
+        @UniqueConstraint(name = "UK_MEDICATION_CODE", columnNames = { "CODE" })
+})
 public class Medication extends Auditable<String> implements Model {
 
+    @NotBlank(message = "Medication Code cannot be empty")
+    @Column(name = "CODE", nullable = false, unique = true, length = 20)
+    private String code;
+
     @NotBlank(message = "Generic Name cannot be empty")
-    @Column(name = "GENERIC_NAME", nullable = false, length = 200)
+    @Column(name = "GENERIC_NAME", nullable = false, length = 250)
     private String genericName;
 
-    @Column(name = "COMMERCIAL_NAME", length = 200)
+    @Column(name = "COMMERCIAL_NAME", length = 250)
     private String commercialName;
 
     @Column(name = "CONCENTRATION", length = 100)
@@ -34,7 +40,7 @@ public class Medication extends Auditable<String> implements Model {
     @Column(name = "PHARMACEUTICAL_FORM", length = 100)
     private String pharmaceuticalForm; // e.g., TABLET, SYRUP, INHALER
 
-    @Column(name = "PRESENTATION", length = 200)
+    @Column(name = "PRESENTATION", length = 250)
     private String presentation; // e.g., BOX X 30 TABLETS
 
     @Column(name = "ACTIVE", nullable = false)

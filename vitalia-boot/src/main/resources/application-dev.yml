@@ -3,6 +3,16 @@ spring:
     url: jdbc:mysql://localhost:3306/hospital_db?serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password: bolivia
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Indicamos que Flyway use la misma configuración de la fuente de datos, para que no carge H2 en desarrollo
+  flyway:
+    enabled: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    locations: "classpath:db/migration"
 
   jpa:
     show-sql: true
@@ -33,7 +43,6 @@ mailing:
   frontend:
     base-url: http://localhost:4200
     activation-path: /#/activate-account
-
 #hospital:
 #  default:
 #    code: "HOSPITAL_CLINICA_MULHOUSE"
