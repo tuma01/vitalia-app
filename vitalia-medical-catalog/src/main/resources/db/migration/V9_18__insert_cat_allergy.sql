@@ -4,27 +4,27 @@
 -- Descripción: Alergias comunes (Medicamentos, Alimentos, Ambiental).
 -- ============================================================
 
-INSERT INTO CAT_ALLERGY (CODE, NAME, TYPE, CREATED_BY) VALUES
+INSERT INTO CAT_ALLERGY (CODE, NAME, TYPE, CREATED_BY, CREATED_DATE) VALUES
 -- Medicamentos
-('ALL-001', 'Penicilina y derivados', 'DRUG', 'SYSTEM'),
-('ALL-002', 'Sulfonamidas (Sulfas)', 'DRUG', 'SYSTEM'),
-('ALL-003', 'Aspirina y AINEs (Ibuprofeno, Naproxeno)', 'DRUG', 'SYSTEM'),
-('ALL-004', 'Anticonvulsivantes', 'DRUG', 'SYSTEM'),
-('ALL-005', 'Insulina', 'DRUG', 'SYSTEM'),
-('ALL-006', 'Medios de contraste yodados', 'DRUG', 'SYSTEM'),
+('ALL-001', 'Penicilina y derivados', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-002', 'Sulfonamidas (Sulfas)', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-003', 'Aspirina y AINEs (Ibuprofeno, Naproxeno)', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-004', 'Anticonvulsivantes', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-005', 'Insulina', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-006', 'Medios de contraste yodados', 'DRUG', 'SYSTEM', CURRENT_TIMESTAMP),
 
 -- Alimentos
-('ALL-100', 'Proteína de leche de vaca', 'FOOD', 'SYSTEM'),
-('ALL-101', 'Huevo', 'FOOD', 'SYSTEM'),
-('ALL-102', 'Maní (Cacahuetes)', 'FOOD', 'SYSTEM'),
-('ALL-103', 'Frutos secos (Nueces, Almendras)', 'FOOD', 'SYSTEM'),
-('ALL-104', 'Pescados y Mariscos', 'FOOD', 'SYSTEM'),
-('ALL-105', 'Trigo (Gluten)', 'FOOD', 'SYSTEM'),
-('ALL-106', 'Soya', 'FOOD', 'SYSTEM'),
+('ALL-100', 'Proteína de leche de vaca', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-101', 'Huevo', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-102', 'Maní (Cacahuetes)', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-103', 'Frutos secos (Nueces, Almendras)', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-104', 'Pescados y Mariscos', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-105', 'Trigo (Gluten)', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-106', 'Soya', 'FOOD', 'SYSTEM', CURRENT_TIMESTAMP),
 
 -- Ambiental / Otros
-('ALL-200', 'Polen', 'ENVIRONMENTAL', 'SYSTEM'),
-('ALL-201', 'Ácaros del polvo', 'ENVIRONMENTAL', 'SYSTEM'),
-('ALL-202', 'Epitelio de animales (Gato, Perro)', 'ENVIRONMENTAL', 'SYSTEM'),
-('ALL-203', 'Látex', 'OTHER', 'SYSTEM'),
-('ALL-204', 'Picaduras de insectos (Abeja, Avispa)', 'ENVIRONMENTAL', 'SYSTEM');
+('ALL-200', 'Polen', 'ENVIRONMENTAL', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-201', 'Ácaros del polvo', 'ENVIRONMENTAL', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-202', 'Epitelio de animales (Gato, Perro)', 'ENVIRONMENTAL', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-203', 'Látex', 'OTHER', 'SYSTEM', CURRENT_TIMESTAMP),
+('ALL-204', 'Picaduras de insectos (Abeja, Avispa)', 'ENVIRONMENTAL', 'SYSTEM', CURRENT_TIMESTAMP);

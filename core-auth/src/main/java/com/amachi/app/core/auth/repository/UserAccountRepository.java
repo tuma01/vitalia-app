@@ -2,6 +2,7 @@ package com.amachi.app.core.auth.repository;
 
 import com.amachi.app.core.auth.entity.User;
 import com.amachi.app.core.auth.entity.UserAccount;
+import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -43,15 +44,15 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long>,
             @Param("tenantCode") String tenantCode);
 
     /**
-     * Busca la UserAccount activa basada en el ID del usuario y el ID del tenant.
+     * Busca la UserAccount activa basada en el usuario y el tenant.
      * Es crucial para establecer el contexto de sesión después del login (ej.
      * obtener el perfil).
      * 
-     * @param userId   ID del usuario (desde JWT/security context).
-     * @param tenantId ID del tenant (desde TenantContext).
+     * @param user   el usuario (desde JWT/security context).
+     * @param tenant el tenant (desde TenantContext).
      * @return Optional con la UserAccount.
      */
-    Optional<UserAccount> findByUserIdAndTenantId(Long userId, Long tenantId);
+    Optional<UserAccount> findByUserAndTenant(User user, Tenant tenant);
 
     /**
      * Verifica si existe una relación entre un Usuario y un Tenant, útil para la
@@ -67,19 +68,17 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long>,
      * Busca todas las cuentas asociadas a un usuario, útil para la selección de
      * Tenant después del login.
      * 
-     * @param userId ID del usuario.
+     * @param user el usuario.
      * @return Conjunto de UserAccount.
      */
-    Set<UserAccount> findByUserId(Long userId);
+    Set<UserAccount> findByUser(User user);
 
     Optional<UserAccount> findByUserAndTenantCode(User user, String tenantCode);
 
-    Optional<UserAccount> findByPerson(com.amachi.app.core.domain.entity.Person person);
-
-    java.util.List<UserAccount> findByUser(com.amachi.app.core.auth.entity.User user);
+    Optional<UserAccount> findByPerson(Person person);
 
     // Encuentra todos los UserAccount de un tenant específico
-    List<UserAccount> findByTenantId(Long tenantId);
+    List<UserAccount> findByTenant(Tenant tenant);
 
     // Opcional: filtrar por rol si quieres precisión
     // @Query("SELECT ua FROM UserAccount ua JOIN ua.roles r WHERE ua.tenant.id =

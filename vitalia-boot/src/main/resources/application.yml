@@ -1,6 +1,6 @@
 spring:
   config:
-    import: "classpath:bootstrap.yml"  # importa bootstrap con datos iniciales
+    import: "classpath:bootstrap.yml" # importa bootstrap con datos iniciales
   application:
     name: vitalia-app
 
@@ -22,11 +22,11 @@ spring:
   jwt:
     secret-key: ${JWT_SECRET:your-secret-key-base64-encoded-with-at-least-256-bits}
     access-token:
-      expiration: 3600000       # 1 hora
+      expiration: 3600000 # 1 hora
     refresh-token:
-      expiration: 604800000     # 7 días
+      expiration: 604800000 # 7 días
     activation-token:
-      expiration: 86400000      # 24 horas
+      expiration: 86400000 # 24 horas
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -49,7 +49,7 @@ spring:
 
   flyway:
     enabled: true
-  #    locations: classpath*:db/migration
+    locations: "classpath:db/migration"
   #    validate-on-migrate: true
   #    baseline-on-migrate: true
   #    clean-disabled: true

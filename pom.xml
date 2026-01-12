@@ -20,9 +20,9 @@
     <modules>
         <!-- core -->
         <module>core-common</module>
-        <module>core-auth</module>
         <module>core-geography</module>
         <module>core-domain</module>
+        <module>core-auth</module>
 
         <!-- business -->
         <module>vitalia-management</module>

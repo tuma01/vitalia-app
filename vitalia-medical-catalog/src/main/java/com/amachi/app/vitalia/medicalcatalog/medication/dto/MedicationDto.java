@@ -7,7 +7,8 @@ import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
@@ -17,12 +18,17 @@ public class MedicationDto {
     @Schema(description = "Identificador único", example = "1")
     private Long id;
 
+    @NotBlank(message = "Medication Code cannot be empty")
+    @Size(max = 20, message = "Medication Code must be at most 20 characters")
+    @Schema(description = "Unique code of the medication", example = "MED-001")
+    private String code;
+
     @NotBlank(message = "Generic Name cannot be empty")
-    @Size(max = 200, message = "Generic Name must be at most 200 characters")
+    @Size(max = 250, message = "Generic Name must be at most 250 characters")
     @Schema(description = "Generic Name of the medication", example = "Paracetamol")
     private String genericName;
 
-    @Size(max = 200, message = "Commercial Name must be at most 200 characters")
+    @Size(max = 250, message = "Commercial Name must be at most 250 characters")
     @Schema(description = "Commercial Name of the medication", example = "Tylenol")
     private String commercialName;
 
@@ -34,7 +40,7 @@ public class MedicationDto {
     @Schema(description = "Pharmaceutical Form", example = "TABLET")
     private String pharmaceuticalForm;
 
-    @Size(max = 200, message = "Presentation must be at most 200 characters")
+    @Size(max = 250, message = "Presentation must be at most 250 characters")
     @Schema(description = "Presentation", example = "BOX X 30 TABLETS")
     private String presentation;
 

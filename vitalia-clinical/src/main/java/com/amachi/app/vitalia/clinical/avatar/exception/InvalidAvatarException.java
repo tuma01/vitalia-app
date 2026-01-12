@@ -1,18 +1,32 @@
 package com.amachi.app.vitalia.clinical.avatar.exception;
 
-import com.amachi.app.core.common.exception.BadRequestException;
+import lombok.Getter;
 
-public class InvalidAvatarException extends BadRequestException {
+@Getter
+public class InvalidAvatarException extends RuntimeException {
+
+    private final String key;
+    private final Object[] args;
+    private final String entityName;
 
     public InvalidAvatarException(String message) {
         super(message);
+        this.key = message;
+        this.args = null;
+        this.entityName = "Avatar";
+    }
+
+    public InvalidAvatarException(String key, Object... args) {
+        super(key);
+        this.key = key;
+        this.args = args;
+        this.entityName = "Avatar";
     }
 
     public InvalidAvatarException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public String getEntityName() {
-        return "Avatar";
+        this.key = message;
+        this.args = null;
+        this.entityName = "Avatar";
     }
 }
