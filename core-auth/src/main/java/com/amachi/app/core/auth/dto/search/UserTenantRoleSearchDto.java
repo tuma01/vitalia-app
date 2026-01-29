@@ -19,6 +19,7 @@ public final class UserTenantRoleSearchDto implements BaseSearchDto {
     private Long tenantId;
     private LocalDateTime assignedAt;
     private LocalDateTime revokedAt;
+    @Builder.Default
     private Boolean active = true;
 
     @Override

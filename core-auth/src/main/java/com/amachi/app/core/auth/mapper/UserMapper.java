@@ -21,15 +21,15 @@ public interface UserMapper extends EntityDtoMapper<User, UserDto> {
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     User toEntity(UserDto dto);
 
-    @Override
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "personId", source = "person.id")
-    UserDto toDto(User entity);
-
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "username", ignore = true)
     @Mapping(target = "name", ignore = true)
     @Mapping(target = "password", ignore = true) // Security Safeguard
     void updateEntityFromDto(UserDto dto, @MappingTarget User entity);
+
+    @Override
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+    @Mapping(target = "personId", source = "person.id")
+    UserDto toDto(User entity);
 }

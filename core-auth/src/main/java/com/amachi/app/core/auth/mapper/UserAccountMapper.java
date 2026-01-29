@@ -15,6 +15,14 @@ import org.mapstruct.ReportingPolicy;
 public interface UserAccountMapper extends EntityDtoMapper<UserAccount, UserAccountDto> {
 
     @Override
+    @AuditableIgnoreConfig.IgnoreAuditableFields
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "person", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    UserAccount toEntity(UserAccountDto dto);
+
+    @Override
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "personId", source = "person.id")
@@ -22,11 +30,5 @@ public interface UserAccountMapper extends EntityDtoMapper<UserAccount, UserAcco
     @Mapping(target = "tenantName", source = "tenant.name")
     UserAccountDto toDto(UserAccount entity);
 
-    @Override
-    @AuditableIgnoreConfig.IgnoreAuditableFields
-    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "person", ignore = true)
-    @Mapping(target = "tenant", ignore = true)
-    UserAccount toEntity(UserAccountDto dto);
+
 }
