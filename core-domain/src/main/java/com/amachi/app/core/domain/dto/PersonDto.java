@@ -62,7 +62,7 @@ public abstract class PersonDto {
 
         @Valid
         @JsonProperty
-        @JsonFormat(pattern = "dd-MM-yyyy")
+//        @JsonFormat(pattern = "yyyy-MM-dd")
         @Schema(description = "La fecha de nacimiento de la Persona", example = "24-06-2000")
         private LocalDate fechaNacimiento;
 

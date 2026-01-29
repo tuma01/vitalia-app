@@ -35,5 +35,6 @@ public class UserTenantRoleDto {
     private LocalDateTime revokedAt;
 
     @Schema(description = "Estado del rol (activo/inactivo)", example = "true")
+    @Builder.Default
     private boolean active = true;
 }

@@ -92,10 +92,14 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public boolean validateToken(String token) {
         try {
-            Jwts.parser()
-                    .verifyWith(signingKey)
+//            Jwts.parser()
+//                    .verifyWith(signingKey)
+//                    .build()
+//                    .parseSignedClaims(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(signingKey)
                     .build()
-                    .parseSignedClaims(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException ex) {
             log.warn("JWT token expired: {}", ex.getMessage());
@@ -186,12 +190,19 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String buildToken(Map<String, Object> claims, String subject, long expiration) {
+//        return Jwts.builder()
+//                .claims(claims)
+//                .subject(subject)
+//                .issuedAt(new Date())
+//                .expiration(new Date(System.currentTimeMillis() + expiration))
+//                .signWith(signingKey)
+//                .compact();
         return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(signingKey)
+                .setClaims(claims) // CAMBIO 0.11.5: antes era claims(claims)
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(signingKey, SignatureAlgorithm.HS256) // CAMBIO 0.11.5: antes solo signWith(signingKey)
                 .compact();
     }
 
@@ -202,11 +213,16 @@ public class JwtServiceImpl implements JwtService {
 
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parser()
-                    .verifyWith(signingKey)
+//            return Jwts.parser()
+//                    .verifyWith(signingKey)
+//                    .build()
+//                    .parseSignedClaims(token)
+//                    .getPayload();
+            return Jwts.parserBuilder()
+                    .setSigningKey(signingKey)
                     .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (JwtException e) {
             log.error("Error extracting claims from token: {}", e.getMessage());
             throw new TokenException("Failed to extract token claims", "CLAIMS_EXTRACTION_FAILED");
