@@ -51,11 +51,7 @@
         </dependency>
 
         <!-- MapStruct Processor -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

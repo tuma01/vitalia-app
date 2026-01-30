@@ -40,11 +40,7 @@
         </dependency>
 
         <!-- Processor -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
+
 
         <!-- Validación para DTOs -->
         <dependency>
