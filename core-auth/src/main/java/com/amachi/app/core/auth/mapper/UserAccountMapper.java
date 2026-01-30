@@ -29,6 +29,4 @@ public interface UserAccountMapper extends EntityDtoMapper<UserAccount, UserAcco
     @Mapping(target = "tenantId", source = "tenant.id")
     @Mapping(target = "tenantName", source = "tenant.name")
     UserAccountDto toDto(UserAccount entity);
-
-
 }
