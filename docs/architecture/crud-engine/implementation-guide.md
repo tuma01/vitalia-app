@@ -1,63 +1,50 @@
-# Guía de Implementación
+# Guía de Implementación (Master Template)
 
-Sigue estos pasos para crear una nueva gestión (ejemplo: `Departments`) en 5 minutos.
+El módulo de **Países** (`app/platform/pages/geography/pais`) es el **Master Template** oficial. Úsalo como base para cualquier nuevo CRUD.
 
-## Paso 1: Definir la Configuración
-Crea `departamento-crud.config.ts`.
+## Paso 1: Configuración (`*-crud.config.ts`)
+Define el esquema, columnas y campos del formulario.
 
 ```typescript
-export const DEPARTAMENTO_CRUD_CONFIG = (): CrudConfig<Departamento> => ({
-  entityName: 'entity.department',
-  entityNamePlural: 'entity.departments',
-  getId: (d) => d.id!,
-  apiService: new OpenApiCrudAdapter<Departamento>(inject(DepartmentService), {
-    getAll: 'getDepartments',
-    getById: 'getDepartment',
-    create: 'createDepartment',
-    update: 'updateDepartment',
-    delete: 'deleteDepartment'
-  }),
-  columns: [
-    { field: 'name', header: 'common.name', sortable: true },
-    { field: 'code', header: 'common.code', sortable: true }
-  ],
-  enableAdd: true,
-  enableEdit: true,
-  enableDelete: true
+export const MI_ENTIDAD_CONFIG = (): CrudConfig<MiEntidad> => ({
+  entityName: 'entity.singular',
+  apiService: new OpenApiCrudAdapter<MiEntidad>(inject(MiServicio), { ... }),
+  columns: [ ... ],
+  form: {
+    layout: { columns: 2 },
+    fields: [
+      { name: 'name', label: 'entity.fields.name', type: 'text', required: true }
+    ]
+  }
 });
 ```
 
-## Paso 2: Crear el Componente de Lista
-Casi todo el código es decorativo.
+## Paso 2: Componente de Lista (`*.component.ts`)
+Simple inyección del template y configuración.
 
 ```typescript
 @Component({
-  selector: 'app-departments',
-  standalone: true,
   imports: [CrudTemplateComponent],
-  template: `
-    <app-crud-template #crud
-      [config]="config"
-      (create)="navToAdd()"
-      (edit)="navToEdit($event)"
-      (delete)="crud.onDelete($event)">
-    </app-crud-template>
-  `
+  template: `<app-crud-template #crud [config]="config" (create)="navToAdd()"></app-crud-template>`
 })
-export class DepartmentsComponent {
-  config = DEPARTAMENTO_CRUD_CONFIG();
-  // ... métodos de navegación
+export class MiListaComponent {
+  config = MI_ENTIDAD_CONFIG();
+  // ... añadir botones de operación vía getOperationColumn() en constructor
 }
 ```
 
-## Paso 3: Crear el Formulario (Add/Edit)
-Extiende de `CrudBaseAddEditComponent` para heredar la lógica de guardado y validación. Solo define el `FormGroup` específico de la entidad.
-
-## Paso 4: Registrar Rutas
-En el archivo de rutas correspondiente al dominio (Platform o Tenant).
+## Paso 3: Add/Edit con `buildFormFromConfig`
+Para evitar duplicar validaciones, usa el helper estático en la clase base.
 
 ```typescript
-{ path: 'departments', component: DepartmentsComponent }
+export class MiAddEditComponent extends CrudBaseAddEditComponent<MiEntidad> {
+  public readonly config = MI_ENTIDAD_CONFIG();
+  protected override form = CrudBaseAddEditComponent.buildFormFromConfig(inject(FormBuilder), this.config);
+  // El resto (guardado, errores) lo maneja la clase base automáticamente.
+}
 ```
 
-¡Listo! El motor se encarga de las tablas, búsqueda, loading y borrado.
+## Ventajas del Master Template
+1. **DRY (Don't Repeat Yourself)**: Las validaciones se definen en un solo lugar (Config).
+2. **Consistencia UI**: Todos los formularios e hilos de éxito/error se ven y comportan igual.
+3. **Internacionalización**: Usa bloques `crud.*` y `validation.*` globales.

@@ -162,21 +162,21 @@
                             "id": "departamentos-list",
                             "name": "departamentos",
                             "type": "link",
-                            "route": "/super-admin/geography/departamento/departamentos",
+                            "route": "/platform/geography/departamento/departamentos",
                             "visible": true
                         },
                         {
                             "id": "departamentos-add",
                             "name": "addDepartamento",
                             "type": "link",
-                            "route": "/super-admin/geography/departamento/add",
+                            "route": "/platform/geography/departamento/add",
                             "visible": true
                         },
                         {
                             "id": "departamentos-edit",
                             "name": "editDepartamento",
                             "type": "link",
-                            "route": "/super-admin/geography/departamento/edit",
+                            "route": "/platform/geography/departamento/edit",
                             "visible": false
                         }
                     ]

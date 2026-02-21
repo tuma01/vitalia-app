@@ -28,16 +28,21 @@ export const PAIS_CRUD_CONFIG = (): CrudConfig<Country> => {
             { field: 'name', header: 'geography.country.fields.name', sortable: true },
             { field: 'niceName', header: 'geography.country.fields.niceName', sortable: true },
             { field: 'phoneCode', header: 'geography.country.fields.phoneCode', sortable: true },
+            { field: 'currency', header: 'geography.country.fields.currency', sortable: true },
         ],
 
-        formFields: [
-            { name: 'iso', label: 'geography.country.fields.code', type: 'text', required: true, col: 'col-md-4' },
-            { name: 'iso3', label: 'geography.country.fields.code3', type: 'text', col: 'col-md-4' },
-            { name: 'name', label: 'geography.country.fields.name', type: 'text', required: true, col: 'col-md-4' },
-            { name: 'niceName', label: 'geography.country.fields.niceName', type: 'text', required: true, col: 'col-md-4' },
-            { name: 'numCode', label: 'geography.country.fields.numCode', type: 'number', col: 'col-md-4' },
-            { name: 'phoneCode', label: 'geography.country.fields.phoneCode', type: 'number', required: true, col: 'col-md-4' },
-        ],
+        form: {
+            layout: { columns: 2 },
+            fields: [
+                { name: 'iso', label: 'geography.country.fields.code', type: 'text', required: true, colSpan: 1, minLength: 2, maxLength: 2 },
+                { name: 'iso3', label: 'geography.country.fields.code3', type: 'text', colSpan: 1, minLength: 3, maxLength: 3 },
+                { name: 'name', label: 'geography.country.fields.name', type: 'text', required: true, colSpan: 1 },
+                { name: 'niceName', label: 'geography.country.fields.niceName', type: 'text', required: true, colSpan: 1 },
+                { name: 'numCode', label: 'geography.country.fields.numCode', type: 'number', colSpan: 1 },
+                { name: 'phoneCode', label: 'geography.country.fields.phoneCode', type: 'number', required: true, colSpan: 1 },
+                { name: 'currency', label: 'geography.country.fields.currency', type: 'text', colSpan: 1 },
+            ]
+        },
 
         enableAdd: true,
         enableEdit: true,

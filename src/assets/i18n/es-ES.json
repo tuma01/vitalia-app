@@ -5,6 +5,7 @@
     },
     "common": {
         "search": "Buscar",
+        "id": "ID",
         "save": "Guardar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
@@ -18,6 +19,8 @@
         "delete_selected": "Eliminar Seleccionados",
         "delete_selection": "Eliminar selección",
         "deselect_all": "Anular selección",
+        "item_selected": "elemento seleccionado",
+        "items_selected": "elementos seleccionados",
         "select_all": "Seleccionar Todo",
         "ok": "Ok",
         "searchPlaceholder": "Buscar {{entityName}}...",
@@ -35,7 +38,53 @@
         "select_health_center": "Selecciona el centro de salud",
         "select_role_and_credentials": "Selecciona tu rol e ingresa tus credenciales",
         "confirm_delete_generic": "¿Estás seguro de eliminar este registro?",
-        "confirmation_delete": "Confirmación de eliminación"
+        "confirmation_delete": "Confirmación de eliminación",
+        "confirm_delete_title": "Confirmar eliminación",
+        "confirm_delete_message": "¿Estás seguro de que deseas eliminar este {{entity}}? Esta acción no se puede deshacer.",
+        "confirm_delete_bulk_message": "¿Estás seguro de que deseas eliminar {{name}} {{entity}}(s) seleccionados? Esta acción no se puede deshacer.",
+        "invalid_field": "Campo inválido",
+        "field_required": "Este campo es obligatorio",
+        "field_min_length": "Mínimo {{min}} caracteres",
+        "field_max_length": "Máximo {{max}} caracteres",
+        "delete_success": "Registro eliminado correctamente",
+        "delete_error": "Error al eliminar. Inténtalo de nuevo"
+    },
+    "crud": {
+        "save_success": "{{entity}} guardado correctamente",
+        "save_error": "Error al guardar {{entity}}",
+        "load_error": "Error al cargar los datos de {{entity}}",
+        "validation_error": "El formulario contiene errores. Por favor, revíselos.",
+        "default_item_name": "Registro"
+    },
+    "validation": {
+        "required": "Este campo es obligatorio",
+        "minlength": "Mínimo {{requiredLength}} caracteres",
+        "maxlength": "Máximo {{requiredLength}} caracteres",
+        "email": "Correo electrónico inválido",
+        "pattern": "Formato inválido"
+    },
+    "entity": {
+        "country": "País",
+        "countries": "Países",
+        "department": "Departamento",
+        "departments": "Departamentos",
+        "province": "Provincia",
+        "provinces": "Provincias",
+        "municipality": "Municipio",
+        "municipalities": "Municipios",
+        "hospital": "Hospital",
+        "patient": "Paciente",
+        "doctor": "Médico",
+        "nurse": "Enfermero/a"
+    },
+    "paginator": {
+        "itemsPerPage": "Elementos por página:",
+        "nextPage": "Página siguiente",
+        "previousPage": "Página anterior",
+        "firstPage": "Primera página",
+        "lastPage": "Última página",
+        "range": "{{start}} - {{end}} de {{length}}",
+        "rangeEmpty": "0 de {{length}}"
     },
     "header": {
         "search": "Buscar...",
@@ -273,8 +322,8 @@
             "fields": {
                 "name": "Nombre",
                 "department": "Departamento",
-                "population": "Population",
-                "surface": "Surface"
+                "population": "Población",
+                "surface": "Superficie"
             }
         },
         "municipality": {

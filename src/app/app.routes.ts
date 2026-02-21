@@ -24,6 +24,8 @@ export const routes: Routes = [
     },
     { path: 'auth/login', redirectTo: 'login', pathMatch: 'full' },
 
+
+
     // ============================================
     // 🟦 PLATFORM DOMAIN (SuperAdmin)
     // ============================================
@@ -39,9 +41,13 @@ export const routes: Routes = [
                 data: { title: 'Platform Dashboard' }
             },
             {
-                path: 'geography/pais',
-                loadChildren: () => import('./platform/pages/geography/pais/pais.routes').then(m => m.routes)
+              path: 'geography',
+              loadChildren: () => import('./platform/pages/geography/geography.routes').then(m => m.routes),
             },
+            // {
+            //     path: 'geography/pais',
+            //     loadChildren: () => import('./platform/pages/geography/pais/pais.routes').then(m => m.routes)
+            // },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },

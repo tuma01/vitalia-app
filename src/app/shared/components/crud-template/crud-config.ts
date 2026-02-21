@@ -35,13 +35,26 @@ export interface CrudActionButton<T = any> {
 export interface CrudFormFieldConfig<T = any> {
     name: keyof T | string;
     label: string;
-    type: 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'textarea';
+    type: 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'textarea' | 'password';
     required?: boolean;
     placeholder?: string;
     disabled?: boolean;
     options?: { label: string; value: any }[]; // para selects
-    validators?: any[]; // Angular Validators
-    col?: string; // Ej: 'col-md-6'
+    validators?: any[];  // Angular Validators (extra, raw)
+    colSpan?: number;    // How many columns to span in the grid
+    // Declarative validator shortcuts
+    minLength?: number;
+    maxLength?: number;
+    min?: number;
+    max?: number;
+    pattern?: string | RegExp;
+}
+
+export interface CrudFormConfig<T = any> {
+    layout: {
+        columns: number;
+    };
+    fields: CrudFormFieldConfig<T>[];
 }
 
 /* ====== Servicio API genérico ====== */
@@ -82,7 +95,7 @@ export interface CrudConfig<T> {
     getId: (entity: T) => number | string; // Agnostic ID resolver
 
     columns: CrudColumnConfig<T>[];
-    formFields?: CrudFormFieldConfig<T>[];
+    form?: CrudFormConfig<T>;
 
     apiService: CrudApiService<T>;
 

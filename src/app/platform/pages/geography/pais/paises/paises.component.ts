@@ -1,10 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
 import { PAIS_CRUD_CONFIG } from '../pais-crud.config';
 import { Country } from 'app/api/models/country';
 import { getOperationColumn } from '@shared/gridcolumn-config';
 import { TranslateService } from '@ngx-translate/core';
+import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 
 @Component({
     selector: 'app-paises',
@@ -14,28 +16,31 @@ import { TranslateService } from '@ngx-translate/core';
     <app-crud-template #crud
       [config]="config"
       (create)="createNew()"
-      (edit)="edit($event)"
     ></app-crud-template>
   `
 })
 export class PaisesComponent {
+    @ViewChild('crud') private crud!: CrudTemplateComponent<Country>;
+
     private router = inject(Router);
     private translate = inject(TranslateService);
+    private confirmDialog = inject(ConfirmDialogService);
+    private snackBar = inject(MatSnackBar);
 
     config = PAIS_CRUD_CONFIG();
 
     constructor() {
-        // Add operation column and link it to the engine's logic
         this.config.columns.push(
-            (getOperationColumn(this.translate, {
-                editHandler: (record: Country) => this.edit(record),
-                deleteHandler: (record: Country) => {
-                    // Logic handled within the grid buttons if needed, 
-                    // or by the engine's onDelete if called via event.
+            (getOperationColumn(
+                this.translate,
+                {
+                    editHandler: (record: Country) => this.edit(record),
+                    deleteHandler: (record: Country) => this.deleteCountry(record),
+                    entityType: 'entity.country',
+                    fieldForMessage: 'name'
                 },
-                entityType: 'entity.country',
-                fieldForMessage: 'name'
-            }) as any)
+                this.confirmDialog
+            ) as any)
         );
     }
 
@@ -46,6 +51,23 @@ export class PaisesComponent {
     edit(record: Country): void {
         this.router.navigate(['/platform/geography/pais/editPais'], {
             queryParams: { id: record.id },
+        });
+    }
+
+    private deleteCountry(record: Country): void {
+        this.config.apiService.delete(record.id!).subscribe({
+            next: () => {
+                this.snackBar.open(
+                    this.translate.instant('common.delete_success'),
+                    undefined, { duration: 3000, panelClass: 'success-snackbar' }
+                );
+                this.crud.loadData();
+            },
+            error: () => this.snackBar.open(
+                this.translate.instant('common.delete_error'),
+                this.translate.instant('common.close'),
+                { duration: 5000, panelClass: 'error-snackbar' }
+            )
         });
     }
 }

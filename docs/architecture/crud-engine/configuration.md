@@ -6,21 +6,25 @@ La interfaz `CrudConfig<T>` es el corazón del motor. Define qué datos mostrar,
 
 ```typescript
 export interface CrudConfig<T> {
-  entityName: string;              // Clave de traducción para el nombre singular (ej: 'entity.country')
-  entityNamePlural: string;        // Clave de traducción para el plural (ej: 'entity.countries')
+  entityName: string;              // Clave i18n singular (ej: 'entity.country')
+  entityNamePlural: string;        // Clave i18n plural (ej: 'entity.countries')
 
-  getId: (entity: T) => number | string; // Función para extraer el ID de la entidad
+  getId: (entity: T) => number | string; // Resolvedor de ID
 
-  columns: CrudColumnConfig<T>[];  // Configuración de columnas del Grid
-  formFields?: CrudFormFieldConfig<T>[]; // Configuración opcional para generación de formularios
+  columns: CrudColumnConfig<T>[];  // Columnas del Grid
 
-  apiService: CrudApiService<T>;   // Servicio que implementa operaciones CRUD
+  form?: {                         // Configuración del Formulario (Declarativo)
+    layout: { columns: number };   // Layout (ej: 2 columnas)
+    fields: CrudFormFieldConfig<T>[];
+  };
 
-  enableDelete?: boolean;          // Habilitar/Deshabilitar eliminación
-  enableEdit?: boolean;            // Habilitar/Deshabilitar edición
-  enableAdd?: boolean;             // Habilitar/Deshabilitar creación
+  apiService: CrudApiService<T>;   // Adaptador API
 
-  table?: TableConfig;             // Opciones de visualización de la tabla (pagination, hover, etc.)
+  enableDelete?: boolean;
+  enableEdit?: boolean;
+  enableAdd?: boolean;
+
+  table?: TableConfig;             // Paginación, hover, etc.
 }
 ```
 
@@ -38,17 +42,28 @@ Define cómo se visualiza la data en el Grid.
 - `header`: Clave de traducción para el encabezado.
 - `type`: 'text', 'number', 'date', 'boolean', 'custom'.
 
-### `formFields` (`CrudFormFieldConfig`)
-(En desarrollo) Define la estructura del formulario reactivo para que el motor pueda generarlo dinámicamente o validar los campos.
+### `form` (`CrudFormConfig`)
+Define la estructura del formulario reactivo. El motor usa esto para:
+1. **Generar campos**: `mat-form-field` con inputs según el `type` ('text', 'number', etc.).
+2. **Validar**: Aplica `Validators.required`, `minLength`, `maxLength`, `min`, `max`, y `pattern` automáticamente.
+3. **Mapear Errores**: Muestra mensajes i18n desde `validation.*` según el error detectado.
+
+Ejemplo de campo:
+```typescript
+{ 
+  name: 'name', 
+  label: 'entity.fields.name', 
+  type: 'text', 
+  required: true, 
+  minLength: 3 
+}
+```
 
 ### `apiService` (`CrudApiService`)
-Interfaz que debe cumplir cualquier servicio que use el motor:
+Interfaz para el adaptador. Se recomienda usar `OpenApiCrudAdapter` para mapear servicios generados por Swagger/OpenAPI.
 ```typescript
-export interface CrudApiService<T> {
-  getAll(): Observable<T[]>;
-  getById(id: any): Observable<T>;
-  create(entity: T): Observable<T>;
-  update(id: any, entity: T): Observable<T>;
-  delete(id: any): Observable<void>;
-}
+apiService: new OpenApiCrudAdapter<Country>(countryService, {
+    getAll: 'getCountries',
+    // ...
+})
 ```

@@ -23,9 +23,9 @@
 
     <mat-menu #languageMenu="matMenu">
         @for (lang of availableLanguages; track lang.code) {
-        <button mat-menu-item (click)="switchLanguage(lang.code)">
+        <button mat-menu-item (click)="switchLanguage(lang.code)" class="lang-menu-item">
             <span class="lang-flag">{{ lang.flag }}</span>
-            <span>{{ lang.name }}</span>
+            <span class="lang-name">{{ lang.name }}</span>
         </button>
         }
     </mat-menu>

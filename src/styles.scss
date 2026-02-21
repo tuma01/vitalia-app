@@ -57,3 +57,23 @@ body {
     background: var(--btn-primary-bg) !important;
     color: var(--btn-primary-text) !important;
 }
+
+/* 4️⃣ TOOLTIP PROXIMITY — bring tooltip slightly closer to trigger */
+.mat-mdc-tooltip-panel-below {
+    margin-top: -8px;
+}
+
+.mat-mdc-tooltip-panel-above {
+    margin-bottom: -8px;
+}
+
+/* 5️⃣ SNACKBAR FEEDBACK */
+.success-snackbar .mdc-snackbar__surface {
+    background: #2e7d32 !important;
+    color: #fff !important;
+}
+
+.error-snackbar .mdc-snackbar__surface {
+    background: #c62828 !important;
+    color: #fff !important;
+}
