@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TranslateModule, TranslateLoader, Translation } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { TranslatePaginatorIntl } from './core/i18n/translate-paginator-intl';
 import { ToastrModule } from 'ngx-toastr';
 
 import { routes } from './app.routes';
@@ -93,6 +95,7 @@ export const appConfig: ApplicationConfig = {
     },
 
     TokenService,
-    RefreshTokenService
+    RefreshTokenService,
+    { provide: MatPaginatorIntl, useClass: TranslatePaginatorIntl }
   ]
 };

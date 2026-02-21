@@ -2,14 +2,13 @@
 <mtx-grid #grid [data]="filteredData" [columns]="columns" [loading]="isLoading"
     [columnResizable]="config.table?.columnResizable ?? false"
     [multiSelectable]="config.table?.multiSelectable ?? false" [rowSelectable]="config.table?.rowSelectable ?? false"
-    [hideRowSelectionCheckbox]="config.table?.hideRowSelectionCheckbox ?? false"
-    [rowHover]="config.table?.rowHover ?? true" [rowStriped]="config.table?.rowStriped ?? true" [showToolbar]="true"
-    [toolbarTemplate]="toolbarTemplate" [toolbarTitle]="''" [showColumnMenuButton]="true"
+    [hideRowSelectionCheckbox]="config.table?.hideRowSelectionCheckbox ?? false" [rowHover]="false" [rowStriped]="false"
+    [showToolbar]="true" [toolbarTemplate]="toolbarTemplate" [toolbarTitle]="''" [showColumnMenuButton]="true"
     [columnMenuButtonType]="'icon'" [columnSortable]="config.table?.columnSortable ?? true"
     [columnMenuButtonIcon]="'view_column'" [columnPinnable]="config.table?.columnPinnable ?? true"
     [expandable]="config.table?.expandable ?? false" [showPaginator]="config.table?.showPaginator ?? true"
     [pageSize]="config.table?.pageSize ?? 10" [pageSizeOptions]="config.table?.pageSizeOptions ?? [5, 10, 50, 100]"
-    (rowSelectedChange)="onRowSelectionChange($event)">
+    (rowSelectedChange)="onRowSelectionChange($event)" (rowClick)="onRowClick($event)" (page)="onPageChange($event)">
 
     <!-- Cell Templates -->
     @for (col of columns; track col.field) {
@@ -22,11 +21,13 @@
     }
     }
 
-    <!-- Toolbar Template (Reorganized Grouping) -->
+    <!-- ── Toolbar ─────────────────────────────────────────────────────── -->
     <ng-template #toolbarTemplate>
         <div class="toolbar-container">
-            <!-- Left cluster: search -->
+
+            <!-- Left: search (always) + selection chip (alongside, when ≥1 selected) -->
             <div class="toolbar-left">
+                <!-- Search always visible -->
                 <mat-form-field appearance="outline" class="search-field mb-0" subscriptSizing="dynamic">
                     <input matInput #searchInput (keyup)="onSearch(searchInput.value)"
                         [placeholder]="'common.search' | translate">
@@ -37,34 +38,50 @@
                     </button>
                     }
                 </mat-form-field>
+
+                <!-- Selection chip — slides in next to search when ≥1 row selected -->
+                @if (selectedRows.length > 0) {
+                <div class="selection-chip">
+                    <mat-icon class="selection-chip-icon">check_circle</mat-icon>
+                    <span class="selection-chip-text">
+                        {{ selectedRows.length }}&nbsp;{{ (selectedRows.length === 1
+                        ? 'common.item_selected'
+                        : 'common.items_selected') | translate }}
+                    </span>
+                </div>
+                }
             </div>
 
-            <!-- Right cluster: Bulk Actions + Primary Actions -->
+            <!-- Right: contextual actions -->
             <div class="toolbar-right">
-                <!-- Delete Selection -->
-                <button mat-icon-button color="warn" [disabled]="selectedRows.length < 2"
-                    (click)="bulkDelete.emit(selectedRows)" matTooltip="{{ 'common.delete_selection' | translate }}"
-                    matTooltipPosition="above">
-                    <mat-icon>delete</mat-icon>
+
+                <!-- Bulk Delete (only when multiSelectable is on) -->
+                @if (config.enableDelete !== false && config.table?.multiSelectable) {
+                <button mat-icon-button class="btn-bulk-delete" [class.has-selection]="selectedRows.length >= 2"
+                    [disabled]="selectedRows.length < 2" (click)="onBulkDelete(selectedRows)" [matTooltip]="selectedRows.length >= 2
+                        ? ('common.delete_selection' | translate) + ' (' + selectedRows.length + ')'
+                        : ('common.delete_selection' | translate)" matTooltipPosition="above">
+                    <mat-icon>delete_sweep</mat-icon>
                 </button>
 
-                <!-- Deselect All (X) -->
-                <button mat-icon-button [disabled]="selectedRows.length < 2" (click)="clearSelection()"
-                    matTooltip="{{ 'common.deselect_all' | translate }}" matTooltipPosition="above">
-                    <mat-icon>highlight_off</mat-icon>
+                <!-- Deselect All -->
+                <button mat-icon-button [disabled]="selectedRows.length < 1" (click)="clearSelection()"
+                    [matTooltip]="'common.deselect_all' | translate" matTooltipPosition="above">
+                    <mat-icon>deselect</mat-icon>
                 </button>
+                }
 
-                <!-- Add (+) -->
+                <!-- Add -->
                 @if (config.enableAdd !== false) {
                 <button mat-icon-button (click)="create.emit()"
-                    matTooltip="{{ 'common.add' | translate }} {{ config.entityName | translate }}"
+                    [matTooltip]="('common.add' | translate) + ' ' + (config.entityName | translate)"
                     matTooltipPosition="above">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
                 }
 
                 <!-- Refresh -->
-                <button mat-icon-button (click)="onRefresh()" matTooltip="{{ 'common.refresh' | translate }}"
+                <button mat-icon-button (click)="onRefresh()" [matTooltip]="'common.refresh' | translate"
                     matTooltipPosition="above">
                     <mat-icon>refresh</mat-icon>
                 </button>
@@ -73,24 +90,80 @@
     </ng-template>
 </mtx-grid>
 } @else {
-<mat-card class="m-16">
-    <mat-card-header class="m-b-16">
-        <mat-card-title>
-            {{ (mode === 'add' ? 'common.add' : 'common.edit') | translate }} {{ config.entityName | translate }}
-        </mat-card-title>
-    </mat-card-header>
+<mat-card class="m-16 crud-form-card">
+    <!-- HEADER (ERP Standard) -->
+    <div class="form-header">
+        <mat-card-header>
+            <mat-card-title>
+                {{ (mode === 'add' ? 'common.add' : 'common.edit') | translate }} {{ config.entityName | translate }}
+            </mat-card-title>
+        </mat-card-header>
+    </div>
 
-    <mat-card-content>
-        <ng-content select="[form]"></ng-content>
+    <!-- BODY (ERP Standard) -->
+    <div class="form-body">
+        <mat-card-content>
+            <!-- Dynamic Form Grid (if config.form is provided) -->
+            @if (config.form && formGroup) {
+            <form [formGroup]="formGroup" class="m-t-16">
+                <div class="dynamic-form-grid"
+                    [style.gridTemplateColumns]="'repeat(' + config.form.layout.columns + ', 1fr)'">
+                    @for (field of config.form.fields; track field.name) {
+                    <div class="form-field-wrapper" [style.gridColumn]="'span ' + (field.colSpan || 1)">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>{{ field.label | translate }}</mat-label>
 
-        <div class="d-flex justify-content-end gap-8 m-t-16">
+                            @if (field.type === 'number') {
+                            <input matInput type="number" [formControlName]="$any(field.name)"
+                                [placeholder]="(field.placeholder || '') | translate">
+                            } @else if (field.type === 'select') {
+                            <mat-select [formControlName]="$any(field.name)">
+                                @for (opt of field.options; track opt.value) {
+                                <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
+                                }
+                            </mat-select>
+                            } @else if (field.type === 'textarea') {
+                            <textarea matInput [formControlName]="$any(field.name)" rows="3"></textarea>
+                            } @else {
+                            <input matInput [type]="field.type" [formControlName]="$any(field.name)"
+                                [placeholder]="(field.placeholder || '') | translate">
+                            }
+
+                            @if (formGroup.get($any(field.name))?.invalid && formGroup.get($any(field.name))?.touched) {
+                            @if (formGroup.get($any(field.name))?.errors?.['required']) {
+                            <mat-error>{{ 'common.field_required' | translate }}</mat-error>
+                            } @else if (formGroup.get($any(field.name))?.errors?.['minlength']) {
+                            <mat-error>{{ 'common.field_min_length' | translate : { min:
+                                formGroup.get($any(field.name))?.errors?.['minlength']?.requiredLength } }}</mat-error>
+                            } @else if (formGroup.get($any(field.name))?.errors?.['maxlength']) {
+                            <mat-error>{{ 'common.field_max_length' | translate : { max:
+                                formGroup.get($any(field.name))?.errors?.['maxlength']?.requiredLength } }}</mat-error>
+                            } @else {
+                            <mat-error>{{ 'common.invalid_field' | translate }}</mat-error>
+                            }
+                            }
+                        </mat-form-field>
+                    </div>
+                    }
+                </div>
+            </form>
+            }
+
+            <!-- Manual content (for custom forms) -->
+            <ng-content select="[form]"></ng-content>
+        </mat-card-content>
+    </div>
+
+    <!-- FOOTER (ERP Standard) -->
+    <div class="form-footer">
+        <mat-card-actions class="d-flex justify-content-end gap-8">
             <button mat-stroked-button type="button" (click)="cancel.emit()">
                 {{ 'common.cancel' | translate }}
             </button>
             <button mat-flat-button color="primary" type="button" (click)="save.emit()">
                 {{ 'common.save' | translate }}
             </button>
-        </div>
-    </mat-card-content>
+        </mat-card-actions>
+    </div>
 </mat-card>
 }

@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
-import { MtxGridColumn, MtxGridColumnButton, MtxGridButtonType } from '@ng-matero/extensions/grid';
-import { ThemePalette } from '@angular/material/core';
+import { MtxGridColumn, MtxGridColumnButton } from '@ng-matero/extensions/grid';
+import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 
 interface CustomButtonOptions {
     icon: string;
@@ -14,61 +14,81 @@ interface OperationColumnOptions {
     deleteHandler?: (record: any) => void;
     customButtons?: CustomButtonOptions[];
     entityType?: string;
+    /** Row field name used to extract the item label for the delete dialog */
     fieldForMessage?: string;
 }
 
 export function getOperationColumn(
     translate: TranslateService,
-    options: OperationColumnOptions
+    options: OperationColumnOptions,
+    confirmDialog?: ConfirmDialogService
 ): MtxGridColumn {
     const buttons: MtxGridColumnButton[] = [];
 
     if (options.editHandler) {
-        buttons.push({
-            type: 'icon' as MtxGridButtonType,
+        const editBtn: MtxGridColumnButton = {
+            type: 'icon',
             icon: 'edit',
-            tooltip: translate.stream('common.edit'),
+            text: '',         // explicit empty — prevents MtxGrid from showing row data
+            tooltip: { message: translate.instant('common.edit'), position: 'below' },
             click: options.editHandler,
-        });
+        };
+        buttons.push(editBtn);
     }
 
     if (options.deleteHandler) {
-        buttons.push({
-            type: 'icon' as MtxGridButtonType,
+        const deleteBtn: MtxGridColumnButton = {
+            type: 'icon',
             icon: 'delete',
-            color: 'warn',
-            tooltip: translate.stream('common.delete'),
+            text: '',         // explicit empty — prevents MtxGrid from showing row data
+            class: 'btn-row-delete',
+            tooltip: { message: translate.instant('common.delete'), position: 'below' },
             click: (record) => {
-                let message: string;
-                if (options.entityType && options.fieldForMessage) {
-                    message = translate.instant('common.confirm_delete', {
-                        entity: translate.instant(options.entityType),
-                        name: record[options.fieldForMessage]
+                const itemName = options.fieldForMessage
+                    ? record[options.fieldForMessage]
+                    : undefined;
+                const entityLabel = options.entityType
+                    ? translate.instant(options.entityType)
+                    : undefined;
+
+                if (confirmDialog) {
+                    confirmDialog.confirm({
+                        titleKey: 'common.confirm_delete_title',
+                        messageKey: 'common.confirm_delete_message',
+                        itemName,
+                        entityLabel,
+                        icon: 'delete_forever',
+                        confirmColor: 'warn',
+                    }).subscribe(confirmed => {
+                        if (confirmed) options.deleteHandler!(record);
                     });
                 } else {
-                    message = translate.instant('common.confirm_delete_generic');
-                }
-                if (confirm(message)) {
-                    options.deleteHandler!(record);
+                    const message = translate.instant('common.confirm_delete_generic');
+                    if (confirm(message)) options.deleteHandler!(record);
                 }
             },
-        });
+        };
+        buttons.push(deleteBtn);
     }
 
     if (options.customButtons) {
-        buttons.push(...options.customButtons.map(btn => ({
-            type: 'icon' as MtxGridButtonType,
-            icon: btn.icon,
-            tooltip: translate.stream(btn.tooltipKey),
-            color: btn.color as ThemePalette,
-            click: btn.handler,
-        })));
+        buttons.push(...options.customButtons.map(btn => {
+            const customBtn: MtxGridColumnButton = {
+                type: 'icon',
+                icon: btn.icon,
+                text: '',
+                tooltip: { message: translate.instant(btn.tooltipKey), position: 'below' },
+                color: btn.color as any,
+                click: btn.handler,
+            };
+            return customBtn;
+        }));
     }
 
     return {
         header: translate.stream('common.operations'),
         field: 'operation',
-        minWidth: 150,
+        minWidth: 120,
         width: '120px',
         pinned: 'right',
         type: 'button',

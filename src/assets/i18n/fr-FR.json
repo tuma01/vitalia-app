@@ -5,6 +5,7 @@
     },
     "common": {
         "search": "Rechercher",
+        "id": "ID",
         "save": "Enregistrer",
         "cancel": "Annuler",
         "delete": "Supprimer",
@@ -16,6 +17,10 @@
         "login": "Connexion",
         "delete_all": "Supprimer Tout",
         "delete_selected": "Supprimer Sélectionnés",
+        "delete_selection": "Supprimer la sélection",
+        "deselect_all": "Tout désélectionner",
+        "item_selected": "élément sélectionné",
+        "items_selected": "éléments sélectionnés",
         "select_all": "Tout Sélectionner",
         "ok": "Ok",
         "searchPlaceholder": "Rechercher {{entityName}}...",
@@ -33,7 +38,53 @@
         "select_health_center": "Sélectionnez le centre de santé",
         "select_role_and_credentials": "Sélectionnez votre rôle et entrez vos identifiants",
         "confirm_delete_generic": "Êtes-vous sûr de vouloir supprimer ce registre?",
-        "confirmation_delete": "Confirmation de suppression"
+        "confirmation_delete": "Confirmation de suppression",
+        "confirm_delete_title": "Confirmer la suppression",
+        "confirm_delete_message": "Êtes-vous sûr de vouloir supprimer ce {{entity}} ? Cette action est irréversible.",
+        "confirm_delete_bulk_message": "Êtes-vous sûr de vouloir supprimer {{name}} {{entity}}(s) sélectionnés ? Cette action est irréversible.",
+        "invalid_field": "Champ invalide",
+        "field_required": "Ce champ est obligatoire",
+        "field_min_length": "Minimum {{min}} caractères",
+        "field_max_length": "Maximum {{max}} caractères",
+        "delete_success": "Enregistrement supprimé avec succès",
+        "delete_error": "Erreur lors de la suppression. Veuillez réessayer"
+    },
+    "entity": {
+        "country": "Pays",
+        "countries": "Pays",
+        "department": "Département",
+        "departments": "Départements",
+        "province": "Province",
+        "provinces": "Provinces",
+        "municipality": "Municipalité",
+        "municipalities": "Municipalités",
+        "hospital": "Hôpital",
+        "patient": "Patient",
+        "doctor": "Médecin",
+        "nurse": "Infirmier/ère"
+    },
+    "crud": {
+        "save_success": "{{entity}} enregistré avec succès",
+        "save_error": "Erreur lors de l'enregistrement de {{entity}}",
+        "load_error": "Erreur lors du chargement des données de {{entity}}",
+        "validation_error": "Le formulaire contient des erreurs. Veuillez les corriger.",
+        "default_item_name": "Enregistrement"
+    },
+    "validation": {
+        "required": "Ce champ est obligatoire",
+        "minlength": "Minimum {{requiredLength}} caractères",
+        "maxlength": "Maximum {{requiredLength}} caractères",
+        "email": "Adresse e-mail invalide",
+        "pattern": "Format invalide"
+    },
+    "paginator": {
+        "itemsPerPage": "Éléments par page:",
+        "nextPage": "Page suivante",
+        "previousPage": "Page précédente",
+        "firstPage": "Première page",
+        "lastPage": "Dernière page",
+        "range": "{{start}} - {{end}} sur {{length}}",
+        "rangeEmpty": "0 sur {{length}}"
     },
     "header": {
         "search": "Rechercher...",

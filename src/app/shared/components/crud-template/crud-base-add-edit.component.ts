@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { CrudConfig } from './crud-config';
 
 @Injectable()
 export abstract class CrudBaseAddEditComponent<T> {
@@ -23,7 +24,42 @@ export abstract class CrudBaseAddEditComponent<T> {
     protected abstract entityNameKey: string;
     protected abstract getSuccessRoute(): any[];
     protected abstract saveEntity(formData: T): Observable<T>;
-    protected abstract loadEntityData(id: any): void;
+
+    /** Override in edit components to load entity data by ID. */
+    protected loadEntityData(_id: any): void { }
+
+    /**
+     * Builds a FormGroup from CrudConfig.form.fields, applying all declarative
+     * validators (required, minLength, maxLength, min, max, pattern, plus raw validators[]).
+     * Use this in add/edit components to avoid duplicating validation logic.
+     */
+    static buildFormFromConfig<T>(fb: FormBuilder, config: CrudConfig<T>): FormGroup {
+        const controls: Record<string, any> = {};
+
+        if (!config.form?.fields) {
+            return fb.group({});
+        }
+
+        for (const field of config.form.fields) {
+            const validators: any[] = [];
+
+            if (field.required) validators.push(Validators.required);
+            if (field.minLength != null) validators.push(Validators.minLength(field.minLength));
+            if (field.maxLength != null) validators.push(Validators.maxLength(field.maxLength));
+            if (field.min != null) validators.push(Validators.min(field.min));
+            if (field.max != null) validators.push(Validators.max(field.max));
+            if (field.pattern != null) validators.push(Validators.pattern(field.pattern as string));
+            if (field.validators?.length) validators.push(...field.validators);
+
+            const defaultValue = field.type === 'number' ? null : '';
+            controls[field.name as string] = [
+                { value: defaultValue, disabled: field.disabled ?? false },
+                validators
+            ];
+        }
+
+        return fb.group(controls);
+    }
 
     onSubmit(): void {
         this.submitted = true;
@@ -31,7 +67,7 @@ export abstract class CrudBaseAddEditComponent<T> {
 
         if (this.form.invalid) {
             this.form.markAllAsTouched();
-            this.showErrorMessage('crud.validation.requiredFields');
+            this.showErrorMessage('crud.validation_error');
             return;
         }
 

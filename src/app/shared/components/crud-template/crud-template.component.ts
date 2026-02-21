@@ -11,6 +11,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MtxGridModule, MtxGrid } from '@ng-matero/extensions/grid';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -36,6 +37,7 @@ import { CrudConfig, CrudMode } from './crud-config';
         MatIconModule,
         MatToolbarModule,
         MatTooltipModule,
+        MatSnackBarModule,
         MatDatepickerModule
     ],
     templateUrl: './crud-template.component.html',
@@ -52,6 +54,7 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> {
     @Output() cancel = new EventEmitter<void>();
 
     @Input() cellTemplates: { [key: string]: TemplateRef<any> } = {};
+    @Input() formGroup?: any; // The ReactiveForm from the implementation
 
     @ViewChild('grid') grid!: MtxGrid;
 
@@ -62,5 +65,24 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> {
     clearSelection(): void {
         this.grid.rowSelection.clear();
         this.selectedRows = [];
+    }
+
+    /**
+     * Row click → toggle row selection (modern UX: clicking anywhere on a row
+     * selects/deselects it, not just the checkbox).
+     */
+    onRowClick(event: { rowData: T; index: number }): void {
+        if (!this.config.table?.multiSelectable && !this.config.table?.rowSelectable) {
+            return; // selection not enabled for this config
+        }
+        const row = event.rowData;
+        const alreadySelected = this.selectedRows.some(r => r === row);
+        if (alreadySelected) {
+            this.grid.rowSelection.deselect(row);
+            this.selectedRows = this.selectedRows.filter(r => r !== row);
+        } else {
+            this.grid.rowSelection.select(row);
+            this.selectedRows = [...this.selectedRows, row];
+        }
     }
 }

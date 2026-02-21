@@ -40,6 +40,71 @@
             margin-left: 0 !important;
             gap: 8px !important;
         }
+
+        /* ── Row delete danger hover ───────────────────────────────────────
+           At rest: neutral grey icon (non-alarming).
+           On hover: red ripple background + red icon — clear danger signal.
+           ──────────────────────────────────────────────────────────────── */
+        .btn-row-delete {
+            transition: background 180ms ease;
+
+            mat-icon {
+                transition: color 180ms ease;
+            }
+
+            &:hover {
+                background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent) !important;
+
+                mat-icon {
+                    color: var(--mat-sys-error) !important;
+                }
+            }
+        }
+
+        /* ── Cell overflow clip — prevents text from adjacent columns
+           bleeding into the pinned 'operation' column or vice versa ────── */
+        .mat-mdc-cell {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ── Pinned column solid background ─────────────────────────────────
+           The 'operation' column is sticky-right. Without a solid background
+           it becomes transparent and data from scrolled columns shows through.
+           We inherit from the row so it respects zebra + hover. ─────────── */
+        .mat-column-operation {
+            background: inherit !important;
+        }
+
+        /* ── Zebra striping + row hover ─────────────────────────────────────
+           Even rows: transparent (base surface).
+           Odd rows:  very light primary tint — barely noticeable.
+           Hover:     slightly stronger tint + smooth transition.
+           ──────────────────────────────────────────────────────────────── */
+        .mat-mdc-row {
+            transition: background-color 150ms ease;
+            cursor: pointer;
+            /* rows are clickable — toggle selection */
+
+            &:nth-child(even) {
+                background-color: var(--mat-sys-surface);
+            }
+
+            &:nth-child(odd) {
+                background-color: color-mix(in srgb, var(--mat-sys-primary) 5%, var(--mat-sys-surface));
+            }
+
+            &:hover {
+                background-color: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface)) !important;
+            }
+
+            /* Selected row — stronger primary tint */
+            &.mdc-data-table__row--selected,
+            &.mat-mdc-row-selected {
+                background-color: color-mix(in srgb, var(--mat-sys-primary) 18%, var(--mat-sys-surface)) !important;
+            }
+        }
     }
 }
 
@@ -68,6 +133,46 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+    }
+}
+
+/* ── Selection mode chip ─────────────────────────────────────────────────────
+   Replaces the search field in the toolbar when ≥1 rows are selected.
+   Shows "X items selected" with a check_circle icon — like Gmail / Drive. */
+.selection-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 10px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--mat-sys-primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mat-sys-primary) 30%, transparent);
+    animation: chip-in 180ms ease;
+
+    .selection-chip-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--mat-sys-primary);
+    }
+
+    .selection-chip-text {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--mat-sys-primary);
+        white-space: nowrap;
+    }
+}
+
+@keyframes chip-in {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
@@ -116,6 +221,64 @@
     }
 }
 
+.dynamic-form-grid {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+@media (max-width: 960px) {
+    .dynamic-form-grid {
+        grid-template-columns: 1fr !important;
+
+        .form-field-wrapper {
+            grid-column: span 1 !important;
+        }
+    }
+}
+
+.crud-form-card {
+    padding: 0 !important;
+    overflow: hidden;
+
+    .form-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--sys-border-subtle);
+
+        mat-card-header {
+            padding: 0;
+            margin: 0;
+        }
+
+        mat-card-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+    }
+
+    .form-body {
+        padding: 24px;
+    }
+
+    .form-footer {
+        padding: 16px 24px;
+        border-top: 1px solid var(--sys-border-subtle);
+        background-color: var(--sys-surface-container-low);
+
+        mat-card-actions {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+    }
+}
+
 .success-snackbar {
     background-color: var(--mat-sys-primary);
     color: var(--mat-sys-on-primary);
@@ -124,4 +287,33 @@
 .error-snackbar {
     background-color: var(--mat-sys-error);
     color: var(--mat-sys-on-error);
+}
+
+/* ── Bulk Delete Danger Button ─────────────────────────────────────────────
+   At rest (has-selection): icon is neutral grey — not alarming yet.
+   On hover: icon + ripple turn error-red — obvious danger signal.
+   Disabled: standard muted opacity.
+   ────────────────────────────────────────────────────────────────────────── */
+.btn-bulk-delete {
+    transition: color 180ms ease;
+
+    mat-icon {
+        transition: color 180ms ease;
+    }
+
+    &:not([disabled]) {
+        &.has-selection {
+            mat-icon {
+                color: var(--mat-sys-on-surface-variant);
+            }
+
+            &:hover {
+                background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+
+                mat-icon {
+                    color: var(--mat-sys-error);
+                }
+            }
+        }
+    }
 }
