@@ -1,13 +1,15 @@
 @if (mode === 'list') {
 <mtx-grid #grid [data]="filteredData" [columns]="columns" [loading]="isLoading"
+    [class.mtx-grid-resizable]="config.table?.columnResizable"
     [columnResizable]="config.table?.columnResizable ?? false"
     [multiSelectable]="config.table?.multiSelectable ?? false" [rowSelectable]="config.table?.rowSelectable ?? false"
     [hideRowSelectionCheckbox]="config.table?.hideRowSelectionCheckbox ?? false" [rowHover]="false" [rowStriped]="false"
-    [showToolbar]="true" [toolbarTemplate]="toolbarTemplate" [toolbarTitle]="''" [showColumnMenuButton]="true"
-    [columnMenuButtonType]="'icon'" [columnSortable]="config.table?.columnSortable ?? true"
-    [columnMenuButtonIcon]="'view_column'" [columnPinnable]="config.table?.columnPinnable ?? true"
-    [expandable]="config.table?.expandable ?? false" [showPaginator]="config.table?.showPaginator ?? true"
-    [pageSize]="config.table?.pageSize ?? 10" [pageSizeOptions]="config.table?.pageSizeOptions ?? [5, 10, 50, 100]"
+    [showToolbar]="true" [toolbarTemplate]="toolbarTemplate" [toolbarTitle]="''"
+    [showColumnMenuButton]="config.table?.showColumnMenuButton ?? true" [columnMenuButtonType]="'icon'"
+    [columnSortable]="config.table?.columnSortable ?? true" [columnMenuButtonIcon]="'view_column'"
+    [columnPinnable]="config.table?.columnPinnable ?? true" [expandable]="config.table?.expandable ?? false"
+    [showPaginator]="config.table?.showPaginator ?? true" [pageSize]="config.table?.pageSize ?? 10"
+    [pageSizeOptions]="config.table?.pageSizeOptions ?? [5, 10, 50, 100]"
     (rowSelectedChange)="onRowSelectionChange($event)" (rowClick)="onRowClick($event)" (page)="onPageChange($event)">
 
     <!-- Cell Templates -->

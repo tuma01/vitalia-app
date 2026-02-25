@@ -24,11 +24,7 @@ export const PAIS_CRUD_CONFIG = (): CrudConfig<Country> => {
         columns: [
             { field: 'id', header: 'common.id', sortable: true, width: '80px' },
             { field: 'iso', header: 'geography.country.fields.code', sortable: true, width: '100px' },
-            { field: 'iso3', header: 'geography.country.fields.code3', sortable: true, width: '100px' },
-            { field: 'name', header: 'geography.country.fields.name', sortable: true },
-            { field: 'niceName', header: 'geography.country.fields.niceName', sortable: true },
-            { field: 'phoneCode', header: 'geography.country.fields.phoneCode', sortable: true },
-            { field: 'currency', header: 'geography.country.fields.currency', sortable: true },
+            { field: 'niceName', header: 'geography.country.fields.name', sortable: true }, // [FLEXIBLE] Takes remaining space
         ],
 
         form: {
@@ -52,6 +48,7 @@ export const PAIS_CRUD_CONFIG = (): CrudConfig<Country> => {
             pageSize: 10,
             rowStriped: true,
             showToolbar: true,
+            columnResizable: true,
             multiSelectable: true,
             rowSelectable: true,
             hideRowSelectionCheckbox: false

@@ -304,9 +304,10 @@
             "edit": "Edit Department",
             "fields": {
                 "name": "Name",
-                "country": "Country",
+                "country": "Country Name",
                 "population": "Population",
-                "surface": "Surface"
+                "surface": "Surface",
+                "countryId": "Country ID"
             }
         },
         "province": {
@@ -317,9 +318,10 @@
             "edit": "Edit Province",
             "fields": {
                 "name": "Name",
-                "department": "Department",
+                "department": "Department Name",
                 "population": "Population",
-                "surface": "Surface"
+                "surface": "Surface",
+                "departmentId": "Department ID"
             }
         },
         "municipality": {
@@ -330,11 +332,12 @@
             "edit": "Edit Municipality",
             "fields": {
                 "name": "Name",
-                "province": "Province",
+                "province": "Province Name",
                 "population": "Population",
                 "surface": "Surface",
+                "address": "Address",
                 "code_municipality": "Municipality Code",
-                "address": "Address"
+                "provinciaId": "Province ID"
             }
         }
     },

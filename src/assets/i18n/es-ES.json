@@ -308,9 +308,10 @@
             "edit": "Editar Departamento",
             "fields": {
                 "name": "Nombre",
-                "country": "País",
+                "country": "Nombre del País",
                 "population": "Población",
-                "surface": "Superficie"
+                "surface": "Superficie",
+                "countryId": "ID de País"
             }
         },
         "province": {
@@ -321,9 +322,10 @@
             "edit": "Editar Provincia",
             "fields": {
                 "name": "Nombre",
-                "department": "Departamento",
+                "department": "Nombre del Departamento",
                 "population": "Población",
-                "surface": "Superficie"
+                "surface": "Superficie",
+                "departmentId": "ID de Departamento"
             }
         },
         "municipality": {
@@ -334,11 +336,12 @@
             "edit": "Editar Municipio",
             "fields": {
                 "name": "Nombre",
-                "province": "Provincia",
+                "province": "Nombre de la Provincia",
                 "population": "Población",
                 "surface": "Superficie",
-                "code_municipality": "Código del Municipio",
-                "address": "Dirección"
+                "address": "Dirección",
+                "code_municipality": "Código de Municipio",
+                "provinciaId": "ID de Provincia"
             }
         }
     },

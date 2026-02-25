@@ -18,6 +18,14 @@ export const routes: Routes = [
         path: 'departamento',
         loadChildren: () => import('./departamento/departamento.routes').then(m => m.routes),
       },
+      {
+        path: 'provincia',
+        loadChildren: () => import('./provincia/provincia.routes').then(m => m.routes),
+      },
+      {
+        path: 'municipio',
+        loadChildren: () => import('./municipio/municipio.routes').then(m => m.routes),
+      },
     ]
 
   }

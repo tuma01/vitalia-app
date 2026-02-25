@@ -16,8 +16,12 @@ export interface CrudColumnConfig<T = any> {
     header: string;
     sortable?: boolean;
     width?: string;
+    minWidth?: number;
+    maxWidth?: number;
     type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
     formatter?: (row: T) => string;
+    showTooltip?: boolean;
+    class?: string;
 }
 
 /* ====== Botones de acción ====== */
@@ -86,6 +90,7 @@ export interface TableConfig {
     showPaginator?: boolean;
     multiSelectOnlyPage?: boolean;
     columnMenuButtonIcon?: string;
+    showColumnMenuButton?: boolean;
 }
 
 export interface CrudConfig<T> {

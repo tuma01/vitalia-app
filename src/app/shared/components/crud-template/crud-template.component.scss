@@ -1,19 +1,30 @@
 /* 🛠️ MTX GRID INTERNAL TOOLBAR FIXES */
 :host ::ng-deep {
     mtx-grid {
+
+        /* ── Hide resizer handle if not enabled ─────────────────────────── */
+        &:not(.mtx-grid-resizable) .mtx-grid-column-resizer {
+            display: none !important;
+        }
+
         .mtx-grid-toolbar {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: nowrap !important;
+            flex-wrap: wrap !important; // Allow wrapping on mobile
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 0 16px !important;
-            min-height: 66px !important;
-            /* Increased by 10px (from 56px) */
+            padding: 8px 16px !important; // Reduced padding for mobile
+            min-height: auto !important; // Flexible height
             border-bottom: 1px solid var(--sys-border-subtle) !important;
             background: transparent !important;
-            gap: 16px !important;
-            overflow: hidden !important;
+            gap: 8px !important;
+            overflow: visible !important; // Allow tooltips/menus to show
+        }
+
+        /* ── Force static layout to respect set widths ─────────────────────── */
+        .mat-mdc-table {
+            table-layout: fixed !important;
+            width: 100% !important;
         }
 
         .mtx-grid-toolbar-title {
@@ -23,12 +34,12 @@
         .mtx-grid-toolbar-template {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: nowrap !important;
+            flex-wrap: wrap !important; // Support stacking
             align-items: center !important;
             justify-content: space-between !important;
             width: 100% !important;
             flex: 1 1 auto !important;
-            height: 100% !important;
+            height: auto !important;
         }
 
         .mtx-grid-actions {
@@ -69,12 +80,16 @@
             white-space: nowrap;
         }
 
+
         /* ── Pinned column solid background ─────────────────────────────────
            The 'operation' column is sticky-right. Without a solid background
            it becomes transparent and data from scrolled columns shows through.
            We inherit from the row so it respects zebra + hover. ─────────── */
         .mat-column-operation {
             background: inherit !important;
+            padding: 0 4px !important;
+            text-align: center !important;
+            vertical-align: middle !important;
         }
 
         /* ── Zebra striping + row hover ─────────────────────────────────────
@@ -112,19 +127,29 @@
 .toolbar-container {
     display: flex !important;
     flex-direction: row !important;
-    flex-wrap: nowrap !important;
+    flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100%;
-    height: 100%;
-    gap: 16px;
+    height: auto;
+    gap: 12px;
+    padding: 8px 0;
 
     .toolbar-left,
     .toolbar-right {
         display: flex !important;
         align-items: center !important;
         gap: 8px;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
+    }
+
+    .toolbar-left {
+        flex: 1 1 300px;
+    }
+
+    .toolbar-right {
+        justify-content: flex-end;
+        flex-shrink: 0;
     }
 
     button[mat-icon-button] {
@@ -133,6 +158,37 @@
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+    }
+}
+
+/* 📱 Mobile Adjustments for Toolbar (< 600px) */
+@media (max-width: 600px) {
+    .toolbar-container {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 16px;
+
+        .toolbar-left {
+            width: 100% !important;
+            flex: none !important;
+        }
+
+        .toolbar-right {
+            justify-content: space-between !important;
+            width: 100% !important;
+            border-top: 1px dashed var(--sys-border-subtle);
+            padding-top: 12px;
+        }
+
+        .search-field {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+
+        .selection-chip {
+            width: 100%;
+            justify-content: center;
+        }
     }
 }
 
@@ -176,12 +232,12 @@
     }
 }
 
-/* 🔍 SEARCH FIELD - FINAL SAFE COMPACT VERSION */
+/* 🔍 SEARCH FIELD - RESPONSIVE VERSION */
 .search-field {
     width: 350px;
-    min-width: 200px;
+    max-width: 100%;
     margin-bottom: 0 !important;
-    flex-shrink: 0;
+    flex-shrink: 1;
 
     ::ng-deep {
         .mat-mdc-form-field-subscript-wrapper {
