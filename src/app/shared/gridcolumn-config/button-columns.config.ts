@@ -88,8 +88,9 @@ export function getOperationColumn(
     return {
         header: translate.stream('common.operations'),
         field: 'operation',
-        minWidth: 120,
-        width: '120px',
+        minWidth: 110,
+        width: '110px',
+        maxWidth: 110,
         pinned: 'right',
         type: 'button',
         buttons,

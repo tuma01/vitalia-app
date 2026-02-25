@@ -2,16 +2,16 @@ import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { DEPARTAMENTO_CRUD_CONFIG } from '../departamento-crud.config';
-import { Departamento } from 'app/api/models/departamento';
+import { MUNICIPIO_CRUD_CONFIG } from '../municipio-crud.config';
+import { Municipio } from 'app/api/models/municipio';
 import { getOperationColumn } from '@shared/gridcolumn-config';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
-import { CountryService } from 'app/api/services/country.service';
-import { Country } from 'app/api/models/country';
+import { ProvinciaService } from 'app/api/services/provincia.service';
+import { Provincia } from 'app/api/models/provincia';
 
 @Component({
-    selector: 'app-departamentos',
+    selector: 'app-municipios',
     standalone: true,
     imports: [CrudTemplateComponent],
     template: `
@@ -21,26 +21,26 @@ import { Country } from 'app/api/models/country';
     ></app-crud-template>
   `
 })
-export class DepartamentosComponent implements OnInit {
-    @ViewChild('crud') private crud!: CrudTemplateComponent<Departamento>;
+export class MunicipiosComponent implements OnInit {
+    @ViewChild('crud') private crud!: CrudTemplateComponent<Municipio>;
 
     private router = inject(Router);
     private translate = inject(TranslateService);
     private confirmDialog = inject(ConfirmDialogService);
     private snackBar = inject(MatSnackBar);
-    private countryService = inject(CountryService);
+    private provinciaService = inject(ProvinciaService);
 
-    config = DEPARTAMENTO_CRUD_CONFIG();
-    private countries: Country[] = [];
+    config = MUNICIPIO_CRUD_CONFIG();
+    private provincias: Provincia[] = [];
 
     constructor() {
         this.config.columns.push(
             (getOperationColumn(
                 this.translate,
                 {
-                    editHandler: (record: Departamento) => this.edit(record),
-                    deleteHandler: (record: Departamento) => this.deleteDepartamento(record),
-                    entityType: 'entity.department',
+                    editHandler: (record: Municipio) => this.edit(record),
+                    deleteHandler: (record: Municipio) => this.deleteMunicipio(record),
+                    entityType: 'entity.municipality',
                     fieldForMessage: 'nombre'
                 },
                 this.confirmDialog
@@ -49,40 +49,40 @@ export class DepartamentosComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.loadCountries();
+        this.loadProvincias();
     }
 
-    private loadCountries(): void {
-        this.countryService.getAllCountries().subscribe({
-            next: (countries) => {
-                this.countries = countries;
-                this.updateCountryFormatter();
+    private loadProvincias(): void {
+        this.provinciaService.getAllProvincias().subscribe({
+            next: (provincias) => {
+                this.provincias = provincias;
+                this.updateProvinciaFormatter();
             }
         });
     }
 
-    private updateCountryFormatter(): void {
-        const countryCol = this.config.columns.find(c => c.field === 'countryId');
-        if (countryCol) {
-            countryCol.formatter = (row: Departamento) => {
-                const country = this.countries.find(c => c.id === row.countryId);
-                return country ? country.name : (row.countryId?.toString() || '');
+    private updateProvinciaFormatter(): void {
+        const provCol = this.config.columns.find(c => c.field === 'provinciaId');
+        if (provCol) {
+            provCol.formatter = (row: Municipio) => {
+                const prov = this.provincias.find(p => p.id === row.provinciaId);
+                return prov ? prov.nombre : (row.provinciaId?.toString() || '');
             };
             this.crud.refreshColumns();
         }
     }
 
     createNew(): void {
-        this.router.navigate(['/platform/geography/departamento/addDepartamento']);
+        this.router.navigate(['/platform/geography/municipio/addMunicipio']);
     }
 
-    edit(record: Departamento): void {
-        this.router.navigate(['/platform/geography/departamento/editDepartamento'], {
+    edit(record: Municipio): void {
+        this.router.navigate(['/platform/geography/municipio/editMunicipio'], {
             queryParams: { id: record.id },
         });
     }
 
-    private deleteDepartamento(record: Departamento): void {
+    private deleteMunicipio(record: Municipio): void {
         this.config.apiService.delete(record.id!).subscribe({
             next: () => {
                 this.snackBar.open(

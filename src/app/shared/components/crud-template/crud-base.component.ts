@@ -35,11 +35,25 @@ export abstract class CrudBaseComponent<T> implements OnInit {
     }
 
     protected initColumns(): void {
+        this.refreshColumns();
+        console.log('[CrudBase] Columns initialized:', this.columns);
+    }
+
+    public refreshColumns(): void {
         this.columns = this.config.columns.map(col => {
+            // If width is a string like '100px', extract the number for minWidth/maxWidth
+            const widthMatch = typeof col.width === 'string' ? col.width.match(/(\d+)px/) : null;
+            const widthPx = widthMatch ? parseInt(widthMatch[1]) : undefined;
+
             const mtxCol: MtxGridColumn = {
                 ...col,
                 field: col.field as string,
-                type: (col.type || 'text') as MtxGridColumnType
+                type: (col.type || 'text') as MtxGridColumnType,
+                width: col.width,
+                // Assign minWidth and maxWidth if not explicitly provided, to force the width
+                minWidth: col.minWidth ?? widthPx,
+                maxWidth: col.maxWidth ?? widthPx,
+                class: col.class
             };
 
             if (typeof col.header === 'string') {
@@ -48,7 +62,6 @@ export abstract class CrudBaseComponent<T> implements OnInit {
 
             return mtxCol;
         });
-        console.log('[CrudBase] Columns initialized:', this.columns);
     }
 
     loadData(): void {

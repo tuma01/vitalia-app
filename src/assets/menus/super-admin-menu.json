@@ -169,14 +169,14 @@
                             "id": "departamentos-add",
                             "name": "addDepartamento",
                             "type": "link",
-                            "route": "/platform/geography/departamento/add",
+                            "route": "/platform/geography/departamento/addDepartamento",
                             "visible": true
                         },
                         {
                             "id": "departamentos-edit",
                             "name": "editDepartamento",
                             "type": "link",
-                            "route": "/platform/geography/departamento/edit",
+                            "route": "/platform/geography/departamento/editDepartamento",
                             "visible": false
                         }
                     ]
@@ -191,21 +191,21 @@
                             "id": "provincias-list",
                             "name": "provincias",
                             "type": "link",
-                            "route": "/super-admin/geography/provincia/provincias",
+                            "route": "/platform/geography/provincia/provincias",
                             "visible": true
                         },
                         {
                             "id": "provincias-add",
                             "name": "addProvincia",
                             "type": "link",
-                            "route": "/super-admin/geography/provincia/add",
+                            "route": "/platform/geography/provincia/addProvincia",
                             "visible": true
                         },
                         {
                             "id": "provincias-edit",
                             "name": "editProvincia",
                             "type": "link",
-                            "route": "/super-admin/geography/provincia/edit",
+                            "route": "/platform/geography/provincia/editProvincia",
                             "visible": false
                         }
                     ]
@@ -220,21 +220,21 @@
                             "id": "municipios-list",
                             "name": "municipios",
                             "type": "link",
-                            "route": "/super-admin/geography/municipio/municipios",
+                            "route": "/platform/geography/municipio/municipios",
                             "visible": true
                         },
                         {
                             "id": "municipios-add",
                             "name": "addMunicipio",
                             "type": "link",
-                            "route": "/super-admin/geography/municipio/add",
+                            "route": "/platform/geography/municipio/addMunicipio",
                             "visible": true
                         },
                         {
                             "id": "municipios-edit",
                             "name": "editMunicipio",
                             "type": "link",
-                            "route": "/super-admin/geography/municipio/edit",
+                            "route": "/platform/geography/municipio/editMunicipio",
                             "visible": false
                         }
                     ]

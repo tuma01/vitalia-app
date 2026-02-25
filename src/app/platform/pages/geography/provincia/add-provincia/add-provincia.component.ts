@@ -5,12 +5,12 @@ import { Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrudBaseAddEditComponent } from '@shared/components/crud-template/crud-base-add-edit.component';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { DEPARTAMENTO_CRUD_CONFIG } from '../departamento-crud.config';
-import { Departamento } from 'app/api/models/departamento';
-import { CountryService } from 'app/api/services/country.service';
+import { PROVINCIA_CRUD_CONFIG } from '../provincia-crud.config';
+import { Provincia } from 'app/api/models/provincia';
+import { DepartamentoService } from 'app/api/services/departamento.service';
 
 @Component({
-    selector: 'app-add-departamento',
+    selector: 'app-add-provincia',
     standalone: true,
     imports: [CrudTemplateComponent, TranslateModule],
     template: `
@@ -23,10 +23,10 @@ import { CountryService } from 'app/api/services/country.service';
         </app-crud-template>
     `
 })
-export class AddDepartamentoComponent extends CrudBaseAddEditComponent<Departamento> implements OnInit {
-    protected override entityNameKey = 'entity.department';
-    public readonly config = DEPARTAMENTO_CRUD_CONFIG();
-    private countryService = inject(CountryService);
+export class AddProvinciaComponent extends CrudBaseAddEditComponent<Provincia> implements OnInit {
+    protected override entityNameKey = 'entity.province';
+    public readonly config = PROVINCIA_CRUD_CONFIG();
+    private departamentoService = inject(DepartamentoService);
     private cdr = inject(ChangeDetectorRef);
 
     protected override form: FormGroup = CrudBaseAddEditComponent.buildFormFromConfig(
@@ -34,17 +34,17 @@ export class AddDepartamentoComponent extends CrudBaseAddEditComponent<Departame
     );
 
     ngOnInit(): void {
-        this.loadCountries();
+        this.loadDepartamentos();
     }
 
-    private loadCountries(): void {
-        this.countryService.getAllCountries().subscribe({
-            next: (countries) => {
-                const countryField = this.config.form?.fields.find(f => f.name === 'countryId');
-                if (countryField) {
-                    countryField.options = countries.map(c => ({
-                        label: (c.name || c.niceName || c.id?.toString() || ''),
-                        value: c.id
+    private loadDepartamentos(): void {
+        this.departamentoService.getAllDepartamentos().subscribe({
+            next: (departamentos) => {
+                const deptField = this.config.form?.fields.find(f => f.name === 'departamentoId');
+                if (deptField) {
+                    deptField.options = departamentos.map(d => ({
+                        label: d.nombre || d.id?.toString() || '',
+                        value: d.id
                     }));
                     this.cdr.detectChanges();
                 }
@@ -53,10 +53,10 @@ export class AddDepartamentoComponent extends CrudBaseAddEditComponent<Departame
     }
 
     protected override getSuccessRoute(): any[] {
-        return ['/platform/geography/departamento/departamentos'];
+        return ['/platform/geography/provincia/provincias'];
     }
 
-    protected override saveEntity(formData: Departamento): Observable<Departamento> {
+    protected override saveEntity(formData: Provincia): Observable<Provincia> {
         return this.config.apiService.create(formData);
     }
 

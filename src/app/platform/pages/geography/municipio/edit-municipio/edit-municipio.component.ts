@@ -5,12 +5,12 @@ import { Observable, forkJoin } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrudBaseAddEditComponent } from '@shared/components/crud-template/crud-base-add-edit.component';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { DEPARTAMENTO_CRUD_CONFIG } from '../departamento-crud.config';
-import { Departamento } from 'app/api/models/departamento';
-import { CountryService } from 'app/api/services/country.service';
+import { MUNICIPIO_CRUD_CONFIG } from '../municipio-crud.config';
+import { Municipio } from 'app/api/models/municipio';
+import { ProvinciaService } from 'app/api/services/provincia.service';
 
 @Component({
-    selector: 'app-edit-departamento',
+    selector: 'app-edit-municipio',
     standalone: true,
     imports: [CrudTemplateComponent, TranslateModule],
     template: `
@@ -23,10 +23,10 @@ import { CountryService } from 'app/api/services/country.service';
         </app-crud-template>
     `
 })
-export class EditDepartamentoComponent extends CrudBaseAddEditComponent<Departamento> implements OnInit {
-    protected override entityNameKey = 'entity.department';
-    public readonly config = DEPARTAMENTO_CRUD_CONFIG();
-    private countryService = inject(CountryService);
+export class EditMunicipioComponent extends CrudBaseAddEditComponent<Municipio> implements OnInit {
+    protected override entityNameKey = 'entity.municipality';
+    public readonly config = MUNICIPIO_CRUD_CONFIG();
+    private provinciaService = inject(ProvinciaService);
     private cdr = inject(ChangeDetectorRef);
 
     protected override form: FormGroup = CrudBaseAddEditComponent.buildFormFromConfig(
@@ -45,23 +45,23 @@ export class EditDepartamentoComponent extends CrudBaseAddEditComponent<Departam
 
     private loadInitialData(id: number): void {
         forkJoin({
-            countries: this.countryService.getAllCountries(),
-            departamento: this.config.apiService.getById(id)
+            provincias: this.provinciaService.getAllProvincias(),
+            municipio: this.config.apiService.getById(id)
         }).subscribe({
-            next: ({ countries, departamento }) => {
+            next: ({ provincias, municipio }) => {
                 // 1. Populate options
-                const countryField = this.config.form?.fields.find(f => f.name === 'countryId');
-                if (countryField) {
-                    countryField.options = countries.map(c => ({
-                        label: (c.name || c.niceName || c.id?.toString() || ''),
-                        value: c.id
+                const provField = this.config.form?.fields.find(f => f.name === 'provinciaId');
+                if (provField) {
+                    provField.options = provincias.map(p => ({
+                        label: p.nombre || p.id?.toString() || '',
+                        value: p.id
                     }));
                 }
 
                 // 2. Patch form
-                this.form.patchValue(departamento as any);
+                this.form.patchValue(municipio as any);
 
-                // 3. Force change detection to ensure mat-select updates its trigger label
+                // 3. Force change detection
                 this.cdr.detectChanges();
             },
             error: (err: any) => {
@@ -72,10 +72,10 @@ export class EditDepartamentoComponent extends CrudBaseAddEditComponent<Departam
     }
 
     protected override getSuccessRoute(): any[] {
-        return ['/platform/geography/departamento/departamentos'];
+        return ['/platform/geography/municipio/municipios'];
     }
 
-    protected override saveEntity(formData: Departamento): Observable<Departamento> {
+    protected override saveEntity(formData: Municipio): Observable<Municipio> {
         return this.config.apiService.update(this.entityId!, formData);
     }
 
