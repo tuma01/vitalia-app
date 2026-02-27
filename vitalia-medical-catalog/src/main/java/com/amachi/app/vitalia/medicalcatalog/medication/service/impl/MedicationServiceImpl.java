@@ -69,7 +69,7 @@ public class MedicationServiceImpl implements GenericService<Medication, Medicat
     @NonNull
     public Medication create(@NonNull Medication entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -77,22 +77,16 @@ public class MedicationServiceImpl implements GenericService<Medication, Medicat
     public Medication update(@NonNull Long id, @NonNull Medication entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        Medication existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Medication.class.getName(), "error.resource.not.found",
-                        id));
 
-        // Mantener el ID de la entidad a guardar
+        getById(id);
         entity.setId(id);
 
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
     public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Medication entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Medication.class.getName(), "error.resource.not.found",
-                        id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }

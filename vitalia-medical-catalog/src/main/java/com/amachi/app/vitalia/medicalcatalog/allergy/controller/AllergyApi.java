@@ -1,9 +1,9 @@
-package com.amachi.app.vitalia.medicalcatalog.diagnosis.controller;
+package com.amachi.app.vitalia.medicalcatalog.allergy.controller;
 
 import com.amachi.app.core.common.controller.GenericApi;
 import com.amachi.app.core.common.dto.PageResponseDto;
-import com.amachi.app.vitalia.medicalcatalog.diagnosis.dto.Icd10Dto;
-import com.amachi.app.vitalia.medicalcatalog.diagnosis.dto.search.Icd10SearchDto;
+import com.amachi.app.vitalia.medicalcatalog.allergy.dto.AllergyDto;
+import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,9 +19,9 @@ import java.util.List;
 import static com.amachi.app.core.common.controller.BaseController.ALL;
 import static com.amachi.app.core.common.controller.BaseController.ID;
 
-@Tag(name = "ICD-10 Diagnosis", description = "REST API para gestionar el catálogo de diagnósticos CIE-10 (MDM).")
-public interface Icd10Api extends GenericApi<Icd10Dto> {
-        String NAME_API = "ICD-10 Diagnosis";
+@Tag(name = "Allergy", description = "REST API para gestionar el catálogo de alergias (MDM).")
+public interface AllergyApi extends GenericApi<AllergyDto> {
+        String NAME_API = "Allergy";
 
         @Operation(summary = "Obtener un " + NAME_API + " por ID", description = "Devuelve un objeto " + NAME_API
                         + " por ID especificado.", responses = {
@@ -32,7 +32,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
                         })
         @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<Icd10Dto> getIcd10ById(
+        ResponseEntity<AllergyDto> getAllergyById(
                         @Parameter(description = "ID del " + NAME_API
                                         + " a recuperar", required = true) @PathVariable("id") @NonNull Long id);
 
@@ -44,9 +44,9 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                                         @ApiResponse(responseCode = "500", description = "Error del servidor.")
                         })
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<Icd10Dto> createIcd10(
+        ResponseEntity<AllergyDto> createAllergy(
                         @Parameter(description = "Detalles del " + NAME_API
-                                        + " a crear.", required = true) @Valid @RequestBody @NonNull Icd10Dto dto);
+                                        + " a crear.", required = true) @Valid @RequestBody @NonNull AllergyDto dto);
 
         @Operation(summary = "Actualizar un " + NAME_API + " por ID", description = "Actualiza un " + NAME_API
                         + " existente usando su ID y los datos proporcionados.", responses = {
@@ -57,11 +57,11 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
                         })
         @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<Icd10Dto> updateIcd10(
+        ResponseEntity<AllergyDto> updateAllergy(
                         @Parameter(description = "ID del " + NAME_API
                                         + " a actualizar.", required = true) @PathVariable("id") @NonNull Long id,
                         @Parameter(description = "Nuevos detalles del " + NAME_API
-                                        + ".", required = true) @Valid @RequestBody @NonNull Icd10Dto dto);
+                                        + ".", required = true) @Valid @RequestBody @NonNull AllergyDto dto);
 
         @Operation(summary = NAME_API + " a eliminar por ID", description = "Elimina un " + NAME_API
                         + " existente usando su ID.", responses = {
@@ -72,7 +72,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
                         })
         @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<Void> deleteIcd10(
+        ResponseEntity<Void> deleteAllergy(
                         @Parameter(description = "ID del " + NAME_API
                                         + " a eliminar.", required = true) @PathVariable("id") @NonNull Long id);
 
@@ -83,18 +83,19 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                                         @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
                         })
         @GetMapping(value = ALL, produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<List<Icd10Dto>> getAllIcd10();
+        ResponseEntity<List<AllergyDto>> getAllAllergies();
 
         @Operation(summary = "Obtiene una lista paginada de "
-                        + NAME_API, description = "Devuelve una lista paginada de " + NAME_API, responses = {
-                                        @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API
-                                                        + " recuperada con éxito."),
-                                        @ApiResponse(responseCode = "400", description = "Parámetros de paginación inválidos."),
-                                        @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
-                        })
+                        + NAME_API, description = "Devuelve una lista paginada de "
+                                        + NAME_API, responses = {
+                                                        @ApiResponse(responseCode = "200", description = "Lista de "
+                                                                        + NAME_API + " recuperada con éxito."),
+                                                        @ApiResponse(responseCode = "400", description = "Parámetros de paginación inválidos."),
+                                                        @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                                        })
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        ResponseEntity<PageResponseDto<Icd10Dto>> getPaginatedIcd10(
-                        @NonNull Icd10SearchDto searchDto,
+        ResponseEntity<PageResponseDto<AllergyDto>> getPaginatedAllergies(
+                        @NonNull AllergySearchDto searchDto,
                         @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) @NonNull Integer pageIndex,
                         @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) @NonNull Integer pageSize);
 }

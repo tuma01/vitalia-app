@@ -59,7 +59,7 @@ public class AllergyServiceImpl implements GenericService<Allergy, AllergySearch
     @NonNull
     public Allergy create(@NonNull Allergy entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -67,17 +67,14 @@ public class AllergyServiceImpl implements GenericService<Allergy, AllergySearch
     public Allergy update(@NonNull Long id, @NonNull Allergy entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
+        getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
     public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Allergy entity = repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }

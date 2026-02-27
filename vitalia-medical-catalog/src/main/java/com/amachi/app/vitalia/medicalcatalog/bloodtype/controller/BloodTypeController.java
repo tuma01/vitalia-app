@@ -7,7 +7,6 @@ import com.amachi.app.vitalia.medicalcatalog.bloodtype.dto.search.BloodTypeSearc
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.entity.BloodType;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.mapper.BloodTypeMapper;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.service.impl.BloodTypeServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,48 +17,50 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Blood Type", description = "Gestión del catálogo maestro de tipos de sangre (MDM)")
+import static java.util.Objects.requireNonNull;
+
 @RestController
 @RequestMapping("/mdm/blood-type")
 @RequiredArgsConstructor
-public class BloodTypeController extends BaseController {
+public class BloodTypeController extends BaseController implements BloodTypeApi {
     private final BloodTypeServiceImpl service;
     private final BloodTypeMapper mapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BloodTypeDto> getById(@PathVariable @NonNull Long id) {
+    @Override
+    public ResponseEntity<BloodTypeDto> getBloodTypeById(@NonNull Long id) {
         return ResponseEntity.ok(mapper.toDto(service.getById(id)));
     }
 
-    @PostMapping
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<BloodTypeDto> create(@RequestBody @NonNull BloodTypeDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(mapper.toEntity(dto))));
+    public ResponseEntity<BloodTypeDto> createBloodType(@NonNull BloodTypeDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
     }
 
-    @PutMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<BloodTypeDto> update(@PathVariable @NonNull Long id, @RequestBody @NonNull BloodTypeDto dto) {
+    public ResponseEntity<BloodTypeDto> updateBloodType(@NonNull Long id, @NonNull BloodTypeDto dto) {
         BloodType existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBloodType(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<BloodTypeDto>> getAll() {
+    @Override
+    public ResponseEntity<List<BloodTypeDto>> getAllBloodTypes() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
-    @GetMapping
-    public ResponseEntity<PageResponseDto<BloodTypeDto>> getPaginated(BloodTypeSearchDto searchDto,
-            @RequestParam(defaultValue = "0") Integer pageIndex, @RequestParam(defaultValue = "10") Integer pageSize) {
+    @Override
+    public ResponseEntity<PageResponseDto<BloodTypeDto>> getPaginatedBloodTypes(
+            @NonNull BloodTypeSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<BloodType> page = service.getAll(searchDto, pageIndex, pageSize);
         return ResponseEntity.ok(PageResponseDto.<BloodTypeDto>builder()
                 .content(page.getContent().stream().map(mapper::toDto).toList())
@@ -67,6 +68,10 @@ public class BloodTypeController extends BaseController {
                 .pageIndex(page.getNumber())
                 .pageSize(page.getSize())
                 .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .empty(page.isEmpty())
+                .numberOfElements(page.getNumberOfElements())
                 .build());
     }
 }

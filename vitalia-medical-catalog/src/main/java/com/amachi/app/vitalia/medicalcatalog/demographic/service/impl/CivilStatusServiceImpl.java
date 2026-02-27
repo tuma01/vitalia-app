@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,42 +30,49 @@ public class CivilStatusServiceImpl implements GenericService<CivilStatus, Civil
 
     @Override
     @Transactional(readOnly = true)
+    @NonNull
     public List<CivilStatus> getAll() {
         return repository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<CivilStatus> getAll(CivilStatusSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    @NonNull
+    public Page<CivilStatus> getAll(@NonNull CivilStatusSearchDto searchDto, @NonNull Integer pageIndex,
+            @NonNull Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
         return repository.findAll(CivilStatusSpecification.withFilters(searchDto), pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CivilStatus getById(Long id) {
+    @NonNull
+    public CivilStatus getById(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("CivilStatus", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException(CivilStatus.class.getName(),
+                        "error.resource.not.found", id));
     }
 
     @Override
-    public CivilStatus create(CivilStatus entity) {
+    @NonNull
+    public CivilStatus create(@NonNull CivilStatus entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
-    public CivilStatus update(Long id, CivilStatus entity) {
+    @NonNull
+    public CivilStatus update(@NonNull Long id, @NonNull CivilStatus entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
         getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(@NonNull Long id) {
         repository.delete(getById(id));
     }
 }

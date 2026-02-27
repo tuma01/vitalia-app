@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,35 +28,52 @@ import static java.util.Objects.requireNonNull;
 public class BloodTypeServiceImpl implements GenericService<BloodType, BloodTypeSearchDto> {
     private final BloodTypeRepository repository;
 
-    @Override @Transactional(readOnly = true) public List<BloodType> getAll() { return repository.findAll(); }
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public List<BloodType> getAll() {
+        return repository.findAll();
+    }
 
-    @Override @Transactional(readOnly = true) public Page<BloodType> getAll(BloodTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public Page<BloodType> getAll(@NonNull BloodTypeSearchDto searchDto, @NonNull Integer pageIndex,
+            @NonNull Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
         Specification<BloodType> specification = new BloodTypeSpecification(searchDto);
         return repository.findAll(specification, pageable);
     }
 
-    @Override @Transactional(readOnly = true) public BloodType getById(Long id) {
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public BloodType getById(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
+        return repository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
     }
 
-    @Override public BloodType create(BloodType entity) {
+    @Override
+    @NonNull
+    public BloodType create(@NonNull BloodType entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
-    @Override public BloodType update(Long id, BloodType entity) {
+    @Override
+    @NonNull
+    public BloodType update(@NonNull Long id, @NonNull BloodType entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
+        getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
-    @Override public void delete(Long id) {
+    @Override
+    public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        BloodType entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +60,7 @@ public class HealthcareProviderServiceImpl implements GenericService<HealthcareP
     @NonNull
     public HealthcareProvider create(@NonNull HealthcareProvider entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -69,19 +68,14 @@ public class HealthcareProviderServiceImpl implements GenericService<HealthcareP
     public HealthcareProvider update(@NonNull Long id, @NonNull HealthcareProvider entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HealthcareProvider.class.getName(),
-                        "error.resource.not.found", id));
+        getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
     public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        HealthcareProvider entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HealthcareProvider.class.getName(),
-                        "error.resource.not.found", id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }
