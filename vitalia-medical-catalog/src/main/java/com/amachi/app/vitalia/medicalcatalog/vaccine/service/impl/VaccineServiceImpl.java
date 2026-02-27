@@ -57,7 +57,7 @@ public class VaccineServiceImpl implements GenericService<Vaccine, VaccineSearch
     @NonNull
     public Vaccine create(@NonNull Vaccine entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -65,9 +65,11 @@ public class VaccineServiceImpl implements GenericService<Vaccine, VaccineSearch
     public Vaccine update(@NonNull Long id, @NonNull Vaccine entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+
         getById(id);
         entity.setId(id);
-        return repository.save(entity);
+
+        return requireNonNull(repository.save(entity));
     }
 
     @Override

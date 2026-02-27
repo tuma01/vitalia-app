@@ -7,20 +7,19 @@ import com.amachi.app.vitalia.medicalcatalog.procedure.dto.search.MedicalProcedu
 import com.amachi.app.vitalia.medicalcatalog.procedure.entity.MedicalProcedure;
 import com.amachi.app.vitalia.medicalcatalog.procedure.mapper.MedicalProcedureMapper;
 import com.amachi.app.vitalia.medicalcatalog.procedure.service.impl.MedicalProcedureServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Medical Procedure", description = "Gestión del catálogo de procedimientos médicos y laboratorios (MDM)")
+import static java.util.Objects.requireNonNull;
+
 @RestController
 @RequestMapping("/mdm/procedure")
 @RequiredArgsConstructor
@@ -30,20 +29,20 @@ public class MedicalProcedureController extends BaseController implements Medica
     private final MedicalProcedureMapper mapper;
 
     @Override
-    public ResponseEntity<MedicalProcedureDto> getProcedureById(Long id) {
+    public ResponseEntity<MedicalProcedureDto> getProcedureById(@NonNull Long id) {
         return ResponseEntity.ok(mapper.toDto(service.getById(id)));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalProcedureDto> createProcedure(MedicalProcedureDto dto) {
-        MedicalProcedure entity = mapper.toEntity(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(entity)));
+    public ResponseEntity<MedicalProcedureDto> createProcedure(@NonNull MedicalProcedureDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalProcedureDto> updateProcedure(Long id, MedicalProcedureDto dto) {
+    public ResponseEntity<MedicalProcedureDto> updateProcedure(@NonNull Long id, @NonNull MedicalProcedureDto dto) {
         MedicalProcedure existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
@@ -51,7 +50,7 @@ public class MedicalProcedureController extends BaseController implements Medica
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteProcedure(Long id) {
+    public ResponseEntity<Void> deleteProcedure(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -62,12 +61,13 @@ public class MedicalProcedureController extends BaseController implements Medica
     }
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponseDto<MedicalProcedureDto>> getPaginatedProcedures(MedicalProcedureSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<MedicalProcedureDto>> getPaginatedProcedures(
+            @NonNull MedicalProcedureSearchDto searchDto,
+            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<MedicalProcedure> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicalProcedureDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
-        PageResponseDto<MedicalProcedureDto> response = PageResponseDto.<MedicalProcedureDto>builder()
+        return ResponseEntity.ok(PageResponseDto.<MedicalProcedureDto>builder()
                 .content(dtos)
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
@@ -77,8 +77,6 @@ public class MedicalProcedureController extends BaseController implements Medica
                 .last(page.isLast())
                 .empty(page.isEmpty())
                 .numberOfElements(page.getNumberOfElements())
-                .build();
-
-        return ResponseEntity.ok(response);
+                .build());
     }
 }

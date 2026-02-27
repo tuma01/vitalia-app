@@ -50,14 +50,15 @@ public class GenderServiceImpl implements GenericService<Gender, GenderSearchDto
     public Gender getById(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Gender", "id", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Gender.class.getName(), "error.resource.not.found", id));
     }
 
     @Override
     @NonNull
     public Gender create(@NonNull Gender entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -67,7 +68,7 @@ public class GenderServiceImpl implements GenericService<Gender, GenderSearchDto
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
         getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override

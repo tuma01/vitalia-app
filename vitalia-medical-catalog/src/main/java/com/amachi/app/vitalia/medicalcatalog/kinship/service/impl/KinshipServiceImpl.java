@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,35 +28,53 @@ import static java.util.Objects.requireNonNull;
 public class KinshipServiceImpl implements GenericService<Kinship, KinshipSearchDto> {
     private final KinshipRepository repository;
 
-    @Override @Transactional(readOnly = true) public List<Kinship> getAll() { return repository.findAll(); }
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public List<Kinship> getAll() {
+        return repository.findAll();
+    }
 
-    @Override @Transactional(readOnly = true) public Page<Kinship> getAll(KinshipSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public Page<Kinship> getAll(@NonNull KinshipSearchDto searchDto, @NonNull Integer pageIndex,
+            @NonNull Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
         Specification<Kinship> specification = new KinshipSpecification(searchDto);
         return repository.findAll(specification, pageable);
     }
 
-    @Override @Transactional(readOnly = true) public Kinship getById(Long id) {
+    @Override
+    @Transactional(readOnly = true)
+    @NonNull
+    public Kinship getById(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
+        return repository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
     }
 
-    @Override public Kinship create(Kinship entity) {
+    @Override
+    @NonNull
+    public Kinship create(@NonNull Kinship entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
-    @Override public Kinship update(Long id, Kinship entity) {
+    @Override
+    @NonNull
+    public Kinship update(@NonNull Long id, @NonNull Kinship entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
+        getById(id);
         entity.setId(id);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
-    @Override public void delete(Long id) {
+    @Override
+    public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Kinship entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }

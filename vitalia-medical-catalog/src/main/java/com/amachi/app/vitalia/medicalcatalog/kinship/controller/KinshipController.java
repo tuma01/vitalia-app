@@ -7,58 +7,61 @@ import com.amachi.app.vitalia.medicalcatalog.kinship.dto.search.KinshipSearchDto
 import com.amachi.app.vitalia.medicalcatalog.kinship.entity.Kinship;
 import com.amachi.app.vitalia.medicalcatalog.kinship.mapper.KinshipMapper;
 import com.amachi.app.vitalia.medicalcatalog.kinship.service.impl.KinshipServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Kinship", description = "Gestión del catálogo maestro de parentescos (MDM)")
+import static java.util.Objects.requireNonNull;
+
 @RestController
 @RequestMapping("/mdm/kinship")
 @RequiredArgsConstructor
-public class KinshipController extends BaseController {
+public class KinshipController extends BaseController implements KinshipApi {
+
     private final KinshipServiceImpl service;
     private final KinshipMapper mapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<KinshipDto> getById(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<KinshipDto> getKinshipById(@NonNull Long id) {
         return ResponseEntity.ok(mapper.toDto(service.getById(id)));
     }
 
-    @PostMapping
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> create(@RequestBody KinshipDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(mapper.toEntity(dto))));
+    public ResponseEntity<KinshipDto> createKinship(@NonNull KinshipDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
     }
 
-    @PutMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> update(@PathVariable Long id, @RequestBody KinshipDto dto) {
+    public ResponseEntity<KinshipDto> updateKinship(@NonNull Long id, @NonNull KinshipDto dto) {
         Kinship existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteKinship(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<KinshipDto>> getAll() {
+    @Override
+    public ResponseEntity<List<KinshipDto>> getAllKinships() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
-    @GetMapping
-    public ResponseEntity<PageResponseDto<KinshipDto>> getPaginated(KinshipSearchDto searchDto, @RequestParam(defaultValue = "0") Integer pageIndex, @RequestParam(defaultValue = "10") Integer pageSize) {
+    @Override
+    public ResponseEntity<PageResponseDto<KinshipDto>> getPaginatedKinships(@NonNull KinshipSearchDto searchDto,
+            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Kinship> page = service.getAll(searchDto, pageIndex, pageSize);
         return ResponseEntity.ok(PageResponseDto.<KinshipDto>builder()
                 .content(page.getContent().stream().map(mapper::toDto).toList())
@@ -66,6 +69,10 @@ public class KinshipController extends BaseController {
                 .pageIndex(page.getNumber())
                 .pageSize(page.getSize())
                 .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .empty(page.isEmpty())
+                .numberOfElements(page.getNumberOfElements())
                 .build());
     }
 }

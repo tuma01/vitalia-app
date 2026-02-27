@@ -7,66 +7,75 @@ import com.amachi.app.vitalia.medicalcatalog.demographic.dto.search.CivilStatusS
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.CivilStatus;
 import com.amachi.app.vitalia.medicalcatalog.demographic.mapper.CivilStatusMapper;
 import com.amachi.app.vitalia.medicalcatalog.demographic.service.impl.CivilStatusServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Civil Status", description = "Gestión del catálogo maestro de estado civil (MDM)")
+import static java.util.Objects.requireNonNull;
+
 @RestController
 @RequestMapping("/mdm/demographic/civil-status")
 @RequiredArgsConstructor
-public class CivilStatusController extends BaseController {
+public class CivilStatusController extends BaseController implements CivilStatusApi {
 
     private final CivilStatusServiceImpl service;
     private final CivilStatusMapper mapper;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CivilStatusDto> getById(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<CivilStatusDto> getCivilStatusById(@NonNull Long id) {
         return ResponseEntity.ok(mapper.toDto(service.getById(id)));
     }
 
-    @PostMapping
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<CivilStatusDto> create(@RequestBody CivilStatusDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(mapper.toEntity(dto))));
+    public ResponseEntity<CivilStatusDto> createCivilStatus(@NonNull CivilStatusDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
     }
 
-    @PutMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<CivilStatusDto> update(@PathVariable Long id, @RequestBody CivilStatusDto dto) {
+    public ResponseEntity<CivilStatusDto> updateCivilStatus(@NonNull Long id, @NonNull CivilStatusDto dto) {
         CivilStatus existing = service.getById(id);
         mapper.updateEntity(dto, existing);
         return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
     }
 
-    @DeleteMapping("/{id}")
+    @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCivilStatus(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<CivilStatusDto>> getAll() {
+    @Override
+    public ResponseEntity<List<CivilStatusDto>> getAllCivilStatuses() {
         return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
     }
 
-    @GetMapping
-    public ResponseEntity<PageResponseDto<CivilStatusDto>> getPaginated(CivilStatusSearchDto searchDto,
-            @RequestParam(defaultValue = "0") Integer pageIndex, @RequestParam(defaultValue = "10") Integer pageSize) {
+    @Override
+    public ResponseEntity<PageResponseDto<CivilStatusDto>> getPaginatedCivilStatuses(
+            @NonNull CivilStatusSearchDto searchDto,
+            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<CivilStatus> page = service.getAll(searchDto, pageIndex, pageSize);
+
         return ResponseEntity.ok(PageResponseDto.<CivilStatusDto>builder()
                 .content(page.getContent().stream().map(mapper::toDto).toList())
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
                 .pageSize(page.getSize())
                 .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .empty(page.isEmpty())
+                .numberOfElements(page.getNumberOfElements())
                 .build());
     }
 }

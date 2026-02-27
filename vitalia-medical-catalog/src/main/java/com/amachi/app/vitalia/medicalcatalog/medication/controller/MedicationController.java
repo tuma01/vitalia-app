@@ -7,20 +7,18 @@ import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSea
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
 import com.amachi.app.vitalia.medicalcatalog.medication.mapper.MedicationMapper;
 import com.amachi.app.vitalia.medicalcatalog.medication.service.impl.MedicationServiceImpl;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Medication", description = "Gestión del catálogo de medicamentos (Vademécum - MDM)")
+import static java.util.Objects.requireNonNull;
+
 @RestController
 @RequestMapping("/mdm/medication")
 @RequiredArgsConstructor
@@ -30,20 +28,20 @@ public class MedicationController extends BaseController implements MedicationAp
     private final MedicationMapper mapper;
 
     @Override
-    public ResponseEntity<MedicationDto> getMedicationById(Long id) {
+    public ResponseEntity<MedicationDto> getMedicationById(@NonNull Long id) {
         return ResponseEntity.ok(mapper.toDto(service.getById(id)));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> createMedication(MedicationDto dto) {
-        Medication entity = mapper.toEntity(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(entity)));
+    public ResponseEntity<MedicationDto> createMedication(@NonNull MedicationDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> updateMedication(Long id, MedicationDto dto) {
+    public ResponseEntity<MedicationDto> updateMedication(@NonNull Long id, @NonNull MedicationDto dto) {
         Medication existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
@@ -51,7 +49,7 @@ public class MedicationController extends BaseController implements MedicationAp
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteMedication(Long id) {
+    public ResponseEntity<Void> deleteMedication(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -62,12 +60,13 @@ public class MedicationController extends BaseController implements MedicationAp
     }
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(MedicationSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(
+            @NonNull MedicationSearchDto searchDto,
+            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Medication> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicationDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
-        PageResponseDto<MedicationDto> response = PageResponseDto.<MedicationDto>builder()
+        return ResponseEntity.ok(PageResponseDto.<MedicationDto>builder()
                 .content(dtos)
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
@@ -77,8 +76,6 @@ public class MedicationController extends BaseController implements MedicationAp
                 .last(page.isLast())
                 .empty(page.isEmpty())
                 .numberOfElements(page.getNumberOfElements())
-                .build();
-
-        return ResponseEntity.ok(response);
+                .build());
     }
 }

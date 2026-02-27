@@ -60,7 +60,7 @@ public class Icd10ServiceImpl implements GenericService<Icd10, Icd10SearchDto> {
     @NonNull
     public Icd10 create(@NonNull Icd10 entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return repository.save(entity);
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
@@ -68,19 +68,16 @@ public class Icd10ServiceImpl implements GenericService<Icd10, Icd10SearchDto> {
     public Icd10 update(@NonNull Long id, @NonNull Icd10 entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        repository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Icd10.class.getName(), "error.resource.not.found", id));
+
+        getById(id);
         entity.setId(id);
-        return repository.save(entity);
+
+        return requireNonNull(repository.save(entity));
     }
 
     @Override
     public void delete(@NonNull Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Icd10 entity = repository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Icd10.class.getName(), "error.resource.not.found", id));
-        repository.delete(entity);
+        repository.delete(getById(id));
     }
 }
