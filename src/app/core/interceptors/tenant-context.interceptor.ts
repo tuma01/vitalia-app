@@ -13,22 +13,28 @@ import { AppContextService } from '../services/app-context.service';
 export const tenantContextInterceptor: HttpInterceptorFn = (req, next) => {
     const appContext = inject(AppContextService);
 
-    // Only add tenant header if we're in APP context
-    if (appContext.isApp()) {
-        const tenant = appContext.tenant();
+    // Determine tenant code based on context
+    let tenantCode: string | undefined;
 
-        if (tenant?.code) {
-            const clonedReq = req.clone({
-                setHeaders: {
-                    'X-Tenant-ID': tenant.code
-                }
-            });
+    if (appContext.isPlatform()) {
+        tenantCode = 'GLOBAL';
+    } else if (appContext.isApp()) {
+        tenantCode = appContext.tenant()?.code;
+    }
 
-            console.log('[TenantContextInterceptor] Added X-Tenant-ID header:', tenant.code);
-            return next(clonedReq);
+    if (tenantCode) {
+        const clonedReq = req.clone({
+            setHeaders: {
+                'X-Tenant-Code': tenantCode
+            }
+        });
+
+        if (appContext.isPlatform()) {
+            console.log('[TenantContextInterceptor] Added X-Tenant-Code: GLOBAL (Platform Context)');
         } else {
-            console.warn('[TenantContextInterceptor] APP context but no tenant code available');
+            console.log('[TenantContextInterceptor] Added X-Tenant-Code header:', tenantCode);
         }
+        return next(clonedReq);
     }
 
     // Platform context or no tenant → no header

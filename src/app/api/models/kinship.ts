@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Kinship information
+ * Detalles del Kinship a crear.
  */
 export interface Kinship {
 

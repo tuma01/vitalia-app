@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, inject } from '@angular/core';
 import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -8,6 +8,7 @@ import { UserSummary } from '../../api/models/user-summary';
 import { Router } from '@angular/router';
 import { TokenService } from '../token/token.service';
 import { SessionService } from './session.service';
+import { RefreshTokenService } from '../token/refresh-token.service';
 
 /**
  * Enhanced authentication service wrapper
@@ -124,22 +125,12 @@ export class AuthService {
 
   /**
    * Refresh access token
+   * Delegates to specialized RefreshTokenService to ensure unified logic and session sync
    */
   refreshToken(): Observable<AuthenticationResponse> {
-    const refreshToken = this.tokenService.refreshToken;
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.authApiService.refresh({ refreshToken }).pipe(
-      tap(response => {
-        if (response.tokens) {
-          this.tokenService.setTokens(
-            response.tokens.accessToken!,
-            response.tokens.refreshToken!
-          );
-        }
-      })
+    const refreshTokenService = inject(RefreshTokenService);
+    return refreshTokenService.refreshAccessToken().pipe(
+      map(response => response as AuthenticationResponse)
     );
   }
 

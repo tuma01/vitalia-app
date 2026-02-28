@@ -12,23 +12,23 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { CivilStatus } from '../models/civil-status';
-import { create4 } from '../fn/civil-status/create-4';
-import { Create4$Params } from '../fn/civil-status/create-4';
-import { delete2 } from '../fn/civil-status/delete-2';
-import { Delete2$Params } from '../fn/civil-status/delete-2';
-import { getAll4 } from '../fn/civil-status/get-all-4';
-import { GetAll4$Params } from '../fn/civil-status/get-all-4';
-import { getById2 } from '../fn/civil-status/get-by-id-2';
-import { GetById2$Params } from '../fn/civil-status/get-by-id-2';
-import { getPaginated2 } from '../fn/civil-status/get-paginated-2';
-import { GetPaginated2$Params } from '../fn/civil-status/get-paginated-2';
+import { createCivilStatus } from '../fn/civil-status/create-civil-status';
+import { CreateCivilStatus$Params } from '../fn/civil-status/create-civil-status';
+import { deleteCivilStatus } from '../fn/civil-status/delete-civil-status';
+import { DeleteCivilStatus$Params } from '../fn/civil-status/delete-civil-status';
+import { getAllCivilStatuses } from '../fn/civil-status/get-all-civil-statuses';
+import { GetAllCivilStatuses$Params } from '../fn/civil-status/get-all-civil-statuses';
+import { getCivilStatusById } from '../fn/civil-status/get-civil-status-by-id';
+import { GetCivilStatusById$Params } from '../fn/civil-status/get-civil-status-by-id';
+import { getPaginatedCivilStatuses } from '../fn/civil-status/get-paginated-civil-statuses';
+import { GetPaginatedCivilStatuses$Params } from '../fn/civil-status/get-paginated-civil-statuses';
 import { PageResponseDtoCivilStatus } from '../models/page-response-dto-civil-status';
-import { update2 } from '../fn/civil-status/update-2';
-import { Update2$Params } from '../fn/civil-status/update-2';
+import { updateCivilStatus } from '../fn/civil-status/update-civil-status';
+import { UpdateCivilStatus$Params } from '../fn/civil-status/update-civil-status';
 
 
 /**
- * Gestión del catálogo maestro de estado civil (MDM)
+ * REST API para gestionar el catálogo de estado civil (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class CivilStatusService extends BaseService {
@@ -36,152 +36,200 @@ export class CivilStatusService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getById2()` */
-  static readonly GetById2Path = '/mdm/demographic/civil-status/{id}';
+  /** Path part for operation `getCivilStatusById()` */
+  static readonly GetCivilStatusByIdPath = '/mdm/demographic/civil-status/{id}';
 
   /**
+   * Obtener un Civil Status por ID.
+   *
+   * Devuelve un objeto Civil Status por ID especificado.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById2()` instead.
+   * To access only the response body, use `getCivilStatusById()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById2$Response(params: GetById2$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
-    return getById2(this.http, this.rootUrl, params, context);
+  getCivilStatusById$Response(params: GetCivilStatusById$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
+    return getCivilStatusById(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtener un Civil Status por ID.
+   *
+   * Devuelve un objeto Civil Status por ID especificado.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById2$Response()` instead.
+   * To access the full response (for headers, for example), `getCivilStatusById$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById2(params: GetById2$Params, context?: HttpContext): Observable<CivilStatus> {
-    return this.getById2$Response(params, context).pipe(
+  getCivilStatusById(params: GetCivilStatusById$Params, context?: HttpContext): Observable<CivilStatus> {
+    return this.getCivilStatusById$Response(params, context).pipe(
       map((r: StrictHttpResponse<CivilStatus>): CivilStatus => r.body)
     );
   }
 
-  /** Path part for operation `update2()` */
-  static readonly Update2Path = '/mdm/demographic/civil-status/{id}';
+  /** Path part for operation `updateCivilStatus()` */
+  static readonly UpdateCivilStatusPath = '/mdm/demographic/civil-status/{id}';
 
   /**
+   * Actualizar un Civil Status por ID.
+   *
+   * Actualiza un Civil Status existente usando su ID y los datos proporcionados.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update2()` instead.
+   * To access only the response body, use `updateCivilStatus()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update2$Response(params: Update2$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
-    return update2(this.http, this.rootUrl, params, context);
+  updateCivilStatus$Response(params: UpdateCivilStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
+    return updateCivilStatus(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Actualizar un Civil Status por ID.
+   *
+   * Actualiza un Civil Status existente usando su ID y los datos proporcionados.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update2$Response()` instead.
+   * To access the full response (for headers, for example), `updateCivilStatus$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update2(params: Update2$Params, context?: HttpContext): Observable<CivilStatus> {
-    return this.update2$Response(params, context).pipe(
+  updateCivilStatus(params: UpdateCivilStatus$Params, context?: HttpContext): Observable<CivilStatus> {
+    return this.updateCivilStatus$Response(params, context).pipe(
       map((r: StrictHttpResponse<CivilStatus>): CivilStatus => r.body)
     );
   }
 
-  /** Path part for operation `delete2()` */
-  static readonly Delete2Path = '/mdm/demographic/civil-status/{id}';
+  /** Path part for operation `deleteCivilStatus()` */
+  static readonly DeleteCivilStatusPath = '/mdm/demographic/civil-status/{id}';
 
   /**
+   * Civil Status a eliminar por ID.
+   *
+   * Elimina un Civil Status existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete2()` instead.
+   * To access only the response body, use `deleteCivilStatus()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete2$Response(params: Delete2$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete2(this.http, this.rootUrl, params, context);
+  deleteCivilStatus$Response(params: DeleteCivilStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteCivilStatus(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Civil Status a eliminar por ID.
+   *
+   * Elimina un Civil Status existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete2$Response()` instead.
+   * To access the full response (for headers, for example), `deleteCivilStatus$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete2(params: Delete2$Params, context?: HttpContext): Observable<void> {
-    return this.delete2$Response(params, context).pipe(
+  deleteCivilStatus(params: DeleteCivilStatus$Params, context?: HttpContext): Observable<void> {
+    return this.deleteCivilStatus$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `getPaginated2()` */
-  static readonly GetPaginated2Path = '/mdm/demographic/civil-status';
+  /** Path part for operation `getPaginatedCivilStatuses()` */
+  static readonly GetPaginatedCivilStatusesPath = '/mdm/demographic/civil-status';
 
   /**
+   * Obtiene una lista paginada de Civil Status.
+   *
+   * Devuelve una lista paginada de Civil Status
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPaginated2()` instead.
+   * To access only the response body, use `getPaginatedCivilStatuses()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated2$Response(params: GetPaginated2$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoCivilStatus>> {
-    return getPaginated2(this.http, this.rootUrl, params, context);
+  getPaginatedCivilStatuses$Response(params: GetPaginatedCivilStatuses$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoCivilStatus>> {
+    return getPaginatedCivilStatuses(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene una lista paginada de Civil Status.
+   *
+   * Devuelve una lista paginada de Civil Status
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPaginated2$Response()` instead.
+   * To access the full response (for headers, for example), `getPaginatedCivilStatuses$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated2(params: GetPaginated2$Params, context?: HttpContext): Observable<PageResponseDtoCivilStatus> {
-    return this.getPaginated2$Response(params, context).pipe(
+  getPaginatedCivilStatuses(params: GetPaginatedCivilStatuses$Params, context?: HttpContext): Observable<PageResponseDtoCivilStatus> {
+    return this.getPaginatedCivilStatuses$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoCivilStatus>): PageResponseDtoCivilStatus => r.body)
     );
   }
 
-  /** Path part for operation `create4()` */
-  static readonly Create4Path = '/mdm/demographic/civil-status';
+  /** Path part for operation `createCivilStatus()` */
+  static readonly CreateCivilStatusPath = '/mdm/demographic/civil-status';
 
   /**
+   * Crear un Civil Status.
+   *
+   * Crea un nuevo Civil Status usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create4()` instead.
+   * To access only the response body, use `createCivilStatus()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create4$Response(params: Create4$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
-    return create4(this.http, this.rootUrl, params, context);
+  createCivilStatus$Response(params: CreateCivilStatus$Params, context?: HttpContext): Observable<StrictHttpResponse<CivilStatus>> {
+    return createCivilStatus(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Crear un Civil Status.
+   *
+   * Crea un nuevo Civil Status usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create4$Response()` instead.
+   * To access the full response (for headers, for example), `createCivilStatus$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create4(params: Create4$Params, context?: HttpContext): Observable<CivilStatus> {
-    return this.create4$Response(params, context).pipe(
+  createCivilStatus(params: CreateCivilStatus$Params, context?: HttpContext): Observable<CivilStatus> {
+    return this.createCivilStatus$Response(params, context).pipe(
       map((r: StrictHttpResponse<CivilStatus>): CivilStatus => r.body)
     );
   }
 
-  /** Path part for operation `getAll4()` */
-  static readonly GetAll4Path = '/mdm/demographic/civil-status/all';
+  /** Path part for operation `getAllCivilStatuses()` */
+  static readonly GetAllCivilStatusesPath = '/mdm/demographic/civil-status/all';
 
   /**
+   * Obtiene todos los Civil Status.
+   *
+   * Devuelve la lista completa de Civil Status
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll4()` instead.
+   * To access only the response body, use `getAllCivilStatuses()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll4$Response(params?: GetAll4$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<CivilStatus>>> {
-    return getAll4(this.http, this.rootUrl, params, context);
+  getAllCivilStatuses$Response(params?: GetAllCivilStatuses$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<CivilStatus>>> {
+    return getAllCivilStatuses(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene todos los Civil Status.
+   *
+   * Devuelve la lista completa de Civil Status
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll4$Response()` instead.
+   * To access the full response (for headers, for example), `getAllCivilStatuses$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll4(params?: GetAll4$Params, context?: HttpContext): Observable<Array<CivilStatus>> {
-    return this.getAll4$Response(params, context).pipe(
+  getAllCivilStatuses(params?: GetAllCivilStatuses$Params, context?: HttpContext): Observable<Array<CivilStatus>> {
+    return this.getAllCivilStatuses$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<CivilStatus>>): Array<CivilStatus> => r.body)
     );
   }

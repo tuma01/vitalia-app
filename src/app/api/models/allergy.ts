@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Allergy information
+ * Detalles del Allergy a crear.
  */
 export interface Allergy {
   active?: boolean;

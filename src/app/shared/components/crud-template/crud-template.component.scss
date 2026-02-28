@@ -10,15 +10,15 @@
         .mtx-grid-toolbar {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: wrap !important; // Allow wrapping on mobile
+            flex-wrap: wrap !important;
             align-items: center !important;
             justify-content: space-between !important;
-            padding: 8px 16px !important; // Reduced padding for mobile
-            min-height: auto !important; // Flexible height
+            padding: 8px 16px !important;
+            min-height: auto !important;
             border-bottom: 1px solid var(--sys-border-subtle) !important;
             background: transparent !important;
             gap: 8px !important;
-            overflow: visible !important; // Allow tooltips/menus to show
+            overflow: visible !important;
         }
 
         /* ── Force static layout to respect set widths ─────────────────────── */
@@ -34,7 +34,7 @@
         .mtx-grid-toolbar-template {
             display: flex !important;
             flex-direction: row !important;
-            flex-wrap: wrap !important; // Support stacking
+            flex-wrap: wrap !important;
             align-items: center !important;
             justify-content: space-between !important;
             width: 100% !important;
@@ -52,10 +52,6 @@
             gap: 8px !important;
         }
 
-        /* ── Row delete danger hover ───────────────────────────────────────
-           At rest: neutral grey icon (non-alarming).
-           On hover: red ripple background + red icon — clear danger signal.
-           ──────────────────────────────────────────────────────────────── */
         .btn-row-delete {
             transition: background 180ms ease;
 
@@ -72,35 +68,23 @@
             }
         }
 
-        /* ── Cell overflow clip — prevents text from adjacent columns
-           bleeding into the pinned 'operation' column or vice versa ────── */
         .mat-mdc-cell {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-
-        /* ── Pinned column solid background ─────────────────────────────────
-           The 'operation' column is sticky-right. Without a solid background
-           it becomes transparent and data from scrolled columns shows through.
-           We inherit from the row so it respects zebra + hover. ─────────── */
         .mat-column-operation {
             background: inherit !important;
             padding: 0 4px !important;
             text-align: center !important;
             vertical-align: middle !important;
+            z-index: 2 !important;
         }
 
-        /* ── Zebra striping + row hover ─────────────────────────────────────
-           Even rows: transparent (base surface).
-           Odd rows:  very light primary tint — barely noticeable.
-           Hover:     slightly stronger tint + smooth transition.
-           ──────────────────────────────────────────────────────────────── */
         .mat-mdc-row {
             transition: background-color 150ms ease;
             cursor: pointer;
-            /* rows are clickable — toggle selection */
 
             &:nth-child(even) {
                 background-color: var(--mat-sys-surface);
@@ -114,7 +98,6 @@
                 background-color: color-mix(in srgb, var(--mat-sys-primary) 10%, var(--mat-sys-surface)) !important;
             }
 
-            /* Selected row — stronger primary tint */
             &.mdc-data-table__row--selected,
             &.mat-mdc-row-selected {
                 background-color: color-mix(in srgb, var(--mat-sys-primary) 18%, var(--mat-sys-surface)) !important;
@@ -123,13 +106,13 @@
     }
 }
 
-/* 🔹 FINAL TOOLBAR VERSION STYLES */
+/* 🔹 TOOLBAR STYLES */
 .toolbar-container {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     height: auto;
     gap: 12px;
@@ -137,10 +120,10 @@
 
     .toolbar-left,
     .toolbar-right {
-        display: flex !important;
-        align-items: center !important;
+        display: flex;
+        align-items: center;
         gap: 8px;
-        flex-wrap: wrap !important;
+        flex-wrap: wrap;
     }
 
     .toolbar-left {
@@ -153,36 +136,36 @@
     }
 
     button[mat-icon-button] {
-        width: 40px !important;
-        height: 40px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 
-/* 📱 Mobile Adjustments for Toolbar (< 600px) */
+/* 📱 Mobile Adjustments */
 @media (max-width: 600px) {
     .toolbar-container {
-        flex-direction: column !important;
-        align-items: stretch !important;
+        flex-direction: column;
+        align-items: stretch;
         gap: 16px;
 
         .toolbar-left {
-            width: 100% !important;
-            flex: none !important;
+            width: 100%;
+            flex: none;
         }
 
         .toolbar-right {
-            justify-content: space-between !important;
-            width: 100% !important;
+            justify-content: space-between;
+            width: 100%;
             border-top: 1px dashed var(--sys-border-subtle);
             padding-top: 12px;
         }
 
         .search-field {
-            width: 100% !important;
-            min-width: 0 !important;
+            width: 100%;
+            min-width: 0;
         }
 
         .selection-chip {
@@ -192,9 +175,6 @@
     }
 }
 
-/* ── Selection mode chip ─────────────────────────────────────────────────────
-   Replaces the search field in the toolbar when ≥1 rows are selected.
-   Shows "X items selected" with a check_circle icon — like Gmail / Drive. */
 .selection-chip {
     display: inline-flex;
     align-items: center;
@@ -232,62 +212,34 @@
     }
 }
 
-/* 🔍 SEARCH FIELD - RESPONSIVE VERSION */
 .search-field {
     width: 350px;
     max-width: 100%;
-    margin-bottom: 0 !important;
+    margin-bottom: 0;
     flex-shrink: 1;
-
-    ::ng-deep {
-        .mat-mdc-form-field-subscript-wrapper {
-            display: none !important;
-        }
-
-        .mat-mdc-text-field-wrapper {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            height: 44px !important;
-            min-height: 44px !important;
-        }
-
-        .mat-mdc-form-field-flex {
-            height: 44px !important;
-            align-items: center !important;
-        }
-
-        .mat-mdc-form-field-infix {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            min-height: 44px !important;
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        .mdc-floating-label--float {
-            display: none !important;
-        }
-
-        .mat-mdc-form-field-icon-prefix,
-        .mat-mdc-form-field-icon-suffix {
-            display: flex !important;
-            align-items: center !important;
-            height: 44px !important;
-        }
-    }
 }
 
+/* 💠 DYNAMIC FORM GRID - Pure Standard Layout */
 .dynamic-form-grid {
     display: grid;
-    gap: 16px;
+    gap: 16px 20px;
     width: 100%;
+    /* Standard align-items (stretch) is usually fine for inputs */
 
-    mat-form-field {
-        width: 100%;
+    .form-field-wrapper {
+        display: flex;
+        flex-direction: column;
+
+        /* 
+         * No forced heights. 
+         * No flex centering.
+         * Let mat-form-field do its job.
+         */
     }
 }
 
-@media (max-width: 960px) {
+/* 📱 Mobile Grid */
+@media (max-width: 500px) {
     .dynamic-form-grid {
         grid-template-columns: 1fr !important;
 
@@ -298,7 +250,7 @@
 }
 
 .crud-form-card {
-    padding: 0 !important;
+    padding: 0;
     overflow: hidden;
 
     .form-header {
@@ -345,11 +297,6 @@
     color: var(--mat-sys-on-error);
 }
 
-/* ── Bulk Delete Danger Button ─────────────────────────────────────────────
-   At rest (has-selection): icon is neutral grey — not alarming yet.
-   On hover: icon + ripple turn error-red — obvious danger signal.
-   Disabled: standard muted opacity.
-   ────────────────────────────────────────────────────────────────────────── */
 .btn-bulk-delete {
     transition: color 180ms ease;
 
@@ -357,19 +304,42 @@
         transition: color 180ms ease;
     }
 
-    &:not([disabled]) {
-        &.has-selection {
+    &:not([disabled]).has-selection {
+        mat-icon {
+            color: var(--mat-sys-on-surface-variant);
+        }
+
+        &:hover {
+            background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
+
             mat-icon {
-                color: var(--mat-sys-on-surface-variant);
-            }
-
-            &:hover {
-                background: color-mix(in srgb, var(--mat-sys-error) 12%, transparent);
-
-                mat-icon {
-                    color: var(--mat-sys-error);
-                }
+                color: var(--mat-sys-error);
             }
         }
     }
+}
+
+.radio-field-container,
+.checkbox-field-container {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+}
+
+.radio-group-label {
+    font-size: 12px;
+    color: var(--sys-text-secondary);
+    margin-bottom: 8px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.checkbox-field-container {
+    justify-content: center;
+    height: 100%;
 }

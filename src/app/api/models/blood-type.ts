@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Blood Type information
+ * Detalles del Blood Type a crear.
  */
 export interface BloodType {
 

@@ -3,13 +3,19 @@
  */
 
 @use './styles/theme';
+@use './styles/helpers';
 @use './app/core/styles/density.scss';
 @use './styles/plugins';
+@use './styles/custom';
 
 /* 1️⃣ BASE RESET */
-* {
+html,
+body {
     margin: 0;
     padding: 0;
+}
+
+* {
     box-sizing: border-box;
 }
 
@@ -58,13 +64,39 @@ body {
     color: var(--btn-primary-text) !important;
 }
 
-/* 4️⃣ TOOLTIP PROXIMITY — bring tooltip slightly closer to trigger */
+/* 4️⃣ TOOLTIP PROXIMITY & MODERN STYLE */
+.mat-mdc-tooltip-panel {
+    --mdc-plain-tooltip-container-color: rgba(15, 23, 42, 0.9);
+    --mdc-plain-tooltip-supporting-text-color: #e2e8f0;
+
+    .mdc-tooltip__surface {
+        border-radius: 8px !important;
+        padding: 6px 12px !important; // Slightly more compact/discreet
+        backdrop-filter: blur(8px);
+        font-weight: 400 !important;
+        font-size: 12px !important; // More discreet
+        letter-spacing: 0.01em;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+// Dark Mode refinement for Tooltip
+.theme-dark .mat-mdc-tooltip-panel {
+    --mdc-plain-tooltip-container-color: rgba(30, 41, 59, 0.95); // Darker Slate-800 for contrast
+    --mdc-plain-tooltip-supporting-text-color: #cbd5e1; // Muted Slate-300
+
+    .mdc-tooltip__surface {
+        border: 1px solid rgba(255, 255, 255, 0.1); // Added subtle border for visibility
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+    }
+}
+
 .mat-mdc-tooltip-panel-below {
-    margin-top: -8px;
+    margin-top: -13px !important; // Brought 2px closer
 }
 
 .mat-mdc-tooltip-panel-above {
-    margin-bottom: -8px;
+    margin-bottom: -13px !important; // Brought 2px closer
 }
 
 /* 5️⃣ SNACKBAR FEEDBACK */

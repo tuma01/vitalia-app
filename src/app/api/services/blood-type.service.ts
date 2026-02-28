@@ -12,23 +12,23 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { BloodType } from '../models/blood-type';
-import { create5 } from '../fn/blood-type/create-5';
-import { Create5$Params } from '../fn/blood-type/create-5';
-import { delete3 } from '../fn/blood-type/delete-3';
-import { Delete3$Params } from '../fn/blood-type/delete-3';
-import { getAll5 } from '../fn/blood-type/get-all-5';
-import { GetAll5$Params } from '../fn/blood-type/get-all-5';
-import { getById3 } from '../fn/blood-type/get-by-id-3';
-import { GetById3$Params } from '../fn/blood-type/get-by-id-3';
-import { getPaginated3 } from '../fn/blood-type/get-paginated-3';
-import { GetPaginated3$Params } from '../fn/blood-type/get-paginated-3';
+import { createBloodType } from '../fn/blood-type/create-blood-type';
+import { CreateBloodType$Params } from '../fn/blood-type/create-blood-type';
+import { deleteBloodType } from '../fn/blood-type/delete-blood-type';
+import { DeleteBloodType$Params } from '../fn/blood-type/delete-blood-type';
+import { getAllBloodTypes } from '../fn/blood-type/get-all-blood-types';
+import { GetAllBloodTypes$Params } from '../fn/blood-type/get-all-blood-types';
+import { getBloodTypeById } from '../fn/blood-type/get-blood-type-by-id';
+import { GetBloodTypeById$Params } from '../fn/blood-type/get-blood-type-by-id';
+import { getPaginatedBloodTypes } from '../fn/blood-type/get-paginated-blood-types';
+import { GetPaginatedBloodTypes$Params } from '../fn/blood-type/get-paginated-blood-types';
 import { PageResponseDtoBloodType } from '../models/page-response-dto-blood-type';
-import { update3 } from '../fn/blood-type/update-3';
-import { Update3$Params } from '../fn/blood-type/update-3';
+import { updateBloodType } from '../fn/blood-type/update-blood-type';
+import { UpdateBloodType$Params } from '../fn/blood-type/update-blood-type';
 
 
 /**
- * Gestión del catálogo maestro de tipos de sangre (MDM)
+ * REST API para gestionar el catálogo maestro de tipos de sangre (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class BloodTypeService extends BaseService {
@@ -36,152 +36,200 @@ export class BloodTypeService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getById3()` */
-  static readonly GetById3Path = '/mdm/blood-type/{id}';
+  /** Path part for operation `getBloodTypeById()` */
+  static readonly GetBloodTypeByIdPath = '/mdm/blood-type/{id}';
 
   /**
+   * Obtener un Blood Type por ID.
+   *
+   * Devuelve un objeto Blood Type por ID especificado.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById3()` instead.
+   * To access only the response body, use `getBloodTypeById()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById3$Response(params: GetById3$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
-    return getById3(this.http, this.rootUrl, params, context);
+  getBloodTypeById$Response(params: GetBloodTypeById$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
+    return getBloodTypeById(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtener un Blood Type por ID.
+   *
+   * Devuelve un objeto Blood Type por ID especificado.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById3$Response()` instead.
+   * To access the full response (for headers, for example), `getBloodTypeById$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById3(params: GetById3$Params, context?: HttpContext): Observable<BloodType> {
-    return this.getById3$Response(params, context).pipe(
+  getBloodTypeById(params: GetBloodTypeById$Params, context?: HttpContext): Observable<BloodType> {
+    return this.getBloodTypeById$Response(params, context).pipe(
       map((r: StrictHttpResponse<BloodType>): BloodType => r.body)
     );
   }
 
-  /** Path part for operation `update3()` */
-  static readonly Update3Path = '/mdm/blood-type/{id}';
+  /** Path part for operation `updateBloodType()` */
+  static readonly UpdateBloodTypePath = '/mdm/blood-type/{id}';
 
   /**
+   * Actualizar un Blood Type por ID.
+   *
+   * Actualiza un Blood Type existente usando su ID y los datos proporcionados.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update3()` instead.
+   * To access only the response body, use `updateBloodType()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update3$Response(params: Update3$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
-    return update3(this.http, this.rootUrl, params, context);
+  updateBloodType$Response(params: UpdateBloodType$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
+    return updateBloodType(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Actualizar un Blood Type por ID.
+   *
+   * Actualiza un Blood Type existente usando su ID y los datos proporcionados.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update3$Response()` instead.
+   * To access the full response (for headers, for example), `updateBloodType$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update3(params: Update3$Params, context?: HttpContext): Observable<BloodType> {
-    return this.update3$Response(params, context).pipe(
+  updateBloodType(params: UpdateBloodType$Params, context?: HttpContext): Observable<BloodType> {
+    return this.updateBloodType$Response(params, context).pipe(
       map((r: StrictHttpResponse<BloodType>): BloodType => r.body)
     );
   }
 
-  /** Path part for operation `delete3()` */
-  static readonly Delete3Path = '/mdm/blood-type/{id}';
+  /** Path part for operation `deleteBloodType()` */
+  static readonly DeleteBloodTypePath = '/mdm/blood-type/{id}';
 
   /**
+   * Blood Type a eliminar por ID.
+   *
+   * Elimina un Blood Type existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete3()` instead.
+   * To access only the response body, use `deleteBloodType()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete3$Response(params: Delete3$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete3(this.http, this.rootUrl, params, context);
+  deleteBloodType$Response(params: DeleteBloodType$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteBloodType(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Blood Type a eliminar por ID.
+   *
+   * Elimina un Blood Type existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete3$Response()` instead.
+   * To access the full response (for headers, for example), `deleteBloodType$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete3(params: Delete3$Params, context?: HttpContext): Observable<void> {
-    return this.delete3$Response(params, context).pipe(
+  deleteBloodType(params: DeleteBloodType$Params, context?: HttpContext): Observable<void> {
+    return this.deleteBloodType$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `getPaginated3()` */
-  static readonly GetPaginated3Path = '/mdm/blood-type';
+  /** Path part for operation `getPaginatedBloodTypes()` */
+  static readonly GetPaginatedBloodTypesPath = '/mdm/blood-type';
 
   /**
+   * Obtiene una lista paginada de Blood Type.
+   *
+   * Devuelve una lista paginada de Blood Type
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPaginated3()` instead.
+   * To access only the response body, use `getPaginatedBloodTypes()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated3$Response(params?: GetPaginated3$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
-    return getPaginated3(this.http, this.rootUrl, params, context);
+  getPaginatedBloodTypes$Response(params: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
+    return getPaginatedBloodTypes(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene una lista paginada de Blood Type.
+   *
+   * Devuelve una lista paginada de Blood Type
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPaginated3$Response()` instead.
+   * To access the full response (for headers, for example), `getPaginatedBloodTypes$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated3(params?: GetPaginated3$Params, context?: HttpContext): Observable<PageResponseDtoBloodType> {
-    return this.getPaginated3$Response(params, context).pipe(
+  getPaginatedBloodTypes(params: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<PageResponseDtoBloodType> {
+    return this.getPaginatedBloodTypes$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoBloodType>): PageResponseDtoBloodType => r.body)
     );
   }
 
-  /** Path part for operation `create5()` */
-  static readonly Create5Path = '/mdm/blood-type';
+  /** Path part for operation `createBloodType()` */
+  static readonly CreateBloodTypePath = '/mdm/blood-type';
 
   /**
+   * Crear un Blood Type.
+   *
+   * Crea un nuevo Blood Type usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create5()` instead.
+   * To access only the response body, use `createBloodType()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create5$Response(params: Create5$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
-    return create5(this.http, this.rootUrl, params, context);
+  createBloodType$Response(params: CreateBloodType$Params, context?: HttpContext): Observable<StrictHttpResponse<BloodType>> {
+    return createBloodType(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Crear un Blood Type.
+   *
+   * Crea un nuevo Blood Type usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create5$Response()` instead.
+   * To access the full response (for headers, for example), `createBloodType$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create5(params: Create5$Params, context?: HttpContext): Observable<BloodType> {
-    return this.create5$Response(params, context).pipe(
+  createBloodType(params: CreateBloodType$Params, context?: HttpContext): Observable<BloodType> {
+    return this.createBloodType$Response(params, context).pipe(
       map((r: StrictHttpResponse<BloodType>): BloodType => r.body)
     );
   }
 
-  /** Path part for operation `getAll5()` */
-  static readonly GetAll5Path = '/mdm/blood-type/all';
+  /** Path part for operation `getAllBloodTypes()` */
+  static readonly GetAllBloodTypesPath = '/mdm/blood-type/all';
 
   /**
+   * Obtiene todos los Blood Type.
+   *
+   * Devuelve la lista completa de Blood Type
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll5()` instead.
+   * To access only the response body, use `getAllBloodTypes()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll5$Response(params?: GetAll5$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<BloodType>>> {
-    return getAll5(this.http, this.rootUrl, params, context);
+  getAllBloodTypes$Response(params?: GetAllBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<BloodType>>> {
+    return getAllBloodTypes(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene todos los Blood Type.
+   *
+   * Devuelve la lista completa de Blood Type
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll5$Response()` instead.
+   * To access the full response (for headers, for example), `getAllBloodTypes$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll5(params?: GetAll5$Params, context?: HttpContext): Observable<Array<BloodType>> {
-    return this.getAll5$Response(params, context).pipe(
+  getAllBloodTypes(params?: GetAllBloodTypes$Params, context?: HttpContext): Observable<Array<BloodType>> {
+    return this.getAllBloodTypes$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<BloodType>>): Array<BloodType> => r.body)
     );
   }

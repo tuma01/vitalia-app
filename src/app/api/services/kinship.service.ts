@@ -11,24 +11,24 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create1 } from '../fn/kinship/create-1';
-import { Create1$Params } from '../fn/kinship/create-1';
-import { delete$ } from '../fn/kinship/delete';
-import { Delete$Params } from '../fn/kinship/delete';
-import { getAll1 } from '../fn/kinship/get-all-1';
-import { GetAll1$Params } from '../fn/kinship/get-all-1';
-import { getById } from '../fn/kinship/get-by-id';
-import { GetById$Params } from '../fn/kinship/get-by-id';
-import { getPaginated } from '../fn/kinship/get-paginated';
-import { GetPaginated$Params } from '../fn/kinship/get-paginated';
+import { createKinship } from '../fn/kinship/create-kinship';
+import { CreateKinship$Params } from '../fn/kinship/create-kinship';
+import { deleteKinship } from '../fn/kinship/delete-kinship';
+import { DeleteKinship$Params } from '../fn/kinship/delete-kinship';
+import { getAllKinships } from '../fn/kinship/get-all-kinships';
+import { GetAllKinships$Params } from '../fn/kinship/get-all-kinships';
+import { getKinshipById } from '../fn/kinship/get-kinship-by-id';
+import { GetKinshipById$Params } from '../fn/kinship/get-kinship-by-id';
+import { getPaginatedKinships } from '../fn/kinship/get-paginated-kinships';
+import { GetPaginatedKinships$Params } from '../fn/kinship/get-paginated-kinships';
 import { Kinship } from '../models/kinship';
 import { PageResponseDtoKinship } from '../models/page-response-dto-kinship';
-import { update } from '../fn/kinship/update';
-import { Update$Params } from '../fn/kinship/update';
+import { updateKinship } from '../fn/kinship/update-kinship';
+import { UpdateKinship$Params } from '../fn/kinship/update-kinship';
 
 
 /**
- * Gestión del catálogo maestro de parentescos (MDM)
+ * REST API para gestionar el catálogo maestro de parentescos (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class KinshipService extends BaseService {
@@ -36,152 +36,200 @@ export class KinshipService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getById()` */
-  static readonly GetByIdPath = '/mdm/kinship/{id}';
+  /** Path part for operation `getKinshipById()` */
+  static readonly GetKinshipByIdPath = '/mdm/kinship/{id}';
 
   /**
+   * Obtener un Kinship por ID.
+   *
+   * Devuelve un objeto Kinship por ID especificado.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById()` instead.
+   * To access only the response body, use `getKinshipById()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById$Response(params: GetById$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
-    return getById(this.http, this.rootUrl, params, context);
+  getKinshipById$Response(params: GetKinshipById$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
+    return getKinshipById(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtener un Kinship por ID.
+   *
+   * Devuelve un objeto Kinship por ID especificado.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById$Response()` instead.
+   * To access the full response (for headers, for example), `getKinshipById$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById(params: GetById$Params, context?: HttpContext): Observable<Kinship> {
-    return this.getById$Response(params, context).pipe(
+  getKinshipById(params: GetKinshipById$Params, context?: HttpContext): Observable<Kinship> {
+    return this.getKinshipById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Kinship>): Kinship => r.body)
     );
   }
 
-  /** Path part for operation `update()` */
-  static readonly UpdatePath = '/mdm/kinship/{id}';
+  /** Path part for operation `updateKinship()` */
+  static readonly UpdateKinshipPath = '/mdm/kinship/{id}';
 
   /**
+   * Actualizar un Kinship por ID.
+   *
+   * Actualiza un Kinship existente usando su ID y los datos proporcionados.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update()` instead.
+   * To access only the response body, use `updateKinship()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update$Response(params: Update$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
-    return update(this.http, this.rootUrl, params, context);
+  updateKinship$Response(params: UpdateKinship$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
+    return updateKinship(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Actualizar un Kinship por ID.
+   *
+   * Actualiza un Kinship existente usando su ID y los datos proporcionados.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update$Response()` instead.
+   * To access the full response (for headers, for example), `updateKinship$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update(params: Update$Params, context?: HttpContext): Observable<Kinship> {
-    return this.update$Response(params, context).pipe(
+  updateKinship(params: UpdateKinship$Params, context?: HttpContext): Observable<Kinship> {
+    return this.updateKinship$Response(params, context).pipe(
       map((r: StrictHttpResponse<Kinship>): Kinship => r.body)
     );
   }
 
-  /** Path part for operation `delete()` */
-  static readonly DeletePath = '/mdm/kinship/{id}';
+  /** Path part for operation `deleteKinship()` */
+  static readonly DeleteKinshipPath = '/mdm/kinship/{id}';
 
   /**
+   * Kinship a eliminar por ID.
+   *
+   * Elimina un Kinship existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete()` instead.
+   * To access only the response body, use `deleteKinship()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete$Response(params: Delete$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete$(this.http, this.rootUrl, params, context);
+  deleteKinship$Response(params: DeleteKinship$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteKinship(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Kinship a eliminar por ID.
+   *
+   * Elimina un Kinship existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete$Response()` instead.
+   * To access the full response (for headers, for example), `deleteKinship$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete(params: Delete$Params, context?: HttpContext): Observable<void> {
-    return this.delete$Response(params, context).pipe(
+  deleteKinship(params: DeleteKinship$Params, context?: HttpContext): Observable<void> {
+    return this.deleteKinship$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `getPaginated()` */
-  static readonly GetPaginatedPath = '/mdm/kinship';
+  /** Path part for operation `getPaginatedKinships()` */
+  static readonly GetPaginatedKinshipsPath = '/mdm/kinship';
 
   /**
+   * Obtiene una lista paginada de Kinship.
+   *
+   * Devuelve una lista paginada de Kinship
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPaginated()` instead.
+   * To access only the response body, use `getPaginatedKinships()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated$Response(params?: GetPaginated$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
-    return getPaginated(this.http, this.rootUrl, params, context);
+  getPaginatedKinships$Response(params: GetPaginatedKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
+    return getPaginatedKinships(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene una lista paginada de Kinship.
+   *
+   * Devuelve una lista paginada de Kinship
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPaginated$Response()` instead.
+   * To access the full response (for headers, for example), `getPaginatedKinships$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated(params?: GetPaginated$Params, context?: HttpContext): Observable<PageResponseDtoKinship> {
-    return this.getPaginated$Response(params, context).pipe(
+  getPaginatedKinships(params: GetPaginatedKinships$Params, context?: HttpContext): Observable<PageResponseDtoKinship> {
+    return this.getPaginatedKinships$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoKinship>): PageResponseDtoKinship => r.body)
     );
   }
 
-  /** Path part for operation `create1()` */
-  static readonly Create1Path = '/mdm/kinship';
+  /** Path part for operation `createKinship()` */
+  static readonly CreateKinshipPath = '/mdm/kinship';
 
   /**
+   * Crear un Kinship.
+   *
+   * Crea un nuevo Kinship usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create1()` instead.
+   * To access only the response body, use `createKinship()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create1$Response(params: Create1$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
-    return create1(this.http, this.rootUrl, params, context);
+  createKinship$Response(params: CreateKinship$Params, context?: HttpContext): Observable<StrictHttpResponse<Kinship>> {
+    return createKinship(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Crear un Kinship.
+   *
+   * Crea un nuevo Kinship usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create1$Response()` instead.
+   * To access the full response (for headers, for example), `createKinship$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create1(params: Create1$Params, context?: HttpContext): Observable<Kinship> {
-    return this.create1$Response(params, context).pipe(
+  createKinship(params: CreateKinship$Params, context?: HttpContext): Observable<Kinship> {
+    return this.createKinship$Response(params, context).pipe(
       map((r: StrictHttpResponse<Kinship>): Kinship => r.body)
     );
   }
 
-  /** Path part for operation `getAll1()` */
-  static readonly GetAll1Path = '/mdm/kinship/all';
+  /** Path part for operation `getAllKinships()` */
+  static readonly GetAllKinshipsPath = '/mdm/kinship/all';
 
   /**
+   * Obtiene todos los Kinship.
+   *
+   * Devuelve la lista completa de Kinship
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll1()` instead.
+   * To access only the response body, use `getAllKinships()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll1$Response(params?: GetAll1$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Kinship>>> {
-    return getAll1(this.http, this.rootUrl, params, context);
+  getAllKinships$Response(params?: GetAllKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Kinship>>> {
+    return getAllKinships(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene todos los Kinship.
+   *
+   * Devuelve la lista completa de Kinship
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll1$Response()` instead.
+   * To access the full response (for headers, for example), `getAllKinships$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll1(params?: GetAll1$Params, context?: HttpContext): Observable<Array<Kinship>> {
-    return this.getAll1$Response(params, context).pipe(
+  getAllKinships(params?: GetAllKinships$Params, context?: HttpContext): Observable<Array<Kinship>> {
+    return this.getAllKinships$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Kinship>>): Array<Kinship> => r.body)
     );
   }

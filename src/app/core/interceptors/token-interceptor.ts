@@ -6,20 +6,21 @@ import {
 } from '@angular/common/http';
 
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { TokenService } from '../token/token.service';
+import { RefreshTokenService } from '../token/refresh-token.service';
+import { SessionService } from '../services/session.service';
 
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
-  const authService = inject(AuthService);
+  const refreshTokenService = inject(RefreshTokenService);
+  const sessionService = inject(SessionService);
 
-  // 🛡️ [PROFESSIONAL] Skip auth endpoints to prevent "expired token" loops
-  // Refresh and Login should NEVER carry an Authorization header from previous sessions
-  const isAuthRequest = req.url.includes('/auth/');
+  // 🛡️ SKIP auth endpoints to prevent loops
+  const isAuthRequest = req.url.includes('/auth/login') || req.url.includes('/auth/refresh');
 
   const accessToken = tokenService.accessToken;
 
@@ -34,35 +35,33 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // If it's not a 401 or it IS an auth request (which failed on its own merits), throw immediately
+      // 1. Handle non-401 or auth requests normally
       if (error.status !== 401 || isAuthRequest) {
+        if (error.status === 401 && req.url.includes('/auth/refresh')) {
+          console.error('[TokenInterceptor] Refresh failed. Logging out.');
+          sessionService.logout();
+        }
         return throwError(() => error);
       }
 
-      const refreshToken = tokenService.refreshToken;
-      if (!refreshToken || !tokenService.isRefreshTokenValid()) {
-        console.warn('[TokenInterceptor] No valid refresh token found. Logging out.');
-        tokenService.clearTokens();
-        return throwError(() => error);
-      }
-
+      // 2. Start refresh if not in progress
       if (!isRefreshing) {
         isRefreshing = true;
         refreshTokenSubject.next(null);
 
-        console.log('[TokenInterceptor] 🔄 Access token expired. Attempting refresh...');
+        console.log('[TokenInterceptor] 🔄 Access token expired. Refreshing...');
 
-        return authService.refreshToken().pipe(
+        return refreshTokenService.refreshAccessToken().pipe(
           switchMap((response: any) => {
-            const newAccessToken = response?.tokens?.accessToken;
+            const newAccessToken = response?.tokens?.accessToken || response?.accessToken;
 
             if (!newAccessToken) {
-              console.error('[TokenInterceptor] ❌ Refresh failed: No new access token received.');
-              tokenService.clearTokens();
+              console.error('[TokenInterceptor] ❌ Refresh failed: No token.');
+              sessionService.logout();
               return throwError(() => error);
             }
 
-            console.log('[TokenInterceptor] ✅ Refresh successful. Retrying original request.');
+            console.log('[TokenInterceptor] ✅ Refresh successful.');
             refreshTokenSubject.next(newAccessToken);
             isRefreshing = false;
 
@@ -75,14 +74,13 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
             );
           }),
           catchError(refreshErr => {
-            console.error('[TokenInterceptor] ❌ Refresh failed critical error:', refreshErr);
-            tokenService.clearTokens();
             isRefreshing = false;
+            sessionService.logout();
             return throwError(() => refreshErr);
           })
         );
       } else {
-        // [PROFESSIONAL] Queue concurrent requests while refresh is in progress
+        // 3. Queue subsequent requests
         return refreshTokenSubject.pipe(
           filter(t => t !== null),
           take(1),

@@ -11,17 +11,24 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create } from '../fn/vaccine/create';
-import { Create$Params } from '../fn/vaccine/create';
-import { getAll } from '../fn/vaccine/get-all';
-import { GetAll$Params } from '../fn/vaccine/get-all';
-import { getById4 } from '../fn/vaccine/get-by-id-4';
-import { GetById4$Params } from '../fn/vaccine/get-by-id-4';
+import { createVaccine } from '../fn/vaccine/create-vaccine';
+import { CreateVaccine$Params } from '../fn/vaccine/create-vaccine';
+import { deleteVaccine } from '../fn/vaccine/delete-vaccine';
+import { DeleteVaccine$Params } from '../fn/vaccine/delete-vaccine';
+import { getAllVaccines } from '../fn/vaccine/get-all-vaccines';
+import { GetAllVaccines$Params } from '../fn/vaccine/get-all-vaccines';
+import { getPaginatedVaccines } from '../fn/vaccine/get-paginated-vaccines';
+import { GetPaginatedVaccines$Params } from '../fn/vaccine/get-paginated-vaccines';
+import { getVaccineById } from '../fn/vaccine/get-vaccine-by-id';
+import { GetVaccineById$Params } from '../fn/vaccine/get-vaccine-by-id';
+import { PageResponseDtoVaccine } from '../models/page-response-dto-vaccine';
+import { updateVaccine } from '../fn/vaccine/update-vaccine';
+import { UpdateVaccine$Params } from '../fn/vaccine/update-vaccine';
 import { Vaccine } from '../models/vaccine';
 
 
 /**
- * MDM para catálogo de vacunas
+ * REST API para gestionar el catálogo de vacunas (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class VaccineService extends BaseService {
@@ -29,77 +36,200 @@ export class VaccineService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `create()` */
-  static readonly CreatePath = '/mdm/vaccine';
+  /** Path part for operation `getVaccineById()` */
+  static readonly GetVaccineByIdPath = '/mdm/vaccine/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create()` instead.
+   * Obtener un Vaccine por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Vaccine por ID especificado.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getVaccineById()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create$Response(params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<Vaccine>> {
-    return create(this.http, this.rootUrl, params, context);
+  getVaccineById$Response(params: GetVaccineById$Params, context?: HttpContext): Observable<StrictHttpResponse<Vaccine>> {
+    return getVaccineById(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create$Response()` instead.
+   * Obtener un Vaccine por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Vaccine por ID especificado.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getVaccineById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create(params: Create$Params, context?: HttpContext): Observable<Vaccine> {
-    return this.create$Response(params, context).pipe(
+  getVaccineById(params: GetVaccineById$Params, context?: HttpContext): Observable<Vaccine> {
+    return this.getVaccineById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Vaccine>): Vaccine => r.body)
     );
   }
 
-  /** Path part for operation `getById4()` */
-  static readonly GetById4Path = '/mdm/vaccine/{id}';
+  /** Path part for operation `updateVaccine()` */
+  static readonly UpdateVaccinePath = '/mdm/vaccine/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById4()` instead.
+   * Actualizar un Vaccine por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Vaccine existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateVaccine()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById4$Response(params: GetById4$Params, context?: HttpContext): Observable<StrictHttpResponse<Vaccine>> {
-    return getById4(this.http, this.rootUrl, params, context);
+  updateVaccine$Response(params: UpdateVaccine$Params, context?: HttpContext): Observable<StrictHttpResponse<Vaccine>> {
+    return updateVaccine(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById4$Response()` instead.
+   * Actualizar un Vaccine por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Vaccine existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateVaccine$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById4(params: GetById4$Params, context?: HttpContext): Observable<Vaccine> {
-    return this.getById4$Response(params, context).pipe(
+  updateVaccine(params: UpdateVaccine$Params, context?: HttpContext): Observable<Vaccine> {
+    return this.updateVaccine$Response(params, context).pipe(
       map((r: StrictHttpResponse<Vaccine>): Vaccine => r.body)
     );
   }
 
-  /** Path part for operation `getAll()` */
-  static readonly GetAllPath = '/mdm/vaccine/all';
+  /** Path part for operation `deleteVaccine()` */
+  static readonly DeleteVaccinePath = '/mdm/vaccine/{id}';
 
   /**
+   * Vaccine a eliminar por ID.
+   *
+   * Elimina un Vaccine existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll()` instead.
+   * To access only the response body, use `deleteVaccine()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll$Response(params?: GetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Vaccine>>> {
-    return getAll(this.http, this.rootUrl, params, context);
+  deleteVaccine$Response(params: DeleteVaccine$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteVaccine(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Vaccine a eliminar por ID.
+   *
+   * Elimina un Vaccine existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll$Response()` instead.
+   * To access the full response (for headers, for example), `deleteVaccine$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll(params?: GetAll$Params, context?: HttpContext): Observable<Array<Vaccine>> {
-    return this.getAll$Response(params, context).pipe(
+  deleteVaccine(params: DeleteVaccine$Params, context?: HttpContext): Observable<void> {
+    return this.deleteVaccine$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getPaginatedVaccines()` */
+  static readonly GetPaginatedVaccinesPath = '/mdm/vaccine';
+
+  /**
+   * Obtiene una lista paginada de Vaccine.
+   *
+   * Devuelve una lista paginada de Vaccine
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getPaginatedVaccines()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPaginatedVaccines$Response(params: GetPaginatedVaccines$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoVaccine>> {
+    return getPaginatedVaccines(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtiene una lista paginada de Vaccine.
+   *
+   * Devuelve una lista paginada de Vaccine
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getPaginatedVaccines$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPaginatedVaccines(params: GetPaginatedVaccines$Params, context?: HttpContext): Observable<PageResponseDtoVaccine> {
+    return this.getPaginatedVaccines$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageResponseDtoVaccine>): PageResponseDtoVaccine => r.body)
+    );
+  }
+
+  /** Path part for operation `createVaccine()` */
+  static readonly CreateVaccinePath = '/mdm/vaccine';
+
+  /**
+   * Crear un Vaccine.
+   *
+   * Crea un nuevo Vaccine usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createVaccine()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createVaccine$Response(params: CreateVaccine$Params, context?: HttpContext): Observable<StrictHttpResponse<Vaccine>> {
+    return createVaccine(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear un Vaccine.
+   *
+   * Crea un nuevo Vaccine usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createVaccine$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createVaccine(params: CreateVaccine$Params, context?: HttpContext): Observable<Vaccine> {
+    return this.createVaccine$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Vaccine>): Vaccine => r.body)
+    );
+  }
+
+  /** Path part for operation `getAllVaccines()` */
+  static readonly GetAllVaccinesPath = '/mdm/vaccine/all';
+
+  /**
+   * Obtiene todos los Vaccine.
+   *
+   * Devuelve la lista completa de Vaccine
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllVaccines()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllVaccines$Response(params?: GetAllVaccines$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Vaccine>>> {
+    return getAllVaccines(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtiene todos los Vaccine.
+   *
+   * Devuelve la lista completa de Vaccine
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllVaccines$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllVaccines(params?: GetAllVaccines$Params, context?: HttpContext): Observable<Array<Vaccine>> {
+    return this.getAllVaccines$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Vaccine>>): Array<Vaccine> => r.body)
     );
   }

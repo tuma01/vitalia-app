@@ -47,7 +47,9 @@
         "field_min_length": "Mínimo {{min}} caracteres",
         "field_max_length": "Máximo {{max}} caracteres",
         "delete_success": "Registro eliminado correctamente",
-        "delete_error": "Error al eliminar. Inténtalo de nuevo"
+        "delete_error": "Error al eliminar. Inténtalo de nuevo",
+        "active": "Activo",
+        "inactive": "Inactivo"
     },
     "crud": {
         "save_success": "{{entity}} guardado correctamente",
@@ -105,7 +107,6 @@
         "all_patients": "Todos los Pacientes",
         "add_patient": "Agregar Paciente",
         "appointments": "Citas",
-        "clinical": "Clínico",
         "consultations": "Consultas",
         "prescriptions": "Recetas",
         "lab_tests": "Análisis de Laboratorio",
@@ -277,7 +278,40 @@
         "municipalities": "Municipio",
         "municipalities_list": "Municipios",
         "add_municipality": "Agregar Municipio",
-        "edit_municipality": "Editar Municipio"
+        "edit_municipality": "Editar Municipio",
+        "tenant_governance": "Gobernanza de Tenencia",
+        "billing_licensing": "Planes y Licenciamiento",
+        "tenant_config": "Configuración Global de Tenencia",
+        "medical_catalog": "Catálogo Médico Global",
+        "icd10": "Diagnósticos (CIM-10)",
+        "procedures": "Procedimientos Médicos",
+        "vaccines": "Vacunas",
+        "specialties_allergies": "Especialidades y Alergias",
+        "security_policies": "Políticas MFA y Seguridad",
+        "iam_superadmins": "Gestión de SuperAdmins",
+        "consent_registry": "Registro de Consentimiento (DSQ)",
+        "bridge_connectors": "Conectores (Bridge)",
+        "fhir_hl7_profiles": "Perfiles FHIR/HL7",
+        "empi_matching": "EMPI (Maestro de Pacientes)",
+        "platform_intelligence": "Inteligencia de Plataforma",
+        "operational_stats": "Estadísticas Operacionales",
+        "broadcast_center": "Centro de Comunicación Masiva",
+        "clinical": {
+            "icd10": {
+                "title": "Diagnósticos (CIM-10)",
+                "singular": "Diagnóstico",
+                "plural": "Diagnósticos",
+                "list": "Lista de Diagnósticos",
+                "add": "Agregar Diagnóstico",
+                "edit": "Editar Diagnóstico",
+                "fields": {
+                    "id": "ID",
+                    "code": "Código CIM",
+                    "description": "Descripción",
+                    "active": "Activo"
+                }
+            }
+        }
     },
     "geography": {
         "title": "Geografía",
@@ -414,5 +448,13 @@
         },
         "description": "Estructura y navegación centralizada con tokens de espaciado y alineación.",
         "utilities_title": "Navegación y Primitivas de Diseño"
+    },
+    "platform": {
+        "shell": {
+            "description": "Sección Administrativa de Vitalia",
+            "wip_title": "En Construcción",
+            "wip_message": "Esta funcionalidad se encuentra actualmente en fase de implementación como parte de la nueva gobernanza de plataforma.",
+            "back_dashboard": "Volver al Panel"
+        }
     }
 }

@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Gender information
+ * Detalles del Gender a crear.
  */
 export interface Gender {
   active?: boolean;

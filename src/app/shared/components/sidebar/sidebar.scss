@@ -78,7 +78,7 @@ app-sidebar {
 }
 
 /* 🎨 THEME MIXIN ... */
-@mixin force-sidebar-theme($bg, $text, $text-muted, $border, $surface1, $surface2, $hover) {
+@mixin force-sidebar-theme($bg, $text, $text-muted, $border, $surface1, $surface2, $hover, $active, $active-text) {
     --sys-surface-0: #{$bg};
     --sys-surface-1: #{$surface1};
     --sys-surface-2: #{$surface2};
@@ -86,11 +86,15 @@ app-sidebar {
     --sys-text-secondary: #{$text-muted};
     --sys-border-subtle: #{$border};
     --state-hover-surface: #{$hover};
+    --state-active-surface: #{$active};
 
     --sidebar-bg: var(--sys-surface-0);
     --sidebar-text: var(--sys-text-primary);
     --sidebar-text-muted: var(--sys-text-secondary);
     --sidebar-border: var(--sys-border-subtle);
+    --sidebar-item-hover-bg: var(--state-hover-surface);
+    --sidebar-item-active-bg: var(--state-active-surface);
+    --sidebar-item-active-text: #{$active-text};
 
     .sidebar,
     .sidebar-header,
@@ -112,9 +116,10 @@ app-sidebar {
 }
 
 body.sidebar-light app-sidebar {
-    @include force-sidebar-theme(#ffffff, #1e293b, #64748b, rgba(0, 0, 0, 0.05), #f8f9fa, #f1f3f5, rgba(0, 0, 0, 0.04));
+    @include force-sidebar-theme(#ffffff, #1e293b, #64748b, rgba(0, 0, 0, 0.05), #f8f9fa, #f1f3f5, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.2), #0284c7);
 }
 
 body.sidebar-dark app-sidebar {
-    @include force-sidebar-theme(#121212, #ffffff, #cbd5e1, rgba(255, 255, 255, 0.05), #1e1e1e, #232323, rgba(255, 255, 255, 0.05));
+    // 🌑 High Contrast Dark Mode: Clearly visible selection and hover
+    @include force-sidebar-theme(#121212, #ffffff, #cbd5e1, rgba(255, 255, 255, 0.05), #1e1e1e, #232323, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.25), #ffffff);
 }

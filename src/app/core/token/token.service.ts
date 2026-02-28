@@ -2,6 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ApiConfiguration } from '../../api/api-configuration';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +17,16 @@ export class TokenService {
   private tokenChangedSubject = new BehaviorSubject<string | null>(null);
   public tokenChanged$ = this.tokenChangedSubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  constructor(
+    @Inject(PLATFORM_ID) platformId: Object,
+    private apiConfig: ApiConfiguration
+  ) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.jwtHelper = new JwtHelperService();
+  }
+
+  getApiRoot(): string {
+    return this.apiConfig.rootUrl || '';
   }
 
   // ========== ACCESS TOKEN ==========
@@ -57,11 +65,14 @@ export class TokenService {
     const token = this.accessToken;
     if (!token) return false;
 
-    // We trust that if a token exists, the user is authenticated.
-    // Invalid tokens will be caught by the 401 Interceptor.
-    // This prevents aggressive client-side logouts due to clock skew or format checks.
-    // console.log('[TokenService] Token found, assuming valid for session restoration.');
+    // Basic JWT format check: Header.Payload.Signature
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.warn('[TokenService] Invalid access token format detected.');
+      return false;
+    }
 
+    // Optional: Could check expiration here, but Interceptor handles 401 cases accurately.
     return true;
   }
 

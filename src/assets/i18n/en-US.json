@@ -47,7 +47,9 @@
         "field_min_length": "Minimum {{min}} characters",
         "field_max_length": "Maximum {{max}} characters",
         "delete_success": "Record deleted successfully",
-        "delete_error": "Error deleting record. Please try again"
+        "delete_error": "Error deleting record. Please try again",
+        "active": "Active",
+        "inactive": "Inactive"
     },
     "entity": {
         "country": "Country",
@@ -105,7 +107,6 @@
         "all_patients": "All Patients",
         "add_patient": "Add Patient",
         "appointments": "Appointments",
-        "clinical": "Clinical",
         "consultations": "Consultations",
         "prescriptions": "Prescriptions",
         "employees": "Employees",
@@ -271,7 +272,40 @@
         "municipalities": "Municipalities",
         "municipalities_list": "Municipalities List",
         "add_municipality": "Add Municipality",
-        "edit_municipality": "Edit Municipality"
+        "edit_municipality": "Edit Municipality",
+        "tenant_governance": "Tenant Governance",
+        "billing_licensing": "Plans & Licensing",
+        "tenant_config": "Global Tenant Configuration",
+        "medical_catalog": "Global Medical Catalog",
+        "icd10": "Diagnostics (ICD-10)",
+        "procedures": "Medical Procedures",
+        "vaccines": "Vaccines",
+        "specialties_allergies": "Specialties & Allergies",
+        "security_policies": "MFA & Security Policies",
+        "iam_superadmins": "SuperAdmin Management",
+        "consent_registry": "Consent Registry (DSQ)",
+        "bridge_connectors": "Bridge Connectors",
+        "fhir_hl7_profiles": "FHIR/HL7 Profiles",
+        "empi_matching": "EMPI (Patient Master)",
+        "platform_intelligence": "Platform Intelligence",
+        "operational_stats": "Operational Statistics",
+        "broadcast_center": "Broadcast Center",
+        "clinical": {
+            "icd10": {
+                "title": "Diagnostics (ICD-10)",
+                "singular": "Diagnosis",
+                "plural": "Diagnostics",
+                "list": "Diagnostics List",
+                "add": "Add Diagnosis",
+                "edit": "Edit Diagnosis",
+                "fields": {
+                    "id": "ID",
+                    "code": "ICD Code",
+                    "description": "Description",
+                    "active": "Active Status"
+                }
+            }
+        }
     },
     "geography": {
         "title": "Geography",
@@ -425,5 +459,13 @@
         },
         "description": "Centralized structure and navigation with spacing and alignment tokens.",
         "utilities_title": "Navigation & Layout Primitives"
+    },
+    "platform": {
+        "shell": {
+            "description": "Vitalia Administrative Section",
+            "wip_title": "Under Construction",
+            "wip_message": "This feature is currently being implemented as part of the new platform governance model.",
+            "back_dashboard": "Back to Dashboard"
+        }
     }
 }

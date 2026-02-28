@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Vaccine information
+ * Detalles de la Vaccine a crear.
  */
 export interface Vaccine {
   active?: boolean;

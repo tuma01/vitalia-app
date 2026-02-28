@@ -148,7 +148,7 @@ export class MedicalProcedureService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedProcedures$Response(params?: GetPaginatedProcedures$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoMedicalProcedure>> {
+  getPaginatedProcedures$Response(params: GetPaginatedProcedures$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoMedicalProcedure>> {
     return getPaginatedProcedures(this.http, this.rootUrl, params, context);
   }
 
@@ -162,7 +162,7 @@ export class MedicalProcedureService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedProcedures(params?: GetPaginatedProcedures$Params, context?: HttpContext): Observable<PageResponseDtoMedicalProcedure> {
+  getPaginatedProcedures(params: GetPaginatedProcedures$Params, context?: HttpContext): Observable<PageResponseDtoMedicalProcedure> {
     return this.getPaginatedProcedures$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoMedicalProcedure>): PageResponseDtoMedicalProcedure => r.body)
     );

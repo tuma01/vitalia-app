@@ -1,4 +1,4 @@
-import { OnInit, Directive, Input, inject } from '@angular/core';
+import { OnInit, Directive, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -24,6 +24,7 @@ export abstract class CrudBaseComponent<T> implements OnInit {
     protected translate = inject(TranslateService);
     protected confirmDialog = inject(ConfirmDialogService);
     protected snackBar = inject(MatSnackBar);
+    protected cdr = inject(ChangeDetectorRef);
 
     ngOnInit(): void {
         if (!this.config) {
@@ -72,6 +73,7 @@ export abstract class CrudBaseComponent<T> implements OnInit {
         this.config.apiService.getAll()
             .pipe(finalize(() => {
                 this.isLoading = false;
+                this.cdr.markForCheck();
                 console.log(`[CrudBase] 🏁 Loading complete for ${entityName}.`);
             }))
             .subscribe({
@@ -86,6 +88,7 @@ export abstract class CrudBaseComponent<T> implements OnInit {
                     } else {
                         console.error(`[CrudBase] ❌ Expected array but received:`, data);
                     }
+                    this.cdr.markForCheck();
                 },
                 error: (err) => {
                     console.error(`[CrudBase] ❌ Error loading ${entityName}:`, err);
@@ -96,10 +99,11 @@ export abstract class CrudBaseComponent<T> implements OnInit {
     onSearch(searchTerm: string): void {
         if (!searchTerm?.trim()) {
             this.filteredData = [...this.dataList];
-            return;
+        } else {
+            const term = searchTerm.toLowerCase().trim();
+            this.filteredData = this.dataList.filter(item => this.searchInObject(item, term));
         }
-        const term = searchTerm.toLowerCase().trim();
-        this.filteredData = this.dataList.filter(item => this.searchInObject(item, term));
+        this.cdr.markForCheck();
     }
 
     protected searchInObject(obj: any, term: string): boolean {
@@ -143,7 +147,10 @@ export abstract class CrudBaseComponent<T> implements OnInit {
             if (!confirmed) return;
             this.isLoading = true;
             this.config.apiService.delete(id)
-                .pipe(finalize(() => this.isLoading = false))
+                .pipe(finalize(() => {
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                }))
                 .subscribe({
                     next: () => {
                         this.snackBar.open(
@@ -183,7 +190,10 @@ export abstract class CrudBaseComponent<T> implements OnInit {
                 this.config.apiService.delete(this.config.getId(row))
             );
             forkJoin(deletes$)
-                .pipe(finalize(() => this.isLoading = false))
+                .pipe(finalize(() => {
+                    this.isLoading = false;
+                    this.cdr.markForCheck();
+                }))
                 .subscribe({
                     next: () => {
                         this.snackBar.open(
@@ -204,11 +214,13 @@ export abstract class CrudBaseComponent<T> implements OnInit {
 
     onRefresh(): void {
         this.loadData();
+        this.cdr.markForCheck();
     }
 
     clearSearch(input: HTMLInputElement): void {
         input.value = '';
         this.filteredData = [...this.dataList];
+        this.cdr.markForCheck();
     }
 
     /**

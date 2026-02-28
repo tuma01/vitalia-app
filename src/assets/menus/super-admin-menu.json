@@ -7,237 +7,323 @@
             "name": "dashboard",
             "type": "link",
             "icon": "dashboard",
-            "route": "/super-admin/dashboard",
+            "route": "/platform/dashboard",
             "visible": true
         },
         {
-            "id": "tenants",
-            "name": "tenant_management",
+            "id": "tenant_governance",
+            "name": "tenant_governance",
             "type": "group",
             "icon": "business",
             "visible": true,
             "children": [
                 {
-                    "id": "hospitals",
+                    "id": "tenants-list",
                     "name": "hospitals_clinics",
                     "type": "link",
-                    "route": "/super-admin/tenants/list",
+                    "route": "/platform/tenants/list",
                     "icon": "domain"
                 },
                 {
-                    "id": "onboarding",
+                    "id": "tenant-onboarding",
                     "name": "tenant_onboarding",
                     "type": "link",
-                    "route": "/super-admin/tenants/onboarding",
+                    "route": "/platform/tenants/onboarding",
                     "icon": "add_business"
                 },
                 {
-                    "id": "subscription",
-                    "name": "subscriptions_billing",
+                    "id": "billing-licensing",
+                    "name": "billing_licensing",
                     "type": "link",
-                    "route": "/super-admin/tenants/billing",
+                    "route": "/platform/tenants/billing",
                     "icon": "payments"
+                },
+                {
+                    "id": "tenant-config",
+                    "name": "tenant_config",
+                    "type": "link",
+                    "route": "/platform/tenants/config",
+                    "icon": "settings_applications"
                 }
             ]
         },
         {
-            "id": "registry",
-            "name": "master_registry",
+            "id": "medical_catalog",
+            "name": "medical_catalog",
             "type": "group",
             "icon": "folder_special",
             "visible": true,
             "children": [
                 {
-                    "id": "mpi",
-                    "name": "master_patient_index",
-                    "type": "link",
-                    "route": "/super-admin/registry/mpi",
-                    "icon": "people_outline"
+                    "id": "icd10",
+                    "name": "icd10",
+                    "type": "sub",
+                    "icon": "menu_book",
+                    "children": [
+                        {
+                            "id": "icd10-list",
+                            "name": "clinical.icd10.list",
+                            "type": "link",
+                            "route": "/platform/catalog/icd10/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "icd10-add",
+                            "name": "clinical.icd10.add",
+                            "type": "link",
+                            "route": "/platform/catalog/icd10/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "icd10-edit",
+                            "name": "clinical.icd10.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/icd10/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
-                    "id": "provider-registry",
-                    "name": "provider_registry",
+                    "id": "medications",
+                    "name": "medications",
                     "type": "link",
-                    "route": "/super-admin/registry/providers",
-                    "icon": "medical_information"
+                    "route": "/platform/catalog/medications",
+                    "icon": "medication"
+                },
+                {
+                    "id": "procedures",
+                    "name": "procedures",
+                    "type": "link",
+                    "route": "/platform/catalog/procedures",
+                    "icon": "medical_services"
+                },
+                {
+                    "id": "vaccines",
+                    "name": "vaccines",
+                    "type": "link",
+                    "route": "/platform/catalog/vaccines",
+                    "icon": "vaccines"
+                },
+                {
+                    "id": "specialties-allergies",
+                    "name": "specialties_allergies",
+                    "type": "link",
+                    "route": "/platform/catalog/specialties",
+                    "icon": "assignment_ind"
+                },
+                {
+                    "id": "geography",
+                    "name": "geography",
+                    "type": "sub",
+                    "icon": "public",
+                    "children": [
+                        {
+                            "id": "countries",
+                            "name": "pais",
+                            "type": "sub",
+                            "icon": "flag",
+                            "children": [
+                                {
+                                    "id": "countries-list",
+                                    "name": "paises",
+                                    "type": "link",
+                                    "route": "/platform/geography/pais/paises",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "countries-add",
+                                    "name": "addPais",
+                                    "type": "link",
+                                    "route": "/platform/geography/pais/addPais",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "countries-edit",
+                                    "name": "editPais",
+                                    "type": "link",
+                                    "route": "/platform/geography/pais/editPais",
+                                    "visible": false
+                                }
+                            ]
+                        },
+                        {
+                            "id": "departamentos",
+                            "name": "departamento",
+                            "type": "sub",
+                            "icon": "location_city",
+                            "children": [
+                                {
+                                    "id": "departamentos-list",
+                                    "name": "departamentos",
+                                    "type": "link",
+                                    "route": "/platform/geography/departamento/departamentos",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "departamentos-add",
+                                    "name": "addDepartamento",
+                                    "type": "link",
+                                    "route": "/platform/geography/departamento/addDepartamento",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "departamentos-edit",
+                                    "name": "editDepartamento",
+                                    "type": "link",
+                                    "route": "/platform/geography/departamento/editDepartamento",
+                                    "visible": false
+                                }
+                            ]
+                        },
+                        {
+                            "id": "provincias",
+                            "name": "provincia",
+                            "type": "sub",
+                            "icon": "map",
+                            "children": [
+                                {
+                                    "id": "provincias-list",
+                                    "name": "provincias",
+                                    "type": "link",
+                                    "route": "/platform/geography/provincia/provincias",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "provincias-add",
+                                    "name": "addProvincia",
+                                    "type": "link",
+                                    "route": "/platform/geography/provincia/addProvincia",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "provincias-edit",
+                                    "name": "editProvincia",
+                                    "type": "link",
+                                    "route": "/platform/geography/provincia/editProvincia",
+                                    "visible": false
+                                }
+                            ]
+                        },
+                        {
+                            "id": "municipios",
+                            "name": "municipio",
+                            "type": "sub",
+                            "icon": "place",
+                            "children": [
+                                {
+                                    "id": "municipios-list",
+                                    "name": "municipios",
+                                    "type": "link",
+                                    "route": "/platform/geography/municipio/municipios",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "municipios-add",
+                                    "name": "addMunicipio",
+                                    "type": "link",
+                                    "route": "/platform/geography/municipio/addMunicipio",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "municipios-edit",
+                                    "name": "editMunicipio",
+                                    "type": "link",
+                                    "route": "/platform/geography/municipio/editMunicipio",
+                                    "visible": false
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
         {
-            "id": "infrastructure",
-            "name": "infrastructure",
+            "id": "security_compliance",
+            "name": "security_compliance",
             "type": "group",
-            "icon": "settings_system_daydream",
+            "icon": "security",
             "visible": true,
             "children": [
                 {
                     "id": "audit",
                     "name": "audit_logs",
                     "type": "link",
-                    "route": "/super-admin/system/audit",
+                    "route": "/platform/system/audit",
                     "icon": "policy"
                 },
                 {
-                    "id": "security",
-                    "name": "security_compliance",
+                    "id": "security-policies",
+                    "name": "security_policies",
                     "type": "link",
-                    "route": "/super-admin/system/security",
-                    "icon": "security"
+                    "route": "/platform/system/security",
+                    "icon": "admin_panel_settings"
                 },
                 {
-                    "id": "interops",
-                    "name": "interoperability",
+                    "id": "iam-superadmins",
+                    "name": "iam_superadmins",
                     "type": "link",
-                    "route": "/super-admin/system/interop",
-                    "icon": "hub"
+                    "route": "/platform/system/iam",
+                    "icon": "manage_accounts"
+                },
+                {
+                    "id": "consent-registry",
+                    "name": "consent_registry",
+                    "type": "link",
+                    "route": "/platform/system/consent",
+                    "icon": "gavel"
                 }
             ]
         },
         {
-            "id": "data",
-            "name": "data_management",
+            "id": "interoperability",
+            "name": "interoperability",
             "type": "group",
-            "icon": "storage",
+            "icon": "hub",
             "visible": true,
             "children": [
                 {
-                    "id": "backups",
-                    "name": "backups_recovery",
+                    "id": "bridge-connectors",
+                    "name": "bridge_connectors",
                     "type": "link",
-                    "route": "/super-admin/data/backups",
-                    "icon": "backup"
+                    "route": "/platform/interop/bridge",
+                    "icon": "settings_input_component"
                 },
                 {
-                    "id": "reference-data",
-                    "name": "reference_data",
+                    "id": "fhir-hl7-profiles",
+                    "name": "fhir_hl7_profiles",
                     "type": "link",
-                    "route": "/super-admin/data/reference",
-                    "icon": "dataset"
+                    "route": "/platform/interop/profiles",
+                    "icon": "schema"
+                },
+                {
+                    "id": "empi-matching",
+                    "name": "empi_matching",
+                    "type": "link",
+                    "route": "/platform/interop/empi",
+                    "icon": "fingerprint"
                 }
             ]
         },
         {
-            "id": "geography",
-            "name": "geography",
+            "id": "platform_intelligence",
+            "name": "platform_intelligence",
             "type": "group",
-            "icon": "public",
+            "icon": "analytics",
             "visible": true,
             "children": [
                 {
-                    "id": "countries",
-                    "name": "pais",
-                    "type": "sub",
-                    "icon": "flag",
-                    "children": [
-                        {
-                            "id": "countries-list",
-                            "name": "paises",
-                            "type": "link",
-                            "route": "/platform/geography/pais/paises",
-                            "visible": true
-                        },
-                        {
-                            "id": "countries-add",
-                            "name": "addPais",
-                            "type": "link",
-                            "route": "/platform/geography/pais/addPais",
-                            "visible": true
-                        },
-                        {
-                            "id": "countries-edit",
-                            "name": "editPais",
-                            "type": "link",
-                            "route": "/platform/geography/pais/editPais",
-                            "visible": false
-                        }
-                    ]
+                    "id": "operational-stats",
+                    "name": "operational_stats",
+                    "type": "link",
+                    "route": "/platform/analytics/stats",
+                    "icon": "insert_chart"
                 },
                 {
-                    "id": "departamentos",
-                    "name": "departamento",
-                    "type": "sub",
-                    "icon": "location_city",
-                    "children": [
-                        {
-                            "id": "departamentos-list",
-                            "name": "departamentos",
-                            "type": "link",
-                            "route": "/platform/geography/departamento/departamentos",
-                            "visible": true
-                        },
-                        {
-                            "id": "departamentos-add",
-                            "name": "addDepartamento",
-                            "type": "link",
-                            "route": "/platform/geography/departamento/addDepartamento",
-                            "visible": true
-                        },
-                        {
-                            "id": "departamentos-edit",
-                            "name": "editDepartamento",
-                            "type": "link",
-                            "route": "/platform/geography/departamento/editDepartamento",
-                            "visible": false
-                        }
-                    ]
-                },
-                {
-                    "id": "provincias",
-                    "name": "provincia",
-                    "type": "sub",
-                    "icon": "map",
-                    "children": [
-                        {
-                            "id": "provincias-list",
-                            "name": "provincias",
-                            "type": "link",
-                            "route": "/platform/geography/provincia/provincias",
-                            "visible": true
-                        },
-                        {
-                            "id": "provincias-add",
-                            "name": "addProvincia",
-                            "type": "link",
-                            "route": "/platform/geography/provincia/addProvincia",
-                            "visible": true
-                        },
-                        {
-                            "id": "provincias-edit",
-                            "name": "editProvincia",
-                            "type": "link",
-                            "route": "/platform/geography/provincia/editProvincia",
-                            "visible": false
-                        }
-                    ]
-                },
-                {
-                    "id": "municipios",
-                    "name": "municipio",
-                    "type": "sub",
-                    "icon": "place",
-                    "children": [
-                        {
-                            "id": "municipios-list",
-                            "name": "municipios",
-                            "type": "link",
-                            "route": "/platform/geography/municipio/municipios",
-                            "visible": true
-                        },
-                        {
-                            "id": "municipios-add",
-                            "name": "addMunicipio",
-                            "type": "link",
-                            "route": "/platform/geography/municipio/addMunicipio",
-                            "visible": true
-                        },
-                        {
-                            "id": "municipios-edit",
-                            "name": "editMunicipio",
-                            "type": "link",
-                            "route": "/platform/geography/municipio/editMunicipio",
-                            "visible": false
-                        }
-                    ]
+                    "id": "broadcast-center",
+                    "name": "broadcast_center",
+                    "type": "link",
+                    "route": "/platform/communication/broadcast",
+                    "icon": "campaign"
                 }
             ]
         }

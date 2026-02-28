@@ -29,14 +29,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
       if ([403, 500].includes(error.status)) {
         router.navigateByUrl(`/${error.status}`, { skipLocationChange: true });
-      } else if (error.status === 401) {
-        toast.error('Session expired. Please login again.');
-        router.navigate(['/auth/login']);
       } else if (error.status === 404) {
         // Ignorar 404 (recurso no encontrado), no mostrar Toast.
       } else if (error.status === 400) {
         // Ignorar 400 (Bad Request) - Dejar que el componente maneje la validación.
-      } else {
+      } else if (error.status !== 401) {
+        // No mostrar error para 401 aquí, ya que el token interceptor lo maneja
         toast.error(error.message || 'Unexpected Error');
       }
 
