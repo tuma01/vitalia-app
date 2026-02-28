@@ -29,89 +29,97 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final MultiTenantFilter multiTenantFilter; // Injected
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    private final LogoutHandler logoutHandler;
-    private final AuthenticationProvider authenticationProvider;
+        private final JwtAuthenticationFilter jwtAuthFilter;
+        private final MultiTenantFilter multiTenantFilter; // Injected
+        private final UserDetailsService userDetailsService;
+        private final PasswordEncoder passwordEncoder;
+        private final LogoutHandler logoutHandler;
+        private final AuthenticationProvider authenticationProvider;
 
-    @Value("${spring.profiles.active:dev}")
-    private String activeProfile;
+        @Value("${spring.profiles.active:dev}")
+        private String activeProfile;
 
-    /**
-     * ✅ Configuración principal del filtro de seguridad
-     */
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                // 🔹 Desactivar CSRF para APIs JWT
-                .csrf(AbstractHttpConfigurer::disable)
-                // 🔹 Autorizaciones por endpoint
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/auth/**", // login, register, refresh
-                                "/account/activate", // Public activation
-                                "/account/request-reset-password", // Public reset request
-                                "/account/reset-password", // Public reset confirmation
-                                "/tenants/**", // Permitir listar tenants públicamente para login
-                                "/public/**", // healthcheck o documentación
-                                "/v3/api-docs/**", "/swagger-ui/**")
-                        .permitAll()
+        /**
+         * ✅ Configuración principal del filtro de seguridad
+         */
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                // 🔹 Desactivar CSRF para APIs JWT
+                                .csrf(AbstractHttpConfigurer::disable)
+                                // 🔹 Autorizaciones por endpoint
+                                .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers(
+                                                                "/auth/**", // login, register, refresh
+                                                                "/account/activate", // Public activation
+                                                                "/account/request-reset-password", // Public reset
+                                                                                                   // request
+                                                                "/account/reset-password", // Public reset confirmation
+                                                                "/tenants/**", // Permitir listar tenants públicamente
+                                                                               // para login
+                                                                "/public/**", // healthcheck o documentación
+                                                                "/v3/api-docs/**", "/swagger-ui/**")
+                                                .permitAll()
 
-                        // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
-                        .requestMatchers("/super-admin/tenants/**", "/super-admin/tenant-admins/**")
-                        .hasRole("SUPER_ADMIN")
-                        .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**", "/municipios/**",
-                                "/addresses/**")
-                        .hasRole("SUPER_ADMIN")
-                        .requestMatchers("/employee/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/doctor/**").hasAnyRole("DOCTOR", "ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/doctor/**").hasRole("DOCTOR")
+                                                // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---
+                                                .requestMatchers("/super-admin/tenants/**",
+                                                                "/super-admin/tenant-admins/**")
+                                                .hasRole("SUPER_ADMIN")
+                                                .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**",
+                                                                "/municipios/**",
+                                                                "/addresses/**")
+                                                .hasRole("SUPER_ADMIN")
+                                                .requestMatchers("/employee/**").hasRole("ADMIN")
+                                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.GET, "/doctor/**")
+                                                .hasAnyRole("DOCTOR", "ADMIN")
+                                                .requestMatchers(HttpMethod.POST, "/doctor/**").hasRole("DOCTOR")
 
-                        .requestMatchers("/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
-                        .requestMatchers("/patient/**").hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
+                                                .requestMatchers("/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
+                                                .requestMatchers("/patient/**")
+                                                .hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
 
-                        // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
-                        .anyRequest().authenticated())
-                // 🔹 Política de sesión sin estado (JWT)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                                // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
+                                                .anyRequest().authenticated())
+                                // 🔹 Política de sesión sin estado (JWT)
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // 🔹 Provider personalizado
-                .authenticationProvider(authenticationProvider)
+                                // 🔹 Provider personalizado
+                                .authenticationProvider(authenticationProvider)
 
-                // 🔹 Incluir filtro JWT antes del UsernamePasswordAuthenticationFilter
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                // 🔹 Incluir MultiTenantFilter antes del JWT Filter (para tener el contexto
-                // listo)
-                .addFilterBefore(multiTenantFilter, JwtAuthenticationFilter.class);
+                                // 🔹 Incluir filtro JWT antes del UsernamePasswordAuthenticationFilter
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                                // 🔹 Incluir MultiTenantFilter antes del JWT Filter (para tener el contexto
+                                // listo)
+                                .addFilterBefore(multiTenantFilter, JwtAuthenticationFilter.class);
 
-        // 🔹 Configuraciones especiales para entorno dev
-        if ("dev".equalsIgnoreCase(activeProfile)) {
-            http.cors(cors -> cors.configurationSource(corsConfigurationSource())); // Habilitar CORS en dev
+                // 🔹 Configuraciones especiales para entorno dev
+                if ("dev".equalsIgnoreCase(activeProfile)) {
+                        http.cors(cors -> cors.configurationSource(corsConfigurationSource())); // Habilitar CORS en dev
+                }
+
+                return http.build();
         }
 
-        return http.build();
-    }
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+                // 🔹 En local, permite subdominios y front Angular
+                configuration.setAllowedOriginPatterns(List.of(
+                                "http://localhost:*",
+                                "http://*.localhost:*"));
 
-        // 🔹 En local, permite subdominios y front Angular
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://*.localhost:*"));
+                configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+                configuration.setAllowedHeaders(
+                                List.of("Authorization", "Content-Type", "X-Tenant-Code", "X-Tenant-ID"));
+                configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
+                configuration.setAllowCredentials(true);
 
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Tenant-Code"));
-        configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition"));
-        configuration.setAllowCredentials(true);
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
-    }
+                return source;
+        }
 }
