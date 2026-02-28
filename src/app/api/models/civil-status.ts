@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Civil Status information
+ * Detalles del Civil Status a crear.
  */
 export interface CivilStatus {
   active?: boolean;

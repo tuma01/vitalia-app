@@ -12,16 +12,23 @@ import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
 import { Allergy } from '../models/allergy';
-import { create6 } from '../fn/allergy/create-6';
-import { Create6$Params } from '../fn/allergy/create-6';
-import { getAll6 } from '../fn/allergy/get-all-6';
-import { GetAll6$Params } from '../fn/allergy/get-all-6';
-import { getById6 } from '../fn/allergy/get-by-id-6';
-import { GetById6$Params } from '../fn/allergy/get-by-id-6';
+import { createAllergy } from '../fn/allergy/create-allergy';
+import { CreateAllergy$Params } from '../fn/allergy/create-allergy';
+import { deleteAllergy } from '../fn/allergy/delete-allergy';
+import { DeleteAllergy$Params } from '../fn/allergy/delete-allergy';
+import { getAllAllergies } from '../fn/allergy/get-all-allergies';
+import { GetAllAllergies$Params } from '../fn/allergy/get-all-allergies';
+import { getAllergyById } from '../fn/allergy/get-allergy-by-id';
+import { GetAllergyById$Params } from '../fn/allergy/get-allergy-by-id';
+import { getPaginatedAllergies } from '../fn/allergy/get-paginated-allergies';
+import { GetPaginatedAllergies$Params } from '../fn/allergy/get-paginated-allergies';
+import { PageResponseDtoAllergy } from '../models/page-response-dto-allergy';
+import { updateAllergy } from '../fn/allergy/update-allergy';
+import { UpdateAllergy$Params } from '../fn/allergy/update-allergy';
 
 
 /**
- * MDM para catálogo de alergias
+ * REST API para gestionar el catálogo de alergias (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class AllergyService extends BaseService {
@@ -29,77 +36,200 @@ export class AllergyService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `create6()` */
-  static readonly Create6Path = '/mdm/allergy';
+  /** Path part for operation `getAllergyById()` */
+  static readonly GetAllergyByIdPath = '/mdm/allergy/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create6()` instead.
+   * Obtener un Allergy por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Allergy por ID especificado.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllergyById()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create6$Response(params: Create6$Params, context?: HttpContext): Observable<StrictHttpResponse<Allergy>> {
-    return create6(this.http, this.rootUrl, params, context);
+  getAllergyById$Response(params: GetAllergyById$Params, context?: HttpContext): Observable<StrictHttpResponse<Allergy>> {
+    return getAllergyById(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create6$Response()` instead.
+   * Obtener un Allergy por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Allergy por ID especificado.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllergyById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create6(params: Create6$Params, context?: HttpContext): Observable<Allergy> {
-    return this.create6$Response(params, context).pipe(
+  getAllergyById(params: GetAllergyById$Params, context?: HttpContext): Observable<Allergy> {
+    return this.getAllergyById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Allergy>): Allergy => r.body)
     );
   }
 
-  /** Path part for operation `getById6()` */
-  static readonly GetById6Path = '/mdm/allergy/{id}';
+  /** Path part for operation `updateAllergy()` */
+  static readonly UpdateAllergyPath = '/mdm/allergy/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById6()` instead.
+   * Actualizar un Allergy por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Allergy existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateAllergy()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById6$Response(params: GetById6$Params, context?: HttpContext): Observable<StrictHttpResponse<Allergy>> {
-    return getById6(this.http, this.rootUrl, params, context);
+  updateAllergy$Response(params: UpdateAllergy$Params, context?: HttpContext): Observable<StrictHttpResponse<Allergy>> {
+    return updateAllergy(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById6$Response()` instead.
+   * Actualizar un Allergy por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Allergy existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateAllergy$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById6(params: GetById6$Params, context?: HttpContext): Observable<Allergy> {
-    return this.getById6$Response(params, context).pipe(
+  updateAllergy(params: UpdateAllergy$Params, context?: HttpContext): Observable<Allergy> {
+    return this.updateAllergy$Response(params, context).pipe(
       map((r: StrictHttpResponse<Allergy>): Allergy => r.body)
     );
   }
 
-  /** Path part for operation `getAll6()` */
-  static readonly GetAll6Path = '/mdm/allergy/all';
+  /** Path part for operation `deleteAllergy()` */
+  static readonly DeleteAllergyPath = '/mdm/allergy/{id}';
 
   /**
+   * Allergy a eliminar por ID.
+   *
+   * Elimina un Allergy existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll6()` instead.
+   * To access only the response body, use `deleteAllergy()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll6$Response(params?: GetAll6$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Allergy>>> {
-    return getAll6(this.http, this.rootUrl, params, context);
+  deleteAllergy$Response(params: DeleteAllergy$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteAllergy(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Allergy a eliminar por ID.
+   *
+   * Elimina un Allergy existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll6$Response()` instead.
+   * To access the full response (for headers, for example), `deleteAllergy$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll6(params?: GetAll6$Params, context?: HttpContext): Observable<Array<Allergy>> {
-    return this.getAll6$Response(params, context).pipe(
+  deleteAllergy(params: DeleteAllergy$Params, context?: HttpContext): Observable<void> {
+    return this.deleteAllergy$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `getPaginatedAllergies()` */
+  static readonly GetPaginatedAllergiesPath = '/mdm/allergy';
+
+  /**
+   * Obtiene una lista paginada de Allergy.
+   *
+   * Devuelve una lista paginada de Allergy
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getPaginatedAllergies()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPaginatedAllergies$Response(params: GetPaginatedAllergies$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoAllergy>> {
+    return getPaginatedAllergies(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtiene una lista paginada de Allergy.
+   *
+   * Devuelve una lista paginada de Allergy
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getPaginatedAllergies$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getPaginatedAllergies(params: GetPaginatedAllergies$Params, context?: HttpContext): Observable<PageResponseDtoAllergy> {
+    return this.getPaginatedAllergies$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageResponseDtoAllergy>): PageResponseDtoAllergy => r.body)
+    );
+  }
+
+  /** Path part for operation `createAllergy()` */
+  static readonly CreateAllergyPath = '/mdm/allergy';
+
+  /**
+   * Crear un Allergy.
+   *
+   * Crea un nuevo Allergy usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createAllergy()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createAllergy$Response(params: CreateAllergy$Params, context?: HttpContext): Observable<StrictHttpResponse<Allergy>> {
+    return createAllergy(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear un Allergy.
+   *
+   * Crea un nuevo Allergy usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createAllergy$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createAllergy(params: CreateAllergy$Params, context?: HttpContext): Observable<Allergy> {
+    return this.createAllergy$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Allergy>): Allergy => r.body)
+    );
+  }
+
+  /** Path part for operation `getAllAllergies()` */
+  static readonly GetAllAllergiesPath = '/mdm/allergy/all';
+
+  /**
+   * Obtiene todos los Allergy.
+   *
+   * Devuelve la lista completa de Allergy
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllAllergies()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllAllergies$Response(params?: GetAllAllergies$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Allergy>>> {
+    return getAllAllergies(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtiene todos los Allergy.
+   *
+   * Devuelve la lista completa de Allergy
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllAllergies$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllAllergies(params?: GetAllAllergies$Params, context?: HttpContext): Observable<Array<Allergy>> {
+    return this.getAllAllergies$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Allergy>>): Array<Allergy> => r.body)
     );
   }

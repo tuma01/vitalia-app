@@ -12,7 +12,7 @@ import { UserDto } from '../models/user-dto';
 export interface TenantAdmin {
 
   /**
-   * Objeto Dirección Completo (Para creación inline)
+   * Objeto Direcci├│n Completo (Para creaci├│n inline)
    */
   address?: Address;
 

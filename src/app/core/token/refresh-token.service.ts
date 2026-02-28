@@ -1,9 +1,9 @@
-// refresh-token.service.ts
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, tap, finalize } from 'rxjs/operators';
 import { TokenService } from './token.service';
+import { SessionService } from '../services/session.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,39 +12,46 @@ export class RefreshTokenService {
   private isRefreshing = false;
   private refreshSubject = new BehaviorSubject<any>(null);
 
-  constructor(
-    private http: HttpClient,
-    private tokenService: TokenService
-  ) {}
+  private http = inject(HttpClient);
+  private tokenService = inject(TokenService);
+  private sessionService = inject(SessionService);
+
+  constructor() { }
 
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.tokenService.refreshToken;
 
-    if (!refreshToken || !this.tokenService.isRefreshTokenValid()) {
-      return throwError(() => new Error('No valid refresh token'));
+    if (!refreshToken) {
+      return throwError(() => new Error('No refresh token available locally'));
     }
 
     if (this.isRefreshing) {
-      // Si ya se está refrescando, retorna el observable existente
       return this.refreshSubject.asObservable();
     }
 
     this.isRefreshing = true;
 
-    return this.http.post<any>('/api/auth/refresh', {
-      refreshToken: refreshToken
+    return this.http.post<any>(`${this.tokenService.getApiRoot()}/auth/refresh`, null, {
+      params: { refreshToken: refreshToken }
     }).pipe(
-      tap(response => {
-        this.tokenService.setTokens(
-          response.accessToken,
-          response.refreshToken
-        );
+      tap((response: any) => {
+        const accessToken = response.tokens?.accessToken || response.accessToken;
+        const newRefreshToken = response.tokens?.refreshToken || response.refreshToken || refreshToken;
+
+        if (accessToken) {
+          this.tokenService.setTokens(accessToken, newRefreshToken);
+          this.sessionService.handleTokenRefresh();
+          console.log('[RefreshTokenService] 🔄 Token successfully refreshed');
+          this.refreshSubject.next(response);
+        } else {
+          console.warn('[RefreshTokenService] Refresh response missing accessToken');
+        }
+      }),
+      finalize(() => {
         this.isRefreshing = false;
-        this.refreshSubject.next(response);
       }),
       catchError(error => {
-        this.isRefreshing = false;
-        this.tokenService.clearTokens();
+        console.error('[RefreshTokenService] Refresh failed:', error);
         return throwError(() => error);
       })
     );
@@ -52,6 +59,6 @@ export class RefreshTokenService {
 
   shouldRefreshToken(): boolean {
     return this.tokenService.isTokenAboutToExpire() &&
-           this.tokenService.isRefreshTokenValid();
+      this.tokenService.isRefreshTokenValid();
   }
 }

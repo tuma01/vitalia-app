@@ -11,24 +11,24 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create3 } from '../fn/gender/create-3';
-import { Create3$Params } from '../fn/gender/create-3';
-import { delete1 } from '../fn/gender/delete-1';
-import { Delete1$Params } from '../fn/gender/delete-1';
+import { createGender } from '../fn/gender/create-gender';
+import { CreateGender$Params } from '../fn/gender/create-gender';
+import { deleteGender } from '../fn/gender/delete-gender';
+import { DeleteGender$Params } from '../fn/gender/delete-gender';
 import { Gender } from '../models/gender';
-import { getAll3 } from '../fn/gender/get-all-3';
-import { GetAll3$Params } from '../fn/gender/get-all-3';
-import { getById1 } from '../fn/gender/get-by-id-1';
-import { GetById1$Params } from '../fn/gender/get-by-id-1';
-import { getPaginated1 } from '../fn/gender/get-paginated-1';
-import { GetPaginated1$Params } from '../fn/gender/get-paginated-1';
+import { getAllGenders } from '../fn/gender/get-all-genders';
+import { GetAllGenders$Params } from '../fn/gender/get-all-genders';
+import { getGenderById } from '../fn/gender/get-gender-by-id';
+import { GetGenderById$Params } from '../fn/gender/get-gender-by-id';
+import { getPaginatedGenders } from '../fn/gender/get-paginated-genders';
+import { GetPaginatedGenders$Params } from '../fn/gender/get-paginated-genders';
 import { PageResponseDtoGender } from '../models/page-response-dto-gender';
-import { update1 } from '../fn/gender/update-1';
-import { Update1$Params } from '../fn/gender/update-1';
+import { updateGender } from '../fn/gender/update-gender';
+import { UpdateGender$Params } from '../fn/gender/update-gender';
 
 
 /**
- * Gestión del catálogo maestro de géneros (MDM)
+ * REST API para gestionar el catálogo de géneros (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class GenderService extends BaseService {
@@ -36,152 +36,200 @@ export class GenderService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getById1()` */
-  static readonly GetById1Path = '/mdm/demographic/gender/{id}';
+  /** Path part for operation `getGenderById()` */
+  static readonly GetGenderByIdPath = '/mdm/demographic/gender/{id}';
 
   /**
+   * Obtener un Gender por ID.
+   *
+   * Devuelve un objeto Gender por ID especificado.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById1()` instead.
+   * To access only the response body, use `getGenderById()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById1$Response(params: GetById1$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
-    return getById1(this.http, this.rootUrl, params, context);
+  getGenderById$Response(params: GetGenderById$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
+    return getGenderById(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtener un Gender por ID.
+   *
+   * Devuelve un objeto Gender por ID especificado.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById1$Response()` instead.
+   * To access the full response (for headers, for example), `getGenderById$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getById1(params: GetById1$Params, context?: HttpContext): Observable<Gender> {
-    return this.getById1$Response(params, context).pipe(
+  getGenderById(params: GetGenderById$Params, context?: HttpContext): Observable<Gender> {
+    return this.getGenderById$Response(params, context).pipe(
       map((r: StrictHttpResponse<Gender>): Gender => r.body)
     );
   }
 
-  /** Path part for operation `update1()` */
-  static readonly Update1Path = '/mdm/demographic/gender/{id}';
+  /** Path part for operation `updateGender()` */
+  static readonly UpdateGenderPath = '/mdm/demographic/gender/{id}';
 
   /**
+   * Actualizar un Gender por ID.
+   *
+   * Actualiza un Gender existente usando su ID y los datos proporcionados.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `update1()` instead.
+   * To access only the response body, use `updateGender()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update1$Response(params: Update1$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
-    return update1(this.http, this.rootUrl, params, context);
+  updateGender$Response(params: UpdateGender$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
+    return updateGender(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Actualizar un Gender por ID.
+   *
+   * Actualiza un Gender existente usando su ID y los datos proporcionados.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `update1$Response()` instead.
+   * To access the full response (for headers, for example), `updateGender$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  update1(params: Update1$Params, context?: HttpContext): Observable<Gender> {
-    return this.update1$Response(params, context).pipe(
+  updateGender(params: UpdateGender$Params, context?: HttpContext): Observable<Gender> {
+    return this.updateGender$Response(params, context).pipe(
       map((r: StrictHttpResponse<Gender>): Gender => r.body)
     );
   }
 
-  /** Path part for operation `delete1()` */
-  static readonly Delete1Path = '/mdm/demographic/gender/{id}';
+  /** Path part for operation `deleteGender()` */
+  static readonly DeleteGenderPath = '/mdm/demographic/gender/{id}';
 
   /**
+   * Gender a eliminar por ID.
+   *
+   * Elimina un Gender existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete1()` instead.
+   * To access only the response body, use `deleteGender()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete1$Response(params: Delete1$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete1(this.http, this.rootUrl, params, context);
+  deleteGender$Response(params: DeleteGender$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteGender(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Gender a eliminar por ID.
+   *
+   * Elimina un Gender existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete1$Response()` instead.
+   * To access the full response (for headers, for example), `deleteGender$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete1(params: Delete1$Params, context?: HttpContext): Observable<void> {
-    return this.delete1$Response(params, context).pipe(
+  deleteGender(params: DeleteGender$Params, context?: HttpContext): Observable<void> {
+    return this.deleteGender$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `getPaginated1()` */
-  static readonly GetPaginated1Path = '/mdm/demographic/gender';
+  /** Path part for operation `getPaginatedGenders()` */
+  static readonly GetPaginatedGendersPath = '/mdm/demographic/gender';
 
   /**
+   * Obtiene una lista paginada de Gender.
+   *
+   * Devuelve una lista paginada de Gender
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getPaginated1()` instead.
+   * To access only the response body, use `getPaginatedGenders()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated1$Response(params: GetPaginated1$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoGender>> {
-    return getPaginated1(this.http, this.rootUrl, params, context);
+  getPaginatedGenders$Response(params: GetPaginatedGenders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoGender>> {
+    return getPaginatedGenders(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene una lista paginada de Gender.
+   *
+   * Devuelve una lista paginada de Gender
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getPaginated1$Response()` instead.
+   * To access the full response (for headers, for example), `getPaginatedGenders$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getPaginated1(params: GetPaginated1$Params, context?: HttpContext): Observable<PageResponseDtoGender> {
-    return this.getPaginated1$Response(params, context).pipe(
+  getPaginatedGenders(params: GetPaginatedGenders$Params, context?: HttpContext): Observable<PageResponseDtoGender> {
+    return this.getPaginatedGenders$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoGender>): PageResponseDtoGender => r.body)
     );
   }
 
-  /** Path part for operation `create3()` */
-  static readonly Create3Path = '/mdm/demographic/gender';
+  /** Path part for operation `createGender()` */
+  static readonly CreateGenderPath = '/mdm/demographic/gender';
 
   /**
+   * Crear un Gender.
+   *
+   * Crea un nuevo Gender usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create3()` instead.
+   * To access only the response body, use `createGender()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create3$Response(params: Create3$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
-    return create3(this.http, this.rootUrl, params, context);
+  createGender$Response(params: CreateGender$Params, context?: HttpContext): Observable<StrictHttpResponse<Gender>> {
+    return createGender(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Crear un Gender.
+   *
+   * Crea un nuevo Gender usando los datos proporcionados en el cuerpo de la solicitud.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create3$Response()` instead.
+   * To access the full response (for headers, for example), `createGender$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  create3(params: Create3$Params, context?: HttpContext): Observable<Gender> {
-    return this.create3$Response(params, context).pipe(
+  createGender(params: CreateGender$Params, context?: HttpContext): Observable<Gender> {
+    return this.createGender$Response(params, context).pipe(
       map((r: StrictHttpResponse<Gender>): Gender => r.body)
     );
   }
 
-  /** Path part for operation `getAll3()` */
-  static readonly GetAll3Path = '/mdm/demographic/gender/all';
+  /** Path part for operation `getAllGenders()` */
+  static readonly GetAllGendersPath = '/mdm/demographic/gender/all';
 
   /**
+   * Obtiene todos los Gender.
+   *
+   * Devuelve la lista completa de Gender
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll3()` instead.
+   * To access only the response body, use `getAllGenders()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll3$Response(params?: GetAll3$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Gender>>> {
-    return getAll3(this.http, this.rootUrl, params, context);
+  getAllGenders$Response(params?: GetAllGenders$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Gender>>> {
+    return getAllGenders(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene todos los Gender.
+   *
+   * Devuelve la lista completa de Gender
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll3$Response()` instead.
+   * To access the full response (for headers, for example), `getAllGenders$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll3(params?: GetAll3$Params, context?: HttpContext): Observable<Array<Gender>> {
-    return this.getAll3$Response(params, context).pipe(
+  getAllGenders(params?: GetAllGenders$Params, context?: HttpContext): Observable<Array<Gender>> {
+    return this.getAllGenders$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Gender>>): Array<Gender> => r.body)
     );
   }

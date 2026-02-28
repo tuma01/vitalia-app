@@ -41,8 +41,32 @@ export const routes: Routes = [
                 data: { title: 'Platform Dashboard' }
             },
             {
-              path: 'geography',
-              loadChildren: () => import('./platform/pages/geography/geography.routes').then(m => m.routes),
+                path: 'geography',
+                loadChildren: () => import('./platform/pages/geography/geography.routes').then(m => m.routes),
+            },
+            {
+                path: 'tenants',
+                loadChildren: () => import('./platform/pages/tenants/tenants.routes').then(m => m.routes),
+            },
+            {
+                path: 'catalog',
+                loadChildren: () => import('./platform/pages/catalog/catalog.routes').then(m => m.routes),
+            },
+            {
+                path: 'system',
+                loadChildren: () => import('./platform/pages/system/system.routes').then(m => m.routes),
+            },
+            {
+                path: 'interop',
+                loadChildren: () => import('./platform/pages/interop/interop.routes').then(m => m.routes),
+            },
+            {
+                path: 'analytics',
+                loadChildren: () => import('./platform/pages/analytics/analytics.routes').then(m => m.routes),
+            },
+            {
+                path: 'communication',
+                loadChildren: () => import('./platform/pages/communication/communication.routes').then(m => m.routes),
             },
             // {
             //     path: 'geography/pais',

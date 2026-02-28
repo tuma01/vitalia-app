@@ -39,7 +39,7 @@ export interface CrudActionButton<T = any> {
 export interface CrudFormFieldConfig<T = any> {
     name: keyof T | string;
     label: string;
-    type: 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'textarea' | 'password';
+    type: 'text' | 'number' | 'select' | 'date' | 'checkbox' | 'textarea' | 'password' | 'radio';
     required?: boolean;
     placeholder?: string;
     disabled?: boolean;

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,8 +13,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MtxGridModule, MtxGrid } from '@ng-matero/extensions/grid';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatRadioModule } from '@angular/material/radio';
 import { CrudBaseComponent } from './crud-base.component';
 import { CrudConfig, CrudMode } from './crud-config';
 
@@ -38,7 +39,8 @@ import { CrudConfig, CrudMode } from './crud-config';
         MatToolbarModule,
         MatTooltipModule,
         MatSnackBarModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        MatRadioModule
     ],
     templateUrl: './crud-template.component.html',
     styleUrls: ['./crud-template.component.scss']
@@ -58,8 +60,36 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> {
 
     @ViewChild('grid') grid!: MtxGrid;
 
+    protected override translate = inject(TranslateService);
+
     constructor() {
         super();
+    }
+
+    getErrorMessage(controlName: string): string {
+        const control = this.formGroup?.get(controlName);
+        if (!control || !control.errors) {
+            return '';
+        }
+
+        const errors = control.errors;
+
+        if (errors['required']) {
+            return this.translate.instant('validation.required');
+        }
+        if (errors['minlength']) {
+            return this.translate.instant('validation.minlength', { requiredLength: errors['minlength'].requiredLength });
+        }
+        if (errors['maxlength']) {
+            return this.translate.instant('validation.maxlength', { requiredLength: errors['maxlength'].requiredLength });
+        }
+        if (errors['email']) {
+            return this.translate.instant('validation.email');
+        }
+        if (errors['pattern']) {
+            return this.translate.instant('validation.pattern');
+        }
+        return '';
     }
 
     clearSelection(): void {

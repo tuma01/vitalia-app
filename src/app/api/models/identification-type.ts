@@ -4,7 +4,7 @@
 
 
 /**
- * Schema to hold Identification Type information
+ * Detalles del Identification Type a crear.
  */
 export interface IdentificationType {
   active?: boolean;

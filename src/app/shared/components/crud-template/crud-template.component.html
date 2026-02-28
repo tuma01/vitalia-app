@@ -112,6 +112,24 @@
                     [style.gridTemplateColumns]="'repeat(' + config.form.layout.columns + ', 1fr)'">
                     @for (field of config.form.fields; track field.name) {
                     <div class="form-field-wrapper" [style.gridColumn]="'span ' + (field.colSpan || 1)">
+                        @if (field.type === 'checkbox') {
+                        <div class="checkbox-field-container">
+                            <mat-checkbox [formControlName]="$any(field.name)">
+                                {{ field.label | translate }}
+                            </mat-checkbox>
+                        </div>
+                        } @else if (field.type === 'radio') {
+                        <div class="radio-field-container">
+                            <label class="radio-group-label">{{ field.label | translate }}</label>
+                            <mat-radio-group [formControlName]="$any(field.name)" class="radio-group">
+                                @for (opt of field.options; track opt.value) {
+                                <mat-radio-button [value]="opt.value">
+                                    {{ opt.label | translate }}
+                                </mat-radio-button>
+                                }
+                            </mat-radio-group>
+                        </div>
+                        } @else {
                         <mat-form-field appearance="outline" class="w-100">
                             <mat-label>{{ field.label | translate }}</mat-label>
 
@@ -132,19 +150,10 @@
                             }
 
                             @if (formGroup.get($any(field.name))?.invalid && formGroup.get($any(field.name))?.touched) {
-                            @if (formGroup.get($any(field.name))?.errors?.['required']) {
-                            <mat-error>{{ 'common.field_required' | translate }}</mat-error>
-                            } @else if (formGroup.get($any(field.name))?.errors?.['minlength']) {
-                            <mat-error>{{ 'common.field_min_length' | translate : { min:
-                                formGroup.get($any(field.name))?.errors?.['minlength']?.requiredLength } }}</mat-error>
-                            } @else if (formGroup.get($any(field.name))?.errors?.['maxlength']) {
-                            <mat-error>{{ 'common.field_max_length' | translate : { max:
-                                formGroup.get($any(field.name))?.errors?.['maxlength']?.requiredLength } }}</mat-error>
-                            } @else {
-                            <mat-error>{{ 'common.invalid_field' | translate }}</mat-error>
-                            }
+                            <mat-error>{{ getErrorMessage($any(field.name)) }}</mat-error>
                             }
                         </mat-form-field>
+                        }
                     </div>
                     }
                 </div>

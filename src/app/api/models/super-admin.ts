@@ -11,7 +11,7 @@ import { UserDto } from '../models/user-dto';
 export interface SuperAdmin {
 
   /**
-   * Objeto Dirección Completo (Para creación inline)
+   * Objeto Direcci├│n Completo (Para creaci├│n inline)
    */
   address?: Address;
 

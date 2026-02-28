@@ -47,7 +47,9 @@
         "field_min_length": "Minimum {{min}} caractères",
         "field_max_length": "Maximum {{max}} caractères",
         "delete_success": "Enregistrement supprimé avec succès",
-        "delete_error": "Erreur lors de la suppression. Veuillez réessayer"
+        "delete_error": "Erreur lors de la suppression. Veuillez réessayer",
+        "active": "Actif",
+        "inactive": "Inactif"
     },
     "entity": {
         "country": "Pays",
@@ -105,7 +107,6 @@
         "all_patients": "Tous les Patients",
         "add_patient": "Ajouter un Patient",
         "appointments": "Rendez-vous",
-        "clinical": "Clinique",
         "consultations": "Consultations",
         "prescriptions": "Ordonnances",
         "employees": "Employés",
@@ -271,7 +272,40 @@
         "municipalities": "Municipalités",
         "municipalities_list": "Liste des Municipalités",
         "add_municipality": "Ajouter une Municipalité",
-        "edit_municipality": "Modifier la Municipalité"
+        "edit_municipality": "Modifier la Municipalité",
+        "tenant_governance": "Gouvernance Locataire",
+        "billing_licensing": "Abonnements et Licences",
+        "tenant_config": "Configuration Globale des Locataires",
+        "medical_catalog": "Catalogue Médical Global",
+        "icd10": "Diagnostics (CIM-10)",
+        "procedures": "Procédures Médicales",
+        "vaccines": "Vaccins",
+        "specialties_allergies": "Spécialités et Allergies",
+        "security_policies": "Politiques MFA et Sécurité",
+        "iam_superadmins": "Gestion des SuperAdmins",
+        "consent_registry": "Registre des Consentements (DSQ)",
+        "bridge_connectors": "Connecteurs (Bridge)",
+        "fhir_hl7_profiles": "Profils FHIR/HL7",
+        "empi_matching": "MPI (Index Patient)",
+        "platform_intelligence": "Intelligence Plateforme",
+        "operational_stats": "Statistiques Opérationnelles",
+        "broadcast_center": "Centre de Communication Massive",
+        "clinical": {
+            "icd10": {
+                "title": "Diagnostics (CIM-10)",
+                "singular": "Diagnostic",
+                "plural": "Diagnostics",
+                "list": "Liste des Diagnostics",
+                "add": "Ajouter un Diagnostic",
+                "edit": "Modifier le Diagnostic",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code CIM",
+                    "description": "Description",
+                    "active": "Statut Actif"
+                }
+            }
+        }
     },
     "geography": {
         "title": "Géographie",
@@ -418,5 +452,13 @@
         },
         "description": "Structure et navigation centralisées avec des jetons d'espacement et d'alignement.",
         "utilities_title": "Primitives de navigation et mise en page"
+    },
+    "platform": {
+        "shell": {
+            "description": "Section Administrative de Vitalia",
+            "wip_title": "En Construction",
+            "wip_message": "Cette fonctionnalité est en cours d'implémentation dans le cadre del nouveau modèle de gouvernance.",
+            "back_dashboard": "Retour au Tableau de Bord"
+        }
     }
 }

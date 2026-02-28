@@ -10,7 +10,7 @@ import { PLATFORM_DEFAULT_THEME, TENANT_DEFAULT_THEME } from './theme.service';
  * 💾 Cached Theme Structure (with versioning)
  */
 export interface CachedTheme {
-    version?: string;
+    version?: number;
     theme: ThemeDto;
     cachedAt: number;
 }
@@ -59,13 +59,13 @@ export class SettingsResolver {
         if (savedJson) {
             try {
                 const cached: CachedTheme = JSON.parse(savedJson);
-                console.log('[SettingsResolver] ✅ Theme from cache (v' + cached.version + ')');
+                console.log('[SettingsResolver] ✅ Theme from cache (v' + (cached.version ?? 0) + ')');
 
                 // 🔥 Return cached immediately (instant UI)
                 const cachedTheme$ = of(cached.theme);
 
                 // 🔥 Refresh in background with version check
-                this.refreshInBackground(cached.version || 'v1');
+                this.refreshInBackground(cached.version ?? 0);
 
                 return cachedTheme$;
             } catch (error) {
@@ -85,7 +85,7 @@ export class SettingsResolver {
      * Fetches theme from backend and compares version.
      * If version changed → updates cache and notifies ThemeService.
      */
-    private refreshInBackground(currentVersion: string): void {
+    private refreshInBackground(currentVersion: number): void {
         this.fetchFromBackend().subscribe({
             next: serverTheme => {
                 if (serverTheme.version !== currentVersion) {
@@ -116,7 +116,7 @@ export class SettingsResolver {
         return this.fetchFromBackend().pipe(
             tap(theme => {
                 const cached: CachedTheme = {
-                    version: theme.version || 'v1',
+                    version: theme.version ?? 0,
                     theme: theme,
                     cachedAt: Date.now()
                 };
@@ -129,7 +129,7 @@ export class SettingsResolver {
 
                 // Cache default with special version
                 const cached: CachedTheme = {
-                    version: 'default',
+                    version: -1,
                     theme: defaultTheme,
                     cachedAt: Date.now()
                 };

@@ -30,7 +30,7 @@ export function getOperationColumn(
             type: 'icon',
             icon: 'edit',
             text: '',         // explicit empty — prevents MtxGrid from showing row data
-            tooltip: { message: translate.instant('common.edit'), position: 'below' },
+            tooltip: { message: translate.instant('common.edit'), position: 'above' },
             click: options.editHandler,
         };
         buttons.push(editBtn);
@@ -42,7 +42,7 @@ export function getOperationColumn(
             icon: 'delete',
             text: '',         // explicit empty — prevents MtxGrid from showing row data
             class: 'btn-row-delete',
-            tooltip: { message: translate.instant('common.delete'), position: 'below' },
+            tooltip: { message: translate.instant('common.delete'), position: 'above' },
             click: (record) => {
                 const itemName = options.fieldForMessage
                     ? record[options.fieldForMessage]
@@ -77,7 +77,7 @@ export function getOperationColumn(
                 type: 'icon',
                 icon: btn.icon,
                 text: '',
-                tooltip: { message: translate.instant(btn.tooltipKey), position: 'below' },
+                tooltip: { message: translate.instant(btn.tooltipKey), position: 'above' },
                 color: btn.color as any,
                 click: btn.handler,
             };

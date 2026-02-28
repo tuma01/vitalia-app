@@ -17,7 +17,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:8088/api/v1",
+      "url": "http://localhost:8088/api/v1",
       "description": "Development Server"
     }
   ],
@@ -27,12 +27,12 @@
       "description": "REST API para gestionar detalles del municipio: crear, actualizar, obtener y eliminar."
     },
     {
-      "name": "Allergy",
-      "description": "MDM para catálogo de alergias"
+      "name": "Gender",
+      "description": "REST API para gestionar el catálogo de géneros (MDM)."
     },
     {
-      "name": "Kinship",
-      "description": "Gestión del catálogo maestro de parentescos (MDM)"
+      "name": "Allergy",
+      "description": "REST API para gestionar el catálogo de alergias (MDM)."
     },
     {
       "name": "Medical Specialty",
@@ -51,6 +51,10 @@
       "description": "REST API para gestionar detalles de tenantConfigs: crear, actualizar, obtener y eliminar."
     },
     {
+      "name": "Kinship",
+      "description": "REST API para gestionar el catálogo maestro de parentescos (MDM)."
+    },
+    {
       "name": "Healthcare Provider",
       "description": "REST API para gestionar el catálogo de aseguradoras y pagadores de salud (MDM)."
     },
@@ -59,16 +63,12 @@
       "description": "Gestión de autenticación de usuarios (login, registro, tokens)"
     },
     {
-      "name": "Identification Type",
-      "description": "MDM para tipos de identificación"
+      "name": "Blood Type",
+      "description": "REST API para gestionar el catálogo maestro de tipos de sangre (MDM)."
     },
     {
       "name": "Civil Status",
-      "description": "Gestión del catálogo maestro de estado civil (MDM)"
-    },
-    {
-      "name": "Gender",
-      "description": "Gestión del catálogo maestro de géneros (MDM)"
+      "description": "REST API para gestionar el catálogo de estado civil (MDM)."
     },
     {
       "name": "Medication",
@@ -83,16 +83,8 @@
       "description": "REST API para gestionar el catálogo de procedimientos médicos y laboratorios (MDM)."
     },
     {
-      "name": "Vaccine",
-      "description": "MDM para catálogo de vacunas"
-    },
-    {
       "name": "ICD-10 Diagnosis",
       "description": "REST API para gestionar el catálogo de diagnósticos CIE-10 (MDM)."
-    },
-    {
-      "name": "Avatar",
-      "description": "REST API para gestionar avatares de usuarios."
     },
     {
       "name": "Departamento",
@@ -123,11 +115,185 @@
       "description": "REST API para gestionar detalles del Super Admin: crear, actualizar, obtener y eliminar."
     },
     {
-      "name": "Blood Type",
-      "description": "Gestión del catálogo maestro de tipos de sangre (MDM)"
+      "name": "Vaccine",
+      "description": "REST API para gestionar el catálogo de vacunas (MDM)."
+    },
+    {
+      "name": "Identification Type",
+      "description": "REST API para gestionar el catálogo de tipos de identificación (MDM)."
     }
   ],
   "paths": {
+    "/{id}": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtener un Identification Type por ID",
+        "description": "Devuelve un objeto Identification Type por ID especificado.",
+        "operationId": "getIdentificationTypeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a recuperar",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identification Type encontrado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Identification Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Actualizar un Identification Type por ID",
+        "description": "Actualiza un Identification Type existente usando su ID y los datos proporcionados.",
+        "operationId": "updateIdentificationType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a actualizar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentificationType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Identification Type actualizado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Identification Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Identification Type a eliminar por ID",
+        "description": "Elimina un Identification Type existente usando su ID.",
+        "operationId": "deleteIdentificationType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Identification Type eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Identification Type no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
+          }
+        }
+      }
+    },
     "/user-tenant-roles/{id}": {
       "get": {
         "tags": [
@@ -1392,6 +1558,176 @@
         }
       }
     },
+    "/mdm/vaccine/{id}": {
+      "get": {
+        "tags": [
+          "Vaccine"
+        ],
+        "summary": "Obtener un Vaccine por ID",
+        "description": "Devuelve un objeto Vaccine por ID especificado.",
+        "operationId": "getVaccineById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la Vaccine a recuperar",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vaccine encontrado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vaccine no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Vaccine"
+        ],
+        "summary": "Actualizar un Vaccine por ID",
+        "description": "Actualiza un Vaccine existente usando su ID y los datos proporcionados.",
+        "operationId": "updateVaccine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la Vaccine a actualizar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Vaccine"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Vaccine actualizado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vaccine no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Vaccine"
+        ],
+        "summary": "Vaccine a eliminar por ID",
+        "description": "Elimina un Vaccine existente usando su ID.",
+        "operationId": "deleteVaccine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de la Vaccine a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Vaccine eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Vaccine no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
+          }
+        }
+      }
+    },
     "/mdm/procedure/{id}": {
       "get": {
         "tags": [
@@ -1907,11 +2243,14 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "getById",
+        "summary": "Obtener un Kinship por ID",
+        "description": "Devuelve un objeto Kinship por ID especificado.",
+        "operationId": "getKinshipById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Kinship a recuperar",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1921,9 +2260,39 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Kinship encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kinship no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Kinship"
                 }
@@ -1936,11 +2305,14 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "update",
+        "summary": "Actualizar un Kinship por ID",
+        "description": "Actualiza un Kinship existente usando su ID y los datos proporcionados.",
+        "operationId": "updateKinship",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Kinship a actualizar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1960,9 +2332,39 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Kinship actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Kinship no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Kinship"
                 }
@@ -1975,11 +2377,14 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "delete",
+        "summary": "Kinship a eliminar por ID",
+        "description": "Elimina un Kinship existente usando su ID.",
+        "operationId": "deleteKinship",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Kinship a eliminar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -1988,8 +2393,17 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Kinship eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Kinship no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
           }
         }
       }
@@ -2018,7 +2432,7 @@
           "200": {
             "description": "Healthcare Provider encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2028,7 +2442,7 @@
           "400": {
             "description": "Solicitud inválida: ID nulo o datos incompletos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2038,7 +2452,7 @@
           "404": {
             "description": "Healthcare Provider no encontrado.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2048,7 +2462,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2090,7 +2504,7 @@
           "200": {
             "description": "Healthcare Provider actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2100,7 +2514,7 @@
           "400": {
             "description": "Solicitud inválida: ID nulo o datos incompletos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2110,7 +2524,7 @@
           "404": {
             "description": "Healthcare Provider no encontrado.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2120,7 +2534,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -2188,7 +2602,7 @@
           "200": {
             "description": "ICD-10 Diagnosis encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2198,7 +2612,7 @@
           "400": {
             "description": "Solicitud inválida: ID nulo o datos incompletos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2208,7 +2622,7 @@
           "404": {
             "description": "ICD-10 Diagnosis no encontrado.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2218,7 +2632,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2260,7 +2674,7 @@
           "200": {
             "description": "ICD-10 Diagnosis actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2270,7 +2684,7 @@
           "400": {
             "description": "Solicitud inválida: ID nulo o datos incompletos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2280,7 +2694,7 @@
           "404": {
             "description": "ICD-10 Diagnosis no encontrado.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2290,7 +2704,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -2339,11 +2753,14 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "getById_1",
+        "summary": "Obtener un Gender por ID",
+        "description": "Devuelve un objeto Gender por ID especificado.",
+        "operationId": "getGenderById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Gender a recuperar",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2353,9 +2770,39 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Gender encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gender no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Gender"
                 }
@@ -2368,11 +2815,14 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "update_1",
+        "summary": "Actualizar un Gender por ID",
+        "description": "Actualiza un Gender existente usando su ID y los datos proporcionados.",
+        "operationId": "updateGender",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Gender a actualizar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2392,9 +2842,39 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Gender actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Gender no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Gender"
                 }
@@ -2407,11 +2887,14 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "delete_1",
+        "summary": "Gender a eliminar por ID",
+        "description": "Elimina un Gender existente usando su ID.",
+        "operationId": "deleteGender",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Gender a eliminar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2420,8 +2903,17 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Gender eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Gender no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
           }
         }
       }
@@ -2431,11 +2923,14 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "getById_2",
+        "summary": "Obtener un Civil Status por ID",
+        "description": "Devuelve un objeto Civil Status por ID especificado.",
+        "operationId": "getCivilStatusById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Civil Status a recuperar",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2445,9 +2940,39 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Civil Status encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Civil Status no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CivilStatus"
                 }
@@ -2460,11 +2985,14 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "update_2",
+        "summary": "Actualizar un Civil Status por ID",
+        "description": "Actualiza un Civil Status existente usando su ID y los datos proporcionados.",
+        "operationId": "updateCivilStatus",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Civil Status a actualizar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2484,9 +3012,39 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Civil Status actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Civil Status no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CivilStatus"
                 }
@@ -2499,11 +3057,14 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "delete_2",
+        "summary": "Civil Status a eliminar por ID",
+        "description": "Elimina un Civil Status existente usando su ID.",
+        "operationId": "deleteCivilStatus",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Civil Status a eliminar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2512,8 +3073,17 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Civil Status eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Civil Status no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
           }
         }
       }
@@ -2523,11 +3093,14 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "getById_3",
+        "summary": "Obtener un Blood Type por ID",
+        "description": "Devuelve un objeto Blood Type por ID especificado.",
+        "operationId": "getBloodTypeById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Blood Type a recuperar",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2537,9 +3110,39 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Blood Type encontrado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blood Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BloodType"
                 }
@@ -2552,11 +3155,14 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "update_3",
+        "summary": "Actualizar un Blood Type por ID",
+        "description": "Actualiza un Blood Type existente usando su ID y los datos proporcionados.",
+        "operationId": "updateBloodType",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Blood Type a actualizar.",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2576,9 +3182,39 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Blood Type actualizado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blood Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BloodType"
                 }
@@ -2591,11 +3227,50 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "delete_3",
+        "summary": "Blood Type a eliminar por ID",
+        "description": "Elimina un Blood Type existente usando su ID.",
+        "operationId": "deleteBloodType",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID del Blood Type a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Blood Type eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Blood Type no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
+          }
+        }
+      }
+    },
+    "/mdm/allergy/{id}": {
+      "get": {
+        "tags": [
+          "Allergy"
+        ],
+        "summary": "Obtener un Allergy por ID",
+        "description": "Devuelve un objeto Allergy por ID especificado.",
+        "operationId": "getAllergyById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Allergy a recuperar",
             "required": true,
             "schema": {
               "type": "integer",
@@ -2605,7 +3280,150 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Allergy encontrado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Allergy no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Allergy"
+        ],
+        "summary": "Actualizar un Allergy por ID",
+        "description": "Actualiza un Allergy existente usando su ID y los datos proporcionados.",
+        "operationId": "updateAllergy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Allergy a actualizar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Allergy"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Allergy actualizado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Allergy no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Allergy"
+        ],
+        "summary": "Allergy a eliminar por ID",
+        "description": "Elimina un Allergy existente usando su ID.",
+        "operationId": "deleteAllergy",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Allergy a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Allergy eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Allergy no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
           }
         }
       }
@@ -2946,150 +3764,6 @@
           },
           "500": {
             "description": "Error interno del servidor."
-          }
-        }
-      }
-    },
-    "/avatars/{id}": {
-      "get": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Obtener un Avatar por ID",
-        "description": "Devuelve un objeto Avatar por ID especificado.",
-        "operationId": "getAvatarById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Avatar a recuperar",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Avatar encontrado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Avatar no encontrado.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Actualizar un Avatar por ID",
-        "description": "Actualiza un Avatar existente.",
-        "operationId": "updateAvatar",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Avatar a actualizar.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Avatar"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Avatar actualizado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Avatar no encontrado.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Eliminar un Avatar por ID",
-        "description": "Elimina un Avatar existente.",
-        "operationId": "deleteAvatar",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Avatar a eliminar.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Avatar eliminado con éxito."
-          },
-          "404": {
-            "description": "Avatar no encontrado."
           }
         }
       }
@@ -4205,11 +4879,87 @@
       }
     },
     "/mdm/vaccine": {
+      "get": {
+        "tags": [
+          "Vaccine"
+        ],
+        "summary": "Obtiene una lista paginada de Vaccine",
+        "description": "Devuelve una lista paginada de Vaccine",
+        "operationId": "getPaginatedVaccines",
+        "parameters": [
+          {
+            "name": "searchDto",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/VaccineSearchDto"
+            }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Índice de la página a recuperar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamaño de la página.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Vaccine recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoVaccine"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoVaccine"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoVaccine"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Vaccine"
         ],
-        "operationId": "create",
+        "summary": "Crear un Vaccine",
+        "description": "Crea un nuevo Vaccine usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createVaccine",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4221,10 +4971,30 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Vaccine creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Vaccine"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Vaccine"
                 }
@@ -4247,7 +5017,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4259,7 +5029,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4365,7 +5135,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4377,7 +5147,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4483,7 +5253,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4495,7 +5265,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -4593,34 +5363,60 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "getPaginated",
+        "summary": "Obtiene una lista paginada de Kinship",
+        "description": "Devuelve una lista paginada de Kinship",
+        "operationId": "getPaginatedKinships",
         "parameters": [
           {
             "name": "pageIndex",
             "in": "query",
-            "required": false,
+            "description": "Índice de la página a recuperar.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 0
-            }
+            },
+            "example": 0
           },
           {
             "name": "pageSize",
             "in": "query",
-            "required": false,
+            "description": "Tamaño de la página.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 10
-            }
+            },
+            "example": 10
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Kinship recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoKinship"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoKinship"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseDtoKinship"
                 }
@@ -4633,7 +5429,9 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "create_1",
+        "summary": "Crear un Kinship",
+        "description": "Crea un nuevo Kinship usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createKinship",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4645,42 +5443,32 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Kinship creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Kinship"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/mdm/identification-type": {
-      "post": {
-        "tags": [
-          "Identification Type"
-        ],
-        "operationId": "create_2",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IdentificationType"
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Kinship"
+                }
               }
             }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
+          "500": {
+            "description": "Error del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
+                  "$ref": "#/components/schemas/Kinship"
                 }
               }
             }
@@ -4704,7 +5492,8 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 0
             },
             "example": 0
           },
@@ -4715,7 +5504,8 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 10
             },
             "example": 10
           }
@@ -4774,7 +5564,7 @@
           "201": {
             "description": "Healthcare Provider creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -4784,7 +5574,7 @@
           "400": {
             "description": "Datos de entrada inválidos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -4794,7 +5584,7 @@
           "500": {
             "description": "Error del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HealthcareProvider"
                 }
@@ -4820,7 +5610,8 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 0
             },
             "example": 0
           },
@@ -4831,7 +5622,8 @@
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int32",
+              "default": 10
             },
             "example": 10
           }
@@ -4890,7 +5682,7 @@
           "201": {
             "description": "ICD-10 Diagnosis creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -4900,7 +5692,7 @@
           "400": {
             "description": "Datos de entrada inválidos.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -4910,7 +5702,7 @@
           "500": {
             "description": "Error del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Icd10"
                 }
@@ -4925,7 +5717,9 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "getPaginated_1",
+        "summary": "Obtiene una lista paginada de Gender",
+        "description": "Devuelve una lista paginada de Gender",
+        "operationId": "getPaginatedGenders",
         "parameters": [
           {
             "name": "searchDto",
@@ -4938,29 +5732,53 @@
           {
             "name": "pageIndex",
             "in": "query",
+            "description": "Índice de la página a recuperar.",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 0
-            }
+            },
+            "example": 0
           },
           {
             "name": "pageSize",
             "in": "query",
+            "description": "Tamaño de la página.",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 10
-            }
+            },
+            "example": 10
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Gender recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoGender"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoGender"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseDtoGender"
                 }
@@ -4973,7 +5791,9 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "create_3",
+        "summary": "Crear un Gender",
+        "description": "Crea un nuevo Gender usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createGender",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4985,10 +5805,30 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Gender creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gender"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Gender"
                 }
@@ -5003,7 +5843,9 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "getPaginated_2",
+        "summary": "Obtiene una lista paginada de Civil Status",
+        "description": "Devuelve una lista paginada de Civil Status",
+        "operationId": "getPaginatedCivilStatuses",
         "parameters": [
           {
             "name": "searchDto",
@@ -5016,29 +5858,53 @@
           {
             "name": "pageIndex",
             "in": "query",
-            "required": false,
+            "description": "Índice de la página a recuperar.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 0
-            }
+            },
+            "example": 0
           },
           {
             "name": "pageSize",
             "in": "query",
-            "required": false,
+            "description": "Tamaño de la página.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 10
-            }
+            },
+            "example": 10
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Civil Status recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoCivilStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoCivilStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseDtoCivilStatus"
                 }
@@ -5051,7 +5917,9 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "create_4",
+        "summary": "Crear un Civil Status",
+        "description": "Crea un nuevo Civil Status usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createCivilStatus",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5063,10 +5931,30 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Civil Status creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CivilStatus"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CivilStatus"
                 }
@@ -5081,34 +5969,60 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "getPaginated_3",
+        "summary": "Obtiene una lista paginada de Blood Type",
+        "description": "Devuelve una lista paginada de Blood Type",
+        "operationId": "getPaginatedBloodTypes",
         "parameters": [
           {
             "name": "pageIndex",
             "in": "query",
-            "required": false,
+            "description": "Índice de la página a recuperar.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 0
-            }
+            },
+            "example": 0
           },
           {
             "name": "pageSize",
             "in": "query",
-            "required": false,
+            "description": "Tamaño de la página.",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32",
               "default": 10
-            }
+            },
+            "example": 10
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Blood Type recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoBloodType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoBloodType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PageResponseDtoBloodType"
                 }
@@ -5121,7 +6035,9 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "create_5",
+        "summary": "Crear un Blood Type",
+        "description": "Crea un nuevo Blood Type usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createBloodType",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5133,10 +6049,30 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Blood Type creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BloodType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BloodType"
                 }
@@ -5147,11 +6083,87 @@
       }
     },
     "/mdm/allergy": {
+      "get": {
+        "tags": [
+          "Allergy"
+        ],
+        "summary": "Obtiene una lista paginada de Allergy",
+        "description": "Devuelve una lista paginada de Allergy",
+        "operationId": "getPaginatedAllergies",
+        "parameters": [
+          {
+            "name": "searchDto",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/AllergySearchDto"
+            }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Índice de la página a recuperar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamaño de la página.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Allergy recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoAllergy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoAllergy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoAllergy"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Allergy"
         ],
-        "operationId": "create_6",
+        "summary": "Crear un Allergy",
+        "description": "Crea un nuevo Allergy usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createAllergy",
         "requestBody": {
           "content": {
             "application/json": {
@@ -5163,10 +6175,30 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Allergy creado con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Allergy"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Allergy"
                 }
@@ -5408,161 +6440,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/avatars": {
-      "get": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Obtiene lista paginada de Avatar",
-        "description": "Devuelve lista paginada de Avatar",
-        "operationId": "getPaginatedAvatars",
-        "parameters": [
-          {
-            "name": "searchDto",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/AvatarSearchDto"
-            }
-          },
-          {
-            "name": "pageIndex",
-            "in": "query",
-            "description": "Índice de página",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            },
-            "example": 0
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Tamaño de página",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 10
-            },
-            "example": 10
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista paginada recuperada con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResponseDtoAvatar"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Crear un Avatar",
-        "description": "Crea un nuevo Avatar.",
-        "operationId": "createAvatar",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Avatar"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Avatar creado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Datos de entrada inválidos.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Avatar"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/avatars/upload/{userId}": {
-      "post": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Subir imagen de Avatar",
-        "description": "Sube y actualiza la imagen del avatar para un usuario específico.",
-        "operationId": "uploadAvatarImage",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "ID del usuario dueño del avatar",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "Archivo de imagen"
-                  }
-                },
-                "required": [
-                  "file"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Imagen actualizada con éxito."
-          },
-          "400": {
-            "description": "Archivo inválido."
           }
         }
       }
@@ -5920,6 +6797,132 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtiene una lista paginada de Identification Type",
+        "description": "Devuelve una lista paginada de Identification Type",
+        "operationId": "getPaginatedIdentificationTypes",
+        "parameters": [
+          {
+            "name": "searchDto",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/IdentificationTypeSearchDto"
+            }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Índice de la página a recuperar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamaño de la página.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Identification Type recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Crear un Identification Type",
+        "description": "Crea un nuevo Identification Type usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createIdentificationType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentificationType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Identification Type creado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
           }
         }
       }
@@ -6326,48 +7329,32 @@
         }
       }
     },
-    "/mdm/vaccine/{id}": {
-      "get": {
-        "tags": [
-          "Vaccine"
-        ],
-        "operationId": "getById_4",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Vaccine"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/mdm/vaccine/all": {
       "get": {
         "tags": [
           "Vaccine"
         ],
-        "operationId": "getAll",
+        "summary": "Obtiene todos los Vaccine",
+        "description": "Devuelve la lista completa de Vaccine",
+        "operationId": "getAllVaccines",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Vaccine recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Vaccine"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6499,12 +7486,14 @@
         "tags": [
           "Kinship"
         ],
-        "operationId": "getAll_1",
+        "summary": "Obtiene todos los Kinship",
+        "description": "Devuelve la lista completa de Kinship",
+        "operationId": "getAllKinships",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Kinship recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6513,78 +7502,15 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/mdm/identification-type/{id}": {
-      "get": {
-        "tags": [
-          "Identification Type"
-        ],
-        "operationId": "getById_5",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
+          },
+          "500": {
+            "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Identification Type"
-        ],
-        "operationId": "delete_4",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/mdm/identification-type/all": {
-      "get": {
-        "tags": [
-          "Identification Type"
-        ],
-        "operationId": "getAll_2",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/IdentificationType"
+                    "$ref": "#/components/schemas/Kinship"
                   }
                 }
               }
@@ -6605,7 +7531,7 @@
           "200": {
             "description": "Lista de Healthcare Provider recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6618,7 +7544,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6643,7 +7569,7 @@
           "200": {
             "description": "Lista de ICD-10 Diagnosis recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6656,7 +7582,7 @@
           "500": {
             "description": "Error interno del servidor.",
             "content": {
-              "*/*": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6674,12 +7600,27 @@
         "tags": [
           "Gender"
         ],
-        "operationId": "getAll_3",
+        "summary": "Obtiene todos los Gender",
+        "description": "Devuelve la lista completa de Gender",
+        "operationId": "getAllGenders",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Gender recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Gender"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6697,12 +7638,27 @@
         "tags": [
           "Civil Status"
         ],
-        "operationId": "getAll_4",
+        "summary": "Obtiene todos los Civil Status",
+        "description": "Devuelve la lista completa de Civil Status",
+        "operationId": "getAllCivilStatuses",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Civil Status recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CivilStatus"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6720,12 +7676,27 @@
         "tags": [
           "Blood Type"
         ],
-        "operationId": "getAll_5",
+        "summary": "Obtiene todos los Blood Type",
+        "description": "Devuelve la lista completa de Blood Type",
+        "operationId": "getAllBloodTypes",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Blood Type recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BloodType"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6738,48 +7709,32 @@
         }
       }
     },
-    "/mdm/allergy/{id}": {
-      "get": {
-        "tags": [
-          "Allergy"
-        ],
-        "operationId": "getById_6",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/Allergy"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/mdm/allergy/all": {
       "get": {
         "tags": [
           "Allergy"
         ],
-        "operationId": "getAll_6",
+        "summary": "Obtiene todos los Allergy",
+        "description": "Devuelve la lista completa de Allergy",
+        "operationId": "getAllAllergies",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Lista de Allergy recuperada con éxito.",
             "content": {
-              "*/*": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Allergy"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -6868,89 +7823,6 @@
         }
       }
     },
-    "/avatars/image/{userId}": {
-      "get": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Obtener imagen de Avatar",
-        "description": "Descarga la imagen del avatar de un usuario",
-        "operationId": "getAvatarImage",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "ID del usuario",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Imagen recuperada.",
-            "content": {
-              "image/png": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              },
-              "image/jpeg": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Imagen no encontrada.",
-            "content": {
-              "image/png": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              },
-              "image/jpeg": {
-                "schema": {
-                  "type": "string",
-                  "format": "byte"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/avatars/all": {
-      "get": {
-        "tags": [
-          "Avatar"
-        ],
-        "summary": "Obtiene todos los Avatar",
-        "description": "Devuelve la lista completa de Avatar",
-        "operationId": "getAllAvatars",
-        "responses": {
-          "200": {
-            "description": "Lista recuperada con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Avatar"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/auth/validate": {
       "get": {
         "tags": [
@@ -6972,6 +7844,44 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/all": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtiene todos los Identification Type",
+        "description": "Devuelve la lista completa de Identification Type",
+        "operationId": "getAllIdentificationTypes",
+        "responses": {
+          "200": {
+            "description": "Lista de Identification Type recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentificationType"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentificationType"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -7064,6 +7974,31 @@
   },
   "components": {
     "schemas": {
+      "IdentificationType": {
+        "type": "object",
+        "description": "Detalles del Identification Type a crear.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      },
       "Role": {
         "type": "object",
         "description": "Schema to hold Role information",
@@ -7348,6 +8283,10 @@
           "tenantId": {
             "type": "integer",
             "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -7582,7 +8521,7 @@
           },
           "address": {
             "$ref": "#/components/schemas/Address",
-            "description": "Objeto Dirección Completo (Para creación inline)"
+            "description": "Objeto Direcci├│n Completo (Para creaci├│n inline)"
           },
           "telefono": {
             "type": "string",
@@ -7789,7 +8728,7 @@
           },
           "address": {
             "$ref": "#/components/schemas/Address",
-            "description": "Objeto Dirección Completo (Para creación inline)"
+            "description": "Objeto Direcci├│n Completo (Para creaci├│n inline)"
           },
           "telefono": {
             "type": "string",
@@ -7940,6 +8879,34 @@
         "required": [
           "nombre",
           "provinciaId"
+        ]
+      },
+      "Vaccine": {
+        "type": "object",
+        "description": "Detalles de la Vaccine a crear.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name"
         ]
       },
       "MedicalProcedure": {
@@ -8096,7 +9063,7 @@
       },
       "Kinship": {
         "type": "object",
-        "description": "Schema to hold Kinship information",
+        "description": "Detalles del Kinship a crear.",
         "properties": {
           "id": {
             "type": "integer",
@@ -8220,7 +9187,7 @@
       },
       "Gender": {
         "type": "object",
-        "description": "Schema to hold Gender information",
+        "description": "Detalles del Gender a crear.",
         "properties": {
           "id": {
             "type": "integer",
@@ -8245,7 +9212,7 @@
       },
       "CivilStatus": {
         "type": "object",
-        "description": "Schema to hold Civil Status information",
+        "description": "Detalles del Civil Status a crear.",
         "properties": {
           "id": {
             "type": "integer",
@@ -8270,7 +9237,7 @@
       },
       "BloodType": {
         "type": "object",
-        "description": "Schema to hold Blood Type information",
+        "description": "Detalles del Blood Type a crear.",
         "properties": {
           "id": {
             "type": "integer",
@@ -8301,6 +9268,39 @@
         "required": [
           "code",
           "name"
+        ]
+      },
+      "Allergy": {
+        "type": "object",
+        "description": "Detalles del Allergy a crear.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "type"
         ]
       },
       "Departamento": {
@@ -8397,50 +9397,6 @@
           "phoneCode"
         ]
       },
-      "Avatar": {
-        "type": "object",
-        "description": "Detalles del Avatar a crear.",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Identificador único",
-            "example": 1
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64",
-            "description": "ID del usuario",
-            "example": 1
-          },
-          "tenantCode": {
-            "type": "string",
-            "description": "Código del tenant",
-            "example": "GLOBAL",
-            "minLength": 1
-          },
-          "filename": {
-            "type": "string",
-            "description": "Nombre del archivo",
-            "example": "profile.png"
-          },
-          "mimeType": {
-            "type": "string",
-            "description": "Tipo MIME del archivo",
-            "example": "image/png"
-          },
-          "size": {
-            "type": "integer",
-            "format": "int64",
-            "description": "Tamaño del archivo en bytes",
-            "example": 1024
-          }
-        },
-        "required": [
-          "tenantCode",
-          "userId"
-        ]
-      },
       "AssignRolesRequest": {
         "type": "object",
         "description": "Assign or unassign role names to a user in a tenant",
@@ -8474,92 +9430,6 @@
           "roleNames",
           "tenantId",
           "userId"
-        ]
-      },
-      "Vaccine": {
-        "type": "object",
-        "description": "Schema to hold Vaccine information",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": {
-            "type": "string"
-          },
-          "active": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
-      "IdentificationType": {
-        "type": "object",
-        "description": "Schema to hold Identification Type information",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "active": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
-      "Allergy": {
-        "type": "object",
-        "description": "Schema to hold Allergy information",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "type": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": {
-            "type": "string"
-          },
-          "active": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "code",
-          "name",
-          "type"
         ]
       },
       "UserRegisterRequest": {
@@ -9088,6 +9958,64 @@
           }
         }
       },
+      "VaccineSearchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageResponseDtoVaccine": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vaccine"
+            }
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PageResponseDtoMedicalProcedure": {
         "type": "object",
         "properties": {
@@ -9484,6 +10412,67 @@
           }
         }
       },
+      "AllergySearchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageResponseDtoAllergy": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergy"
+            }
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PageResponseDtoDepartamento": {
         "type": "object",
         "properties": {
@@ -9564,29 +10553,13 @@
           }
         }
       },
-      "AvatarSearchDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tenantCode": {
-            "type": "string"
-          }
-        }
-      },
-      "PageResponseDtoAvatar": {
+      "PageResponseDtoAddress": {
         "type": "object",
         "properties": {
           "content": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Avatar"
+              "$ref": "#/components/schemas/Address"
             }
           },
           "totalElements": {
@@ -9620,13 +10593,31 @@
           }
         }
       },
-      "PageResponseDtoAddress": {
+      "IdentificationTypeSearchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageResponseDtoIdentificationType": {
         "type": "object",
         "properties": {
           "content": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Address"
+              "$ref": "#/components/schemas/IdentificationType"
             }
           },
           "totalElements": {

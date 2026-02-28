@@ -99,6 +99,18 @@ export class SessionService {
   }
 
   /**
+   * Sincroniza el estado de la sesión tras un refresco de token exitoso
+   */
+  handleTokenRefresh(): void {
+    const storedUser = this.getUserFromStorage();
+    if (storedUser) {
+      console.log('[SessionService] Syncing session after token refresh');
+      this.userSubject.next(storedUser);
+      this.user.set(storedUser);
+    }
+  }
+
+  /**
    * Gestiona el rol activo para redirecciones de dashboard
    */
   setActiveRole(role: string | null): void {

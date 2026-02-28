@@ -11,19 +11,24 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { create2 } from '../fn/identification-type/create-2';
-import { Create2$Params } from '../fn/identification-type/create-2';
-import { delete4 } from '../fn/identification-type/delete-4';
-import { Delete4$Params } from '../fn/identification-type/delete-4';
-import { getAll2 } from '../fn/identification-type/get-all-2';
-import { GetAll2$Params } from '../fn/identification-type/get-all-2';
-import { getById5 } from '../fn/identification-type/get-by-id-5';
-import { GetById5$Params } from '../fn/identification-type/get-by-id-5';
+import { createIdentificationType } from '../fn/identification-type/create-identification-type';
+import { CreateIdentificationType$Params } from '../fn/identification-type/create-identification-type';
+import { deleteIdentificationType } from '../fn/identification-type/delete-identification-type';
+import { DeleteIdentificationType$Params } from '../fn/identification-type/delete-identification-type';
+import { getAllIdentificationTypes } from '../fn/identification-type/get-all-identification-types';
+import { GetAllIdentificationTypes$Params } from '../fn/identification-type/get-all-identification-types';
+import { getIdentificationTypeById } from '../fn/identification-type/get-identification-type-by-id';
+import { GetIdentificationTypeById$Params } from '../fn/identification-type/get-identification-type-by-id';
+import { getPaginatedIdentificationTypes } from '../fn/identification-type/get-paginated-identification-types';
+import { GetPaginatedIdentificationTypes$Params } from '../fn/identification-type/get-paginated-identification-types';
 import { IdentificationType } from '../models/identification-type';
+import { PageResponseDtoIdentificationType } from '../models/page-response-dto-identification-type';
+import { updateIdentificationType } from '../fn/identification-type/update-identification-type';
+import { UpdateIdentificationType$Params } from '../fn/identification-type/update-identification-type';
 
 
 /**
- * MDM para tipos de identificación
+ * REST API para gestionar el catálogo de tipos de identificación (MDM).
  */
 @Injectable({ providedIn: 'root' })
 export class IdentificationTypeService extends BaseService {
@@ -31,102 +36,200 @@ export class IdentificationTypeService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `create2()` */
-  static readonly Create2Path = '/mdm/identification-type';
+  /** Path part for operation `getIdentificationTypeById()` */
+  static readonly GetIdentificationTypeByIdPath = '/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `create2()` instead.
+   * Obtener un Identification Type por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Identification Type por ID especificado.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getIdentificationTypeById()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create2$Response(params: Create2$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
-    return create2(this.http, this.rootUrl, params, context);
+  getIdentificationTypeById$Response(params: GetIdentificationTypeById$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
+    return getIdentificationTypeById(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `create2$Response()` instead.
+   * Obtener un Identification Type por ID.
    *
-   * This method sends `application/json` and handles request body of type `application/json`.
+   * Devuelve un objeto Identification Type por ID especificado.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getIdentificationTypeById$Response()` instead.
+   *
+   * This method doesn't expect any request body.
    */
-  create2(params: Create2$Params, context?: HttpContext): Observable<IdentificationType> {
-    return this.create2$Response(params, context).pipe(
+  getIdentificationTypeById(params: GetIdentificationTypeById$Params, context?: HttpContext): Observable<IdentificationType> {
+    return this.getIdentificationTypeById$Response(params, context).pipe(
       map((r: StrictHttpResponse<IdentificationType>): IdentificationType => r.body)
     );
   }
 
-  /** Path part for operation `getById5()` */
-  static readonly GetById5Path = '/mdm/identification-type/{id}';
+  /** Path part for operation `updateIdentificationType()` */
+  static readonly UpdateIdentificationTypePath = '/{id}';
 
   /**
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getById5()` instead.
+   * Actualizar un Identification Type por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Identification Type existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateIdentificationType()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById5$Response(params: GetById5$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
-    return getById5(this.http, this.rootUrl, params, context);
+  updateIdentificationType$Response(params: UpdateIdentificationType$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
+    return updateIdentificationType(this.http, this.rootUrl, params, context);
   }
 
   /**
-   * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getById5$Response()` instead.
+   * Actualizar un Identification Type por ID.
    *
-   * This method doesn't expect any request body.
+   * Actualiza un Identification Type existente usando su ID y los datos proporcionados.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateIdentificationType$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getById5(params: GetById5$Params, context?: HttpContext): Observable<IdentificationType> {
-    return this.getById5$Response(params, context).pipe(
+  updateIdentificationType(params: UpdateIdentificationType$Params, context?: HttpContext): Observable<IdentificationType> {
+    return this.updateIdentificationType$Response(params, context).pipe(
       map((r: StrictHttpResponse<IdentificationType>): IdentificationType => r.body)
     );
   }
 
-  /** Path part for operation `delete4()` */
-  static readonly Delete4Path = '/mdm/identification-type/{id}';
+  /** Path part for operation `deleteIdentificationType()` */
+  static readonly DeleteIdentificationTypePath = '/{id}';
 
   /**
+   * Identification Type a eliminar por ID.
+   *
+   * Elimina un Identification Type existente usando su ID.
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `delete4()` instead.
+   * To access only the response body, use `deleteIdentificationType()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete4$Response(params: Delete4$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return delete4(this.http, this.rootUrl, params, context);
+  deleteIdentificationType$Response(params: DeleteIdentificationType$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return deleteIdentificationType(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Identification Type a eliminar por ID.
+   *
+   * Elimina un Identification Type existente usando su ID.
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `delete4$Response()` instead.
+   * To access the full response (for headers, for example), `deleteIdentificationType$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  delete4(params: Delete4$Params, context?: HttpContext): Observable<void> {
-    return this.delete4$Response(params, context).pipe(
+  deleteIdentificationType(params: DeleteIdentificationType$Params, context?: HttpContext): Observable<void> {
+    return this.deleteIdentificationType$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 
-  /** Path part for operation `getAll2()` */
-  static readonly GetAll2Path = '/mdm/identification-type/all';
+  /** Path part for operation `getPaginatedIdentificationTypes()` */
+  static readonly GetPaginatedIdentificationTypesPath = '/';
 
   /**
+   * Obtiene una lista paginada de Identification Type.
+   *
+   * Devuelve una lista paginada de Identification Type
+   *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll2()` instead.
+   * To access only the response body, use `getPaginatedIdentificationTypes()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll2$Response(params?: GetAll2$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IdentificationType>>> {
-    return getAll2(this.http, this.rootUrl, params, context);
+  getPaginatedIdentificationTypes$Response(params: GetPaginatedIdentificationTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIdentificationType>> {
+    return getPaginatedIdentificationTypes(this.http, this.rootUrl, params, context);
   }
 
   /**
+   * Obtiene una lista paginada de Identification Type.
+   *
+   * Devuelve una lista paginada de Identification Type
+   *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll2$Response()` instead.
+   * To access the full response (for headers, for example), `getPaginatedIdentificationTypes$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll2(params?: GetAll2$Params, context?: HttpContext): Observable<Array<IdentificationType>> {
-    return this.getAll2$Response(params, context).pipe(
+  getPaginatedIdentificationTypes(params: GetPaginatedIdentificationTypes$Params, context?: HttpContext): Observable<PageResponseDtoIdentificationType> {
+    return this.getPaginatedIdentificationTypes$Response(params, context).pipe(
+      map((r: StrictHttpResponse<PageResponseDtoIdentificationType>): PageResponseDtoIdentificationType => r.body)
+    );
+  }
+
+  /** Path part for operation `createIdentificationType()` */
+  static readonly CreateIdentificationTypePath = '/';
+
+  /**
+   * Crear un Identification Type.
+   *
+   * Crea un nuevo Identification Type usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createIdentificationType()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createIdentificationType$Response(params: CreateIdentificationType$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
+    return createIdentificationType(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Crear un Identification Type.
+   *
+   * Crea un nuevo Identification Type usando los datos proporcionados en el cuerpo de la solicitud.
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `createIdentificationType$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createIdentificationType(params: CreateIdentificationType$Params, context?: HttpContext): Observable<IdentificationType> {
+    return this.createIdentificationType$Response(params, context).pipe(
+      map((r: StrictHttpResponse<IdentificationType>): IdentificationType => r.body)
+    );
+  }
+
+  /** Path part for operation `getAllIdentificationTypes()` */
+  static readonly GetAllIdentificationTypesPath = '/all';
+
+  /**
+   * Obtiene todos los Identification Type.
+   *
+   * Devuelve la lista completa de Identification Type
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getAllIdentificationTypes()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllIdentificationTypes$Response(params?: GetAllIdentificationTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<IdentificationType>>> {
+    return getAllIdentificationTypes(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * Obtiene todos los Identification Type.
+   *
+   * Devuelve la lista completa de Identification Type
+   *
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `getAllIdentificationTypes$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getAllIdentificationTypes(params?: GetAllIdentificationTypes$Params, context?: HttpContext): Observable<Array<IdentificationType>> {
+    return this.getAllIdentificationTypes$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<IdentificationType>>): Array<IdentificationType> => r.body)
     );
   }

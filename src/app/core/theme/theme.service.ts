@@ -214,6 +214,12 @@ export class ThemeService {
     setVar('--color-primary-container', this.mix(primary, '#ffffff', 85));
     setVar('--color-primary-container-contrast', this.getContrastColor(this.mix(primary, '#ffffff', 85)));
 
+    // 🌙 Dark Mode Tonal Variant: In M3, dark themes use a lighter (P-80) primary.
+    // Ensures UI elements like focus borders are always visible on dark surfaces.
+    // We mix 40% towards white to approximate the tonal role.
+    const primaryTonal = isDark ? this.mix(primary, '#ffffff', 40) : primary;
+    setVar('--color-primary-tonal', primaryTonal);
+
     setVar('--color-accent', accent);
     const aRgb = this.hexToRgb(accent);
     setVar('--color-accent-rgb', `${aRgb.r},${aRgb.g},${aRgb.b}`);
@@ -269,14 +275,16 @@ export class ThemeService {
 
     setVar('--input-text', 'var(--sys-text-primary)');
     setVar('--input-label', 'var(--sys-text-secondary)');
-    setVar('--input-border-focus', 'var(--color-primary)');
-    setVar('--input-caret', isDark ? '#ffffff' : 'var(--color-primary)');
+    // In dark mode: use tonal (lighter) primary so the focus border is visible on dark bg
+    setVar('--input-border-focus', isDark ? primaryTonal : primary);
+    setVar('--input-caret', isDark ? primaryTonal : primary);
 
     setVar('--link-color', 'var(--color-link)');
     setVar('--link-hover', 'var(--color-link-hover)');
 
     // 🔁 6. MAPEO A ANGULAR MATERIAL 3 (M3 System Variables)
-    setVar('--mat-sys-primary', 'var(--color-primary)');
+    // In dark mode, Material 3 system primary should be the lighter tonal variant
+    setVar('--mat-sys-primary', isDark ? primaryTonal : 'var(--color-primary)');
     setVar('--mat-sys-on-primary', 'var(--color-primary-contrast)');
     setVar('--mat-sys-primary-container', 'var(--color-primary-container)');
     setVar('--mat-sys-on-primary-container', 'var(--color-primary)');
@@ -347,6 +355,9 @@ export class ThemeService {
       this.injectCustomCss('');
     }
 
+    // 🔧 Inject critical fixes that must override Angular Material compiled styles
+    this.injectCriticalFixes(isDark, primaryTonal);
+
     console.log('[ThemeService] ✅ Design Token Engine applied');
   }
 
@@ -365,6 +376,41 @@ export class ThemeService {
     }
 
     styleEl.textContent = css;
+  }
+
+  /**
+   * 🔧 Injects permanent UI fixes that must override Angular Material compiled styles.
+   * This style tag is always appended last in <head>, giving it maximum cascade priority.
+   */
+  private injectCriticalFixes(isDark: boolean, focusColor: string): void {
+    const styleId = 'vitalia-critical-fixes';
+    let styleEl = this.document.getElementById(styleId) as HTMLStyleElement;
+    if (!styleEl) {
+      styleEl = this.document.createElement('style');
+      styleEl.id = styleId;
+      this.document.head.appendChild(styleEl);
+    }
+
+    styleEl.textContent = `
+      /* ── Suppress vertical line artifact on outlined form fields ── */
+      .mat-mdc-form-field-focus-indicator { display: none !important; }
+      .mat-focus-indicator::before,
+      .mat-focus-indicator::after { display: none !important; }
+
+      ${isDark ? `
+      /* ── Dark Mode: Force focus border to be visible ── */
+      body.theme-dark .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+      body.theme-dark .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+      body.theme-dark .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+        border-color: ${focusColor} !important;
+        border-width: 2px !important;
+      }
+      body.theme-dark .mat-mdc-form-field.mat-focused .mdc-floating-label,
+      body.theme-dark .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+        color: ${focusColor} !important;
+      }
+      ` : ''}
+    `;
   }
 
   /**
