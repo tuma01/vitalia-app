@@ -31,4 +31,5 @@ public class ThemeDTO {
     private boolean allowCustomCss;
     private boolean active;
     private Long tenantId;
+    private Integer version;
 }

@@ -22,6 +22,7 @@ INSERT INTO DMN_THEME (
     CUSTOM_CSS,
     ALLOW_CUSTOM_CSS,
     ACTIVE,
+    VERSION,
     CREATED_BY,
     CREATED_DATE
 )
@@ -45,6 +46,7 @@ VALUES (
     NULL,                         -- CUSTOM_CSS vacío
     FALSE,                        -- ALLOW_CUSTOM_CSS por defecto
     TRUE,                         -- ACTIVE
+    0,                            -- VERSION
     'SYSTEM',                     -- CREATED_BY
-    CURRENT_TIMESTAMP                          -- CREATED_DATE
+    CURRENT_TIMESTAMP             -- CREATED_DATE
 );

@@ -100,6 +100,10 @@ public class Theme extends Auditable<String> implements Model {
     @Builder.Default
     private boolean active = true;
 
+    @Version
+    @Column(name = "VERSION")
+    private Integer version;
+
     // ---------------------------------------------------------------------
     // Relationship (inverse side)
     // ---------------------------------------------------------------------
