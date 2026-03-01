@@ -23,19 +23,19 @@ export const DEPARTAMENTO_CRUD_CONFIG = (): CrudConfig<Departamento> => {
 
         columns: [
             { field: 'id', header: 'common.id', sortable: true, width: '80px' },
-            { field: 'nombre', header: 'geography.department.fields.name', sortable: true }, // [FLEXIBLE]
-            { field: 'countryId', header: 'geography.department.fields.country', sortable: false, width: '250px' }
+            { field: 'nombre', header: 'menu.catalog.geography.department.fields.name', sortable: true }, // [FLEXIBLE]
+            { field: 'countryId', header: 'menu.catalog.geography.department.fields.country', sortable: false, width: '250px' }
         ],
 
         form: {
             layout: { columns: 2 },
             fields: [
-                { name: 'nombre', label: 'geography.department.fields.name', type: 'text', required: true, colSpan: 1 },
-                { name: 'poblacion', label: 'geography.department.fields.population', type: 'number', colSpan: 1 },
-                { name: 'superficie', label: 'geography.department.fields.surface', type: 'number', colSpan: 1 },
+                { name: 'nombre', label: 'menu.catalog.geography.department.fields.name', type: 'text', required: true, colSpan: 1 },
+                { name: 'poblacion', label: 'menu.catalog.geography.department.fields.population', type: 'number', colSpan: 1 },
+                { name: 'superficie', label: 'menu.catalog.geography.department.fields.surface', type: 'number', colSpan: 1 },
                 {
                     name: 'countryId',
-                    label: 'geography.department.fields.country',
+                    label: 'menu.catalog.geography.department.fields.country',
                     type: 'select',
                     required: true,
                     colSpan: 1,

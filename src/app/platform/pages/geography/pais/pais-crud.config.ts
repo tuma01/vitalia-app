@@ -23,20 +23,20 @@ export const PAIS_CRUD_CONFIG = (): CrudConfig<Country> => {
 
         columns: [
             { field: 'id', header: 'common.id', sortable: true, width: '80px' },
-            { field: 'iso', header: 'geography.country.fields.code', sortable: true, width: '100px' },
-            { field: 'niceName', header: 'geography.country.fields.name', sortable: true }, // [FLEXIBLE] Takes remaining space
+            { field: 'iso', header: 'menu.catalog.geography.country.fields.code', sortable: true, width: '100px' },
+            { field: 'niceName', header: 'menu.catalog.geography.country.fields.name', sortable: true }, // [FLEXIBLE] Takes remaining space
         ],
 
         form: {
             layout: { columns: 2 },
             fields: [
-                { name: 'iso', label: 'geography.country.fields.code', type: 'text', required: true, colSpan: 1, minLength: 2, maxLength: 2 },
-                { name: 'iso3', label: 'geography.country.fields.code3', type: 'text', colSpan: 1, minLength: 3, maxLength: 3 },
-                { name: 'name', label: 'geography.country.fields.name', type: 'text', required: true, colSpan: 1 },
-                { name: 'niceName', label: 'geography.country.fields.niceName', type: 'text', required: true, colSpan: 1 },
-                { name: 'numCode', label: 'geography.country.fields.numCode', type: 'number', colSpan: 1 },
-                { name: 'phoneCode', label: 'geography.country.fields.phoneCode', type: 'number', required: true, colSpan: 1 },
-                { name: 'currency', label: 'geography.country.fields.currency', type: 'text', colSpan: 1 },
+                { name: 'iso', label: 'menu.catalog.geography.country.fields.code', type: 'text', required: true, colSpan: 1, minLength: 2, maxLength: 2 },
+                { name: 'iso3', label: 'menu.catalog.geography.country.fields.code3', type: 'text', colSpan: 1, minLength: 3, maxLength: 3 },
+                { name: 'name', label: 'menu.catalog.geography.country.fields.name', type: 'text', required: true, colSpan: 1 },
+                { name: 'niceName', label: 'menu.catalog.geography.country.fields.niceName', type: 'text', required: true, colSpan: 1 },
+                { name: 'numCode', label: 'menu.catalog.geography.country.fields.numCode', type: 'number', colSpan: 1 },
+                { name: 'phoneCode', label: 'menu.catalog.geography.country.fields.phoneCode', type: 'number', required: true, colSpan: 1 },
+                { name: 'currency', label: 'menu.catalog.geography.country.fields.currency', type: 'text', colSpan: 1 },
             ]
         },
 

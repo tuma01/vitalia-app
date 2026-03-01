@@ -2,14 +2,14 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { ICD10_CRUD_CONFIG } from './icd10-crud.config';
-import { Icd10 } from 'app/api/models/icd-10';
+import { GENDERS_CRUD_CONFIG } from './genders-crud.config';
+import { Gender } from 'app/api/models/gender';
 import { getOperationColumn } from '@shared/gridcolumn-config';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
 
 @Component({
-    selector: 'app-icd10-list',
+    selector: 'app-genders-list',
     standalone: true,
     imports: [CrudTemplateComponent],
     template: `
@@ -19,25 +19,25 @@ import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
     ></app-crud-template>
   `
 })
-export class Icd10ListComponent {
-    @ViewChild('crud') private crud!: CrudTemplateComponent<Icd10>;
+export class GendersListComponent {
+    @ViewChild('crud') private crud!: CrudTemplateComponent<Gender>;
 
     private router = inject(Router);
     private translate = inject(TranslateService);
     private confirmDialog = inject(ConfirmDialogService);
     private snackBar = inject(MatSnackBar);
 
-    config = ICD10_CRUD_CONFIG();
+    config = GENDERS_CRUD_CONFIG();
 
     constructor() {
         this.config.columns.push(
             (getOperationColumn(
                 this.translate,
                 {
-                    editHandler: (record: Icd10) => this.edit(record),
-                    deleteHandler: (record: Icd10) => this.deleteIcd10(record),
-                    entityType: 'menu.catalog.icd10.singular',
-                    fieldForMessage: 'description'
+                    editHandler: (record: Gender) => this.edit(record),
+                    deleteHandler: (record: Gender) => this.deleteGender(record),
+                    entityType: 'menu.catalog.demographics.gender.singular',
+                    fieldForMessage: 'name'
                 },
                 this.confirmDialog
             ) as any)
@@ -45,16 +45,16 @@ export class Icd10ListComponent {
     }
 
     createNew(): void {
-        this.router.navigate(['/platform/catalog/icd10/add']);
+        this.router.navigate(['/platform/catalog/demographics/genders/add']);
     }
 
-    edit(record: Icd10): void {
-        this.router.navigate(['/platform/catalog/icd10/edit'], {
+    edit(record: Gender): void {
+        this.router.navigate(['/platform/catalog/demographics/genders/edit'], {
             queryParams: { id: record.id },
         });
     }
 
-    private deleteIcd10(record: Icd10): void {
+    private deleteGender(record: Gender): void {
         this.config.apiService.delete(record.id!).subscribe({
             next: () => {
                 this.snackBar.open(

@@ -1,33 +1,33 @@
 import { inject } from '@angular/core';
-import { Icd10 } from 'app/api/models/icd-10';
-import { Icd10DiagnosisService } from 'app/api/services/icd-10-diagnosis.service';
+import { Gender } from 'app/api/models/gender';
+import { GenderService } from 'app/api/services/gender.service';
 import { OpenApiCrudAdapter } from '@shared/services/crud-api-adapter.service';
 import { CrudConfig } from '@shared/components/crud-template/crud-config';
 
-export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
-    const service = inject(Icd10DiagnosisService);
+export const GENDERS_CRUD_CONFIG = (): CrudConfig<Gender> => {
+    const service = inject(GenderService);
 
     return {
-        entityName: 'menu.catalog.icd10.singular',
-        entityNamePlural: 'menu.catalog.icd10.plural',
+        entityName: 'menu.catalog.demographics.gender.singular',
+        entityNamePlural: 'menu.catalog.demographics.gender.plural',
 
-        getId: (entity: Icd10) => entity.id!,
+        getId: (entity: Gender) => entity.id!,
 
-        apiService: new OpenApiCrudAdapter<Icd10>(service, {
-            getAll: 'getAllIcd10',
-            getById: 'getIcd10ById',
-            create: 'createIcd10',
-            update: 'updateIcd10',
-            delete: 'deleteIcd10'
+        apiService: new OpenApiCrudAdapter<Gender>(service, {
+            getAll: 'getAllGenders',
+            getById: 'getGenderById',
+            create: 'createGender',
+            update: 'updateGender',
+            delete: 'deleteGender'
         }),
 
         columns: [
-            { field: 'id', header: 'menu.catalog.icd10.fields.id', sortable: true, width: '80px' },
-            { field: 'code', header: 'menu.catalog.icd10.fields.code', sortable: true, width: '120px' },
-            { field: 'description', header: 'menu.catalog.icd10.fields.description', sortable: true, width: '400px' },
+            { field: 'id', header: 'menu.catalog.demographics.gender.fields.id', sortable: true, width: '80px' },
+            { field: 'code', header: 'menu.catalog.demographics.gender.fields.code', sortable: true, width: '150px' },
+            { field: 'name', header: 'menu.catalog.demographics.gender.fields.name', sortable: true, width: '300px' },
             {
                 field: 'active',
-                header: 'menu.catalog.icd10.fields.active',
+                header: 'menu.catalog.demographics.gender.fields.active',
                 sortable: true,
                 width: '120px',
                 type: 'tag',
@@ -43,29 +43,29 @@ export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
             fields: [
                 {
                     name: 'code',
-                    label: 'menu.catalog.icd10.fields.code',
+                    label: 'menu.catalog.demographics.gender.fields.code',
                     type: 'text',
                     required: true,
                     colSpan: 1,
                     maxLength: 20
                 },
                 {
-                    name: 'active',
-                    label: 'menu.catalog.icd10.fields.active',
-                    type: 'radio',
+                    name: 'name',
+                    label: 'menu.catalog.demographics.gender.fields.name',
+                    type: 'text',
+                    required: true,
                     colSpan: 1,
+                    maxLength: 100
+                },
+                {
+                    name: 'active',
+                    label: 'menu.catalog.demographics.gender.fields.active',
+                    type: 'radio',
+                    colSpan: 2,
                     options: [
                         { label: 'common.active', value: true },
                         { label: 'common.inactive', value: false }
                     ]
-                },
-                {
-                    name: 'description',
-                    label: 'menu.catalog.icd10.fields.description',
-                    type: 'textarea',
-                    required: true,
-                    colSpan: 2,
-                    maxLength: 500
                 }
             ]
         },

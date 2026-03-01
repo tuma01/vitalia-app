@@ -23,21 +23,21 @@ export const MUNICIPIO_CRUD_CONFIG = (): CrudConfig<Municipio> => {
 
         columns: [
             { field: 'id', header: 'common.id', sortable: true, width: '80px' },
-            { field: 'nombre', header: 'geography.municipality.fields.name', sortable: true }, // [FLEXIBLE]
-            { field: 'provinciaId', header: 'geography.municipality.fields.province', sortable: false, width: '250px' }
+            { field: 'nombre', header: 'menu.catalog.geography.municipality.fields.name', sortable: true }, // [FLEXIBLE]
+            { field: 'provinciaId', header: 'menu.catalog.geography.municipality.fields.province', sortable: false, width: '250px' }
         ],
 
         form: {
             layout: { columns: 2 },
             fields: [
-                { name: 'codigoMunicipio', label: 'geography.municipality.fields.code_municipality', type: 'number', colSpan: 1 },
-                { name: 'nombre', label: 'geography.municipality.fields.name', type: 'text', required: true, colSpan: 1 },
-                { name: 'poblacion', label: 'geography.municipality.fields.population', type: 'number', colSpan: 1 },
-                { name: 'superficie', label: 'geography.municipality.fields.surface', type: 'number', colSpan: 1 },
-                { name: 'direccion', label: 'geography.municipality.fields.address', type: 'text', colSpan: 1 },
+                { name: 'codigoMunicipio', label: 'menu.catalog.geography.municipality.fields.code_municipality', type: 'number', colSpan: 1 },
+                { name: 'nombre', label: 'menu.catalog.geography.municipality.fields.name', type: 'text', required: true, colSpan: 1 },
+                { name: 'poblacion', label: 'menu.catalog.geography.municipality.fields.population', type: 'number', colSpan: 1 },
+                { name: 'superficie', label: 'menu.catalog.geography.municipality.fields.surface', type: 'number', colSpan: 1 },
+                { name: 'direccion', label: 'menu.catalog.geography.municipality.fields.address', type: 'text', colSpan: 1 },
                 {
                     name: 'provinciaId',
-                    label: 'geography.municipality.fields.province',
+                    label: 'menu.catalog.geography.municipality.fields.province',
                     type: 'select',
                     required: true,
                     colSpan: 1,

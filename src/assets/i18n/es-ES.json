@@ -261,22 +261,6 @@
         "financial_reports": "Informes Financieros",
         "clinical_quality": "Calidad Clínica",
         "geography_management": "Gestión de Geografía",
-        "countries": "Países",
-        "countries_list": "Lista de Países",
-        "add_country": "Agregar País",
-        "edit_country": "Editar País",
-        "departments_states": "Departamentos",
-        "departments_list": "Departamentos",
-        "add_department": "Agregar Departamento",
-        "edit_department": "Editar Departamento",
-        "provinces": "Provincia",
-        "provinces_list": "Provincias",
-        "add_province": "Agregar Provincia",
-        "edit_province": "Editar Provincia",
-        "municipalities": "Municipio",
-        "municipalities_list": "Municipios",
-        "add_municipality": "Agregar Municipio",
-        "edit_municipality": "Editar Municipio",
         "tenant_governance": "Gobernanza de Tenencia",
         "billing_licensing": "Planes y Licenciamiento",
         "tenant_config": "Configuración Global de Tenencia",
@@ -552,24 +536,11 @@
                     }
                 }
             }
+        },
+        "dashboard": {
+            "title": "Panel de Control"
         }
     },
-    "no_countries_found": "No se encontraron países",
-    "no_departments_found": "No se encontraron departamentos",
-    "no_provinces_found": "No se encontraron provincias",
-    "no_municipalities_found": "No se encontraron municipios",
-    "theme_branding": "Tema y Marca",
-    "primary_color": "Color Primario",
-    "accent_color": "Color de Acento",
-    "warn_color": "Color de Advertencia",
-    "upload_logo": "Cargar Logo",
-    "upload_favicon": "Cargar Favicon",
-    "theme_mode": "Modo de Tema",
-    "light_mode": "Modo Claro",
-    "dark_mode": "Modo Oscuro",
-    "save_theme": "Guardar Tema",
-    "preview_theme": "Vista Previa",
-    "reset_theme": "Restablecer por Defecto",
     "dashboard": {
         "title": "Panel de Control",
         "welcome": "Bienvenido",
@@ -622,6 +593,22 @@
             "overview": "Resumen General"
         }
     },
+    "no_countries_found": "No se encontraron países",
+    "no_departments_found": "No se encontraron departamentos",
+    "no_provinces_found": "No se encontraron provincias",
+    "no_municipalities_found": "No se encontraron municipios",
+    "theme_branding": "Tema y Marca",
+    "primary_color": "Color Primario",
+    "accent_color": "Color de Acento",
+    "warm_color": "Color de Advertencia",
+    "upload_logo": "Cargar Logo",
+    "upload_favicon": "Cargar Favicon",
+    "theme_mode": "Modo de Tema",
+    "light_mode": "Modo Claro",
+    "dark_mode": "Modo Oscuro",
+    "save_theme": "Guardar Tema",
+    "preview_theme": "Vista Previa",
+    "reset_theme": "Restablecer por Defecto",
     "pilot": {
         "breadcrumbs": {
             "home": "Inicio",
