@@ -11,13 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.amachi.app.core.common.controller.BaseController.ALL;
-import static com.amachi.app.core.common.controller.BaseController.ID;
+import static com.amachi.app.core.common.controller.BaseController.*;
 
 @Tag(name = "Healthcare Provider", description = "REST API para gestionar el catálogo de aseguradoras y pagadores de salud (MDM).")
 public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto> {
@@ -34,7 +32,7 @@ public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto>
         @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<HealthcareProviderDto> getProviderById(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a recuperar", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a recuperar", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Crear un " + NAME_API, description = "Crea un nuevo " + NAME_API
                         + " usando los datos proporcionados en el cuerpo de la solicitud.", responses = {
@@ -46,7 +44,7 @@ public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto>
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<HealthcareProviderDto> createProvider(
                         @Parameter(description = "Detalles del " + NAME_API
-                                        + " a crear.", required = true) @Valid @RequestBody @NonNull HealthcareProviderDto dto);
+                                        + " a crear.", required = true) @Valid @RequestBody HealthcareProviderDto dto);
 
         @Operation(summary = "Actualizar un " + NAME_API + " por ID", description = "Actualiza un " + NAME_API
                         + " existente usando su ID y los datos proporcionados.", responses = {
@@ -59,9 +57,9 @@ public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto>
         @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<HealthcareProviderDto> updateProvider(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a actualizar.", required = true) @PathVariable("id") @NonNull Long id,
+                                        + " a actualizar.", required = true) @PathVariable("id") Long id,
                         @Parameter(description = "Nuevos detalles del " + NAME_API
-                                        + ".", required = true) @Valid @RequestBody @NonNull HealthcareProviderDto dto);
+                                        + ".", required = true) @Valid @RequestBody HealthcareProviderDto dto);
 
         @Operation(summary = NAME_API + " a eliminar por ID", description = "Elimina un " + NAME_API
                         + " existente usando su ID.", responses = {
@@ -74,7 +72,7 @@ public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto>
         @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Void> deleteProvider(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a eliminar.", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a eliminar.", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Obtiene todos los " + NAME_API, description = "Devuelve la lista completa de "
                         + NAME_API, responses = {
@@ -94,7 +92,7 @@ public interface HealthcareProviderApi extends GenericApi<HealthcareProviderDto>
                         })
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<PageResponseDto<HealthcareProviderDto>> getPaginatedProviders(
-                        @NonNull HealthcareProviderSearchDto searchDto,
-                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) @NonNull Integer pageIndex,
-                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) @NonNull Integer pageSize);
+                        HealthcareProviderSearchDto searchDto,
+                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) final Integer pageIndex,
+                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) final Integer pageSize);
 }

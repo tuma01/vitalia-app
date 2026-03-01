@@ -6,15 +6,13 @@ import com.amachi.app.vitalia.medicalcatalog.bloodtype.dto.search.BloodTypeSearc
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.entity.BloodType;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.repository.BloodTypeRepository;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.specification.BloodTypeSpecification;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,58 +20,56 @@ import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY
 import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
-@Transactional
 public class BloodTypeServiceImpl implements GenericService<BloodType, BloodTypeSearchDto> {
-    private final BloodTypeRepository repository;
+
+    BloodTypeRepository bloodTypeRepository;
 
     @Override
-    @Transactional(readOnly = true)
-    @NonNull
     public List<BloodType> getAll() {
-        return repository.findAll();
+        return bloodTypeRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
-    @NonNull
-    public Page<BloodType> getAll(@NonNull BloodTypeSearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+    public Page<BloodType> getAll(BloodTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
         Specification<BloodType> specification = new BloodTypeSpecification(searchDto);
-        return repository.findAll(specification, pageable);
+        return bloodTypeRepository.findAll(specification, pageable);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    @NonNull
-    public BloodType getById(@NonNull Long id) {
+    public BloodType getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
+        return bloodTypeRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
     }
 
     @Override
-    @NonNull
-    public BloodType create(@NonNull BloodType entity) {
+    public BloodType create(BloodType entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(repository.save(entity));
+        return bloodTypeRepository.save(entity);
     }
 
     @Override
-    @NonNull
-    public BloodType update(@NonNull Long id, @NonNull BloodType entity) {
+    public BloodType update(Long id, BloodType entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        getById(id);
+        // Verificar que el BloodType exista
+        bloodTypeRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(repository.save(entity));
+        return bloodTypeRepository.save(entity);
     }
 
     @Override
-    public void delete(@NonNull Long id) {
+    public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        repository.delete(getById(id));
+        BloodType bloodType = bloodTypeRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(BloodType.class.getName(), "error.resource.not.found", id));
+        bloodTypeRepository.delete(bloodType);
     }
 }

@@ -7,67 +7,69 @@ import com.amachi.app.vitalia.medicalcatalog.specialty.dto.search.MedicalSpecial
 import com.amachi.app.vitalia.medicalcatalog.specialty.entity.MedicalSpecialty;
 import com.amachi.app.vitalia.medicalcatalog.specialty.mapper.MedicalSpecialtyMapper;
 import com.amachi.app.vitalia.medicalcatalog.specialty.service.impl.MedicalSpecialtyServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
 @RequestMapping("/mdm/medical-specialty")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MedicalSpecialtyController extends BaseController implements MedicalSpecialtyApi {
 
-    private final MedicalSpecialtyServiceImpl service;
-    private final MedicalSpecialtyMapper mapper;
+    MedicalSpecialtyServiceImpl service;
+    MedicalSpecialtyMapper mapper;
 
     @Override
-    public ResponseEntity<MedicalSpecialtyDto> getSpecialtyById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<MedicalSpecialtyDto> getSpecialtyById(Long id) {
+        MedicalSpecialty entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalSpecialtyDto> createSpecialty(@NonNull MedicalSpecialtyDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<MedicalSpecialtyDto> createSpecialty(MedicalSpecialtyDto dto) {
+        MedicalSpecialty entity = mapper.toEntity(dto);
+        MedicalSpecialty savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalSpecialtyDto> updateSpecialty(@NonNull Long id, @NonNull MedicalSpecialtyDto dto) {
+    public ResponseEntity<MedicalSpecialtyDto> updateSpecialty(Long id, MedicalSpecialtyDto dto) {
         MedicalSpecialty existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        MedicalSpecialty savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteSpecialty(@NonNull Long id) {
+    public ResponseEntity<Void> deleteSpecialty(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<MedicalSpecialtyDto>> getAllSpecialties() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<MedicalSpecialty> entities = service.getAll();
+        List<MedicalSpecialtyDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<MedicalSpecialtyDto>> getPaginatedSpecialties(
-            @NonNull MedicalSpecialtySearchDto searchDto,
-            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            MedicalSpecialtySearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<MedicalSpecialty> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicalSpecialtyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(PageResponseDto.<MedicalSpecialtyDto>builder()
+        PageResponseDto<MedicalSpecialtyDto> response = PageResponseDto.<MedicalSpecialtyDto>builder()
                 .content(dtos)
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
@@ -77,6 +79,8 @@ public class MedicalSpecialtyController extends BaseController implements Medica
                 .last(page.isLast())
                 .empty(page.isEmpty())
                 .numberOfElements(page.getNumberOfElements())
-                .build());
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }

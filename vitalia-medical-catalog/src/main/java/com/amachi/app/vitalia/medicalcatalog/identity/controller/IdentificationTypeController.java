@@ -7,62 +7,65 @@ import com.amachi.app.vitalia.medicalcatalog.identity.dto.search.IdentificationT
 import com.amachi.app.vitalia.medicalcatalog.identity.entity.IdentificationType;
 import com.amachi.app.vitalia.medicalcatalog.identity.mapper.IdentificationTypeMapper;
 import com.amachi.app.vitalia.medicalcatalog.identity.service.impl.IdentificationTypeServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
-@RequiredArgsConstructor
+@RequestMapping("/mdm/identification-type")
+@AllArgsConstructor
 public class IdentificationTypeController extends BaseController implements IdentificationTypeApi {
 
-    private final IdentificationTypeServiceImpl service;
-    private final IdentificationTypeMapper mapper;
+    IdentificationTypeServiceImpl service;
+    IdentificationTypeMapper mapper;
 
     @Override
-    public ResponseEntity<IdentificationTypeDto> getIdentificationTypeById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<IdentificationTypeDto> getIdentificationTypeById(Long id) {
+        IdentificationType entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<IdentificationTypeDto> createIdentificationType(@NonNull IdentificationTypeDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<IdentificationTypeDto> createIdentificationType(IdentificationTypeDto dto) {
+        IdentificationType entity = mapper.toEntity(dto);
+        IdentificationType savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<IdentificationTypeDto> updateIdentificationType(@NonNull Long id,
-            @NonNull IdentificationTypeDto dto) {
+    public ResponseEntity<IdentificationTypeDto> updateIdentificationType(Long id, IdentificationTypeDto dto) {
         IdentificationType existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        IdentificationType savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteIdentificationType(@NonNull Long id) {
+    public ResponseEntity<Void> deleteIdentificationType(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<IdentificationTypeDto>> getAllIdentificationTypes() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<IdentificationType> entities = service.getAll();
+        List<IdentificationTypeDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<IdentificationTypeDto>> getPaginatedIdentificationTypes(
-            @NonNull IdentificationTypeSearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+            IdentificationTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<IdentificationType> page = service.getAll(searchDto, pageIndex, pageSize);
         List<IdentificationTypeDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

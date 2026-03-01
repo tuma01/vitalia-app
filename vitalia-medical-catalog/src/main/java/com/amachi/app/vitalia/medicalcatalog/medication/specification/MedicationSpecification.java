@@ -14,29 +14,35 @@ import java.util.List;
 
 @AllArgsConstructor
 public class MedicationSpecification implements Specification<Medication> {
-
     private transient MedicationSearchDto criteria;
 
     @Override
     public Predicate toPredicate(Root<Medication> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
 
+        // Filtrar por ID exacto
         if (criteria.getId() != null) {
             predicates.add(cb.equal(root.get("id"), criteria.getId()));
         }
 
+        // Filtrar por nombre genérico del medicamento (LIKE)
         if (criteria.getGenericName() != null && !criteria.getGenericName().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("genericName")), "%" + criteria.getGenericName().toLowerCase() + "%"));
+            predicates.add(
+                    cb.like(cb.lower(root.get("genericName")), "%" + criteria.getGenericName().toLowerCase() + "%"));
         }
 
+        // Filtrar por nombre comercial del medicamento (LIKE)
         if (criteria.getCommercialName() != null && !criteria.getCommercialName().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("commercialName")), "%" + criteria.getCommercialName().toLowerCase() + "%"));
+            predicates.add(cb.like(cb.lower(root.get("commercialName")),
+                    "%" + criteria.getCommercialName().toLowerCase() + "%"));
         }
 
+        // Filtrar por forma farmacéutica (exacto)
         if (criteria.getPharmaceuticalForm() != null && !criteria.getPharmaceuticalForm().isBlank()) {
             predicates.add(cb.equal(root.get("pharmaceuticalForm"), criteria.getPharmaceuticalForm()));
         }
 
+        // Filtrar por estado activo/inactivo
         if (criteria.getActive() != null) {
             predicates.add(cb.equal(root.get("active"), criteria.getActive()));
         }

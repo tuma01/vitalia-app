@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
         @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Icd10Dto> getIcd10ById(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a recuperar", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a recuperar", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Crear un " + NAME_API, description = "Crea un nuevo " + NAME_API
                         + " usando los datos proporcionados en el cuerpo de la solicitud.", responses = {
@@ -46,7 +45,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Icd10Dto> createIcd10(
                         @Parameter(description = "Detalles del " + NAME_API
-                                        + " a crear.", required = true) @Valid @RequestBody @NonNull Icd10Dto dto);
+                                        + " a crear.", required = true) @Valid @RequestBody Icd10Dto dto);
 
         @Operation(summary = "Actualizar un " + NAME_API + " por ID", description = "Actualiza un " + NAME_API
                         + " existente usando su ID y los datos proporcionados.", responses = {
@@ -59,9 +58,9 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
         @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Icd10Dto> updateIcd10(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a actualizar.", required = true) @PathVariable("id") @NonNull Long id,
+                                        + " a actualizar.", required = true) @PathVariable("id") Long id,
                         @Parameter(description = "Nuevos detalles del " + NAME_API
-                                        + ".", required = true) @Valid @RequestBody @NonNull Icd10Dto dto);
+                                        + ".", required = true) @Valid @RequestBody Icd10Dto dto);
 
         @Operation(summary = NAME_API + " a eliminar por ID", description = "Elimina un " + NAME_API
                         + " existente usando su ID.", responses = {
@@ -74,7 +73,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
         @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Void> deleteIcd10(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a eliminar.", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a eliminar.", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Obtiene todos los " + NAME_API, description = "Devuelve la lista completa de "
                         + NAME_API, responses = {
@@ -94,7 +93,7 @@ public interface Icd10Api extends GenericApi<Icd10Dto> {
                         })
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<PageResponseDto<Icd10Dto>> getPaginatedIcd10(
-                        @NonNull Icd10SearchDto searchDto,
-                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) @NonNull Integer pageIndex,
-                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) @NonNull Integer pageSize);
+                        Icd10SearchDto searchDto,
+                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) final Integer pageIndex,
+                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) final Integer pageSize);
 }

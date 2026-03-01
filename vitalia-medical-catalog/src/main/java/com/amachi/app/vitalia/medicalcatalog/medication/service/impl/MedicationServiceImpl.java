@@ -6,13 +6,12 @@ import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSea
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
 import com.amachi.app.vitalia.medicalcatalog.medication.repository.MedicationRepository;
 import com.amachi.app.vitalia.medicalcatalog.medication.specification.MedicationSpecification;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,71 +21,63 @@ import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY
 import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
-@Transactional
 public class MedicationServiceImpl implements GenericService<Medication, MedicationSearchDto> {
 
-    private final MedicationRepository repository;
+    MedicationRepository medicationRepository;
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
     public List<Medication> getAll() {
-        return repository.findAll();
+        return medicationRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public Page<Medication> getAll(@NonNull MedicationSearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+    public Page<Medication> getAll(MedicationSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
         Specification<Medication> specification = new MedicationSpecification(searchDto);
-        return repository.findAll(specification, pageable);
+        return medicationRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public Medication getById(@NonNull Long id) {
+    public Medication getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id)
+        return medicationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Medication.class.getName(), "error.resource.not.found",
                         id));
     }
 
     @Transactional(readOnly = true)
-    @NonNull
-    public Medication getByCode(@NonNull String code) {
+    public Medication getByCode(String code) {
         requireNonNull(code, "Code must not be null");
-        return repository.findByCode(code)
+        return medicationRepository.findByCode(code)
                 .orElseThrow(() -> new ResourceNotFoundException(Medication.class.getName(), "error.resource.not.found",
                         code));
     }
 
     @Override
-    @NonNull
-    public Medication create(@NonNull Medication entity) {
+    public Medication create(Medication entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(medicationRepository.save(entity));
     }
 
     @Override
-    @NonNull
-    public Medication update(@NonNull Long id, @NonNull Medication entity) {
+    public Medication update(Long id, Medication entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-
-        getById(id);
+        medicationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Medication.class.getName(), "error.resource.not.found",
+                        id));
         entity.setId(id);
-
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(medicationRepository.save(entity));
     }
 
     @Override
-    public void delete(@NonNull Long id) {
+    public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        repository.delete(getById(id));
+        medicationRepository.delete(getById(id));
     }
 }

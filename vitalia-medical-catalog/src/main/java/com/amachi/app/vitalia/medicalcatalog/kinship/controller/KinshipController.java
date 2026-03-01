@@ -7,64 +7,70 @@ import com.amachi.app.vitalia.medicalcatalog.kinship.dto.search.KinshipSearchDto
 import com.amachi.app.vitalia.medicalcatalog.kinship.entity.Kinship;
 import com.amachi.app.vitalia.medicalcatalog.kinship.mapper.KinshipMapper;
 import com.amachi.app.vitalia.medicalcatalog.kinship.service.impl.KinshipServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
 @RequestMapping("/mdm/kinship")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class KinshipController extends BaseController implements KinshipApi {
 
-    private final KinshipServiceImpl service;
-    private final KinshipMapper mapper;
+    KinshipServiceImpl service;
+    KinshipMapper mapper;
 
     @Override
-    public ResponseEntity<KinshipDto> getKinshipById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<KinshipDto> getKinshipById(Long id) {
+        Kinship entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> createKinship(@NonNull KinshipDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<KinshipDto> createKinship(KinshipDto dto) {
+        Kinship entity = mapper.toEntity(dto);
+        Kinship savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> updateKinship(@NonNull Long id, @NonNull KinshipDto dto) {
+    public ResponseEntity<KinshipDto> updateKinship(Long id, KinshipDto dto) {
         Kinship existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        Kinship savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteKinship(@NonNull Long id) {
+    public ResponseEntity<Void> deleteKinship(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<KinshipDto>> getAllKinships() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<Kinship> entities = service.getAll();
+        List<KinshipDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<KinshipDto>> getPaginatedKinships(@NonNull KinshipSearchDto searchDto,
-            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+    public ResponseEntity<PageResponseDto<KinshipDto>> getPaginatedKinships(
+            KinshipSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Kinship> page = service.getAll(searchDto, pageIndex, pageSize);
-        return ResponseEntity.ok(PageResponseDto.<KinshipDto>builder()
-                .content(page.getContent().stream().map(mapper::toDto).toList())
+        List<KinshipDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
+
+        PageResponseDto<KinshipDto> response = PageResponseDto.<KinshipDto>builder()
+                .content(dtos)
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
                 .pageSize(page.getSize())
@@ -73,6 +79,8 @@ public class KinshipController extends BaseController implements KinshipApi {
                 .last(page.isLast())
                 .empty(page.isEmpty())
                 .numberOfElements(page.getNumberOfElements())
-                .build());
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }

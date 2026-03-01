@@ -7,63 +7,65 @@ import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto.search.Healt
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.entity.HealthcareProvider;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.mapper.HealthcareProviderMapper;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.service.impl.HealthcareProviderServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
 @RequestMapping("/mdm/healthcare-provider")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class HealthcareProviderController extends BaseController implements HealthcareProviderApi {
 
-    private final HealthcareProviderServiceImpl service;
-    private final HealthcareProviderMapper mapper;
+    HealthcareProviderServiceImpl service;
+    HealthcareProviderMapper mapper;
 
     @Override
-    public ResponseEntity<HealthcareProviderDto> getProviderById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<HealthcareProviderDto> getProviderById(Long id) {
+        HealthcareProvider entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<HealthcareProviderDto> createProvider(@NonNull HealthcareProviderDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<HealthcareProviderDto> createProvider(HealthcareProviderDto dto) {
+        HealthcareProvider entity = mapper.toEntity(dto);
+        HealthcareProvider savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<HealthcareProviderDto> updateProvider(@NonNull Long id,
-            @NonNull HealthcareProviderDto dto) {
+    public ResponseEntity<HealthcareProviderDto> updateProvider(Long id, HealthcareProviderDto dto) {
         HealthcareProvider existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        HealthcareProvider savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteProvider(@NonNull Long id) {
+    public ResponseEntity<Void> deleteProvider(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<HealthcareProviderDto>> getAllProviders() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<HealthcareProvider> entities = service.getAll();
+        List<HealthcareProviderDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<HealthcareProviderDto>> getPaginatedProviders(
-            @NonNull HealthcareProviderSearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+            HealthcareProviderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<HealthcareProvider> page = service.getAll(searchDto, pageIndex, pageSize);
         List<HealthcareProviderDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
