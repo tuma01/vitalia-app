@@ -76,6 +76,9 @@ Cada dashboard se define mediante un archivo JSON (ej: `admin-dashboard.json`).
 - **`requiredPermission`**: El identificador único del permiso necesario para ver ese widget.
 - **`titleKey` / `labelKey`**: Keys de traducción para i18n dinámico.
 
+> [!IMPORTANT]
+> **Regla i18n del Dashboard**: Las claves `titleKey` y `labelKey` usan el prefijo `dashboard.*` directamente en la **raíz** de los archivos i18n (`es-ES.json`, `en-US.json`, `fr-FR.json`). **NO** se anidan bajo `menu.`. El prefijo `menu.` es exclusivo del Sidemenu, que lo agrega automáticamente. Ejemplo: `"dashboard.admin.stats.total_staff"` → existe como `dashboard.admin.stats.total_staff` en el JSON raíz.
+
 ---
 
 ## 🚀 Cómo Implementar un Nuevo Dashboard
