@@ -46,19 +46,41 @@ export abstract class CrudBaseComponent<T> implements OnInit {
             const widthMatch = typeof col.width === 'string' ? col.width.match(/(\d+)px/) : null;
             const widthPx = widthMatch ? parseInt(widthMatch[1]) : undefined;
 
-            const mtxCol: MtxGridColumn = {
+            // Map custom types to standard mtx-grid types for the internal logic
+            const standardTypes: string[] = ['number', 'boolean', 'date', 'currency', 'percent', 'image', 'button', 'link'];
+            const mtxType = (standardTypes.includes(col.type || '') ? col.type : undefined) as MtxGridColumnType;
+
+            const mtxCol: any = {
                 ...col,
                 field: col.field as string,
-                type: (col.type || 'text') as MtxGridColumnType,
+                type: mtxType,
                 width: col.width,
-                // Assign minWidth and maxWidth if not explicitly provided, to force the width
                 minWidth: col.minWidth ?? widthPx,
                 maxWidth: col.maxWidth ?? widthPx,
-                class: col.class
+                class: col.class,
+                tag: col.tag,
+                originalType: col.type || 'text'
             };
 
             if (typeof col.header === 'string') {
                 mtxCol.header = this.translate.stream(col.header);
+            }
+
+            // For tag columns: use formatter to generate badge HTML with CSS classes
+            // (CSS classes bypass Angular sanitizer; inline styles would be stripped)
+            if (col.tag) {
+                const tagMap = col.tag;
+                const translateFn = this.translate;
+                mtxCol.formatter = (row: any) => {
+                    const rawVal = row[col.field as string];
+                    const key = rawVal != null ? String(rawVal) : null;
+                    const tagConfig = key != null ? tagMap[key] : null;
+                    if (!tagConfig) return rawVal != null ? String(rawVal) : '';
+                    const text = translateFn.instant(tagConfig.text || '');
+                    // Determine CSS modifier class from the value key (true=active, false=inactive)
+                    const modifierClass = (key === 'true') ? 'vt-badge-active' : 'vt-badge-inactive';
+                    return `<span class="vt-badge ${modifierClass}"><span class="vt-badge-dot"></span>${text}</span>`;
+                };
             }
 
             return mtxCol;

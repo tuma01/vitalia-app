@@ -96,7 +96,6 @@
         "logout": "Logout"
     },
     "menu": {
-        "dashboard": "Dashboard",
         "hospital": "Hospital",
         "hospitals": "Hospitals",
         "hospitalDepartments": "Hospital Departments",
@@ -109,11 +108,16 @@
         "appointments": "Appointments",
         "consultations": "Consultations",
         "prescriptions": "Prescriptions",
+        "lab_tests": "Laboratory Tests",
+        "blood_tests": "Blood Tests",
+        "imaging": "Imaging",
         "employees": "Employees",
         "settings": "Settings",
         "admissions": "Admissions",
         "discharges": "Discharges",
         "medicalRecords": "Medical Records",
+        "my_tasks": "My Tasks",
+        "staff": "Staff",
         "billingPayments": "Billing & Payments",
         "medico": "Doctor",
         "listaMedicos": "Doctors List",
@@ -246,6 +250,7 @@
         "bed_management": "Bed Management",
         "facility_scheduling": "Facility Scheduling",
         "human_resources": "Human Resources",
+        "roles_permissions": "Roles & Permissions",
         "staff_directory": "Staff Directory",
         "payroll_benefits": "Payroll & Benefits",
         "clinical_configuration": "Clinical Configuration",
@@ -255,7 +260,6 @@
         "reports_analytics": "Reports & Analytics",
         "financial_reports": "Financial Reports",
         "clinical_quality": "Clinical Quality",
-        "geography": "Geography",
         "geography_management": "Geography Management",
         "countries": "Countries",
         "countries_list": "Countries List",
@@ -277,10 +281,6 @@
         "billing_licensing": "Plans & Licensing",
         "tenant_config": "Global Tenant Configuration",
         "medical_catalog": "Global Medical Catalog",
-        "icd10": "Diagnostics (ICD-10)",
-        "procedures": "Medical Procedures",
-        "vaccines": "Vaccines",
-        "specialties_allergies": "Specialties & Allergies",
         "security_policies": "MFA & Security Policies",
         "iam_superadmins": "SuperAdmin Management",
         "consent_registry": "Consent Registry (DSQ)",
@@ -290,7 +290,8 @@
         "platform_intelligence": "Platform Intelligence",
         "operational_stats": "Operational Statistics",
         "broadcast_center": "Broadcast Center",
-        "clinical": {
+        "catalog": {
+            "title": "Medical Catalog",
             "icd10": {
                 "title": "Diagnostics (ICD-10)",
                 "singular": "Diagnosis",
@@ -304,74 +305,252 @@
                     "description": "Description",
                     "active": "Active Status"
                 }
-            }
-        }
-    },
-    "geography": {
-        "title": "Geography",
-        "country": {
-            "title": "Countries",
-            "singular": "Country",
-            "plural": "Countries",
-            "list": "Countries List",
-            "add": "Add Country",
-            "edit": "Edit Country",
-            "notFound": "No countries found",
-            "deleted_error": "Error deleting country. It may be linked to other records.",
-            "deleted_success": "Country deleted successfully.",
-            "fields": {
-                "code": "Code",
-                "code3": "ISO3 Code",
-                "name": "Name",
-                "niceName": "Common Name",
-                "numCode": "Num Code",
-                "phoneCode": "Phone Code",
-                "currency": "Currency",
-                "status": "Status"
-            }
-        },
-        "department": {
-            "title": "Departments",
-            "singular": "Department",
-            "plural": "Departments",
-            "add": "Add Department",
-            "edit": "Edit Department",
-            "fields": {
-                "name": "Name",
-                "country": "Country Name",
-                "population": "Population",
-                "surface": "Surface",
-                "countryId": "Country ID"
-            }
-        },
-        "province": {
-            "title": "Provinces",
-            "singular": "Province",
-            "plural": "Provinces",
-            "add": "Add Province",
-            "edit": "Edit Province",
-            "fields": {
-                "name": "Name",
-                "department": "Department Name",
-                "population": "Population",
-                "surface": "Surface",
-                "departmentId": "Department ID"
-            }
-        },
-        "municipality": {
-            "title": "Municipalities",
-            "singular": "Municipality",
-            "plural": "Municipalities",
-            "add": "Add Municipality",
-            "edit": "Edit Municipality",
-            "fields": {
-                "name": "Name",
-                "province": "Province Name",
-                "population": "Population",
-                "surface": "Surface",
-                "address": "Address",
-                "code_municipality": "Municipality Code",
-                "provinciaId": "Province ID"
+            },
+            "allergy": {
+                "title": "Allergies",
+                "singular": "Allergy",
+                "plural": "Allergies",
+                "list": "Allergies List",
+                "add": "Add Allergy",
+                "edit": "Edit Allergy",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "type": "Type",
+                    "description": "Description",
+                    "active": "Active Status"
+                }
+            },
+            "blood_type": {
+                "title": "Blood Types",
+                "singular": "Blood Type",
+                "plural": "Blood Types",
+                "list": "Blood Types List",
+                "add": "Add Blood Type",
+                "edit": "Edit Blood Type",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "active": "Active Status"
+                }
+            },
+            "healthcare_provider": {
+                "title": "Healthcare Providers",
+                "singular": "Healthcare Provider",
+                "plural": "Healthcare Providers",
+                "list": "Healthcare Providers List",
+                "add": "Add Healthcare Provider",
+                "edit": "Edit Healthcare Provider",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "taxId": "Tax ID (NIT/RUT)",
+                    "email": "Email",
+                    "phone": "Phone",
+                    "active": "Active Status"
+                }
+            },
+            "identification_type": {
+                "title": "Identification Types",
+                "singular": "Identification Type",
+                "plural": "Identification Types",
+                "list": "Identification Type List",
+                "add": "Add Identification Type",
+                "edit": "Edit Identification Type",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "active": "Active"
+                }
+            },
+            "medications": {
+                "title": "Medications",
+                "singular": "Medication",
+                "plural": "Medications",
+                "list": "List of Medications",
+                "add": "Add Medication",
+                "edit": "Edit Medication",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "genericName": "Generic Name",
+                    "commercialName": "Commercial Name",
+                    "concentration": "Concentration",
+                    "pharmaceuticalForm": "Pharmaceutical Form",
+                    "presentation": "Presentation",
+                    "active": "Active"
+                }
+            },
+            "procedures": {
+                "title": "Medical Procedures",
+                "singular": "Procedure",
+                "plural": "Procedures",
+                "list": "List of Procedures",
+                "add": "Add Procedure",
+                "edit": "Edit Procedure",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "type": "Type",
+                    "active": "Active"
+                }
+            },
+            "vaccines": {
+                "title": "Vaccines",
+                "singular": "Vaccine",
+                "plural": "Vaccines",
+                "list": "List of Vaccines",
+                "add": "Add Vaccine",
+                "edit": "Edit Vaccine",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "description": "Description",
+                    "active": "Active"
+                }
+            },
+            "specialty": {
+                "title": "Medical Specialties",
+                "singular": "Specialty",
+                "plural": "Specialties",
+                "list": "List of Specialties",
+                "add": "Add Specialty",
+                "edit": "Edit Specialty",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "description": "Description",
+                    "targetProfession": "Target Profession",
+                    "targetProfession_options": {
+                        "doctor": "Doctor",
+                        "nurse": "Nurse",
+                        "both": "Both"
+                    },
+                    "active": "Active"
+                }
+            },
+            "kinship": {
+                "title": "Kinships",
+                "singular": "Kinship",
+                "plural": "Kinships",
+                "list": "List of Kinships",
+                "add": "Add Kinship",
+                "edit": "Edit Kinship",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Name",
+                    "active": "Active"
+                }
+            },
+            "demographics": {
+                "title": "Demographic Data",
+                "civil_status": {
+                    "title": "Civil Statuses",
+                    "singular": "Civil Status",
+                    "plural": "Civil Statuses",
+                    "list": "List of Civil Statuses",
+                    "add": "Add Civil Status",
+                    "edit": "Edit Civil Status",
+                    "fields": {
+                        "id": "ID",
+                        "code": "Code",
+                        "name": "Name",
+                        "active": "Active"
+                    }
+                },
+                "gender": {
+                    "title": "Genders",
+                    "singular": "Gender",
+                    "plural": "Genders",
+                    "list": "List of Genders",
+                    "add": "Add Gender",
+                    "edit": "Edit Gender",
+                    "fields": {
+                        "id": "ID",
+                        "code": "Code",
+                        "name": "Name",
+                        "active": "Active"
+                    }
+                }
+            },
+            "geography": {
+                "title": "Geography",
+                "country": {
+                    "title": "Countries",
+                    "singular": "Country",
+                    "plural": "Countries",
+                    "list": "Countries List",
+                    "add": "Add Country",
+                    "edit": "Edit Country",
+                    "notFound": "No countries found",
+                    "deleted_error": "Error deleting country. It may be linked to other records.",
+                    "deleted_success": "Country deleted successfully.",
+                    "fields": {
+                        "code": "Code",
+                        "code3": "ISO3 Code",
+                        "name": "Name",
+                        "niceName": "Common Name",
+                        "numCode": "Num Code",
+                        "phoneCode": "Phone Code",
+                        "currency": "Currency",
+                        "status": "Status"
+                    }
+                },
+                "department": {
+                    "title": "Departments",
+                    "singular": "Department",
+                    "plural": "Departments",
+                    "list": "Departments List",
+                    "add": "Add Department",
+                    "edit": "Edit Department",
+                    "fields": {
+                        "name": "Name",
+                        "country": "Country Name",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "countryId": "Country ID"
+                    }
+                },
+                "province": {
+                    "title": "Provinces",
+                    "singular": "Province",
+                    "plural": "Provinces",
+                    "list": "Provinces List",
+                    "add": "Add Province",
+                    "edit": "Edit Province",
+                    "fields": {
+                        "name": "Name",
+                        "department": "Department Name",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "departmentId": "Department ID"
+                    }
+                },
+                "municipality": {
+                    "title": "Municipalities",
+                    "singular": "Municipality",
+                    "plural": "Municipalities",
+                    "list": "Municipalities List",
+                    "add": "Add Municipality",
+                    "edit": "Edit Municipality",
+                    "fields": {
+                        "name": "Name",
+                        "province": "Province Name",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "address": "Address",
+                        "code_municipality": "Municipality Code",
+                        "provinciaId": "Province ID"
+                    }
+                }
             }
         }
     },

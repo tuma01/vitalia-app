@@ -343,3 +343,53 @@
     justify-content: center;
     height: 100%;
 }
+
+/* ── Premium Modern Badges ── */
+::ng-deep .badge-modern {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 14px 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    border: 1px solid transparent;
+    cursor: default;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        filter: brightness(1.05);
+    }
+
+    .badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 10px;
+        box-shadow: 0 0 6px currentColor;
+        animation: pulse-dot 2s infinite;
+    }
+}
+
+@keyframes pulse-dot {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}

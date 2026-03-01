@@ -12,7 +12,7 @@
     [pageSizeOptions]="config.table?.pageSizeOptions ?? [5, 10, 50, 100]"
     (rowSelectedChange)="onRowSelectionChange($event)" (rowClick)="onRowClick($event)" (page)="onPageChange($event)">
 
-    <!-- Cell Templates -->
+    <!-- User-provided cell templates (from parent via [cellTemplates]) -->
     @for (col of columns; track col.field) {
     @if (cellTemplates[col.field]) {
     <ng-template [mtxGridCellTemplate]="col.field" let-row let-index="index">
@@ -22,6 +22,24 @@
     </ng-template>
     }
     }
+
+    <!-- Static tag badge template — assigned to columns via ngAfterViewInit -->
+    <!-- Context: rowData = row object, colDef = column definition (MtxGridCell provides both) -->
+    <ng-template #tagCellTemplate let-rowData="rowData" let-colDef="colDef">
+        @let field = $any(colDef)?.field;
+        @let val = rowData && field && rowData[field] != null ? '' + rowData[field] : null;
+        @let tagMap = $any(colDef)?.tag;
+        @let tagConfig = tagMap && val != null ? tagMap[val] : null;
+        @if (tagConfig) {
+        <div class="badge-modern" [style.background-color]="tagConfig.color + '1A'" [style.color]="tagConfig.color"
+            [style.border-color]="tagConfig.color + '33'">
+            <span class="badge-dot" [style.background-color]="tagConfig.color"></span>
+            <span class="badge-text">{{ tagConfig.text | translate }}</span>
+        </div>
+        } @else {
+        {{ rowData && field ? rowData[field] : '' }}
+        }
+    </ng-template>
 
     <!-- ── Toolbar ─────────────────────────────────────────────────────── -->
     <ng-template #toolbarTemplate>

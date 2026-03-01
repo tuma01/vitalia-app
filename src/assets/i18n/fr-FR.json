@@ -96,7 +96,6 @@
         "logout": "Déconnexion"
     },
     "menu": {
-        "dashboard": "Tableau de Bord",
         "hospital": "Hôpital",
         "hospitals": "Hôpitaux",
         "hospitalDepartments": "Départements Hospitaliers",
@@ -109,11 +108,16 @@
         "appointments": "Rendez-vous",
         "consultations": "Consultations",
         "prescriptions": "Ordonnances",
+        "lab_tests": "Analyses de Laboratoire",
+        "blood_tests": "Analyses de Sang",
+        "imaging": "Imagerie",
         "employees": "Employés",
         "settings": "Paramètres",
         "admissions": "Admissions",
         "discharges": "Sorties",
         "medicalRecords": "Dossiers Médicaux",
+        "my_tasks": "Mes Tâches",
+        "staff": "Personnel",
         "billingPayments": "Facturation et Paiements",
         "medico": "Médecin",
         "listaMedicos": "Liste des Médecins",
@@ -246,6 +250,7 @@
         "bed_management": "Gestion des Lits",
         "facility_scheduling": "Planification Locaux",
         "human_resources": "Ressources Humaines",
+        "roles_permissions": "Rôles et Permissions",
         "staff_directory": "Annuaire Personnel",
         "payroll_benefits": "Paie et Avantages",
         "clinical_configuration": "Config. Clinique",
@@ -255,13 +260,12 @@
         "reports_analytics": "Rapports et Analyses",
         "financial_reports": "Rapports Financiers",
         "clinical_quality": "Qualité Clinique",
-        "geography": "Géographie",
-        "geography_management": "Géographie",
+        "geography_management": "Gestion de la Géographie",
         "countries": "Pays",
         "countries_list": "Liste des Pays",
         "add_country": "Ajouter un Pays",
         "edit_country": "Modifier le Pays",
-        "departments_states": "Département",
+        "departments_states": "Départements",
         "departments_list": "Liste des Départements",
         "add_department": "Ajouter un Département",
         "edit_department": "Modifier le Département",
@@ -277,10 +281,6 @@
         "billing_licensing": "Abonnements et Licences",
         "tenant_config": "Configuration Globale des Locataires",
         "medical_catalog": "Catalogue Médical Global",
-        "icd10": "Diagnostics (CIM-10)",
-        "procedures": "Procédures Médicales",
-        "vaccines": "Vaccins",
-        "specialties_allergies": "Spécialités et Allergies",
         "security_policies": "Politiques MFA et Sécurité",
         "iam_superadmins": "Gestion des SuperAdmins",
         "consent_registry": "Registre des Consentements (DSQ)",
@@ -290,7 +290,8 @@
         "platform_intelligence": "Intelligence Plateforme",
         "operational_stats": "Statistiques Opérationnelles",
         "broadcast_center": "Centre de Communication Massive",
-        "clinical": {
+        "catalog": {
+            "title": "Catalogue Médical",
             "icd10": {
                 "title": "Diagnostics (CIM-10)",
                 "singular": "Diagnostic",
@@ -304,75 +305,259 @@
                     "description": "Description",
                     "active": "Statut Actif"
                 }
+            },
+            "allergy": {
+                "title": "Allergies",
+                "singular": "Allergie",
+                "plural": "Allergies",
+                "list": "Liste des Allergies",
+                "add": "Ajouter une Allergie",
+                "edit": "Modifier l'Allergie",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "type": "Type",
+                    "description": "Description",
+                    "active": "Statut Actif"
+                }
+            },
+            "blood_type": {
+                "title": "Groupes Sanguins",
+                "singular": "Groupe Sanguin",
+                "plural": "Groupes Sanguins",
+                "list": "Liste des Groupes Sanguins",
+                "add": "Ajouter un Groupe Sanguin",
+                "edit": "Modifier le Groupe Sanguin",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "active": "Statut Actif"
+                }
+            },
+            "healthcare_provider": {
+                "title": "Assureurs et Payeurs",
+                "singular": "Assureur",
+                "plural": "Assureurs et Payeurs",
+                "list": "Liste des Assureurs",
+                "add": "Ajouter un Assureur",
+                "edit": "Modifier l'Assureur",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "taxId": "NIT / RUT",
+                    "email": "E-mail",
+                    "phone": "Téléphone",
+                    "active": "Statut Actif"
+                }
+            },
+            "identification_type": {
+                "title": "Types d'Identification",
+                "singular": "Type d'Identification",
+                "plural": "Types d'Identification",
+                "list": "Liste des Types d'Identification",
+                "add": "Ajouter un Type d'Identification",
+                "edit": "Modifier le Type d'Identification",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "active": "Actif"
+                }
+            },
+            "medications": {
+                "title": "Médicaments",
+                "singular": "Médicament",
+                "plural": "Médicaments",
+                "list": "Liste des Médicaments",
+                "add": "Ajouter un Médicament",
+                "edit": "Modifier le Médicament",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "genericName": "Nom Générique",
+                    "commercialName": "Nom Commercial",
+                    "concentration": "Concentration",
+                    "pharmaceuticalForm": "Forme Pharmaceutique",
+                    "presentation": "Présentation",
+                    "active": "Actif"
+                }
+            },
+            "procedures": {
+                "title": "Procédures Médicales",
+                "singular": "Procédure",
+                "plural": "Procédures",
+                "list": "Liste des Procédures",
+                "add": "Ajouter une Procédure",
+                "edit": "Modifier la Procédure",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "type": "Type",
+                    "active": "Actif"
+                }
+            },
+            "vaccines": {
+                "title": "Vaccins",
+                "singular": "Vaccin",
+                "plural": "Vaccins",
+                "list": "Liste des Vaccins",
+                "add": "Ajouter un Vaccin",
+                "edit": "Modifier le Vaccin",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "description": "Description",
+                    "active": "Actif"
+                }
+            },
+            "specialty": {
+                "title": "Spécialités Médicales",
+                "singular": "Spécialité",
+                "plural": "Spécialités",
+                "list": "Liste des Spécialités",
+                "add": "Ajouter une Spécialité",
+                "edit": "Modifier la Spécialité",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "description": "Description",
+                    "targetProfession": "Profession Cible",
+                    "targetProfession_options": {
+                        "doctor": "Médecin",
+                        "nurse": "Infirmier/ère",
+                        "both": "Les deux"
+                    },
+                    "active": "Actif"
+                }
+            },
+            "kinship": {
+                "title": "Parentés",
+                "singular": "Lien de Parenté",
+                "plural": "Liens de Parenté",
+                "list": "Liste des Parentés",
+                "add": "Ajouter una Parenté",
+                "edit": "Modifier la Parenté",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "active": "Statut Actif"
+                }
+            },
+            "demographics": {
+                "title": "Données Démographiques",
+                "civil_status": {
+                    "title": "États Civiles",
+                    "singular": "État Civil",
+                    "plural": "États Civiles",
+                    "list": "Liste des États Civils",
+                    "add": "Ajouter un État Civil",
+                    "edit": "Modifier l'État Civil",
+                    "fields": {
+                        "id": "ID",
+                        "code": "Code",
+                        "name": "Nom",
+                        "active": "Actif"
+                    }
+                },
+                "gender": {
+                    "title": "Genres",
+                    "singular": "Genre",
+                    "plural": "Genres",
+                    "list": "Liste des Genres",
+                    "add": "Ajouter un Genre",
+                    "edit": "Modifier le Genre",
+                    "fields": {
+                        "id": "ID",
+                        "code": "Code",
+                        "name": "Nom",
+                        "active": "Actif"
+                    }
+                }
+            },
+            "geography": {
+                "title": "Géographie",
+                "country": {
+                    "title": "Pays",
+                    "singular": "Pays",
+                    "plural": "Pays",
+                    "list": "Liste des Pays",
+                    "add": "Ajouter un Pays",
+                    "edit": "Modifier le Pays",
+                    "notFound": "Aucun pays trouvé",
+                    "deleted_error": "Erreur lors de la suppression du pays. Il peut être lié à d'autres enregistrements.",
+                    "deleted_success": "Pays supprimé avec succès.",
+                    "fields": {
+                        "code": "Code",
+                        "code3": "Code ISO3",
+                        "name": "Nom",
+                        "niceName": "Nom usuel",
+                        "numCode": "Code Num",
+                        "phoneCode": "Code Tel",
+                        "currency": "Devise",
+                        "status": "Statut"
+                    }
+                },
+                "department": {
+                    "title": "Départements",
+                    "singular": "Département",
+                    "plural": "Départements",
+                    "list": "Liste des Départements",
+                    "add": "Ajouter un Département",
+                    "edit": "Modifier le Département",
+                    "fields": {
+                        "name": "Nom",
+                        "country": "Nom du Pays",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "countryId": "ID du Pays"
+                    }
+                },
+                "province": {
+                    "title": "Provinces",
+                    "singular": "Province",
+                    "plural": "Provinces",
+                    "list": "Liste des Provinces",
+                    "add": "Ajouter une Province",
+                    "edit": "Modifier la Province",
+                    "fields": {
+                        "name": "Nom",
+                        "department": "Nom du Département",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "departmentId": "ID du Département"
+                    }
+                },
+                "municipality": {
+                    "title": "Municipalités",
+                    "singular": "Municipalité",
+                    "plural": "Municipalités",
+                    "list": "Liste des Municipalités",
+                    "add": "Ajouter une Municipalité",
+                    "edit": "Modifier la Municipalité",
+                    "fields": {
+                        "name": "Nom",
+                        "province": "Nom de la Province",
+                        "population": "Population",
+                        "surface": "Surface",
+                        "address": "Adresse",
+                        "code_municipality": "Code de Municipalité",
+                        "provinciaId": "ID de la Province"
+                    }
+                }
             }
         }
     },
-    "geography": {
-        "title": "Géographie",
-        "country": {
-            "title": "Pays",
-            "singular": "Pays",
-            "plural": "Pays",
-            "list": "Liste des Pays",
-            "add": "Ajouter un Pays",
-            "edit": "Modifier le Pays",
-            "notFound": "Aucun pays trouvé",
-            "fields": {
-                "code": "Code",
-                "code3": "Code ISO3",
-                "name": "Nom",
-                "niceName": "Nom usuel",
-                "numCode": "Code Num",
-                "phoneCode": "Code Tel",
-                "currency": "Devise",
-                "status": "Statut"
-            }
-        },
-        "department": {
-            "title": "Départements",
-            "singular": "Département",
-            "plural": "Départements",
-            "add": "Ajouter un Département",
-            "edit": "Modifier le Département",
-            "fields": {
-                "name": "Nom",
-                "country": "Nom du Pays",
-                "population": "Population",
-                "surface": "Surface",
-                "countryId": "ID du Pays"
-            }
-        },
-        "province": {
-            "title": "Provinces",
-            "singular": "Province",
-            "plural": "Provinces",
-            "add": "Ajouter une Province",
-            "edit": "Modifier la Province",
-            "fields": {
-                "name": "Nom",
-                "department": "Nom du Département",
-                "population": "Population",
-                "surface": "Surface",
-                "departmentId": "ID du Département"
-            }
-        },
-        "municipality": {
-            "title": "Municipalités",
-            "singular": "Municipalité",
-            "plural": "Municipalités",
-            "add": "Ajouter une Municipalité",
-            "edit": "Modifier la Municipalité",
-            "fields": {
-                "name": "Nom",
-                "province": "Nom de la Province",
-                "population": "Population",
-                "surface": "Surface",
-                "address": "Adresse",
-                "code_municipality": "Code de Municipalité",
-                "provinciaId": "ID de la Province"
-            }
-        }
-    },
+    "no_countries_found": "Aucun pays trouvé",
+    "no_departments_found": "Aucun département trouvé",
+    "no_provinces_found": "Aucune province trouvée",
+    "no_municipalities_found": "Aucune municipalité trouvée",
     "theme_branding": "Thème et Image de Marque",
     "primary_color": "Couleur Primaire",
     "accent_color": "Couleur d'Accent",
@@ -387,6 +572,7 @@
     "reset_theme": "Réinitialiser par Défaut",
     "dashboard": {
         "title": "Tableau de Bord",
+        "welcome": "Bienvenue",
         "welcome_back": "Bienvenue, {{name}} !",
         "role": "Rôle",
         "tenant": "Organisation",

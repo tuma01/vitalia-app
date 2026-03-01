@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef, ViewChild, inject, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,8 +45,9 @@ import { CrudConfig, CrudMode } from './crud-config';
     templateUrl: './crud-template.component.html',
     styleUrls: ['./crud-template.component.scss']
 })
-export class CrudTemplateComponent<T> extends CrudBaseComponent<T> {
+export class CrudTemplateComponent<T> extends CrudBaseComponent<T> implements AfterViewInit {
     @Input() override mode: CrudMode = 'list';
+    @ViewChild('tagCellTemplate', { static: true }) tagCellTemplate!: TemplateRef<any>;
 
     @Output() create = new EventEmitter<void>();
     @Output() edit = new EventEmitter<T>();
@@ -61,9 +62,27 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> {
     @ViewChild('grid') grid!: MtxGrid;
 
     protected override translate = inject(TranslateService);
+    protected override cdr = inject(ChangeDetectorRef);
 
     constructor() {
         super();
+    }
+
+    ngAfterViewInit(): void {
+        this.assignCustomTemplates();
+    }
+
+    private assignCustomTemplates(): void {
+        // Only target columns that explicitly have a tag configuration
+        const needsTemplate = this.columns.filter(col => (col as any).tag && !col.cellTemplate);
+
+        if (needsTemplate.length > 0) {
+            needsTemplate.forEach(col => {
+                col.cellTemplate = this.tagCellTemplate;
+            });
+            this.columns = [...this.columns]; // Force grid to re-render
+            this.cdr.detectChanges();
+        }
     }
 
     getErrorMessage(controlName: string): string {

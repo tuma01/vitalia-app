@@ -11,23 +11,43 @@ export const routes: Routes = [
             },
             {
                 path: 'medications',
-                component: PlatformShellComponent,
-                data: { title: 'menu.medications', icon: 'medication' }
+                loadChildren: () => import('./medication/medication.routes').then(m => m.routes)
             },
             {
                 path: 'procedures',
-                component: PlatformShellComponent,
-                data: { title: 'menu.procedures', icon: 'medical_services' }
+                loadChildren: () => import('./medical-procedure/medical-procedure.routes').then(m => m.routes)
             },
             {
                 path: 'vaccines',
-                component: PlatformShellComponent,
-                data: { title: 'menu.vaccines', icon: 'vaccines' }
+                loadChildren: () => import('./vaccine/vaccine.routes').then(m => m.routes)
             },
             {
-                path: 'specialties',
-                component: PlatformShellComponent,
-                data: { title: 'menu.specialties_allergies', icon: 'assignment_ind' }
+                path: 'specialty',
+                loadChildren: () => import('./medical-specialty/medical-specialty.routes').then(m => m.routes)
+            },
+            {
+                path: 'allergy',
+                loadChildren: () => import('./allergy/allergy.routes').then(m => m.routes)
+            },
+            {
+                path: 'blood-type',
+                loadChildren: () => import('./blood-type/blood-type.routes').then(m => m.routes)
+            },
+            {
+                path: 'healthcare-provider',
+                loadChildren: () => import('./healthcare-provider/healthcare-provider.routes').then(m => m.routes)
+            },
+            {
+                path: 'identification-type',
+                loadChildren: () => import('./identification-type/identification-type.routes').then(m => m.routes)
+            },
+            {
+                path: 'kinship',
+                loadChildren: () => import('./kinship/kinship.routes').then(m => m.routes)
+            },
+            {
+                path: 'demographics',
+                loadChildren: () => import('./demographic/demographic.routes').then(m => m.routes)
             }
         ]
     }
