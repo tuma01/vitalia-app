@@ -7,66 +7,69 @@ import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSea
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
 import com.amachi.app.vitalia.medicalcatalog.medication.mapper.MedicationMapper;
 import com.amachi.app.vitalia.medicalcatalog.medication.service.impl.MedicationServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
 @RequestMapping("/mdm/medication")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MedicationController extends BaseController implements MedicationApi {
 
-    private final MedicationServiceImpl service;
-    private final MedicationMapper mapper;
+    MedicationServiceImpl service;
+    MedicationMapper mapper;
 
     @Override
-    public ResponseEntity<MedicationDto> getMedicationById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<MedicationDto> getMedicationById(Long id) {
+        Medication entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> createMedication(@NonNull MedicationDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<MedicationDto> createMedication(MedicationDto dto) {
+        Medication entity = mapper.toEntity(dto);
+        Medication savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> updateMedication(@NonNull Long id, @NonNull MedicationDto dto) {
+    public ResponseEntity<MedicationDto> updateMedication(Long id, MedicationDto dto) {
         Medication existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        Medication savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteMedication(@NonNull Long id) {
+    public ResponseEntity<Void> deleteMedication(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<MedicationDto>> getAllMedications() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<Medication> entities = service.getAll();
+        List<MedicationDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(
-            @NonNull MedicationSearchDto searchDto,
-            @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            MedicationSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Medication> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicationDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
-        return ResponseEntity.ok(PageResponseDto.<MedicationDto>builder()
+        PageResponseDto<MedicationDto> response = PageResponseDto.<MedicationDto>builder()
                 .content(dtos)
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
@@ -76,6 +79,8 @@ public class MedicationController extends BaseController implements MedicationAp
                 .last(page.isLast())
                 .empty(page.isEmpty())
                 .numberOfElements(page.getNumberOfElements())
-                .build());
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 }

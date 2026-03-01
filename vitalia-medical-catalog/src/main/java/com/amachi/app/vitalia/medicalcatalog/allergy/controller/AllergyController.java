@@ -7,59 +7,65 @@ import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto
 import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
 import com.amachi.app.vitalia.medicalcatalog.allergy.mapper.AllergyMapper;
 import com.amachi.app.vitalia.medicalcatalog.allergy.service.impl.AllergyServiceImpl;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
-
+@Slf4j
 @RestController
 @RequestMapping("/mdm/allergy")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AllergyController extends BaseController implements AllergyApi {
-    private final AllergyServiceImpl service;
-    private final AllergyMapper mapper;
+
+    AllergyServiceImpl service;
+    AllergyMapper mapper;
 
     @Override
-    public ResponseEntity<AllergyDto> getAllergyById(@NonNull Long id) {
-        return ResponseEntity.ok(mapper.toDto(service.getById(id)));
+    public ResponseEntity<AllergyDto> getAllergyById(Long id) {
+        Allergy entity = service.getById(id);
+        return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<AllergyDto> createAllergy(@NonNull AllergyDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(mapper.toDto(service.create(requireNonNull(mapper.toEntity(dto)))));
+    public ResponseEntity<AllergyDto> createAllergy(AllergyDto dto) {
+        Allergy entity = mapper.toEntity(dto);
+        Allergy savedEntity = service.create(entity);
+        return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<AllergyDto> updateAllergy(@NonNull Long id, @NonNull AllergyDto dto) {
+    public ResponseEntity<AllergyDto> updateAllergy(Long id, AllergyDto dto) {
         Allergy existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existing)));
+        Allergy savedEntity = service.update(id, existing);
+        return ResponseEntity.ok(mapper.toDto(savedEntity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteAllergy(@NonNull Long id) {
+    public ResponseEntity<Void> deleteAllergy(Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<List<AllergyDto>> getAllAllergies() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
+        List<Allergy> entities = service.getAll();
+        List<AllergyDto> dtos = entities.stream().map(mapper::toDto).toList();
+        return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<AllergyDto>> getPaginatedAllergies(
-            @NonNull AllergySearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            AllergySearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Allergy> page = service.getAll(searchDto, pageIndex, pageSize);
         List<AllergyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

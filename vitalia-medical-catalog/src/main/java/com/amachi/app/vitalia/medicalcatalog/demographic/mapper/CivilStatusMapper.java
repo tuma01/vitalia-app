@@ -5,19 +5,25 @@ import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.vitalia.medicalcatalog.demographic.dto.CivilStatusDto;
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.CivilStatus;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
 public interface CivilStatusMapper extends EntityDtoMapper<CivilStatus, CivilStatusDto> {
+
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     CivilStatus toEntity(CivilStatusDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntity(CivilStatusDto dto, @MappingTarget CivilStatus entity);
+    void updateEntityFromDto(CivilStatusDto dto, @MappingTarget CivilStatus entity);
 
     @Override
-    @BeanMapping(unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE)
+    @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     CivilStatusDto toDto(CivilStatus entity);
 }

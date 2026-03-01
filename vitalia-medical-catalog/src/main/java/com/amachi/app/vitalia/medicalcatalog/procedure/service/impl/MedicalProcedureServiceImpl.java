@@ -6,13 +6,12 @@ import com.amachi.app.vitalia.medicalcatalog.procedure.dto.search.MedicalProcedu
 import com.amachi.app.vitalia.medicalcatalog.procedure.entity.MedicalProcedure;
 import com.amachi.app.vitalia.medicalcatalog.procedure.repository.MedicalProcedureRepository;
 import com.amachi.app.vitalia.medicalcatalog.procedure.specification.MedicalProcedureSpecification;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,62 +21,55 @@ import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY
 import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
-@Transactional
 public class MedicalProcedureServiceImpl implements GenericService<MedicalProcedure, MedicalProcedureSearchDto> {
 
-    private final MedicalProcedureRepository repository;
+    MedicalProcedureRepository medicalProcedureRepository;
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
     public List<MedicalProcedure> getAll() {
-        return repository.findAll();
+        return medicalProcedureRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public Page<MedicalProcedure> getAll(@NonNull MedicalProcedureSearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+    public Page<MedicalProcedure> getAll(MedicalProcedureSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
         Specification<MedicalProcedure> specification = new MedicalProcedureSpecification(searchDto);
-        return repository.findAll(specification, pageable);
+        return medicalProcedureRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public MedicalProcedure getById(@NonNull Long id) {
+    public MedicalProcedure getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id)
+        return medicalProcedureRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(MedicalProcedure.class.getName(),
                         "error.resource.not.found", id));
     }
 
     @Override
-    @NonNull
-    public MedicalProcedure create(@NonNull MedicalProcedure entity) {
+    public MedicalProcedure create(MedicalProcedure entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(medicalProcedureRepository.save(entity));
     }
 
     @Override
-    @NonNull
-    public MedicalProcedure update(@NonNull Long id, @NonNull MedicalProcedure entity) {
+    public MedicalProcedure update(Long id, MedicalProcedure entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-
-        getById(id);
+        medicalProcedureRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(MedicalProcedure.class.getName(),
+                        "error.resource.not.found", id));
         entity.setId(id);
-
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(medicalProcedureRepository.save(entity));
     }
 
     @Override
-    public void delete(@NonNull Long id) {
+    public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        repository.delete(getById(id));
+        medicalProcedureRepository.delete(getById(id));
     }
 }

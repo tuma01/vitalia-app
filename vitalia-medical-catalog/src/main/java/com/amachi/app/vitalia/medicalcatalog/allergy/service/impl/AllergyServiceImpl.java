@@ -6,14 +6,12 @@ import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto
 import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
 import com.amachi.app.vitalia.medicalcatalog.allergy.repository.AllergyRepository;
 import com.amachi.app.vitalia.medicalcatalog.allergy.specification.AllergySpecification;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,58 +21,55 @@ import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY
 import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
-@Transactional
 public class AllergyServiceImpl implements GenericService<Allergy, AllergySearchDto> {
-    private final AllergyRepository repository;
+
+    AllergyRepository allergyRepository;
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
     public List<Allergy> getAll() {
-        return repository.findAll();
+        return allergyRepository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public Page<Allergy> getAll(@NonNull AllergySearchDto searchDto, @NonNull Integer pageIndex,
-            @NonNull Integer pageSize) {
+    public Page<Allergy> getAll(AllergySearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
         Specification<Allergy> specification = new AllergySpecification(searchDto);
-        return repository.findAll(specification, pageable);
+        return allergyRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    @NonNull
-    public Allergy getById(@NonNull Long id) {
+    public Allergy getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return repository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
+        return allergyRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
     }
 
     @Override
-    @NonNull
-    public Allergy create(@NonNull Allergy entity) {
+    public Allergy create(Allergy entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(allergyRepository.save(entity));
     }
 
     @Override
-    @NonNull
-    public Allergy update(@NonNull Long id, @NonNull Allergy entity) {
+    public Allergy update(Long id, Allergy entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        getById(id);
+        allergyRepository.findById(id)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(repository.save(entity));
+        return requireNonNull(allergyRepository.save(entity));
     }
 
     @Override
-    public void delete(@NonNull Long id) {
+    public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        repository.delete(getById(id));
+        allergyRepository.delete(getById(id));
     }
 }

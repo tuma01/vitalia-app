@@ -5,17 +5,25 @@ import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.dto.BloodTypeDto;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.entity.BloodType;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+
+import org.mapstruct.Builder;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
 public interface BloodTypeMapper extends EntityDtoMapper<BloodType, BloodTypeDto> {
-    @Override @AuditableIgnoreConfig.IgnoreAuditableFields
+
+    @Override
+    @AuditableIgnoreConfig.IgnoreAuditableFields
     BloodType toEntity(BloodTypeDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(BloodTypeDto dto, @MappingTarget BloodType entity);
 
-    @Override @BeanMapping(unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE)
+    @Override
+    @BeanMapping(unmappedSourcePolicy = org.mapstruct.ReportingPolicy.IGNORE)
     BloodTypeDto toDto(BloodType entity);
 }

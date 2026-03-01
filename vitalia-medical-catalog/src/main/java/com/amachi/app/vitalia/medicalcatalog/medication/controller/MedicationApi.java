@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public interface MedicationApi extends GenericApi<MedicationDto> {
         @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<MedicationDto> getMedicationById(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a recuperar", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a recuperar", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Crear un " + NAME_API, description = "Crea un nuevo " + NAME_API
                         + " usando los datos proporcionados en el cuerpo de la solicitud.", responses = {
@@ -46,7 +45,7 @@ public interface MedicationApi extends GenericApi<MedicationDto> {
         @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<MedicationDto> createMedication(
                         @Parameter(description = "Detalles del " + NAME_API
-                                        + " a crear.", required = true) @Valid @RequestBody @NonNull MedicationDto dto);
+                                        + " a crear.", required = true) @Valid @RequestBody MedicationDto dto);
 
         @Operation(summary = "Actualizar un " + NAME_API + " por ID", description = "Actualiza un " + NAME_API
                         + " existente usando su ID y los datos proporcionados.", responses = {
@@ -59,9 +58,9 @@ public interface MedicationApi extends GenericApi<MedicationDto> {
         @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<MedicationDto> updateMedication(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a actualizar.", required = true) @PathVariable("id") @NonNull Long id,
+                                        + " a actualizar.", required = true) @PathVariable("id") Long id,
                         @Parameter(description = "Nuevos detalles del " + NAME_API
-                                        + ".", required = true) @Valid @RequestBody @NonNull MedicationDto dto);
+                                        + ".", required = true) @Valid @RequestBody MedicationDto dto);
 
         @Operation(summary = NAME_API + " a eliminar por ID", description = "Elimina un " + NAME_API
                         + " existente usando su ID.", responses = {
@@ -74,7 +73,7 @@ public interface MedicationApi extends GenericApi<MedicationDto> {
         @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<Void> deleteMedication(
                         @Parameter(description = "ID del " + NAME_API
-                                        + " a eliminar.", required = true) @PathVariable("id") @NonNull Long id);
+                                        + " a eliminar.", required = true) @PathVariable("id") Long id);
 
         @Operation(summary = "Obtiene todos los " + NAME_API, description = "Devuelve la lista completa de "
                         + NAME_API, responses = {
@@ -94,7 +93,7 @@ public interface MedicationApi extends GenericApi<MedicationDto> {
                         })
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(
-                        @NonNull MedicationSearchDto searchDto,
-                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) @NonNull Integer pageIndex,
-                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) @NonNull Integer pageSize);
+                        MedicationSearchDto searchDto,
+                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) final Integer pageIndex,
+                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) final Integer pageSize);
 }
