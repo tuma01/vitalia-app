@@ -6,8 +6,8 @@ La interfaz `CrudConfig<T>` es el corazón del motor. Define qué datos mostrar,
 
 ```typescript
 export interface CrudConfig<T> {
-  entityName: string;              // Clave i18n singular (ej: 'entity.country')
-  entityNamePlural: string;        // Clave i18n plural (ej: 'entity.countries')
+  entityName: string;              // Clave i18n singular (ej: 'menu.catalog.blood_type.singular')
+  entityNamePlural: string;        // Clave i18n plural (ej: 'menu.catalog.blood_type.plural')
 
   getId: (entity: T) => number | string; // Resolvedor de ID
 
@@ -52,7 +52,7 @@ Ejemplo de campo:
 ```typescript
 { 
   name: 'name', 
-  label: 'entity.fields.name', 
+  label: 'menu.catalog.blood_type.fields.name',  // ⚠️ siempre con prefijo menu.catalog.
   type: 'text', 
   required: true, 
   minLength: 3 
@@ -62,8 +62,14 @@ Ejemplo de campo:
 ### `apiService` (`CrudApiService`)
 Interfaz para el adaptador. Se recomienda usar `OpenApiCrudAdapter` para mapear servicios generados por Swagger/OpenAPI.
 ```typescript
-apiService: new OpenApiCrudAdapter<Country>(countryService, {
-    getAll: 'getCountries',
-    // ...
+apiService: new OpenApiCrudAdapter<BloodType>(bloodTypeService, {
+    getAll:   'getAllBloodTypes',
+    getById:  'getBloodTypeById',
+    create:   'createBloodType',
+    update:   'updateBloodType',
+    delete:   'deleteBloodType'
 })
 ```
+
+> [!IMPORTANT]
+> El prefijo i18n correcto para todos los módulos del catálogo es **`menu.catalog.{module}.*`** — nunca `entity.*` ni `catalog.*` (sin `menu.`). Ver [`module-implementation-guide.md`](../module-implementation-guide.md) para la referencia completa.
