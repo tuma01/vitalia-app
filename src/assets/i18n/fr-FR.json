@@ -162,7 +162,7 @@
         "municipio": "Municipalité",
         "municipios": "Municipalités",
         "addMunicipio": "Ajouter une Municipalité",
-        "editMunicipio": "Modifier une Municipalité",
+        "editMunicipio": "Modifier una Municipalité",
         "admin": "Administration",
         "users": "Utilisateurs",
         "userManagement": "Gestion des Utilisateurs",
@@ -176,7 +176,7 @@
         "auditLog": "Journal d'Audit",
         "backupRestore": "Sauvegarde et Restauration",
         "profile": "Profil",
-        "my_patients": "Mes Patients",
+        "my_patients": "Mis Pacientes",
         "triage": "Triage",
         "vitals": "Signes Vitaux",
         "shift_schedule": "Horaires",
@@ -217,7 +217,7 @@
         "referrals": "Références",
         "nursing_station": "Poste de Soins",
         "triage_queue": "File de Triage",
-        "calendar": "Calendrier",
+        "calendar": "Calendario",
         "chat": "Clavardage",
         "chat_provider": "Discuter avec le Médecin",
         "active_patients": "Patients Actifs",
@@ -261,22 +261,6 @@
         "financial_reports": "Rapports Financiers",
         "clinical_quality": "Qualité Clinique",
         "geography_management": "Gestion de la Géographie",
-        "countries": "Pays",
-        "countries_list": "Liste des Pays",
-        "add_country": "Ajouter un Pays",
-        "edit_country": "Modifier le Pays",
-        "departments_states": "Départements",
-        "departments_list": "Liste des Départements",
-        "add_department": "Ajouter un Département",
-        "edit_department": "Modifier le Département",
-        "provinces": "Provinces",
-        "provinces_list": "Liste des Provinces",
-        "add_province": "Ajouter une Province",
-        "edit_province": "Modifier la Province",
-        "municipalities": "Municipalités",
-        "municipalities_list": "Liste des Municipalités",
-        "add_municipality": "Ajouter une Municipalité",
-        "edit_municipality": "Modifier la Municipalité",
         "tenant_governance": "Gouvernance Locataire",
         "billing_licensing": "Abonnements et Licences",
         "tenant_config": "Configuration Globale des Locataires",
@@ -386,7 +370,7 @@
                 }
             },
             "procedures": {
-                "title": "Procédures Médicales",
+                "title": "Procédures",
                 "singular": "Procédure",
                 "plural": "Procédures",
                 "list": "Liste des Procédures",
@@ -396,7 +380,6 @@
                     "id": "ID",
                     "code": "Code",
                     "name": "Nom",
-                    "type": "Type",
                     "active": "Actif"
                 }
             },
@@ -416,7 +399,7 @@
                 }
             },
             "specialty": {
-                "title": "Spécialités Médicales",
+                "title": "Spécialités",
                 "singular": "Spécialité",
                 "plural": "Spécialités",
                 "list": "Liste des Spécialités",
@@ -427,12 +410,6 @@
                     "code": "Code",
                     "name": "Nom",
                     "description": "Description",
-                    "targetProfession": "Profession Cible",
-                    "targetProfession_options": {
-                        "doctor": "Médecin",
-                        "nurse": "Infirmier/ère",
-                        "both": "Les deux"
-                    },
                     "active": "Actif"
                 }
             },
@@ -520,7 +497,7 @@
                     }
                 },
                 "province": {
-                    "title": "Provinces",
+                    "title": "Provincias",
                     "singular": "Province",
                     "plural": "Provinces",
                     "list": "Liste des Provinces",
@@ -552,24 +529,11 @@
                     }
                 }
             }
+        },
+        "dashboard": {
+            "title": "Tableau de Bord"
         }
     },
-    "no_countries_found": "Aucun pays trouvé",
-    "no_departments_found": "Aucun département trouvé",
-    "no_provinces_found": "Aucune province trouvée",
-    "no_municipalities_found": "Aucune municipalité trouvée",
-    "theme_branding": "Thème et Image de Marque",
-    "primary_color": "Couleur Primaire",
-    "accent_color": "Couleur d'Accent",
-    "warn_color": "Couleur d'Avertissement",
-    "upload_logo": "Télécharger le Logo",
-    "upload_favicon": "Télécharger le Favicon",
-    "theme_mode": "Mode de Thème",
-    "light_mode": "Mode Clair",
-    "dark_mode": "Mode Sombre",
-    "save_theme": "Enregistrer le Thème",
-    "preview_theme": "Aperçu",
-    "reset_theme": "Réinitialiser par Défaut",
     "dashboard": {
         "title": "Tableau de Bord",
         "welcome": "Bienvenue",
@@ -578,6 +542,8 @@
         "tenant": "Organisation",
         "this_month": "ce mois-ci",
         "admin": {
+            "welcome": "Bienvenue",
+            "new_user": "Nouvel Utilisateur",
             "patients": {
                 "title": "Tous les Patients",
                 "subtitle": "Dossiers actifs"
@@ -591,8 +557,6 @@
                 "title": "Alertes Système",
                 "maintenance_needed": "serveurs nécessitent une maintenance"
             },
-            "welcome": "Bienvenue",
-            "new_user": "Nouvel Utilisateur",
             "stats": {
                 "total_staff": "Personnel Total",
                 "active_patients": "Patients Actifs",
@@ -622,6 +586,22 @@
             "overview": "Vue d'Ensemble"
         }
     },
+    "no_countries_found": "Aucun pays trouvé",
+    "no_departments_found": "Aucun département trouvé",
+    "no_provinces_found": "Aucune province trouvée",
+    "no_municipalities_found": "Aucune municipalité trouvée",
+    "theme_branding": "Thème et Image de Marque",
+    "primary_color": "Couleur Primaire",
+    "accent_color": "Couleur d'Accent",
+    "warn_color": "Couleur d'Avertissement",
+    "upload_logo": "Télécharger le Logo",
+    "upload_favicon": "Télécharger le Favicon",
+    "theme_mode": "Mode de Thème",
+    "light_mode": "Mode Clair",
+    "dark_mode": "Mode Sombre",
+    "save_theme": "Enregistrer le Thème",
+    "preview_theme": "Aperçu",
+    "reset_theme": "Réinitialiser par Défaut",
     "pilot": {
         "breadcrumbs": {
             "home": "Accueil",

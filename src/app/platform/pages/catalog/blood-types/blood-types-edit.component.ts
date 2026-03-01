@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrudBaseAddEditComponent } from '@shared/components/crud-template/crud-base-add-edit.component';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { ICD10_CRUD_CONFIG } from './icd10-crud.config';
-import { Icd10 } from 'app/api/models/icd-10';
+import { BLOOD_TYPES_CRUD_CONFIG } from './blood-types-crud.config';
+import { BloodType } from 'app/api/models/blood-type';
 
 @Component({
-    selector: 'app-icd10-edit',
+    selector: 'app-blood-types-edit',
     standalone: true,
     imports: [CrudTemplateComponent, TranslateModule],
     template: `
@@ -22,9 +22,9 @@ import { Icd10 } from 'app/api/models/icd-10';
         </app-crud-template>
     `
 })
-export class Icd10EditComponent extends CrudBaseAddEditComponent<Icd10> implements OnInit {
-    protected override entityNameKey = 'menu.catalog.icd10.singular';
-    public readonly config = ICD10_CRUD_CONFIG();
+export class BloodTypesEditComponent extends CrudBaseAddEditComponent<BloodType> implements OnInit {
+    protected override entityNameKey = 'menu.catalog.blood_type.singular';
+    public readonly config = BLOOD_TYPES_CRUD_CONFIG();
 
     protected override form: FormGroup = CrudBaseAddEditComponent.buildFormFromConfig(
         inject(FormBuilder), this.config
@@ -41,16 +41,16 @@ export class Icd10EditComponent extends CrudBaseAddEditComponent<Icd10> implemen
     }
 
     protected override getSuccessRoute(): any[] {
-        return ['/platform/catalog/icd10/list'];
+        return ['/platform/catalog/blood-types/list'];
     }
 
-    protected override saveEntity(formData: Icd10): Observable<Icd10> {
+    protected override saveEntity(formData: BloodType): Observable<BloodType> {
         return this.config.apiService.update(this.entityId!, formData);
     }
 
     protected override loadEntityData(id: number): void {
         this.config.apiService.getById(id).subscribe({
-            next: (data: Icd10) => {
+            next: (data: BloodType) => {
                 this.form.patchValue(data as any);
             },
             error: (err: any) => {

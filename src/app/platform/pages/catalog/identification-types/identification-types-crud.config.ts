@@ -1,33 +1,33 @@
 import { inject } from '@angular/core';
-import { Icd10 } from 'app/api/models/icd-10';
-import { Icd10DiagnosisService } from 'app/api/services/icd-10-diagnosis.service';
+import { IdentificationType } from 'app/api/models/identification-type';
+import { IdentificationTypeService } from 'app/api/services/identification-type.service';
 import { OpenApiCrudAdapter } from '@shared/services/crud-api-adapter.service';
 import { CrudConfig } from '@shared/components/crud-template/crud-config';
 
-export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
-    const service = inject(Icd10DiagnosisService);
+export const IDENTIFICATION_TYPES_CRUD_CONFIG = (): CrudConfig<IdentificationType> => {
+    const service = inject(IdentificationTypeService);
 
     return {
-        entityName: 'menu.catalog.icd10.singular',
-        entityNamePlural: 'menu.catalog.icd10.plural',
+        entityName: 'menu.catalog.identification_type.singular',
+        entityNamePlural: 'menu.catalog.identification_type.plural',
 
-        getId: (entity: Icd10) => entity.id!,
+        getId: (entity: IdentificationType) => entity.id!,
 
-        apiService: new OpenApiCrudAdapter<Icd10>(service, {
-            getAll: 'getAllIcd10',
-            getById: 'getIcd10ById',
-            create: 'createIcd10',
-            update: 'updateIcd10',
-            delete: 'deleteIcd10'
+        apiService: new OpenApiCrudAdapter<IdentificationType>(service, {
+            getAll: 'getAllIdentificationTypes',
+            getById: 'getIdentificationTypeById',
+            create: 'createIdentificationType',
+            update: 'updateIdentificationType',
+            delete: 'deleteIdentificationType'
         }),
 
         columns: [
-            { field: 'id', header: 'menu.catalog.icd10.fields.id', sortable: true, width: '80px' },
-            { field: 'code', header: 'menu.catalog.icd10.fields.code', sortable: true, width: '120px' },
-            { field: 'description', header: 'menu.catalog.icd10.fields.description', sortable: true, width: '400px' },
+            { field: 'id', header: 'menu.catalog.identification_type.fields.id', sortable: true, width: '80px' },
+            { field: 'code', header: 'menu.catalog.identification_type.fields.code', sortable: true, width: '120px' },
+            { field: 'name', header: 'menu.catalog.identification_type.fields.name', sortable: true, width: '250px' },
             {
                 field: 'active',
-                header: 'menu.catalog.icd10.fields.active',
+                header: 'menu.catalog.identification_type.fields.active',
                 sortable: true,
                 width: '120px',
                 type: 'tag',
@@ -43,7 +43,7 @@ export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
             fields: [
                 {
                     name: 'code',
-                    label: 'menu.catalog.icd10.fields.code',
+                    label: 'menu.catalog.identification_type.fields.code',
                     type: 'text',
                     required: true,
                     colSpan: 1,
@@ -51,7 +51,7 @@ export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
                 },
                 {
                     name: 'active',
-                    label: 'menu.catalog.icd10.fields.active',
+                    label: 'menu.catalog.identification_type.fields.active',
                     type: 'radio',
                     colSpan: 1,
                     options: [
@@ -60,12 +60,12 @@ export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
                     ]
                 },
                 {
-                    name: 'description',
-                    label: 'menu.catalog.icd10.fields.description',
-                    type: 'textarea',
+                    name: 'name',
+                    label: 'menu.catalog.identification_type.fields.name',
+                    type: 'text',
                     required: true,
                     colSpan: 2,
-                    maxLength: 500
+                    maxLength: 100
                 }
             ]
         },

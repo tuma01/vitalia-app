@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
 import { CrudBaseAddEditComponent } from '@shared/components/crud-template/crud-base-add-edit.component';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { ICD10_CRUD_CONFIG } from './icd10-crud.config';
-import { Icd10 } from 'app/api/models/icd-10';
+import { HEALTHCARE_PROVIDERS_CRUD_CONFIG } from './healthcare-providers-crud.config';
+import { HealthcareProvider } from 'app/api/models/healthcare-provider';
 
 @Component({
-    selector: 'app-icd10-add',
+    selector: 'app-healthcare-providers-add',
     standalone: true,
     imports: [CrudTemplateComponent, TranslateModule],
     template: `
@@ -23,9 +22,9 @@ import { Icd10 } from 'app/api/models/icd-10';
         </app-crud-template>
     `
 })
-export class Icd10AddComponent extends CrudBaseAddEditComponent<Icd10> implements OnInit {
-    protected override entityNameKey = 'menu.catalog.icd10.singular';
-    public readonly config = ICD10_CRUD_CONFIG();
+export class HealthcareProvidersAddComponent extends CrudBaseAddEditComponent<HealthcareProvider> implements OnInit {
+    protected override entityNameKey = 'menu.catalog.healthcare_provider.singular';
+    public readonly config = HEALTHCARE_PROVIDERS_CRUD_CONFIG();
 
     protected override form: FormGroup = CrudBaseAddEditComponent.buildFormFromConfig(
         inject(FormBuilder), this.config
@@ -34,10 +33,10 @@ export class Icd10AddComponent extends CrudBaseAddEditComponent<Icd10> implement
     ngOnInit(): void { }
 
     protected override getSuccessRoute(): any[] {
-        return ['/platform/catalog/icd10/list'];
+        return ['/platform/catalog/healthcare-providers/list'];
     }
 
-    protected override saveEntity(formData: Icd10): Observable<Icd10> {
+    protected override saveEntity(formData: HealthcareProvider): Observable<HealthcareProvider> {
         return this.config.apiService.create(formData);
     }
 

@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { PlatformShellComponent } from '../../shared/components/platform-shell/platform-shell.component';
 
 export const routes: Routes = [
     {
@@ -11,43 +10,43 @@ export const routes: Routes = [
             },
             {
                 path: 'medications',
-                loadChildren: () => import('./medication/medication.routes').then(m => m.routes)
+                loadChildren: () => import('./medications/medications.routes').then(m => m.routes)
             },
             {
                 path: 'procedures',
-                loadChildren: () => import('./medical-procedure/medical-procedure.routes').then(m => m.routes)
+                loadChildren: () => import('./procedures/procedures.routes').then(m => m.routes)
             },
             {
                 path: 'vaccines',
-                loadChildren: () => import('./vaccine/vaccine.routes').then(m => m.routes)
+                loadChildren: () => import('./vaccines/vaccines.routes').then(m => m.routes)
             },
             {
-                path: 'specialty',
-                loadChildren: () => import('./medical-specialty/medical-specialty.routes').then(m => m.routes)
+                path: 'specialties',
+                loadChildren: () => import('./specialties/specialties.routes').then(m => m.routes)
             },
             {
-                path: 'allergy',
-                loadChildren: () => import('./allergy/allergy.routes').then(m => m.routes)
+                path: 'allergies',
+                loadChildren: () => import('./allergies/allergies.routes').then(m => m.routes)
             },
             {
-                path: 'blood-type',
-                loadChildren: () => import('./blood-type/blood-type.routes').then(m => m.routes)
+                path: 'blood-types',
+                loadChildren: () => import('./blood-types/blood-types.routes').then(m => m.routes)
             },
             {
-                path: 'healthcare-provider',
-                loadChildren: () => import('./healthcare-provider/healthcare-provider.routes').then(m => m.routes)
+                path: 'healthcare-providers',
+                loadChildren: () => import('./healthcare-providers/healthcare-providers.routes').then(m => m.routes)
             },
             {
-                path: 'identification-type',
-                loadChildren: () => import('./identification-type/identification-type.routes').then(m => m.routes)
+                path: 'identification-types',
+                loadChildren: () => import('./identification-types/identification-types.routes').then(m => m.routes)
             },
             {
-                path: 'kinship',
-                loadChildren: () => import('./kinship/kinship.routes').then(m => m.routes)
+                path: 'kinships',
+                loadChildren: () => import('./kinships/kinships.routes').then(m => m.routes)
             },
             {
                 path: 'demographics',
-                loadChildren: () => import('./demographic/demographic.routes').then(m => m.routes)
+                loadChildren: () => import('./demographics/demographics.routes').then(m => m.routes)
             }
         ]
     }

@@ -1,33 +1,33 @@
 import { inject } from '@angular/core';
-import { Icd10 } from 'app/api/models/icd-10';
-import { Icd10DiagnosisService } from 'app/api/services/icd-10-diagnosis.service';
+import { Kinship } from 'app/api/models/kinship';
+import { KinshipService } from 'app/api/services/kinship.service';
 import { OpenApiCrudAdapter } from '@shared/services/crud-api-adapter.service';
 import { CrudConfig } from '@shared/components/crud-template/crud-config';
 
-export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
-    const service = inject(Icd10DiagnosisService);
+export const KINSHIPS_CRUD_CONFIG = (): CrudConfig<Kinship> => {
+    const service = inject(KinshipService);
 
     return {
-        entityName: 'menu.catalog.icd10.singular',
-        entityNamePlural: 'menu.catalog.icd10.plural',
+        entityName: 'menu.catalog.kinship.singular',
+        entityNamePlural: 'menu.catalog.kinship.plural',
 
-        getId: (entity: Icd10) => entity.id!,
+        getId: (entity: Kinship) => entity.id!,
 
-        apiService: new OpenApiCrudAdapter<Icd10>(service, {
-            getAll: 'getAllIcd10',
-            getById: 'getIcd10ById',
-            create: 'createIcd10',
-            update: 'updateIcd10',
-            delete: 'deleteIcd10'
+        apiService: new OpenApiCrudAdapter<Kinship>(service, {
+            getAll: 'getAllKinships',
+            getById: 'getKinshipById',
+            create: 'createKinship',
+            update: 'updateKinship',
+            delete: 'deleteKinship'
         }),
 
         columns: [
-            { field: 'id', header: 'menu.catalog.icd10.fields.id', sortable: true, width: '80px' },
-            { field: 'code', header: 'menu.catalog.icd10.fields.code', sortable: true, width: '120px' },
-            { field: 'description', header: 'menu.catalog.icd10.fields.description', sortable: true, width: '400px' },
+            { field: 'id', header: 'menu.catalog.kinship.fields.id', sortable: true, width: '80px' },
+            { field: 'code', header: 'menu.catalog.kinship.fields.code', sortable: true, width: '120px' },
+            { field: 'name', header: 'menu.catalog.kinship.fields.name', sortable: true, width: '250px' },
             {
                 field: 'active',
-                header: 'menu.catalog.icd10.fields.active',
+                header: 'menu.catalog.kinship.fields.active',
                 sortable: true,
                 width: '120px',
                 type: 'tag',
@@ -43,29 +43,29 @@ export const ICD10_CRUD_CONFIG = (): CrudConfig<Icd10> => {
             fields: [
                 {
                     name: 'code',
-                    label: 'menu.catalog.icd10.fields.code',
+                    label: 'menu.catalog.kinship.fields.code',
                     type: 'text',
                     required: true,
                     colSpan: 1,
                     maxLength: 20
                 },
                 {
-                    name: 'active',
-                    label: 'menu.catalog.icd10.fields.active',
-                    type: 'radio',
+                    name: 'name',
+                    label: 'menu.catalog.kinship.fields.name',
+                    type: 'text',
+                    required: true,
                     colSpan: 1,
+                    maxLength: 100
+                },
+                {
+                    name: 'active',
+                    label: 'menu.catalog.kinship.fields.active',
+                    type: 'radio',
+                    colSpan: 2,
                     options: [
                         { label: 'common.active', value: true },
                         { label: 'common.inactive', value: false }
                     ]
-                },
-                {
-                    name: 'description',
-                    label: 'menu.catalog.icd10.fields.description',
-                    type: 'textarea',
-                    required: true,
-                    colSpan: 2,
-                    maxLength: 500
                 }
             ]
         },
