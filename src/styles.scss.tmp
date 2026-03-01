@@ -1,0 +1,51 @@
+/* STATUS BADGES — VITALIA */
+.vt-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    cursor: default;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+.vt-badge:hover { transform: translateY(-1px) scale(1.02); }
+.vt-badge .vt-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: vt-pulse 2.4s infinite ease-in-out;
+}
+.vt-badge-active {
+    background: linear-gradient(135deg, rgba(76,175,80,0.16) 0%, rgba(129,199,132,0.08) 100%);
+    color: #2e7d32;
+    border-color: rgba(76,175,80,0.35);
+    box-shadow: 0 1px 10px rgba(76,175,80,0.20), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.vt-badge-active .vt-badge-dot {
+    background: #4caf50;
+    box-shadow: 0 0 0 2.5px rgba(76,175,80,0.25), 0 0 8px rgba(76,175,80,0.75);
+}
+.vt-badge-inactive {
+    background: linear-gradient(135deg, rgba(244,67,54,0.13) 0%, rgba(229,115,115,0.06) 100%);
+    color: #b71c1c;
+    border-color: rgba(244,67,54,0.28);
+    box-shadow: 0 1px 10px rgba(244,67,54,0.16), inset 0 1px 0 rgba(255,255,255,0.20);
+}
+.vt-badge-inactive .vt-badge-dot {
+    background: #f44336;
+    box-shadow: 0 0 0 2.5px rgba(244,67,54,0.22), 0 0 8px rgba(244,67,54,0.65);
+}
+.theme-dark .vt-badge-active { color: #81c784; background: linear-gradient(135deg, rgba(76,175,80,0.22) 0%, rgba(129,199,132,0.10) 100%); border-color: rgba(76,175,80,0.40); }
+.theme-dark .vt-badge-inactive { color: #ef9a9a; background: linear-gradient(135deg, rgba(244,67,54,0.20) 0%, rgba(229,115,115,0.09) 100%); border-color: rgba(244,67,54,0.36); }
+@keyframes vt-pulse {
+    0%, 100% { transform: scale(0.82); opacity: 0.65; }
+    50%       { transform: scale(1.30); opacity: 1; }
+}

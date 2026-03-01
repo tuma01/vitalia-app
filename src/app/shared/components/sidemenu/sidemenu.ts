@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter } from 'rxjs/operators';
 import { MenuService } from '../../../core/services/menu.service';
 import { SidenavItem } from './sidemenu.model';
@@ -21,7 +22,8 @@ import { AppContextService } from '../../../core/services/app-context.service';
         TranslateModule,
         MatListModule,
         MatIconModule,
-        MatBadgeModule
+        MatBadgeModule,
+        MatTooltipModule
     ],
     animations: [
         trigger('expansion', [
@@ -141,6 +143,13 @@ export class SidemenuComponent implements OnInit {
             currentSet.add(id);
             this.expandedItems.set(currentSet);
         }
+    }
+
+    /**
+     * 📏 Detects if an element's text is truncated (overflowing)
+     */
+    isTruncated(element: HTMLElement): boolean {
+        return element ? (element.scrollWidth > element.clientWidth) : false;
     }
 
     private mapMenuItems(items: any[]): SidenavItem[] {

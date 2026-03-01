@@ -11,13 +11,17 @@
         <!-- Type: LINK -->
         @if (item.type === 'link') {
         <a class="menu-heading" [routerLink]="item.route" routerLinkActive="active" (click)="onMenuItemClick()"
-            [class.is-collapsed]="isCollapsed()" [style.padding-left.px]="isCollapsed() ? 0 : 16 + (level * 16)">
+            [class.is-collapsed]="isCollapsed()" [style.padding-left.px]="isCollapsed() ? 0 : 16 + (level * 16)"
+            [matTooltip]="item.label | translate" [matTooltipDisabled]="isCollapsed() || !isTruncated(menuName)"
+            matTooltipPosition="above" matTooltipClass="sidebar-tooltip">
             @if (item.icon) {
             <mat-icon class="menu-icon">{{ item.icon }}</mat-icon>
             }
-            @if (!isCollapsed()) {
-            <span class="menu-name">{{ item.label | translate }}</span>
-            }
+            <span #menuName class="menu-name">
+                @if (!isCollapsed()) {
+                {{ item.label | translate }}
+                }
+            </span>
         </a>
         }
 
@@ -30,11 +34,13 @@
             }
         </div>
         } @else {
-        <button class="menu-heading menu-toggle" (click)="toggleMenu(item)" [style.padding-left.px]="16 + (level * 16)">
+        <button class="menu-heading menu-toggle" (click)="toggleMenu(item)" [style.padding-left.px]="16 + (level * 16)"
+            [matTooltip]="item.label | translate" [matTooltipDisabled]="isCollapsed() || !isTruncated(subMenuName)"
+            matTooltipPosition="above" matTooltipClass="sidebar-tooltip">
             @if (item.icon) {
             <mat-icon class="menu-icon">{{ item.icon }}</mat-icon>
             }
-            <span class="menu-name">{{ item.label | translate }}</span>
+            <span #subMenuName class="menu-name">{{ item.label | translate }}</span>
             <mat-icon class="menu-caret">expand_more</mat-icon>
         </button>
 

@@ -18,8 +18,9 @@ export interface CrudColumnConfig<T = any> {
     width?: string;
     minWidth?: number;
     maxWidth?: number;
-    type?: 'text' | 'number' | 'date' | 'boolean' | 'custom';
+    type?: 'text' | 'number' | 'date' | 'boolean' | 'tag' | 'custom';
     formatter?: (row: T) => string;
+    tag?: { [key: string]: { text: string; color: string } };
     showTooltip?: boolean;
     class?: string;
 }

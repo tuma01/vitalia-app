@@ -4,7 +4,7 @@
     "menu": [
         {
             "id": "dashboard",
-            "name": "dashboard",
+            "name": "dashboard.title",
             "type": "link",
             "icon": "dashboard",
             "route": "/platform/dashboard",
@@ -49,34 +49,34 @@
         },
         {
             "id": "medical_catalog",
-            "name": "medical_catalog",
+            "name": "catalog.title",
             "type": "group",
             "icon": "folder_special",
             "visible": true,
             "children": [
                 {
                     "id": "icd10",
-                    "name": "icd10",
+                    "name": "catalog.icd10.title",
                     "type": "sub",
                     "icon": "menu_book",
                     "children": [
                         {
                             "id": "icd10-list",
-                            "name": "clinical.icd10.list",
+                            "name": "catalog.icd10.list",
                             "type": "link",
                             "route": "/platform/catalog/icd10/list",
                             "visible": true
                         },
                         {
                             "id": "icd10-add",
-                            "name": "clinical.icd10.add",
+                            "name": "catalog.icd10.add",
                             "type": "link",
                             "route": "/platform/catalog/icd10/add",
                             "visible": true
                         },
                         {
                             "id": "icd10-edit",
-                            "name": "clinical.icd10.edit",
+                            "name": "catalog.icd10.edit",
                             "type": "link",
                             "route": "/platform/catalog/icd10/edit",
                             "visible": false
@@ -84,62 +84,361 @@
                     ]
                 },
                 {
+                    "id": "allergy",
+                    "name": "catalog.allergy.title",
+                    "type": "sub",
+                    "icon": "medical_information",
+                    "children": [
+                        {
+                            "id": "allergy-list",
+                            "name": "catalog.allergy.list",
+                            "type": "link",
+                            "route": "/platform/catalog/allergy/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "allergy-add",
+                            "name": "catalog.allergy.add",
+                            "type": "link",
+                            "route": "/platform/catalog/allergy/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "allergy-edit",
+                            "name": "catalog.allergy.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/allergy/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
+                    "id": "blood-type",
+                    "name": "catalog.blood_type.title",
+                    "type": "sub",
+                    "icon": "bloodtype",
+                    "children": [
+                        {
+                            "id": "blood-type-list",
+                            "name": "catalog.blood_type.list",
+                            "type": "link",
+                            "route": "/platform/catalog/blood-type/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "blood-type-add",
+                            "name": "catalog.blood_type.add",
+                            "type": "link",
+                            "route": "/platform/catalog/blood-type/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "blood-type-edit",
+                            "name": "catalog.blood_type.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/blood-type/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
+                    "id": "healthcare-provider",
+                    "name": "catalog.healthcare_provider.title",
+                    "type": "sub",
+                    "icon": "local_hospital",
+                    "children": [
+                        {
+                            "id": "healthcare-provider-list",
+                            "name": "catalog.healthcare_provider.list",
+                            "type": "link",
+                            "route": "/platform/catalog/healthcare-provider/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "healthcare-provider-add",
+                            "name": "catalog.healthcare_provider.add",
+                            "type": "link",
+                            "route": "/platform/catalog/healthcare-provider/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "healthcare-provider-edit",
+                            "name": "catalog.healthcare_provider.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/healthcare-provider/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
+                    "id": "identification-type",
+                    "name": "catalog.identification_type.title",
+                    "type": "sub",
+                    "icon": "badge",
+                    "children": [
+                        {
+                            "id": "identification-type-list",
+                            "name": "catalog.identification_type.list",
+                            "type": "link",
+                            "route": "/platform/catalog/identification-type/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "identification-type-add",
+                            "name": "catalog.identification_type.add",
+                            "type": "link",
+                            "route": "/platform/catalog/identification-type/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "identification-type-edit",
+                            "name": "catalog.identification_type.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/identification-type/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
+                    "id": "kinship",
+                    "name": "catalog.kinship.title",
+                    "type": "sub",
+                    "icon": "family_restroom",
+                    "children": [
+                        {
+                            "id": "kinship-list",
+                            "name": "catalog.kinship.list",
+                            "type": "link",
+                            "route": "/platform/catalog/kinship/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "kinship-add",
+                            "name": "catalog.kinship.add",
+                            "type": "link",
+                            "route": "/platform/catalog/kinship/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "kinship-edit",
+                            "name": "catalog.kinship.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/kinship/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
                     "id": "medications",
-                    "name": "medications",
-                    "type": "link",
-                    "route": "/platform/catalog/medications",
-                    "icon": "medication"
+                    "name": "catalog.medications.title",
+                    "type": "sub",
+                    "icon": "medication",
+                    "children": [
+                        {
+                            "id": "medications-list",
+                            "name": "catalog.medications.list",
+                            "type": "link",
+                            "route": "/platform/catalog/medications/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "medications-add",
+                            "name": "catalog.medications.add",
+                            "type": "link",
+                            "route": "/platform/catalog/medications/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "medications-edit",
+                            "name": "catalog.medications.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/medications/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
                     "id": "procedures",
-                    "name": "procedures",
-                    "type": "link",
-                    "route": "/platform/catalog/procedures",
-                    "icon": "medical_services"
+                    "name": "catalog.procedures.title",
+                    "type": "sub",
+                    "icon": "medical_services",
+                    "children": [
+                        {
+                            "id": "procedures-list",
+                            "name": "catalog.procedures.list",
+                            "type": "link",
+                            "route": "/platform/catalog/procedures/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "procedures-add",
+                            "name": "catalog.procedures.add",
+                            "type": "link",
+                            "route": "/platform/catalog/procedures/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "procedures-edit",
+                            "name": "catalog.procedures.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/procedures/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
                     "id": "vaccines",
-                    "name": "vaccines",
-                    "type": "link",
-                    "route": "/platform/catalog/vaccines",
-                    "icon": "vaccines"
+                    "name": "catalog.vaccines.title",
+                    "type": "sub",
+                    "icon": "vaccines",
+                    "children": [
+                        {
+                            "id": "vaccines-list",
+                            "name": "catalog.vaccines.list",
+                            "type": "link",
+                            "route": "/platform/catalog/vaccines/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "vaccines-add",
+                            "name": "catalog.vaccines.add",
+                            "type": "link",
+                            "route": "/platform/catalog/vaccines/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "vaccines-edit",
+                            "name": "catalog.vaccines.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/vaccines/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
-                    "id": "specialties-allergies",
-                    "name": "specialties_allergies",
-                    "type": "link",
-                    "route": "/platform/catalog/specialties",
-                    "icon": "assignment_ind"
+                    "id": "specialty",
+                    "name": "catalog.specialty.title",
+                    "type": "sub",
+                    "icon": "assignment_ind",
+                    "children": [
+                        {
+                            "id": "specialty-list",
+                            "name": "catalog.specialty.list",
+                            "type": "link",
+                            "route": "/platform/catalog/specialty/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "specialty-add",
+                            "name": "catalog.specialty.add",
+                            "type": "link",
+                            "route": "/platform/catalog/specialty/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "specialty-edit",
+                            "name": "catalog.specialty.edit",
+                            "type": "link",
+                            "route": "/platform/catalog/specialty/edit",
+                            "visible": false
+                        }
+                    ]
+                },
+                {
+                    "id": "demographics",
+                    "name": "catalog.demographics.title",
+                    "type": "sub",
+                    "icon": "people_alt",
+                    "children": [
+                        {
+                            "id": "civil-status",
+                            "name": "catalog.demographics.civil_status.title",
+                            "type": "sub",
+                            "icon": "favorite",
+                            "children": [
+                                {
+                                    "id": "civil-status-list",
+                                    "name": "catalog.demographics.civil_status.list",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/civil-status/list",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "civil-status-add",
+                                    "name": "catalog.demographics.civil_status.add",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/civil-status/add",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "civil-status-edit",
+                                    "name": "catalog.demographics.civil_status.edit",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/civil-status/edit",
+                                    "visible": false
+                                }
+                            ]
+                        },
+                        {
+                            "id": "gender",
+                            "name": "catalog.demographics.gender.title",
+                            "type": "sub",
+                            "icon": "transgender",
+                            "children": [
+                                {
+                                    "id": "gender-list",
+                                    "name": "catalog.demographics.gender.list",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/gender/list",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "gender-add",
+                                    "name": "catalog.demographics.gender.add",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/gender/add",
+                                    "visible": true
+                                },
+                                {
+                                    "id": "gender-edit",
+                                    "name": "catalog.demographics.gender.edit",
+                                    "type": "link",
+                                    "route": "/platform/catalog/demographics/gender/edit",
+                                    "visible": false
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "id": "geography",
-                    "name": "geography",
+                    "name": "catalog.geography.title",
                     "type": "sub",
                     "icon": "public",
                     "children": [
                         {
                             "id": "countries",
-                            "name": "pais",
+                            "name": "catalog.geography.country.title",
                             "type": "sub",
                             "icon": "flag",
                             "children": [
                                 {
                                     "id": "countries-list",
-                                    "name": "paises",
+                                    "name": "catalog.geography.country.list",
                                     "type": "link",
                                     "route": "/platform/geography/pais/paises",
                                     "visible": true
                                 },
                                 {
                                     "id": "countries-add",
-                                    "name": "addPais",
+                                    "name": "catalog.geography.country.add",
                                     "type": "link",
                                     "route": "/platform/geography/pais/addPais",
                                     "visible": true
                                 },
                                 {
                                     "id": "countries-edit",
-                                    "name": "editPais",
+                                    "name": "catalog.geography.country.edit",
                                     "type": "link",
                                     "route": "/platform/geography/pais/editPais",
                                     "visible": false
@@ -148,27 +447,27 @@
                         },
                         {
                             "id": "departamentos",
-                            "name": "departamento",
+                            "name": "catalog.geography.department.title",
                             "type": "sub",
                             "icon": "location_city",
                             "children": [
                                 {
                                     "id": "departamentos-list",
-                                    "name": "departamentos",
+                                    "name": "catalog.geography.department.list",
                                     "type": "link",
                                     "route": "/platform/geography/departamento/departamentos",
                                     "visible": true
                                 },
                                 {
                                     "id": "departamentos-add",
-                                    "name": "addDepartamento",
+                                    "name": "catalog.geography.department.add",
                                     "type": "link",
                                     "route": "/platform/geography/departamento/addDepartamento",
                                     "visible": true
                                 },
                                 {
                                     "id": "departamentos-edit",
-                                    "name": "editDepartamento",
+                                    "name": "catalog.geography.department.edit",
                                     "type": "link",
                                     "route": "/platform/geography/departamento/editDepartamento",
                                     "visible": false
@@ -177,27 +476,27 @@
                         },
                         {
                             "id": "provincias",
-                            "name": "provincia",
+                            "name": "catalog.geography.province.title",
                             "type": "sub",
                             "icon": "map",
                             "children": [
                                 {
                                     "id": "provincias-list",
-                                    "name": "provincias",
+                                    "name": "catalog.geography.province.list",
                                     "type": "link",
                                     "route": "/platform/geography/provincia/provincias",
                                     "visible": true
                                 },
                                 {
                                     "id": "provincias-add",
-                                    "name": "addProvincia",
+                                    "name": "catalog.geography.province.add",
                                     "type": "link",
                                     "route": "/platform/geography/provincia/addProvincia",
                                     "visible": true
                                 },
                                 {
                                     "id": "provincias-edit",
-                                    "name": "editProvincia",
+                                    "name": "catalog.geography.province.edit",
                                     "type": "link",
                                     "route": "/platform/geography/provincia/editProvincia",
                                     "visible": false
@@ -206,27 +505,27 @@
                         },
                         {
                             "id": "municipios",
-                            "name": "municipio",
+                            "name": "catalog.geography.municipality.title",
                             "type": "sub",
                             "icon": "place",
                             "children": [
                                 {
                                     "id": "municipios-list",
-                                    "name": "municipios",
+                                    "name": "catalog.geography.municipality.list",
                                     "type": "link",
                                     "route": "/platform/geography/municipio/municipios",
                                     "visible": true
                                 },
                                 {
                                     "id": "municipios-add",
-                                    "name": "addMunicipio",
+                                    "name": "catalog.geography.municipality.add",
                                     "type": "link",
                                     "route": "/platform/geography/municipio/addMunicipio",
                                     "visible": true
                                 },
                                 {
                                     "id": "municipios-edit",
-                                    "name": "editMunicipio",
+                                    "name": "catalog.geography.municipality.edit",
                                     "type": "link",
                                     "route": "/platform/geography/municipio/editMunicipio",
                                     "visible": false
