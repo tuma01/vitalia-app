@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThemeDTO {
+public class ThemeDto {
     private Long id;
     private String code;
     private String name;
