@@ -4,23 +4,22 @@ import com.amachi.app.core.domain.theme.entity.Theme;
 import com.amachi.app.core.common.mapper.AuditableIgnoreConfig;
 import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
-import com.amachi.app.core.domain.theme.dto.TenantThemeUpdateRequest;
-import com.amachi.app.core.domain.theme.dto.ThemeDTO;
+import com.amachi.app.core.domain.theme.dto.ThemeDto;
 import org.mapstruct.*;
 
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
-public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDTO> {
+public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "tenant.id", source = "tenantId")
-    Theme toEntity(ThemeDTO dto);
+    Theme toEntity(ThemeDto dto);
 
     @Override
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "tenantId", source = "tenant.id")
-    ThemeDTO toDto(Theme entity);
+    ThemeDto toDto(Theme entity);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -33,5 +32,5 @@ public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDTO> {
     @Mapping(target = "customCss", ignore = true)
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "version", ignore = true)
-    void updateThemeFromRequest(TenantThemeUpdateRequest request, @MappingTarget Theme theme);
+    void updateEntityFromDto(ThemeDto dto, @MappingTarget Theme theme);
 }
