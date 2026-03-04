@@ -36,4 +36,4 @@ export function updateIdentificationType(http: HttpClient, rootUrl: string, para
   );
 }
 
-updateIdentificationType.PATH = '/{id}';
+updateIdentificationType.PATH = '/mdm/identification-type/{id}';

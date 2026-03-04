@@ -34,4 +34,4 @@ export function getIdentificationTypeById(http: HttpClient, rootUrl: string, par
   );
 }
 
-getIdentificationTypeById.PATH = '/{id}';
+getIdentificationTypeById.PATH = '/mdm/identification-type/{id}';

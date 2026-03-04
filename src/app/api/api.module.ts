@@ -6,9 +6,8 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { IdentificationTypeService } from './services/identification-type.service';
 import { UserTenantRoleService } from './services/user-tenant-role.service';
-import { ThemeControllerService } from './services/theme-controller.service';
+import { ThemeService } from './services/theme.service';
 import { TenantConfigService } from './services/tenant-config.service';
 import { TenantAdminManagementService } from './services/tenant-admin-management.service';
 import { SuperAdminService } from './services/super-admin.service';
@@ -21,6 +20,7 @@ import { MedicalProcedureService } from './services/medical-procedure.service';
 import { MedicationService } from './services/medication.service';
 import { MedicalSpecialtyService } from './services/medical-specialty.service';
 import { KinshipService } from './services/kinship.service';
+import { IdentificationTypeService } from './services/identification-type.service';
 import { HealthcareProviderService } from './services/healthcare-provider.service';
 import { Icd10DiagnosisService } from './services/icd-10-diagnosis.service';
 import { GenderService } from './services/gender.service';
@@ -41,9 +41,8 @@ import { AccountService } from './services/account.service';
   exports: [],
   declarations: [],
   providers: [
-    IdentificationTypeService,
     UserTenantRoleService,
-    ThemeControllerService,
+    ThemeService,
     TenantConfigService,
     TenantAdminManagementService,
     SuperAdminService,
@@ -56,6 +55,7 @@ import { AccountService } from './services/account.service';
     MedicationService,
     MedicalSpecialtyService,
     KinshipService,
+    IdentificationTypeService,
     HealthcareProviderService,
     Icd10DiagnosisService,
     GenderService,

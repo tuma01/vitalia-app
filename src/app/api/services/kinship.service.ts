@@ -148,7 +148,7 @@ export class KinshipService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedKinships$Response(params: GetPaginatedKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
+  getPaginatedKinships$Response(params?: GetPaginatedKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
     return getPaginatedKinships(this.http, this.rootUrl, params, context);
   }
 
@@ -162,7 +162,7 @@ export class KinshipService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedKinships(params: GetPaginatedKinships$Params, context?: HttpContext): Observable<PageResponseDtoKinship> {
+  getPaginatedKinships(params?: GetPaginatedKinships$Params, context?: HttpContext): Observable<PageResponseDtoKinship> {
     return this.getPaginatedKinships$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoKinship>): PageResponseDtoKinship => r.body)
     );

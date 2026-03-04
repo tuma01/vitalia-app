@@ -46,6 +46,7 @@ export type { PageResponseDtoSuperAdmin } from './models/page-response-dto-super
 export type { PageResponseDtoTenant } from './models/page-response-dto-tenant';
 export type { PageResponseDtoTenantAdmin } from './models/page-response-dto-tenant-admin';
 export type { PageResponseDtoTenantConfig } from './models/page-response-dto-tenant-config';
+export type { PageResponseDtoThemeDto } from './models/page-response-dto-theme-dto';
 export type { PageResponseDtoUserTenantRole } from './models/page-response-dto-user-tenant-role';
 export type { PageResponseDtoVaccine } from './models/page-response-dto-vaccine';
 export type { PasswordResetConfirmationRequest } from './models/password-reset-confirmation-request';
@@ -56,7 +57,6 @@ export type { SuperAdmin } from './models/super-admin';
 export type { Tenant } from './models/tenant';
 export type { TenantAdmin } from './models/tenant-admin';
 export type { TenantConfig } from './models/tenant-config';
-export type { TenantThemeUpdateRequest } from './models/tenant-theme-update-request';
 export type { ThemeDto } from './models/theme-dto';
 export type { TokenPairDto } from './models/token-pair-dto';
 export type { UserAccountDto } from './models/user-account-dto';

@@ -148,7 +148,7 @@ export class BloodTypeService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedBloodTypes$Response(params: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
+  getPaginatedBloodTypes$Response(params?: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
     return getPaginatedBloodTypes(this.http, this.rootUrl, params, context);
   }
 
@@ -162,7 +162,7 @@ export class BloodTypeService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedBloodTypes(params: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<PageResponseDtoBloodType> {
+  getPaginatedBloodTypes(params?: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<PageResponseDtoBloodType> {
     return this.getPaginatedBloodTypes$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoBloodType>): PageResponseDtoBloodType => r.body)
     );

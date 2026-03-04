@@ -148,7 +148,7 @@ export class Icd10DiagnosisService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedIcd10$Response(params: GetPaginatedIcd10$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIcd10>> {
+  getPaginatedIcd10$Response(params?: GetPaginatedIcd10$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIcd10>> {
     return getPaginatedIcd10(this.http, this.rootUrl, params, context);
   }
 
@@ -162,7 +162,7 @@ export class Icd10DiagnosisService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedIcd10(params: GetPaginatedIcd10$Params, context?: HttpContext): Observable<PageResponseDtoIcd10> {
+  getPaginatedIcd10(params?: GetPaginatedIcd10$Params, context?: HttpContext): Observable<PageResponseDtoIcd10> {
     return this.getPaginatedIcd10$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoIcd10>): PageResponseDtoIcd10 => r.body)
     );

@@ -8,11 +8,9 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { CivilStatusSearchDto } from '../../models/civil-status-search-dto';
-import { PageResponseDtoCivilStatus } from '../../models/page-response-dto-civil-status';
+import { PageResponseDtoThemeDto } from '../../models/page-response-dto-theme-dto';
 
-export interface GetPaginatedCivilStatuses$Params {
-  searchDto: CivilStatusSearchDto;
+export interface GetPaginatedThemes$Params {
 
 /**
  * Índice de la página a recuperar.
@@ -25,10 +23,9 @@ export interface GetPaginatedCivilStatuses$Params {
   pageSize?: number;
 }
 
-export function getPaginatedCivilStatuses(http: HttpClient, rootUrl: string, params: GetPaginatedCivilStatuses$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoCivilStatus>> {
-  const rb = new RequestBuilder(rootUrl, getPaginatedCivilStatuses.PATH, 'get');
+export function getPaginatedThemes(http: HttpClient, rootUrl: string, params?: GetPaginatedThemes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoThemeDto>> {
+  const rb = new RequestBuilder(rootUrl, getPaginatedThemes.PATH, 'get');
   if (params) {
-    rb.query('searchDto', params.searchDto, {});
     rb.query('pageIndex', params.pageIndex, {});
     rb.query('pageSize', params.pageSize, {});
   }
@@ -38,9 +35,9 @@ export function getPaginatedCivilStatuses(http: HttpClient, rootUrl: string, par
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PageResponseDtoCivilStatus>;
+      return r as StrictHttpResponse<PageResponseDtoThemeDto>;
     })
   );
 }
 
-getPaginatedCivilStatuses.PATH = '/mdm/demographic/civil-status';
+getPaginatedThemes.PATH = '/themes';

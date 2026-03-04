@@ -261,7 +261,33 @@
         "financial_reports": "Rapports Financiers",
         "clinical_quality": "Qualité Clinique",
         "geography_management": "Gestion de la Géographie",
-        "tenant_governance": "Gouvernance Locataire",
+        "tenant_governance": {
+            "title": "Gouvernance Locataire",
+            "organizations": {
+                "title": "Organisations",
+                "singular": "Organisation",
+                "plural": "Organisations",
+                "list": "Liste des Organisations",
+                "add": "Ajouter une Organisation",
+                "edit": "Modifier l'Organisation",
+                "fields": {
+                    "id": "ID",
+                    "code": "Code",
+                    "name": "Nom",
+                    "type": "Type",
+                    "isActive": "Actif",
+                    "themeId": "Thème Visuel",
+                    "description": "Description"
+                },
+                "types": {
+                    "hospital": "Hôpital",
+                    "clinic": "Clinique",
+                    "pharmacy": "Pharmacie",
+                    "laboratory": "Laboratoire",
+                    "other": "Autre"
+                }
+            }
+        },
         "billing_licensing": "Abonnements et Licences",
         "tenant_config": "Configuration Globale des Locataires",
         "medical_catalog": "Catalogue Médical Global",

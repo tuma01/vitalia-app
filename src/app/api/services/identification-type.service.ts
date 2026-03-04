@@ -37,7 +37,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `getIdentificationTypeById()` */
-  static readonly GetIdentificationTypeByIdPath = '/{id}';
+  static readonly GetIdentificationTypeByIdPath = '/mdm/identification-type/{id}';
 
   /**
    * Obtener un Identification Type por ID.
@@ -70,7 +70,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `updateIdentificationType()` */
-  static readonly UpdateIdentificationTypePath = '/{id}';
+  static readonly UpdateIdentificationTypePath = '/mdm/identification-type/{id}';
 
   /**
    * Actualizar un Identification Type por ID.
@@ -103,7 +103,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `deleteIdentificationType()` */
-  static readonly DeleteIdentificationTypePath = '/{id}';
+  static readonly DeleteIdentificationTypePath = '/mdm/identification-type/{id}';
 
   /**
    * Identification Type a eliminar por ID.
@@ -136,7 +136,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `getPaginatedIdentificationTypes()` */
-  static readonly GetPaginatedIdentificationTypesPath = '/';
+  static readonly GetPaginatedIdentificationTypesPath = '/mdm/identification-type';
 
   /**
    * Obtiene una lista paginada de Identification Type.
@@ -169,7 +169,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `createIdentificationType()` */
-  static readonly CreateIdentificationTypePath = '/';
+  static readonly CreateIdentificationTypePath = '/mdm/identification-type';
 
   /**
    * Crear un Identification Type.
@@ -202,7 +202,7 @@ export class IdentificationTypeService extends BaseService {
   }
 
   /** Path part for operation `getAllIdentificationTypes()` */
-  static readonly GetAllIdentificationTypesPath = '/all';
+  static readonly GetAllIdentificationTypesPath = '/mdm/identification-type/all';
 
   /**
    * Obtiene todos los Identification Type.

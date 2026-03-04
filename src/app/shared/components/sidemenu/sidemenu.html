@@ -13,7 +13,7 @@
         <a class="menu-heading" [routerLink]="item.route" routerLinkActive="active" (click)="onMenuItemClick()"
             [class.is-collapsed]="isCollapsed()" [style.padding-left.px]="isCollapsed() ? 0 : 16 + (level * 16)"
             [matTooltip]="item.label | translate" [matTooltipDisabled]="isCollapsed() || !isTruncated(menuName)"
-            matTooltipPosition="above" matTooltipClass="sidebar-tooltip">
+            matTooltipPosition="right" matTooltipClass="sidebar-tooltip">
             @if (item.icon) {
             <mat-icon class="menu-icon">{{ item.icon }}</mat-icon>
             }
@@ -36,7 +36,7 @@
         } @else {
         <button class="menu-heading menu-toggle" (click)="toggleMenu(item)" [style.padding-left.px]="16 + (level * 16)"
             [matTooltip]="item.label | translate" [matTooltipDisabled]="isCollapsed() || !isTruncated(subMenuName)"
-            matTooltipPosition="above" matTooltipClass="sidebar-tooltip">
+            matTooltipPosition="right" matTooltipClass="sidebar-tooltip">
             @if (item.icon) {
             <mat-icon class="menu-icon">{{ item.icon }}</mat-icon>
             }

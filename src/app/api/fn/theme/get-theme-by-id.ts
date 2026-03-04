@@ -8,19 +8,20 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { TenantThemeUpdateRequest } from '../../models/tenant-theme-update-request';
 import { ThemeDto } from '../../models/theme-dto';
 
-export interface UpdateTheme$Params {
-  tenantCode: string;
-      body: TenantThemeUpdateRequest
+export interface GetThemeById$Params {
+
+/**
+ * ID del Theme a recuperar
+ */
+  id: number;
 }
 
-export function updateTheme(http: HttpClient, rootUrl: string, params: UpdateTheme$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
-  const rb = new RequestBuilder(rootUrl, updateTheme.PATH, 'put');
+export function getThemeById(http: HttpClient, rootUrl: string, params: GetThemeById$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
+  const rb = new RequestBuilder(rootUrl, getThemeById.PATH, 'get');
   if (params) {
-    rb.path('tenantCode', params.tenantCode, {});
-    rb.body(params.body, 'application/json');
+    rb.path('id', params.id, {});
   }
 
   return http.request(
@@ -33,4 +34,4 @@ export function updateTheme(http: HttpClient, rootUrl: string, params: UpdateThe
   );
 }
 
-updateTheme.PATH = '/tenants/{tenantCode}/theme';
+getThemeById.PATH = '/themes/{id}';

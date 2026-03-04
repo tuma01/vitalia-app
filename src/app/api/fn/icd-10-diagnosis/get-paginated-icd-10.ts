@@ -15,15 +15,15 @@ export interface GetPaginatedIcd10$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
-export function getPaginatedIcd10(http: HttpClient, rootUrl: string, params: GetPaginatedIcd10$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIcd10>> {
+export function getPaginatedIcd10(http: HttpClient, rootUrl: string, params?: GetPaginatedIcd10$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIcd10>> {
   const rb = new RequestBuilder(rootUrl, getPaginatedIcd10.PATH, 'get');
   if (params) {
     rb.query('pageIndex', params.pageIndex, {});

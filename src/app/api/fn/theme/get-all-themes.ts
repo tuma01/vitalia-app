@@ -8,16 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { IdentificationType } from '../../models/identification-type';
+import { ThemeDto } from '../../models/theme-dto';
 
-export interface CreateIdentificationType$Params {
-      body: IdentificationType
+export interface GetAllThemes$Params {
 }
 
-export function createIdentificationType(http: HttpClient, rootUrl: string, params: CreateIdentificationType$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
-  const rb = new RequestBuilder(rootUrl, createIdentificationType.PATH, 'post');
+export function getAllThemes(http: HttpClient, rootUrl: string, params?: GetAllThemes$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ThemeDto>>> {
+  const rb = new RequestBuilder(rootUrl, getAllThemes.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -25,9 +23,9 @@ export function createIdentificationType(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<IdentificationType>;
+      return r as StrictHttpResponse<Array<ThemeDto>>;
     })
   );
 }
 
-createIdentificationType.PATH = '/mdm/identification-type';
+getAllThemes.PATH = '/themes/all';

@@ -15,15 +15,15 @@ export interface GetPaginatedProviders$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
-export function getPaginatedProviders(http: HttpClient, rootUrl: string, params: GetPaginatedProviders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoHealthcareProvider>> {
+export function getPaginatedProviders(http: HttpClient, rootUrl: string, params?: GetPaginatedProviders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoHealthcareProvider>> {
   const rb = new RequestBuilder(rootUrl, getPaginatedProviders.PATH, 'get');
   if (params) {
     rb.query('pageIndex', params.pageIndex, {});

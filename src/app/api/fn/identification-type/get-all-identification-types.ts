@@ -28,4 +28,4 @@ export function getAllIdentificationTypes(http: HttpClient, rootUrl: string, par
   );
 }
 
-getAllIdentificationTypes.PATH = '/all';
+getAllIdentificationTypes.PATH = '/mdm/identification-type/all';

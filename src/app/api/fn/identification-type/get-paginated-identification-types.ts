@@ -17,12 +17,12 @@ export interface GetPaginatedIdentificationTypes$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
 export function getPaginatedIdentificationTypes(http: HttpClient, rootUrl: string, params: GetPaginatedIdentificationTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoIdentificationType>> {
@@ -43,4 +43,4 @@ export function getPaginatedIdentificationTypes(http: HttpClient, rootUrl: strin
   );
 }
 
-getPaginatedIdentificationTypes.PATH = '/';
+getPaginatedIdentificationTypes.PATH = '/mdm/identification-type';

@@ -4,6 +4,7 @@ import { firstValueFrom, skip, merge, debounceTime } from 'rxjs';
 import { ThemeDto } from '../../api/models/theme-dto';
 import { AppContextService } from '../services/app-context.service';
 import { ContextStorageService } from '../services/context-storage.service';
+import { AppConstants } from '../constants/app-constants';
 import { SettingsResolver } from './settings-resolver.service';
 
 /**
@@ -12,13 +13,13 @@ import { SettingsResolver } from './settings-resolver.service';
  */
 export const PLATFORM_DEFAULT_THEME: ThemeDto = {
   id: 0,
-  code: 'PLATFORM_DEFAULT',
-  name: 'Platform Admin Theme',
+  code: AppConstants.Themes.DEFAULT_THEME_CODE,
+  name: 'Standard Light',
   primaryColor: '#1976d2',      // Professional Blue
-  secondaryColor: '#424242',    // Dark Gray
-  accentColor: '#0288d1',       // Light Blue
-  backgroundColor: '#ffffff',
-  textColor: '#000000',
+  secondaryColor: '#ffffff',
+  accentColor: '#ff4081',
+  backgroundColor: '#fafafa',
+  textColor: '#212121',
   themeMode: 'LIGHT',
   active: true,
   allowCustomCss: false
@@ -30,13 +31,13 @@ export const PLATFORM_DEFAULT_THEME: ThemeDto = {
  */
 export const TENANT_DEFAULT_THEME: ThemeDto = {
   id: 0,
-  code: 'TENANT_DEFAULT',
-  name: 'Vitalia Medical Theme',
-  primaryColor: '#00897b',      // Medical Teal
-  secondaryColor: '#455a64',    // Blue Gray
-  accentColor: '#26a69a',       // Light Teal
-  backgroundColor: '#ffffff',
-  textColor: '#000000',
+  code: AppConstants.Themes.DEFAULT_THEME_CODE,
+  name: 'Standard Light',
+  primaryColor: '#1976d2',
+  secondaryColor: '#ffffff',
+  accentColor: '#ff4081',
+  backgroundColor: '#fafafa',
+  textColor: '#212121',
   themeMode: 'LIGHT',
   active: true,
   allowCustomCss: false
@@ -45,7 +46,7 @@ export const TENANT_DEFAULT_THEME: ThemeDto = {
 /**
  * 🎨 Fallback Theme (when context is unknown)
  */
-export const VITALIA_DEFAULT_THEME: ThemeDto = TENANT_DEFAULT_THEME; // Default to tenant theme
+export const APP_DEFAULT_THEME: ThemeDto = TENANT_DEFAULT_THEME; // Default to tenant theme
 
 /**
  * 🎨 ThemeService - Context-Aware Multi-Tenant Theming

@@ -15,15 +15,15 @@ export interface GetPaginatedBloodTypes$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
-export function getPaginatedBloodTypes(http: HttpClient, rootUrl: string, params: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
+export function getPaginatedBloodTypes(http: HttpClient, rootUrl: string, params?: GetPaginatedBloodTypes$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoBloodType>> {
   const rb = new RequestBuilder(rootUrl, getPaginatedBloodTypes.PATH, 'get');
   if (params) {
     rb.query('pageIndex', params.pageIndex, {});
