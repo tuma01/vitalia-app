@@ -109,4 +109,12 @@ public final class AppConstants {
         public static final String ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
         public static final String ROLE_ADMIN = "ROLE_ADMIN";
     }
+
+    // Grupo para temas
+    public static final class Themes {
+        public static final String DEFAULT_THEME_CODE = "THEME_LIGHT_STD";
+
+        private Themes() {
+        }
+    }
 }

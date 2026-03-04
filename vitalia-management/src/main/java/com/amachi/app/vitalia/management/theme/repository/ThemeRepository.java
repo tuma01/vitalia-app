@@ -9,9 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface ThemeRepository extends JpaRepository<Theme, Long>, JpaSpecificationExecutor<Theme> {
-    Optional<Theme> findByTenant_Code(String tenantCode);
-
-    Optional<Theme> findByTenant_Id(Long tenantId);
 
     Optional<Theme> findByCode(String defaultTheme);
+
+    java.util.List<Theme> findAllByIsTemplateTrue();
 }

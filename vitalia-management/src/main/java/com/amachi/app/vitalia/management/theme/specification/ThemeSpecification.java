@@ -35,6 +35,9 @@ public class ThemeSpecification implements Specification<Theme> {
             predicates.add(cb.like(cb.lower(root.get("name")), "%" + searchDto.getName().toLowerCase() + "%"));
         }
 
+        // Only templates should be visible/manageable in the general themes list
+        predicates.add(cb.isTrue(root.get("isTemplate")));
+
         return cb.and(predicates.toArray(new Predicate[0]));
     }
 }

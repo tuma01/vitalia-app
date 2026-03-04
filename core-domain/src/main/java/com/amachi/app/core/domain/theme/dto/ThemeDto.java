@@ -30,6 +30,6 @@ public class ThemeDto {
     private String customCss;
     private boolean allowCustomCss;
     private boolean active;
-    private Long tenantId;
+    private boolean isTemplate;
     private Integer version;
 }

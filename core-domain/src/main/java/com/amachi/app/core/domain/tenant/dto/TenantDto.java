@@ -37,6 +37,9 @@ public class TenantDto {
     @Schema(description = "Theme ID associated with the Tenant")
     private Long themeId;
 
+    @Schema(description = "Theme Name associated with the Tenant")
+    private String themeName;
+
     @Schema(description = "Address of the Tenant")
     private AddressDto address;
 }
