@@ -17,12 +17,12 @@ export interface GetPaginatedAllergies$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
 export function getPaginatedAllergies(http: HttpClient, rootUrl: string, params: GetPaginatedAllergies$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoAllergy>> {

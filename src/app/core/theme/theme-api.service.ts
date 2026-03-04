@@ -18,18 +18,11 @@ export class ThemeApiService {
     ) { }
 
     /**
-     * Fetch theme for a specific tenant
+     * Fetch theme for a specific tenant.
+     * Backend endpoint: GET /themes/tenant/{tenantCode} (ThemeController)
      */
     getThemeForTenant(tenantCode: string): Observable<ThemeDto> {
-        const url = `${this.apiRootUrl}/tenants/${tenantCode}/theme`;
-        return this.http.get<ThemeDto>(url);
-    }
-
-    /**
-     * Fetch theme for platform admin context
-     */
-    getThemeForPlatform(): Observable<ThemeDto> {
-        const url = `${this.apiRootUrl}/tenants/platform/theme`;
+        const url = `${this.apiRootUrl}/themes/tenant/${tenantCode}`;
         return this.http.get<ThemeDto>(url);
     }
 }

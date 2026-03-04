@@ -66,7 +66,7 @@ body {
 
 /* 4️⃣ TOOLTIP PROXIMITY & MODERN STYLE */
 .mat-mdc-tooltip-panel {
-    --mdc-plain-tooltip-container-color: rgba(15, 23, 42, 0.9);
+    --mdc-plain-tooltip-container-color: rgb(15, 23, 42); // 🌑 User requested non-transparent
     --mdc-plain-tooltip-supporting-text-color: #e2e8f0;
 
     .mdc-tooltip__surface {
@@ -82,7 +82,7 @@ body {
 
 // Dark Mode refinement for Tooltip
 .theme-dark .mat-mdc-tooltip-panel {
-    --mdc-plain-tooltip-container-color: rgba(30, 41, 59, 0.95);
+    --mdc-plain-tooltip-container-color: rgb(30, 41, 59); // 🌑 Opaque for dark mode
     --mdc-plain-tooltip-supporting-text-color: #cbd5e1;
 
     .mdc-tooltip__surface {
@@ -99,9 +99,9 @@ body {
     margin-bottom: -13px !important;
 }
 
-/* 🎯 Sidebar Tooltip precise offset (+4px lower) */
+/* 🎯 Sidebar Tooltip positioning (moved to right, no negative offset needed) */
 .mat-mdc-tooltip-panel.sidebar-tooltip {
-    margin-bottom: -17px !important;
+    margin-left: 8px !important; // 📏 Add a small distance from the sidebar
 }
 
 /* 5️⃣ SNACKBAR FEEDBACK */
@@ -196,4 +196,16 @@ body {
         transform: scale(1.30);
         opacity: 1;
     }
+}
+
+/* ── 7️⃣ SORT ICON — hint sutil de columna sortable ──────────────────────── */
+.mat-sort-header-content .mtx-grid-icon {
+    width: 11px !important;
+    height: 11px !important;
+    opacity: 0.25 !important;
+    transition: opacity 0.15s ease !important;
+}
+
+.mat-sort-header:hover .mat-sort-header-content .mtx-grid-icon {
+    opacity: 0.5 !important;
 }

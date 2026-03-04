@@ -17,12 +17,12 @@ export interface GetPaginatedGenders$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
 export function getPaginatedGenders(http: HttpClient, rootUrl: string, params: GetPaginatedGenders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoGender>> {

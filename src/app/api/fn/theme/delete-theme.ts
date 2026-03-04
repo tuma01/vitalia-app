@@ -8,26 +8,29 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { ThemeDto } from '../../models/theme-dto';
 
-export interface GetTheme$Params {
-  tenantCode: string;
+export interface DeleteTheme$Params {
+
+/**
+ * ID del Theme a eliminar.
+ */
+  id: number;
 }
 
-export function getTheme(http: HttpClient, rootUrl: string, params: GetTheme$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
-  const rb = new RequestBuilder(rootUrl, getTheme.PATH, 'get');
+export function deleteTheme(http: HttpClient, rootUrl: string, params: DeleteTheme$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteTheme.PATH, 'delete');
   if (params) {
-    rb.path('tenantCode', params.tenantCode, {});
+    rb.path('id', params.id, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<ThemeDto>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }
 
-getTheme.PATH = '/tenants/{tenantCode}/theme';
+deleteTheme.PATH = '/themes/{id}';

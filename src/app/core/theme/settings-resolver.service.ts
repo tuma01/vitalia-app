@@ -142,19 +142,22 @@ export class SettingsResolver {
 
     /**
      * 🌐 Fetch from backend (context-safe)
-     * 
-     * Uses reactive stream to ensure correct context even during context switches.
+     *
+     * For 'platform' context: returns PLATFORM_DEFAULT_THEME directly (no backend endpoint).
+     * For 'app' context: fetches from /themes/tenant/{tenantCode}.
      */
     private fetchFromBackend(): Observable<ThemeDto> {
         return this.appContext.contextChanges$.pipe(
             take(1), // Get current context reactively
             switchMap(context => {
-                const tenantInfo = this.appContext.tenant();
-
                 if (context === 'platform') {
-                    return this.themeApi.getThemeForPlatform();
+                    // 🏢 No backend theme endpoint for platform — use default directly
+                    console.log('[SettingsResolver] Platform context → using PLATFORM_DEFAULT_THEME (no API call)');
+                    return of(PLATFORM_DEFAULT_THEME);
                 } else {
+                    const tenantInfo = this.appContext.tenant();
                     const tenantCode = tenantInfo?.code || 'default';
+                    console.log('[SettingsResolver] App context → fetching theme for tenant:', tenantCode);
                     return this.themeApi.getThemeForTenant(tenantCode);
                 }
             })

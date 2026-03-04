@@ -148,7 +148,7 @@ export class HealthcareProviderService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedProviders$Response(params: GetPaginatedProviders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoHealthcareProvider>> {
+  getPaginatedProviders$Response(params?: GetPaginatedProviders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoHealthcareProvider>> {
     return getPaginatedProviders(this.http, this.rootUrl, params, context);
   }
 
@@ -162,7 +162,7 @@ export class HealthcareProviderService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getPaginatedProviders(params: GetPaginatedProviders$Params, context?: HttpContext): Observable<PageResponseDtoHealthcareProvider> {
+  getPaginatedProviders(params?: GetPaginatedProviders$Params, context?: HttpContext): Observable<PageResponseDtoHealthcareProvider> {
     return this.getPaginatedProviders$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseDtoHealthcareProvider>): PageResponseDtoHealthcareProvider => r.body)
     );

@@ -20,6 +20,10 @@
     overflow: hidden !important;
     z-index: 100 !important;
     box-shadow: none !important;
+    border-radius: 0 !important;
+
+    /* Eliminar el border-radius del shape token de Angular Material 3 */
+    --mat-sidenav-container-shape: 0px;
 
     /* Internal drawer container is blocked globally in styles.scss */
     ::ng-deep .mat-drawer-inner-container {
@@ -27,6 +31,7 @@
         flex-direction: column !important;
         height: 100% !important;
         background: transparent !important;
+        border-radius: 0 !important;
     }
 }
 

@@ -10,14 +10,16 @@ import { RequestBuilder } from '../../request-builder';
 
 import { ThemeDto } from '../../models/theme-dto';
 
-export interface GetThemeByResolvedTenant$Params {
-  'X-Tenant-ID': string;
+export interface UpgradeTheme$Params {
+  tenantCode: string;
+      body: ThemeDto
 }
 
-export function getThemeByResolvedTenant(http: HttpClient, rootUrl: string, params: GetThemeByResolvedTenant$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
-  const rb = new RequestBuilder(rootUrl, getThemeByResolvedTenant.PATH, 'get');
+export function upgradeTheme(http: HttpClient, rootUrl: string, params: UpgradeTheme$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
+  const rb = new RequestBuilder(rootUrl, upgradeTheme.PATH, 'put');
   if (params) {
-    rb.header('X-Tenant-ID', params['X-Tenant-ID'], {});
+    rb.path('tenantCode', params.tenantCode, {});
+    rb.body(params.body, 'application/json');
   }
 
   return http.request(
@@ -30,4 +32,4 @@ export function getThemeByResolvedTenant(http: HttpClient, rootUrl: string, para
   );
 }
 
-getThemeByResolvedTenant.PATH = '/tenants/config';
+upgradeTheme.PATH = '/themes/tenant/{tenantCode}';

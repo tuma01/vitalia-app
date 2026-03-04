@@ -20,6 +20,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
+      // 🎨 SKIP global side-effects for Theme requests
+      // SettingsResolver.catchError() handles theme failures gracefully (default theme fallback).
+      // Without this, a theme API error would navigate to /403 → wildcard → /login.
+      const isThemeRequest = req.url.includes('/themes/');
+      if (isThemeRequest) {
+        return throwError(() => error);
+      }
+
       // Ignore 401 for Mock Users to allow simulation without logout
       const isMockToken = tokenService.accessToken?.startsWith('mock-');
       if (error.status === 401 && isMockToken) {

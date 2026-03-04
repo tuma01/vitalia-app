@@ -12,17 +12,39 @@
         },
         {
             "id": "tenant_governance",
-            "name": "tenant_governance",
+            "name": "tenant_governance.title",
             "type": "group",
             "icon": "business",
             "visible": true,
             "children": [
                 {
-                    "id": "tenants-list",
-                    "name": "hospitals_clinics",
-                    "type": "link",
-                    "route": "/platform/tenants/list",
-                    "icon": "domain"
+                    "id": "organizations",
+                    "name": "tenant_governance.organizations.title",
+                    "type": "sub",
+                    "icon": "domain",
+                    "children": [
+                        {
+                            "id": "organizations-list",
+                            "name": "tenant_governance.organizations.list",
+                            "type": "link",
+                            "route": "/platform/tenants/organizations/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "organizations-add",
+                            "name": "tenant_governance.organizations.add",
+                            "type": "link",
+                            "route": "/platform/tenants/organizations/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "organizations-edit",
+                            "name": "tenant_governance.organizations.edit",
+                            "type": "link",
+                            "route": "/platform/tenants/organizations/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
                     "id": "tenant-onboarding",

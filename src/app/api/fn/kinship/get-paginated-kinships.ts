@@ -15,15 +15,15 @@ export interface GetPaginatedKinships$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
-export function getPaginatedKinships(http: HttpClient, rootUrl: string, params: GetPaginatedKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
+export function getPaginatedKinships(http: HttpClient, rootUrl: string, params?: GetPaginatedKinships$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoKinship>> {
   const rb = new RequestBuilder(rootUrl, getPaginatedKinships.PATH, 'get');
   if (params) {
     rb.query('pageIndex', params.pageIndex, {});

@@ -8,7 +8,7 @@ import { firstValueFrom } from 'rxjs';
  * Auth Guard - Protects routes that require authentication
  * Redirects to /login if user is not authenticated
  */
-export const authGuard: CanActivateFn = async(route, state) => {
+export const authGuard: CanActivateFn = async (route, state) => {
     const authService = inject(AuthService);
     // const tokenService = inject(TokenService);
     const router = inject(Router);
@@ -21,7 +21,9 @@ export const authGuard: CanActivateFn = async(route, state) => {
     }
 
     // Store the attempted URL for redirecting after login
-    router.navigate(['/login'], {
+    // Redirect to the correct login page based on the domain
+    const loginPath = state.url.startsWith('/platform') ? '/platform/login' : '/login';
+    router.navigate([loginPath], {
         queryParams: { returnUrl: state.url }
     });
 

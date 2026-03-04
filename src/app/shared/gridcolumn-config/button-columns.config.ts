@@ -85,12 +85,14 @@ export function getOperationColumn(
         }));
     }
 
+    const colWidth = buttons.length * 42 + 25;
+
     return {
         header: translate.stream('common.operations'),
         field: 'operation',
-        minWidth: 110,
-        width: '110px',
-        maxWidth: 110,
+        minWidth: colWidth,
+        width: `${colWidth}px`,
+        maxWidth: colWidth,
         pinned: 'right',
         type: 'button',
         buttons,

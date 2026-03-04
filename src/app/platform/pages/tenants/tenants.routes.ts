@@ -6,9 +6,13 @@ export const routes: Routes = [
         path: '',
         children: [
             {
+                path: 'organizations',
+                loadChildren: () => import('./organizations/organizations.routes').then(m => m.ORGANIZATIONS_ROUTES)
+            },
+            {
                 path: 'list',
                 component: PlatformShellComponent,
-                data: { title: 'menu.hospitals_clinics', icon: 'domain' }
+                data: { title: 'menu.tenant_governance.organizations.title', icon: 'domain' }
             },
             {
                 path: 'onboarding',

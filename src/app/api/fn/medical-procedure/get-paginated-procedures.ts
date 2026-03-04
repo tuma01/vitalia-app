@@ -15,15 +15,15 @@ export interface GetPaginatedProcedures$Params {
 /**
  * Índice de la página a recuperar.
  */
-  pageIndex: number;
+  pageIndex?: number;
 
 /**
  * Tamaño de la página.
  */
-  pageSize: number;
+  pageSize?: number;
 }
 
-export function getPaginatedProcedures(http: HttpClient, rootUrl: string, params: GetPaginatedProcedures$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoMedicalProcedure>> {
+export function getPaginatedProcedures(http: HttpClient, rootUrl: string, params?: GetPaginatedProcedures$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseDtoMedicalProcedure>> {
   const rb = new RequestBuilder(rootUrl, getPaginatedProcedures.PATH, 'get');
   if (params) {
     rb.query('pageIndex', params.pageIndex, {});

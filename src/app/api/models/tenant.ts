@@ -45,6 +45,11 @@ export interface Tenant {
   themeId?: number;
 
   /**
+   * Theme Name associated with the Tenant
+   */
+  themeName?: string;
+
+  /**
    * Type of the Tenant
    */
   type?: 'HOSPITAL' | 'CLINIC' | 'LABORATORY' | 'PHARMACY' | 'GLOBAL';

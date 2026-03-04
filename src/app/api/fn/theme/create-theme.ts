@@ -10,17 +10,13 @@ import { RequestBuilder } from '../../request-builder';
 
 import { ThemeDto } from '../../models/theme-dto';
 
-export interface UploadLogo$Params {
-  tenantCode: string;
-      body?: {
-'file': Blob;
-}
+export interface CreateTheme$Params {
+      body: ThemeDto
 }
 
-export function uploadLogo(http: HttpClient, rootUrl: string, params: UploadLogo$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
-  const rb = new RequestBuilder(rootUrl, uploadLogo.PATH, 'post');
+export function createTheme(http: HttpClient, rootUrl: string, params: CreateTheme$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
+  const rb = new RequestBuilder(rootUrl, createTheme.PATH, 'post');
   if (params) {
-    rb.path('tenantCode', params.tenantCode, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -34,4 +30,4 @@ export function uploadLogo(http: HttpClient, rootUrl: string, params: UploadLogo
   );
 }
 
-uploadLogo.PATH = '/tenants/{tenantCode}/theme/logo';
+createTheme.PATH = '/themes';

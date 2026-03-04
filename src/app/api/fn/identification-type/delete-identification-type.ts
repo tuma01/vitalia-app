@@ -33,4 +33,4 @@ export function deleteIdentificationType(http: HttpClient, rootUrl: string, para
   );
 }
 
-deleteIdentificationType.PATH = '/{id}';
+deleteIdentificationType.PATH = '/mdm/identification-type/{id}';

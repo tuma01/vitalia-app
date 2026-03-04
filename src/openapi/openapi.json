@@ -83,6 +83,10 @@
       "description": "REST API para gestionar el catálogo de procedimientos médicos y laboratorios (MDM)."
     },
     {
+      "name": "Theme",
+      "description": "REST API para gestionar detalles de temas visuales: crear, actualizar, obtener y eliminar."
+    },
+    {
       "name": "ICD-10 Diagnosis",
       "description": "REST API para gestionar el catálogo de diagnósticos CIE-10 (MDM)."
     },
@@ -115,185 +119,15 @@
       "description": "REST API para gestionar detalles del Super Admin: crear, actualizar, obtener y eliminar."
     },
     {
-      "name": "Vaccine",
-      "description": "REST API para gestionar el catálogo de vacunas (MDM)."
-    },
-    {
       "name": "Identification Type",
       "description": "REST API para gestionar el catálogo de tipos de identificación (MDM)."
+    },
+    {
+      "name": "Vaccine",
+      "description": "REST API para gestionar el catálogo de vacunas (MDM)."
     }
   ],
   "paths": {
-    "/{id}": {
-      "get": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Obtener un Identification Type por ID",
-        "description": "Devuelve un objeto Identification Type por ID especificado.",
-        "operationId": "getIdentificationTypeById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Identification Type a recuperar",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Identification Type encontrado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Solicitud inválida: ID nulo o datos incompletos.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Identification Type no encontrado.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Actualizar un Identification Type por ID",
-        "description": "Actualiza un Identification Type existente usando su ID y los datos proporcionados.",
-        "operationId": "updateIdentificationType",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Identification Type a actualizar.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IdentificationType"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Identification Type actualizado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Solicitud inválida: ID nulo o datos incompletos.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Identification Type no encontrado.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Identification Type a eliminar por ID",
-        "description": "Elimina un Identification Type existente usando su ID.",
-        "operationId": "deleteIdentificationType",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID del Identification Type a eliminar.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Identification Type eliminado con éxito (sin contenido)."
-          },
-          "400": {
-            "description": "Solicitud inválida: ID nulo o no válido."
-          },
-          "404": {
-            "description": "Identification Type no encontrado."
-          },
-          "500": {
-            "description": "Error interno del servidor."
-          }
-        }
-      }
-    },
     "/user-tenant-roles/{id}": {
       "get": {
         "tags": [
@@ -464,12 +298,182 @@
         }
       }
     },
-    "/tenants/{tenantCode}/theme": {
+    "/themes/{id}": {
       "get": {
         "tags": [
-          "theme-controller"
+          "Theme"
         ],
-        "operationId": "getTheme",
+        "summary": "Obtener un Theme por ID",
+        "description": "Devuelve un objeto Theme por ID especificado.",
+        "operationId": "getThemeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Theme a recuperar",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Theme encontrado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Theme no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Theme"
+        ],
+        "summary": "Actualizar un Theme por ID",
+        "description": "Actualiza un Theme existente usando su ID y los datos proporcionados.",
+        "operationId": "updateTheme",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Theme a actualizar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemeDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Theme actualizado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Theme no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Theme"
+        ],
+        "summary": "Theme a eliminar por ID",
+        "description": "Elimina un Theme existente usando su ID.",
+        "operationId": "deleteTheme",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Theme a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Theme eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Theme no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
+          }
+        }
+      }
+    },
+    "/themes/tenant/{tenantCode}": {
+      "get": {
+        "tags": [
+          "Theme"
+        ],
+        "operationId": "getThemeByTenant",
         "parameters": [
           {
             "name": "tenantCode",
@@ -486,7 +490,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThemeDTO"
+                  "$ref": "#/components/schemas/ThemeDto"
                 }
               }
             }
@@ -495,9 +499,9 @@
       },
       "put": {
         "tags": [
-          "theme-controller"
+          "Theme"
         ],
-        "operationId": "updateTheme",
+        "operationId": "upgradeTheme",
         "parameters": [
           {
             "name": "tenantCode",
@@ -512,7 +516,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TenantThemeUpdateRequest"
+                "$ref": "#/components/schemas/ThemeDto"
               }
             }
           },
@@ -524,7 +528,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThemeDTO"
+                  "$ref": "#/components/schemas/ThemeDto"
                 }
               }
             }
@@ -2408,6 +2412,176 @@
         }
       }
     },
+    "/mdm/identification-type/{id}": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtener un Identification Type por ID",
+        "description": "Devuelve un objeto Identification Type por ID especificado.",
+        "operationId": "getIdentificationTypeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a recuperar",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Identification Type encontrado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Identification Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Actualizar un Identification Type por ID",
+        "description": "Actualiza un Identification Type existente usando su ID y los datos proporcionados.",
+        "operationId": "updateIdentificationType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a actualizar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentificationType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Identification Type actualizado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o datos incompletos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Identification Type no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Identification Type a eliminar por ID",
+        "description": "Elimina un Identification Type existente usando su ID.",
+        "operationId": "deleteIdentificationType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID del Identification Type a eliminar.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Identification Type eliminado con éxito (sin contenido)."
+          },
+          "400": {
+            "description": "Solicitud inválida: ID nulo o no válido."
+          },
+          "404": {
+            "description": "Identification Type no encontrado."
+          },
+          "500": {
+            "description": "Error interno del servidor."
+          }
+        }
+      }
+    },
     "/mdm/healthcare-provider/{id}": {
       "get": {
         "tags": [
@@ -4118,10 +4292,128 @@
         }
       }
     },
-    "/tenants/{tenantCode}/theme/logo": {
+    "/themes": {
+      "get": {
+        "tags": [
+          "Theme"
+        ],
+        "summary": "Obtiene una lista paginada de Theme",
+        "description": "Devuelve una lista paginada de Theme",
+        "operationId": "getPaginatedThemes",
+        "parameters": [
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Índice de la página a recuperar.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamaño de la página.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Theme recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoThemeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoThemeDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoThemeDto"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
-          "theme-controller"
+          "Theme"
+        ],
+        "summary": "Crear un Theme",
+        "description": "Crea un nuevo Theme usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createTheme",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemeDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Theme creado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/themes/tenant/{tenantCode}/logo": {
+      "post": {
+        "tags": [
+          "Theme"
         ],
         "operationId": "uploadLogo",
         "parameters": [
@@ -4158,7 +4450,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ThemeDTO"
+                  "$ref": "#/components/schemas/ThemeDto"
                 }
               }
             }
@@ -5017,7 +5309,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5029,7 +5321,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5135,7 +5427,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5147,7 +5439,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5253,7 +5545,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5265,7 +5557,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5371,7 +5663,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5383,7 +5675,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5476,6 +5768,132 @@
         }
       }
     },
+    "/mdm/identification-type": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtiene una lista paginada de Identification Type",
+        "description": "Devuelve una lista paginada de Identification Type",
+        "operationId": "getPaginatedIdentificationTypes",
+        "parameters": [
+          {
+            "name": "searchDto",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/IdentificationTypeSearchDto"
+            }
+          },
+          {
+            "name": "pageIndex",
+            "in": "query",
+            "description": "Índice de la página a recuperar.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            },
+            "example": 0
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Tamaño de la página.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            },
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de Identification Type recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros de paginación inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Crear un Identification Type",
+        "description": "Crea un nuevo Identification Type usando los datos proporcionados en el cuerpo de la solicitud.",
+        "operationId": "createIdentificationType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentificationType"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Identification Type creado con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos de entrada inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentificationType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/mdm/healthcare-provider": {
       "get": {
         "tags": [
@@ -5489,7 +5907,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5501,7 +5919,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5607,7 +6025,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5619,7 +6037,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5733,7 +6151,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5745,7 +6163,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5859,7 +6277,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5871,7 +6289,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5977,7 +6395,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -5989,7 +6407,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -6103,7 +6521,7 @@
             "name": "pageIndex",
             "in": "query",
             "description": "Índice de la página a recuperar.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -6115,7 +6533,7 @@
             "name": "pageSize",
             "in": "query",
             "description": "Tamaño de la página.",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "integer",
               "format": "int32",
@@ -6801,132 +7219,6 @@
         }
       }
     },
-    "/": {
-      "get": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Obtiene una lista paginada de Identification Type",
-        "description": "Devuelve una lista paginada de Identification Type",
-        "operationId": "getPaginatedIdentificationTypes",
-        "parameters": [
-          {
-            "name": "searchDto",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/IdentificationTypeSearchDto"
-            }
-          },
-          {
-            "name": "pageIndex",
-            "in": "query",
-            "description": "Índice de la página a recuperar.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            },
-            "example": 0
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "description": "Tamaño de la página.",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 10
-            },
-            "example": 10
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Lista de Identification Type recuperada con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Parámetros de paginación inválidos.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResponseDtoIdentificationType"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Crear un Identification Type",
-        "description": "Crea un nuevo Identification Type usando los datos proporcionados en el cuerpo de la solicitud.",
-        "operationId": "createIdentificationType",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/IdentificationType"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "Identification Type creado con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Datos de entrada inválidos.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/IdentificationType"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/super-admin/tenants/{id}/enable": {
       "patch": {
         "tags": [
@@ -7046,6 +7338,44 @@
         }
       }
     },
+    "/themes/all": {
+      "get": {
+        "tags": [
+          "Theme"
+        ],
+        "summary": "Obtiene todos los Theme",
+        "description": "Devuelve la lista completa de Theme",
+        "operationId": "getAllThemes",
+        "responses": {
+          "200": {
+            "description": "Lista de Theme recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ThemeDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ThemeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/tenants": {
       "get": {
         "tags": [
@@ -7062,36 +7392,6 @@
                   "items": {
                     "$ref": "#/components/schemas/Tenant"
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/tenants/config": {
-      "get": {
-        "tags": [
-          "theme-controller"
-        ],
-        "operationId": "getThemeByResolvedTenant",
-        "parameters": [
-          {
-            "name": "X-Tenant-ID",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ThemeDTO"
                 }
               }
             }
@@ -7519,6 +7819,44 @@
         }
       }
     },
+    "/mdm/identification-type/all": {
+      "get": {
+        "tags": [
+          "Identification Type"
+        ],
+        "summary": "Obtiene todos los Identification Type",
+        "description": "Devuelve la lista completa de Identification Type",
+        "operationId": "getAllIdentificationTypes",
+        "responses": {
+          "200": {
+            "description": "Lista de Identification Type recuperada con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentificationType"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IdentificationType"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/mdm/healthcare-provider/all": {
       "get": {
         "tags": [
@@ -7848,44 +8186,6 @@
         }
       }
     },
-    "/all": {
-      "get": {
-        "tags": [
-          "Identification Type"
-        ],
-        "summary": "Obtiene todos los Identification Type",
-        "description": "Devuelve la lista completa de Identification Type",
-        "operationId": "getAllIdentificationTypes",
-        "responses": {
-          "200": {
-            "description": "Lista de Identification Type recuperada con éxito.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IdentificationType"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error interno del servidor.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IdentificationType"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/addresses/all": {
       "get": {
         "tags": [
@@ -7974,31 +8274,6 @@
   },
   "components": {
     "schemas": {
-      "IdentificationType": {
-        "type": "object",
-        "description": "Detalles del Identification Type a crear.",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "code": {
-            "type": "string",
-            "minLength": 1
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "active": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
       "Role": {
         "type": "object",
         "description": "Schema to hold Role information",
@@ -8168,54 +8443,9 @@
           }
         }
       },
-      "TenantThemeUpdateRequest": {
+      "ThemeDto": {
         "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "primaryColor": {
-            "type": "string"
-          },
-          "secondaryColor": {
-            "type": "string"
-          },
-          "accentColor": {
-            "type": "string"
-          },
-          "warnColor": {
-            "type": "string"
-          },
-          "backgroundColor": {
-            "type": "string"
-          },
-          "textColor": {
-            "type": "string"
-          },
-          "linkColor": {
-            "type": "string"
-          },
-          "buttonTextColor": {
-            "type": "string"
-          },
-          "fontFamily": {
-            "type": "string"
-          },
-          "themeMode": {
-            "type": "string",
-            "enum": [
-              "LIGHT",
-              "DARK",
-              "AUTO"
-            ]
-          },
-          "propertiesJson": {
-            "type": "string"
-          }
-        }
-      },
-      "ThemeDTO": {
-        "type": "object",
+        "description": "Detalles del Theme a crear.",
         "properties": {
           "id": {
             "type": "integer",
@@ -8280,13 +8510,12 @@
           "active": {
             "type": "boolean"
           },
-          "tenantId": {
-            "type": "integer",
-            "format": "int64"
-          },
           "version": {
             "type": "integer",
             "format": "int32"
+          },
+          "template": {
+            "type": "boolean"
           }
         }
       },
@@ -8635,6 +8864,10 @@
             "type": "integer",
             "format": "int64",
             "description": "Theme ID associated with the Tenant"
+          },
+          "themeName": {
+            "type": "string",
+            "description": "Theme Name associated with the Tenant"
           },
           "address": {
             "$ref": "#/components/schemas/Address",
@@ -9089,6 +9322,31 @@
             "type": "boolean",
             "description": "Status",
             "example": true
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      },
+      "IdentificationType": {
+        "type": "object",
+        "description": "Detalles del Identification Type a crear.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9718,6 +9976,46 @@
           }
         }
       },
+      "PageResponseDtoThemeDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThemeDto"
+            }
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PageResponseDtoTenantConfig": {
         "type": "object",
         "properties": {
@@ -10176,6 +10474,64 @@
           }
         }
       },
+      "IdentificationTypeSearchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageResponseDtoIdentificationType": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IdentificationType"
+            }
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PageResponseDtoHealthcareProvider": {
         "type": "object",
         "properties": {
@@ -10560,64 +10916,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Address"
-            }
-          },
-          "totalElements": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pageIndex": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pageSize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalPages": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "first": {
-            "type": "boolean"
-          },
-          "last": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
-          },
-          "numberOfElements": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "IdentificationTypeSearchDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "code": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "active": {
-            "type": "boolean"
-          }
-        }
-      },
-      "PageResponseDtoIdentificationType": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/IdentificationType"
             }
           },
           "totalElements": {

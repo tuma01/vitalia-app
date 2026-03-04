@@ -19,8 +19,8 @@ export const platformGuard: CanActivateFn = (route, state) => {
 
     if (!isSuperAdmin) {
         console.warn('[PlatformGuard] Access denied: User is not SuperAdmin');
-        // Redirigir al dashboard de tenant como fallback
-        router.navigate(['/admin/dashboard']);
+        // Redirigir al login de plataforma como fallback
+        router.navigate(['/platform/login']);
         return false;
     }
 

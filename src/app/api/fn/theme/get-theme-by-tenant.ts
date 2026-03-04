@@ -8,16 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { IdentificationType } from '../../models/identification-type';
+import { ThemeDto } from '../../models/theme-dto';
 
-export interface CreateIdentificationType$Params {
-      body: IdentificationType
+export interface GetThemeByTenant$Params {
+  tenantCode: string;
 }
 
-export function createIdentificationType(http: HttpClient, rootUrl: string, params: CreateIdentificationType$Params, context?: HttpContext): Observable<StrictHttpResponse<IdentificationType>> {
-  const rb = new RequestBuilder(rootUrl, createIdentificationType.PATH, 'post');
+export function getThemeByTenant(http: HttpClient, rootUrl: string, params: GetThemeByTenant$Params, context?: HttpContext): Observable<StrictHttpResponse<ThemeDto>> {
+  const rb = new RequestBuilder(rootUrl, getThemeByTenant.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('tenantCode', params.tenantCode, {});
   }
 
   return http.request(
@@ -25,9 +25,9 @@ export function createIdentificationType(http: HttpClient, rootUrl: string, para
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<IdentificationType>;
+      return r as StrictHttpResponse<ThemeDto>;
     })
   );
 }
 
-createIdentificationType.PATH = '/mdm/identification-type';
+getThemeByTenant.PATH = '/themes/tenant/{tenantCode}';

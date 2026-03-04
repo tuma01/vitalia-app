@@ -50,13 +50,17 @@ export abstract class CrudBaseComponent<T> implements OnInit {
             const standardTypes: string[] = ['number', 'boolean', 'date', 'currency', 'percent', 'image', 'button', 'link'];
             const mtxType = (standardTypes.includes(col.type || '') ? col.type : undefined) as MtxGridColumnType;
 
+            const isResizable = this.config.table?.columnResizable === true;
+
             const mtxCol: any = {
                 ...col,
                 field: col.field as string,
                 type: mtxType,
                 width: col.width,
-                minWidth: col.minWidth ?? widthPx,
-                maxWidth: col.maxWidth ?? widthPx,
+                // Si la tabla es resizable: minWidth permisivo (50px), sin maxWidth → resize libre
+                // Si no es resizable: min===max===widthPx → clampeado, el handle no actúa
+                minWidth: col.minWidth ?? (isResizable ? 50 : widthPx),
+                maxWidth: col.maxWidth ?? (isResizable ? undefined : widthPx),
                 class: col.class,
                 tag: col.tag,
                 originalType: col.type || 'text'
