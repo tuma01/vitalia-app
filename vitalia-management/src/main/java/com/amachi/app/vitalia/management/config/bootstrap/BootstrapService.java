@@ -52,23 +52,26 @@ public class BootstrapService {
         @Transactional
         public void runBootstrap() {
 
-            // 1️⃣ Cargar Theme por defecto desde BD
-            Theme defaultTheme = themeRepository.findByCode("DEFAULT_THEME")
-                    .orElseThrow(() -> new ResourceNotFoundException(Theme.class.getName(), "error.resource.not.found", "DEFAULT_THEME"));
+                // 1️⃣ Cargar Theme por defecto desde BD
+                Theme defaultTheme = themeRepository.findByCode(AppConstants.Themes.DEFAULT_THEME_CODE)
+                                .orElseThrow(() -> new ResourceNotFoundException(Theme.class.getName(),
+                                                "error.resource.not.found", AppConstants.Themes.DEFAULT_THEME_CODE));
 
-            // 2️⃣ Crear Tenant GLOBAL
-            Tenant globalTenant = createOrUpdateTenant(appBootstrapProperties.getTenant().getTenantGlobal(), defaultTheme);
+                // 2️⃣ Crear Tenant GLOBAL
+                Tenant globalTenant = createOrUpdateTenant(appBootstrapProperties.getTenant().getTenantGlobal(),
+                                defaultTheme);
 
-            // 3️⃣ Crear SUPER_ADMIN (Cascade Strategy)
-            createSuperAdminWithCascade(appBootstrapProperties.getSuperAdmin(), globalTenant);
+                // 3️⃣ Crear SUPER_ADMIN (Cascade Strategy)
+                createSuperAdminWithCascade(appBootstrapProperties.getSuperAdmin(), globalTenant);
 
-            // 4️⃣ Crear Tenant LOCAL (HOSP_A)
-            Tenant localTenant = createOrUpdateTenant(appBootstrapProperties.getTenant().getTenantLocal(), defaultTheme);
+                // 4️⃣ Crear Tenant LOCAL (HOSP_A)
+                Tenant localTenant = createOrUpdateTenant(appBootstrapProperties.getTenant().getTenantLocal(),
+                                defaultTheme);
 
-            // 5️⃣ Crear TENANT_ADMIN (Cascade Strategy)
-            createTenantAdminWithCascade(appBootstrapProperties.getTenantAdmin(), localTenant);
+                // 5️⃣ Crear TENANT_ADMIN (Cascade Strategy)
+                createTenantAdminWithCascade(appBootstrapProperties.getTenantAdmin(), localTenant);
 
-            log.info("🚀 Bootstrap finalizado con éxito");
+                log.info("🚀 Bootstrap finalizado con éxito");
         }
 
         // -------------------------------------------------------
@@ -76,76 +79,56 @@ public class BootstrapService {
         // -------------------------------------------------------
 
         private Tenant createOrUpdateTenant(AppBootstrapProperties.BootstrapTenantConfig config, Theme defaultTheme) {
-            String code = config.getCode();
+                String code = config.getCode();
 
-            Tenant tenant = tenantRepository.findByCode(code).orElse(null);
+                Tenant tenant = tenantRepository.findByCode(code).orElse(null);
 
-            if (tenant == null) {
-                    log.info("🏢 Creando Tenant [{}]..", code);
-                    tenant = Tenant.builder()
-                                    .code(code)
-                                    .name(config.getName())
-                                    .description(config.getDescription())
-                                    .type(config.getTenantType())
-                                    .isActive(true)
-                                    .build();
-            } else {
-                    log.info("🏢 Tenant [{}] encontrado. Verificando actualizaciones..", code);
-            }
+                if (tenant == null) {
+                        log.info("🏢 Creando Tenant [{}]..", code);
+                        tenant = Tenant.builder()
+                                        .code(code)
+                                        .name(config.getName())
+                                        .description(config.getDescription())
+                                        .type(config.getTenantType())
+                                        .isActive(true)
+                                        .build();
+                } else {
+                        log.info("🏢 Tenant [{}] encontrado. Verificando actualizaciones..", code);
+                }
 
-            // 🟢 [JPA/Domain Adaptation] Orchestration for Address (External Module)
-            // Polymorphic access: config.getAddress() handles global vs local logic
-            // internally
-            if (config.getAddress() != null) {
+                // 🟢 [JPA/Domain Adaptation] Orchestration for Address (External Module)
+                // Polymorphic access: config.getAddress() handles global vs local logic
+                // internally
+                if (config.getAddress() != null) {
 
-                    // Universal check: Does tenant lack address?
-                    if (tenant.getAddressId() == null) {
-                            log.info("📍 Agregando dirección al Tenant [{}]..", code);
-                            AppBootstrapProperties.AddressProperties addrProps = config.getAddress();
-                            AddressDto addressDto = AddressDto.builder()
-                                            .direccion(addrProps.getDireccion())
-                                            .ciudad(addrProps.getCiudad())
-                                            .numero(addrProps.getNumero())
-                                            .departamentoId(addrProps.getDepartamentoId())
-                                            .countryId(addrProps.getPaisId())
-                                            .build();
+                        // Universal check: Does tenant lack address?
+                        if (tenant.getAddressId() == null) {
+                                log.info("📍 Agregando dirección al Tenant [{}]..", code);
+                                AppBootstrapProperties.AddressProperties addrProps = config.getAddress();
+                                AddressDto addressDto = AddressDto.builder()
+                                                .direccion(addrProps.getDireccion())
+                                                .ciudad(addrProps.getCiudad())
+                                                .numero(addrProps.getNumero())
+                                                .departamentoId(addrProps.getDepartamentoId())
+                                                .countryId(addrProps.getPaisId())
+                                                .build();
 
-                            TenantDto tempDto = TenantDto.builder()
-                                            .address(addressDto)
-                                            .build();
+                                TenantDto tempDto = TenantDto.builder()
+                                                .address(addressDto)
+                                                .build();
 
-                            // Delegate to Domain Service (creates Address INSERT)
-                            tenantDomainService.handleTenantAddress(tenant, tempDto);
-                    }
-            }
+                                // Delegate to Domain Service (creates Address INSERT)
+                                tenantDomainService.handleTenantAddress(tenant, tempDto);
+                        }
+                }
 
-            // 🔹 Asignar Theme por defecto si no tiene Theme
-            if (tenant.getTheme() == null) {
-                log.info("🎨 Asignando Theme por defecto al Tenant [{}]..", code);
+                // 🔹 Asignar Theme por defecto si no tiene Theme
+                if (tenant.getTheme() == null) {
+                        log.info("🎨 Asignando Theme maestro [{}] al Tenant [{}]..", defaultTheme.getName(), code);
+                        tenant.setTheme(defaultTheme);
+                }
 
-                // 🔹 Creamos una copia del Theme por defecto
-                Theme clonedTheme = Theme.builder()
-                        .code(defaultTheme.getCode() + "_" + code) // Ej: DEFAULT_THEME_HOSP_A
-                        .name(defaultTheme.getName())
-                        .primaryColor(defaultTheme.getPrimaryColor())
-                        .secondaryColor(defaultTheme.getSecondaryColor())
-                        .backgroundColor(defaultTheme.getBackgroundColor())
-                        .textColor(defaultTheme.getTextColor())
-                        .accentColor(defaultTheme.getAccentColor())
-                        .warnColor(defaultTheme.getWarnColor())
-                        .linkColor(defaultTheme.getLinkColor())
-                        .buttonTextColor(defaultTheme.getButtonTextColor())
-                        .fontFamily(defaultTheme.getFontFamily())
-                        .themeMode(defaultTheme.getThemeMode())
-                        .active(true)
-                        .allowCustomCss(defaultTheme.isAllowCustomCss())
-                        .propertiesJson(defaultTheme.getPropertiesJson())
-                        .customCss(defaultTheme.getCustomCss())
-                        .build();
-                tenant.setTheme(clonedTheme);
-            }
-
-            return tenantRepository.save(tenant);
+                return tenantRepository.save(tenant);
         }
 
         // -------------------------------------------------------

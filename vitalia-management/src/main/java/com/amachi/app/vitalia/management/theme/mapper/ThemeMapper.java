@@ -13,12 +13,10 @@ public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDto> {
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "tenant.id", source = "tenantId")
     Theme toEntity(ThemeDto dto);
 
     @Override
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-    @Mapping(target = "tenantId", source = "tenant.id")
     ThemeDto toDto(Theme entity);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
@@ -30,7 +28,6 @@ public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDto> {
     @Mapping(target = "logoUrl", ignore = true)
     @Mapping(target = "faviconUrl", ignore = true)
     @Mapping(target = "customCss", ignore = true)
-    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "version", ignore = true)
     void updateEntityFromDto(ThemeDto dto, @MappingTarget Theme theme);
 }

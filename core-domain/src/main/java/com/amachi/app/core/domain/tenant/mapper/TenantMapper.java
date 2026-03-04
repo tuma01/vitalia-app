@@ -37,5 +37,6 @@ public interface TenantMapper extends EntityDtoMapper<Tenant, TenantDto> {
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "themeId", source = "theme.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "themeName", source = "theme.name")
     TenantDto toDto(Tenant entity);
 }

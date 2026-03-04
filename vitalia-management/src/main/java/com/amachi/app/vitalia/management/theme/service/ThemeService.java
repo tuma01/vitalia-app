@@ -7,6 +7,7 @@ import com.amachi.app.core.domain.theme.dto.search.ThemeSearchDto;
 import com.amachi.app.core.domain.theme.entity.Theme;
 import com.amachi.app.vitalia.management.theme.mapper.ThemeMapper;
 import com.amachi.app.vitalia.management.theme.repository.ThemeRepository;
+import com.amachi.app.core.domain.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.management.theme.specification.ThemeSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,12 +33,13 @@ import static java.util.Objects.requireNonNull;
 public class ThemeService implements GenericService<Theme, ThemeSearchDto> {
 
     private final ThemeRepository themeRepository;
+    private final TenantRepository tenantRepository;
     private final ThemeMapper themeMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<Theme> getAll() {
-        return themeRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        return themeRepository.findAllByIsTemplateTrue();
     }
 
     @Override
@@ -101,7 +103,8 @@ public class ThemeService implements GenericService<Theme, ThemeSearchDto> {
 
     @Transactional(readOnly = true)
     public ThemeDto getThemeForTenant(String tenantCode) {
-        return themeRepository.findByTenant_Code(tenantCode)
+        return tenantRepository.findByCode(tenantCode)
+                .map(com.amachi.app.core.domain.tenant.entity.Tenant::getTheme)
                 .map(themeMapper::toDto)
                 .orElseGet(() -> ThemeDto.builder()
                         .name("Default Theme")
@@ -116,22 +119,71 @@ public class ThemeService implements GenericService<Theme, ThemeSearchDto> {
 
     @Transactional
     public ThemeDto upgradeTheme(String tenantCode, ThemeDto dto) {
-        Theme theme = themeRepository.findByTenant_Code(tenantCode)
-                .orElseThrow(() -> new EntityNotFoundException("Theme not found for tenant: " + tenantCode));
+        // Find tenant and their current theme
+        com.amachi.app.core.domain.tenant.entity.Tenant tenant = tenantRepository.findByCode(tenantCode)
+                .orElseThrow(() -> new EntityNotFoundException("Tenant not found: " + tenantCode));
 
-        themeMapper.updateEntityFromDto(dto, theme);
+        Theme currentTheme = tenant.getTheme();
 
-        return themeMapper.toDto(themeRepository.save(theme));
+        if (currentTheme == null) {
+            throw new EntityNotFoundException("Theme not found for tenant: " + tenantCode);
+        }
+
+        Theme themeToUpdate;
+
+        // LAZY CLONING: If it's a template, we must clone it before editing
+        if (currentTheme.isTemplate()) {
+            themeToUpdate = Theme.builder()
+                    .code(currentTheme.getCode() + "_" + tenantCode)
+                    .name(currentTheme.getName() + " (Custom)")
+                    .primaryColor(currentTheme.getPrimaryColor())
+                    .secondaryColor(currentTheme.getSecondaryColor())
+                    .backgroundColor(currentTheme.getBackgroundColor())
+                    .textColor(currentTheme.getTextColor())
+                    .accentColor(currentTheme.getAccentColor())
+                    .warnColor(currentTheme.getWarnColor())
+                    .linkColor(currentTheme.getLinkColor())
+                    .buttonTextColor(currentTheme.getButtonTextColor())
+                    .fontFamily(currentTheme.getFontFamily())
+                    .themeMode(currentTheme.getThemeMode())
+                    .propertiesJson(currentTheme.getPropertiesJson())
+                    .customCss(currentTheme.getCustomCss())
+                    .allowCustomCss(currentTheme.isAllowCustomCss())
+                    .active(true)
+                    .isTemplate(false) // Clones are not templates
+                    .build();
+
+            // Link tenant to the new private clone
+            tenant.setTheme(themeToUpdate);
+            // JPA will save themeToUpdate because of cascade or we save it manually
+            themeToUpdate = themeRepository.save(themeToUpdate);
+            tenantRepository.save(tenant);
+        } else {
+            // It's already a private clone, just update it
+            themeToUpdate = currentTheme;
+        }
+
+        themeMapper.updateEntityFromDto(dto, themeToUpdate);
+        return themeMapper.toDto(themeRepository.save(themeToUpdate));
     }
 
     @Transactional
     public ThemeDto uploadLogo(String tenantCode, MultipartFile file) {
-        Theme theme = themeRepository.findByTenant_Code(tenantCode)
-                .orElseThrow(() -> new EntityNotFoundException("Theme not found for tenant: " + tenantCode));
+        com.amachi.app.core.domain.tenant.entity.Tenant tenant = tenantRepository.findByCode(tenantCode)
+                .orElseThrow(() -> new EntityNotFoundException("Tenant not found: " + tenantCode));
+
+        Theme theme = tenant.getTheme();
+        if (theme == null)
+            throw new EntityNotFoundException("Theme not found for tenant");
+
+        // If it's a template, we should technically clone it here too if we want to
+        // change the logo url
+        // But for simplicity in this demo, let's focus on colors first.
+        // A robust implementation would use a helper method
+        // 'getOrCreatePrivateTheme(tenant)'
 
         // TODO: Implement actual storage (S3/MinIO/FileSystem)
-        // For now, we simulate a URL assuming the file is served from somewhere
-        String fakeUrl = "/assets/uploads/" + tenantCode + "/logo_" + UUID.randomUUID() + ".png";
+        String fakeUrl = "/assets/uploads/" + tenantCode + "/logo_" + java.util.UUID.randomUUID() + ".png";
 
         theme.setLogoUrl(fakeUrl);
         return themeMapper.toDto(themeRepository.save(theme));

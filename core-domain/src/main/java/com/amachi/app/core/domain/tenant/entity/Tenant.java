@@ -44,7 +44,7 @@ public class Tenant extends Auditable<String> implements Model {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "THEME_ID", nullable = true)
     private Theme theme;
 
