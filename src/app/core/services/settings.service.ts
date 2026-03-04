@@ -9,6 +9,13 @@ export type LayoutMode = 'light' | 'dark';
 export type SidenavColor = 'light' | 'dark';
 export type Density = 'compact' | 'default' | 'expanded';
 
+export interface ThemeSettings {
+    layoutMode?: LayoutMode;
+    sidenavColor?: SidenavColor;
+    density?: Density;
+    headerColor?: string;
+}
+
 /**
  * SettingsService - Context-Aware UI Settings
  * 
@@ -34,6 +41,13 @@ export class SettingsService {
 
     constructor() {
         this.loadSettings();
+
+        // 🔄 Subscribe to theme application events to synchronize panel signals
+        this.themeService.themeApplied$.subscribe(theme => {
+            if (theme) {
+                this.extractAndApplyThemeDefaults(theme);
+            }
+        });
 
         // 🔄 Subscribe to context/tenant changes to reload settings from the correct storage scope
         merge(
@@ -180,6 +194,81 @@ export class SettingsService {
             // Apply default header for current mode (resetting to white/dark)
             const autoColor = this.layoutMode() === 'dark' ? '#111421' : '#ffffff';
             this.applyHeaderStyles(autoColor);
+        }
+    }
+
+    /**
+     * 🎯 Sincroniza las señales del Settings Panel con los valores sugeridos por el tema.
+     * Solo aplica el cambio si el usuario NO tiene una preferencia manual guardada.
+     */
+    applyThemeDefaults(defaults: ThemeSettings): void {
+        const userLayout = this.storage.getItem('layout');
+        const userSidenav = this.storage.getItem('sidenav');
+        const userDensity = this.storage.getItem('density');
+        const userHeader = this.storage.getItem('header-color');
+
+        if (!userLayout && defaults.layoutMode) {
+            this.layoutMode.set(defaults.layoutMode);
+        }
+        if (!userSidenav && defaults.sidenavColor) {
+            this.sidenavColor.set(defaults.sidenavColor);
+        }
+        if (!userDensity && defaults.density) {
+            this.density.set(defaults.density);
+        }
+        if (!userHeader && defaults.headerColor) {
+            this.headerColor.set(defaults.headerColor);
+            this.applyHeaderStyles(defaults.headerColor);
+        }
+    }
+
+    private extractAndApplyThemeDefaults(theme: any): void {
+        let themeDefaults: ThemeSettings = {};
+        if (theme.propertiesJson) {
+            try {
+                const props = JSON.parse(theme.propertiesJson);
+                themeDefaults = {
+                    layoutMode: props.layoutMode || (theme.themeMode?.toLowerCase() as any),
+                    sidenavColor: props.sidenavColor,
+                    density: props.density,
+                    headerColor: props.headerColor || (theme.themeMode === 'DARK' ? '#111421' : '#ffffff')
+                };
+            } catch (e) {
+                // Fallback simplest defaults from themeMode
+                const mode = theme.themeMode === 'DARK' ? 'dark' : 'light';
+                themeDefaults = {
+                    layoutMode: mode as any,
+                    headerColor: mode === 'dark' ? '#111421' : '#ffffff'
+                };
+            }
+        } else {
+            const mode = theme.themeMode === 'DARK' ? 'dark' : 'light';
+            themeDefaults = {
+                layoutMode: mode as any,
+                headerColor: mode === 'dark' ? '#111421' : '#ffffff'
+            };
+        }
+        this.applyThemeDefaults(themeDefaults);
+    }
+
+    /**
+     * 🧹 Resetea todas las personalizaciones del usuario y vuelve a los defaults del tema.
+     */
+    resetToThemeDefaults(): void {
+        this.storage.removeItem('layout');
+        this.storage.removeItem('sidenav');
+        this.storage.removeItem('density');
+        this.storage.removeItem('header-color');
+        this.storage.removeItem('brand-primary');
+        this.storage.removeItem('brand-accent');
+
+        // Re-cargar settings (volverá a los absolutos primero, y luego el themeService notificará los defaults del tema)
+        this.loadSettings();
+
+        // Forzar reaplicación del tema actual para disparar el evento de synchronization
+        const current = this.themeService.getCurrentTheme();
+        if (current) {
+            this.themeService.applyTheme(current);
         }
     }
 }
