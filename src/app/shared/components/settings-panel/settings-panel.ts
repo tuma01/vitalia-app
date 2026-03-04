@@ -90,9 +90,6 @@ export class SettingsPanel {
   }
 
   resetDefaults() {
-    this.setLayout('light');
-    this.setSidenavColor('light');
-    this.setDensity('default');
-    this.settingsService.setHeaderColor('#ffffff'); // Reset to default white
+    this.settingsService.resetToThemeDefaults();
   }
 }

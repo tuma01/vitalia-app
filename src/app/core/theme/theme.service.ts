@@ -1,11 +1,12 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { firstValueFrom, skip, merge, debounceTime } from 'rxjs';
+import { firstValueFrom, skip, merge, debounceTime, BehaviorSubject } from 'rxjs';
 import { ThemeDto } from '../../api/models/theme-dto';
 import { AppContextService } from '../services/app-context.service';
 import { ContextStorageService } from '../services/context-storage.service';
 import { AppConstants } from '../constants/app-constants';
 import { SettingsResolver } from './settings-resolver.service';
+import { SettingsService, ThemeSettings } from '../services/settings.service';
 
 /**
  * 🎨 Platform Default Theme (Admin/SuperAdmin context)
@@ -71,6 +72,13 @@ export const APP_DEFAULT_THEME: ThemeDto = TENANT_DEFAULT_THEME; // Default to t
 })
 export class ThemeService {
   private currentTheme: ThemeDto | null = null;
+  private themeAppliedSubject = new BehaviorSubject<ThemeDto | null>(null);
+
+  /**
+   * 📡 Observable que emite cuando se aplica un nuevo tema.
+   * Útil para sincronizar estados UI (Settings Panel).
+   */
+  public readonly themeApplied$ = this.themeAppliedSubject.asObservable();
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -166,19 +174,24 @@ export class ThemeService {
     const root = this.document.documentElement;
     const body = this.document.body;
 
-    // 🌓 Determinar el modo (Light/Dark) con el "Merge Elegante":
-    // 1️⃣ Preferencia de Usuario en ContextStorage (Dispositivo manda, scoped por contexto)
-    // 2️⃣ Preferencia del Tenant en Backend
-    // 3️⃣ Default (LIGHT)
     const userPref = this.storage.getItem('layout') as 'light' | 'dark' | null;
-    let mode = userPref ? (userPref.toUpperCase() as 'LIGHT' | 'DARK') : theme.themeMode;
 
-    // Si sigue siendo AUTO o null, forzamos LIGHT
-    if (mode === 'AUTO' || !mode) {
-      mode = 'LIGHT';
+    // 🏷️ Extracción de defaults desde el JSON del tema para el modo efectivo
+    let themeLayoutMode: 'light' | 'dark' | undefined;
+    if (theme.propertiesJson) {
+      try {
+        const props = JSON.parse(theme.propertiesJson);
+        themeLayoutMode = props.layoutMode;
+      } catch (e) { }
     }
 
-    const isDark = mode === 'DARK';
+    // El modo efectivo es: Preferencia Usuario > Tema (propertiesJson) > Tema (themeMode) > Default (LIGHT)
+    const themeMode = theme.themeMode === 'DARK' ? 'dark' : 'light';
+    const effectiveMode = userPref || themeLayoutMode || themeMode;
+    const isDark = effectiveMode === 'dark';
+
+    // 🔥 Notificar aplicación de tema (Sincroniza SettingsService sin circularidad)
+    this.themeAppliedSubject.next(theme);
 
     // 🎨 Determinar colores de marca (Prioridad: ContextStorage Overrides > Backend)
     const userPrimary = this.storage.getItem('brand-primary');
