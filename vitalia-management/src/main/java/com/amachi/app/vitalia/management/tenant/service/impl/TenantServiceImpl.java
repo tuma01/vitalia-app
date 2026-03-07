@@ -5,8 +5,10 @@ import com.amachi.app.core.domain.tenant.dto.search.TenantSearchDto;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
 import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.geography.address.mapper.AddressMapper;
 import com.amachi.app.core.geography.address.repository.AddressRepository;
 import com.amachi.app.core.domain.tenant.repository.TenantRepository;
+import com.amachi.app.core.geography.address.service.impl.AddressServiceImpl;
 import com.amachi.app.vitalia.management.tenant.specification.TenantSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,9 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
     private final RoleRepository roleRepository;
     private final AddressRepository addressRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TenantDomainServiceImpl tenantDomainService;
+    private final AddressMapper addressMapper;
+    private final AddressServiceImpl addressService;
 
     @Override
     public List<Tenant> getAll() {
@@ -46,6 +51,7 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Tenant getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return tenantRepository.findById(id)
@@ -54,10 +60,18 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
     }
 
     @Override
+    @Transactional
     public Tenant create(Tenant entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        requireNonNull(entity.getAddressId(), ENTITY_MUST_NOT_BE_NULL);
+        // addressId is handled in the domain service if logic is complex
         return tenantRepository.save(entity);
+    }
+
+    @Transactional
+    public Tenant createWithDetails(Tenant entity, com.amachi.app.core.domain.tenant.dto.TenantDto dto) {
+        tenantDomainService.handleTenantAddress(entity, dto);
+        tenantDomainService.handleTenantTheme(entity, dto);
+        return create(entity);
     }
 
     @Override
@@ -65,14 +79,19 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
     public Tenant update(Long id, Tenant entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        requireNonNull(entity.getAddressId(), ENTITY_MUST_NOT_BE_NULL);
 
-        // Verificar que el Country exista
-        Tenant existing = tenantRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Tenant.class.getName(), "error.resource.not.found", id));
+        tenantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException(Tenant.class.getName(), "error.resource.not.found", id));
+
         entity.setId(id);
         return tenantRepository.save(entity);
+    }
+
+    @Transactional
+    public Tenant updateWithDetails(Long id, Tenant entity, com.amachi.app.core.domain.tenant.dto.TenantDto dto) {
+        tenantDomainService.handleTenantAddress(entity, dto);
+        tenantDomainService.handleTenantTheme(entity, dto);
+        return update(id, entity);
     }
 
     @Override

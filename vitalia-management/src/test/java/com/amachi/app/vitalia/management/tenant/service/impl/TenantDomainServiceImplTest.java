@@ -28,6 +28,9 @@ class TenantDomainServiceImplTest extends AbstractTestSupport {
         @Mock
         private AddressMapper addressMapper;
 
+        @Mock
+        private com.amachi.app.vitalia.management.theme.repository.ThemeRepository themeRepository;
+
         @InjectMocks
         private TenantDomainServiceImpl domainService;
 
@@ -123,5 +126,40 @@ class TenantDomainServiceImplTest extends AbstractTestSupport {
                 // Assert
                 assertNotNull(result.getAddress());
                 assertEquals(addressId, result.getAddress().getId());
+        }
+
+        @Test
+        void handleTenantTheme_WhenThemeIdProvided_ThenSetTheme() {
+                // Arrange
+                Tenant entity = new Tenant();
+                TenantDto dto = new TenantDto();
+                dto.setThemeId(1L);
+
+                com.amachi.app.core.domain.theme.entity.Theme theme = new com.amachi.app.core.domain.theme.entity.Theme();
+                theme.setId(1L);
+
+                when(themeRepository.findById(1L)).thenReturn(java.util.Optional.of(theme));
+
+                // Act
+                domainService.handleTenantTheme(entity, dto);
+
+                // Assert
+                assertEquals(theme, entity.getTheme());
+                verify(themeRepository).findById(1L);
+        }
+
+        @Test
+        void handleTenantTheme_WhenThemeIdIsNull_ThenSetThemeNull() {
+                // Arrange
+                Tenant entity = new Tenant();
+                entity.setTheme(new com.amachi.app.core.domain.theme.entity.Theme());
+                TenantDto dto = new TenantDto();
+                dto.setThemeId(null);
+
+                // Act
+                domainService.handleTenantTheme(entity, dto);
+
+                // Assert
+                assertNull(entity.getTheme());
         }
 }

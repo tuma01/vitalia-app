@@ -24,6 +24,9 @@ class TenantServiceImplTest extends AbstractTestSupport {
     @Mock
     private TenantRepository tenantRepository;
 
+    @Mock
+    private TenantDomainServiceImpl tenantDomainService;
+
     @InjectMocks
     private TenantServiceImpl service;
 
@@ -168,6 +171,46 @@ class TenantServiceImplTest extends AbstractTestSupport {
 
         // Assert
         assertFalse(entity.getIsActive());
+        verify(tenantRepository).save(entity);
+    }
+
+    @Test
+    void createWithDetails_WhenValid_ThenReturnSavedEntity() {
+        // Arrange
+        Tenant entity = Instancio.create(Tenant.class);
+        com.amachi.app.core.domain.tenant.dto.TenantDto dto = Instancio.create(com.amachi.app.core.domain.tenant.dto.TenantDto.class);
+
+        when(tenantRepository.save(any(Tenant.class))).thenReturn(entity);
+
+        // Act
+        Tenant result = service.createWithDetails(entity, dto);
+
+        // Assert
+        assertNotNull(result);
+        verify(tenantDomainService).handleTenantAddress(entity, dto);
+        verify(tenantDomainService).handleTenantTheme(entity, dto);
+        verify(tenantRepository).save(entity);
+    }
+
+    @Test
+    void updateWithDetails_WhenValid_ThenReturnUpdatedEntity() {
+        // Arrange
+        Long id = 1L;
+        Tenant entity = Instancio.of(Tenant.class)
+                .set(field(Tenant::getId), id)
+                .create();
+        com.amachi.app.core.domain.tenant.dto.TenantDto dto = Instancio.create(com.amachi.app.core.domain.tenant.dto.TenantDto.class);
+
+        when(tenantRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(tenantRepository.save(any(Tenant.class))).thenReturn(entity);
+
+        // Act
+        Tenant result = service.updateWithDetails(id, entity, dto);
+
+        // Assert
+        assertNotNull(result);
+        verify(tenantDomainService).handleTenantAddress(entity, dto);
+        verify(tenantDomainService).handleTenantTheme(entity, dto);
         verify(tenantRepository).save(entity);
     }
 }

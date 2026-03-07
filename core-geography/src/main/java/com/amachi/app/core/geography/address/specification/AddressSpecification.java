@@ -38,6 +38,23 @@ public class AddressSpecification implements Specification<Address> {
             predicates.add(cb.like(cb.lower(root.get("casillaPostal")), "%" + criteria.getCasillaPostal() + "%"));
         }
 
+        // Filtros por Jerarquía Geográfica
+        if (criteria.getCountryId() != null) {
+            predicates.add(cb.equal(root.get("country").get("id"), criteria.getCountryId()));
+        }
+
+        if (criteria.getDepartamentoId() != null) {
+            predicates.add(cb.equal(root.get("departamento").get("id"), criteria.getDepartamentoId()));
+        }
+
+        if (criteria.getProvinciaId() != null) {
+            predicates.add(cb.equal(root.get("provincia").get("id"), criteria.getProvinciaId()));
+        }
+
+        if (criteria.getMunicipioId() != null) {
+            predicates.add(cb.equal(root.get("municipio").get("id"), criteria.getMunicipioId()));
+        }
+
         // Retornar todas las condiciones combinadas
         return cb.and(predicates.toArray(new Predicate[0]));
     }

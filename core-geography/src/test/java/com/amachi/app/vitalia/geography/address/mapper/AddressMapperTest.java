@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class AddressMapperTest {
 
     private AddressMapper addressMapper;
+
     @BeforeEach
     void setUp() {
         addressMapper = Mappers.getMapper(AddressMapper.class);
     }
-
 
     @Test
     void shouldMapAddressDtoToEntity() {
@@ -32,6 +32,10 @@ class AddressMapperTest {
         assertEquals(dto.getCountryId(), entity.getCountry().getId());
         assertNotNull(entity.getDepartamento());
         assertEquals(dto.getDepartamentoId(), entity.getDepartamento().getId());
+        assertNotNull(entity.getProvincia());
+        assertEquals(dto.getProvinciaId(), entity.getProvincia().getId());
+        assertNotNull(entity.getMunicipio());
+        assertEquals(dto.getMunicipioId(), entity.getMunicipio().getId());
     }
 
     @Test
@@ -48,5 +52,9 @@ class AddressMapperTest {
         assertEquals(entity.getCountry().getId(), dto.getCountryId());
         assertNotNull(entity.getDepartamento());
         assertEquals(entity.getDepartamento().getId(), dto.getDepartamentoId());
+        assertNotNull(entity.getProvincia());
+        assertEquals(entity.getProvincia().getId(), dto.getProvinciaId());
+        assertNotNull(entity.getMunicipio());
+        assertEquals(entity.getMunicipio().getId(), dto.getMunicipioId());
     }
 }

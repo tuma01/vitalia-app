@@ -110,6 +110,8 @@ public class BootstrapService {
                                                 .ciudad(addrProps.getCiudad())
                                                 .numero(addrProps.getNumero())
                                                 .departamentoId(addrProps.getDepartamentoId())
+                                                .provinciaId(addrProps.getProvinciaId())
+                                                .municipioId(addrProps.getMunicipioId())
                                                 .countryId(addrProps.getPaisId())
                                                 .build();
 

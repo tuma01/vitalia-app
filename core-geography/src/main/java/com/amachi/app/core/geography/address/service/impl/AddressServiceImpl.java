@@ -26,12 +26,15 @@ import static java.util.Objects.requireNonNull;
 public class AddressServiceImpl implements GenericService<Address, AddressSearchDto> {
 
     private final AddressRepository addressRepository;
+    private final com.amachi.app.core.geography.country.repository.CountryRepository countryRepository;
+    private final com.amachi.app.core.geography.departamento.repository.DepartamentoRepository departamentoRepository;
+    private final com.amachi.app.core.geography.provincia.repository.ProvinciaRepository provinciaRepository;
+    private final com.amachi.app.core.geography.municipio.repository.MunicipioRepository municipioRepository;
 
     @Override
     public List<Address> getAll() {
         return addressRepository.findAll();
     }
-
 
     @Override
     public Page<Address> getAll(AddressSearchDto searchDto, Integer pageIndex, Integer pageSize) {
@@ -45,32 +48,62 @@ public class AddressServiceImpl implements GenericService<Address, AddressSearch
     public Address getById(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
     }
 
     @Override
+    @Transactional
     public Address create(Address entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        attachGeographicUnits(entity);
         return addressRepository.save(entity);
     }
 
     @Override
+    @Transactional
     public Address update(Long id, Address entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
 
         // Verificar existencia del addresses
         addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
+
         entity.setId(id);
+        attachGeographicUnits(entity);
         return addressRepository.save(entity);
+    }
+
+    private void attachGeographicUnits(Address entity) {
+        if (entity.getCountry() != null && entity.getCountry().getId() != null) {
+            entity.setCountry(countryRepository.findById(entity.getCountry().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Country", "id", entity.getCountry().getId())));
+        }
+        if (entity.getDepartamento() != null && entity.getDepartamento().getId() != null) {
+            entity.setDepartamento(departamentoRepository.findById(entity.getDepartamento().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Departamento", "id",
+                            entity.getDepartamento().getId())));
+        }
+        if (entity.getProvincia() != null && entity.getProvincia().getId() != null) {
+            entity.setProvincia(provinciaRepository.findById(entity.getProvincia().getId())
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Provincia", "id", entity.getProvincia().getId())));
+        }
+        if (entity.getMunicipio() != null && entity.getMunicipio().getId() != null) {
+            entity.setMunicipio(municipioRepository.findById(entity.getMunicipio().getId())
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Municipio", "id", entity.getMunicipio().getId())));
+        }
     }
 
     @Override
     public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         Address addresses = addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
         addressRepository.delete(addresses);
     }
 }

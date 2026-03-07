@@ -4,6 +4,8 @@ import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.geography.departamento.entity.Departamento;
+import com.amachi.app.core.geography.provincia.entity.Provincia;
+import com.amachi.app.core.geography.municipio.entity.Municipio;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -52,4 +54,12 @@ public class Address extends Auditable<String> implements Model {
     @ManyToOne
     @JoinColumn(name = "FK_ID_DEPARTAMENTO", foreignKey = @ForeignKey(name = "FK_ADDRESS_DEPARTAMENTO"), referencedColumnName = "ID")
     private Departamento departamento;
+
+    @ManyToOne
+    @JoinColumn(name = "FK_ID_PROVINCIA", foreignKey = @ForeignKey(name = "FK_ADDRESS_PROVINCIA"), referencedColumnName = "ID")
+    private Provincia provincia;
+
+    @ManyToOne
+    @JoinColumn(name = "FK_ID_MUNICIPIO", foreignKey = @ForeignKey(name = "FK_ADDRESS_MUNICIPIO"), referencedColumnName = "ID")
+    private Municipio municipio;
 }
