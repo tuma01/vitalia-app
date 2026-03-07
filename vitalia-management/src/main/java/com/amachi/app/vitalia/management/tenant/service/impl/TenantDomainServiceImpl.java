@@ -16,10 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TenantDomainServiceImpl {
     private final AddressServiceImpl addressService;
     private final AddressMapper addressMapper;
+    private final com.amachi.app.vitalia.management.theme.repository.ThemeRepository themeRepository;
 
     public void handleTenantAddress(Tenant entity, TenantDto dto) {
-
-        if (dto.getAddress() == null) { return; }
+        if (dto.getAddress() == null) {
+            return;
+        }
         AddressDto addressDto = dto.getAddress();
         Long addressId;
 
@@ -32,11 +34,26 @@ public class TenantDomainServiceImpl {
         entity.setAddressId(addressId);
     }
 
+    @Transactional
+    public void handleTenantTheme(Tenant entity, TenantDto dto) {
+        if (dto.getThemeId() != null) {
+            // Only update if it's different to avoid version/proxy issues
+            if (entity.getTheme() == null || !entity.getTheme().getId().equals(dto.getThemeId())) {
+                entity.setTheme(themeRepository.findById(dto.getThemeId())
+                        .orElseThrow(
+                                () -> new com.amachi.app.core.common.exception.ResourceNotFoundException("Theme", "id",
+                                        dto.getThemeId())));
+            }
+        } else {
+            entity.setTheme(null);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public TenantDto enrichTenantDto(Tenant entity, TenantDto dto) {
         if (entity.getAddressId() != null) {
             AddressDto addressDto = addressMapper.toDto(
-                    addressService.getById(entity.getAddressId())
-            );
+                    addressService.getById(entity.getAddressId()));
             dto.setAddress(addressDto);
         }
         return dto;

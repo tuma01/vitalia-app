@@ -16,10 +16,13 @@ public final class AddressSearchDto implements BaseSearchDto {
     private String direccion;
     private String ciudad;
     private String casillaPostal;
+    private Long countryId;
+    private Long departamentoId;
+    private Long provinciaId;
+    private Long municipioId;
 
     @Override
     public Long getId() {
         return id;
     }
 }
-

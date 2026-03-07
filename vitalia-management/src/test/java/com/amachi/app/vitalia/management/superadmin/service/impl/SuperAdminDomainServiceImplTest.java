@@ -8,6 +8,7 @@ import com.amachi.app.core.auth.service.UserTenantRoleService;
 import com.amachi.app.core.domain.config.AppBootstrapProperties;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
+import com.amachi.app.core.common.utils.AppConstants;
 import com.amachi.app.vitalia.management.superadmin.entity.SuperAdmin;
 import com.amachi.app.core.domain.tenant.repository.TenantRepository;
 import org.instancio.Instancio;
@@ -73,7 +74,7 @@ class SuperAdminDomainServiceImplTest extends AbstractTestSupport {
 
         Role superAdminRole = new Role();
         superAdminRole.setId(1L);
-        when(roleRepository.findByName(anyString())).thenReturn(Optional.of(superAdminRole));
+        when(roleRepository.findByName(AppConstants.Roles.ROLE_SUPER_ADMIN)).thenReturn(Optional.of(superAdminRole));
 
         // Act
         domainService.completeAccountSetup(savedEntity);

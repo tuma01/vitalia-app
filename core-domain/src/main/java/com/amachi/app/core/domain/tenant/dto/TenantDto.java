@@ -25,7 +25,7 @@ public class TenantDto {
     private String name;
 
     @Schema(description = "Type of the Tenant", example = "HOSPITAL")
-    private TenantType type;// Ej: HOSPITAL, CLINICA, LABORATORIO, PHARMACY
+    private TenantType type;// Ej: HOSPITAL, CLINIC, LABORATORIO, PHARMACY
 
     @Schema(description = "Indicates if the Tenant is active", example = "true")
     @Builder.Default

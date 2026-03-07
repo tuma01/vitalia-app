@@ -84,6 +84,8 @@ public class AppBootstrapProperties {
         private String direccion;
         private String ciudad;
         private Long departamentoId;
+        private Long provinciaId;
+        private Long municipioId;
         private Long paisId;
         private String telefono;
     }

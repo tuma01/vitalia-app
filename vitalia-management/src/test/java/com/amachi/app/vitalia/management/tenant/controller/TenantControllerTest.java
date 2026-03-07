@@ -64,8 +64,9 @@ class TenantControllerTest extends AbstractTestSupport {
         Tenant entity = loadJson(DATA_PATH + "tenant-entity.json", Tenant.class);
 
         when(mapper.toEntity(any())).thenReturn(entity);
-        when(service.create(any())).thenReturn(entity);
+        when(service.createWithDetails(any(), any())).thenReturn(entity);
         when(mapper.toDto(any())).thenReturn(responseDto);
+        when(tenantDomainService.enrichTenantDto(any(), any())).thenReturn(responseDto);
 
         // Act & Assert
         mockMvc.perform(post("/super-admin/tenants")
@@ -75,8 +76,8 @@ class TenantControllerTest extends AbstractTestSupport {
                 .andExpect(content().json(objectMapper.writeValueAsString(responseDto)));
 
         // Verify interactions
-        verify(service).create(any());
-        verify(tenantDomainService).handleTenantAddress(any(), any());
+        verify(service).createWithDetails(any(), any());
+        verify(tenantDomainService).enrichTenantDto(any(), any());
 
     }
 }

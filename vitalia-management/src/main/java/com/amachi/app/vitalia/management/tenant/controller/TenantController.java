@@ -30,13 +30,13 @@ public class TenantController extends BaseController implements TenantApi {
     private final AddressMapper addressMapper;
     private final TenantDomainServiceImpl tenantDomainService;
 
-
     // --- SUPER ADMIN ENDPOINTS ---
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<TenantDto> getTenantById(Long id) {
         Tenant entity = service.getById(id);
-        return ResponseEntity.ok(mapper.toDto(entity));
+        TenantDto dto = mapper.toDto(entity);
+        return ResponseEntity.ok(tenantDomainService.enrichTenantDto(entity, dto));
     }
 
     @Override
@@ -44,8 +44,10 @@ public class TenantController extends BaseController implements TenantApi {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<TenantDto> createTenant(TenantDto dto) {
         Tenant entity = mapper.toEntity(dto);
-        tenantDomainService.handleTenantAddress(entity, dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDto(service.create(entity)));
+        Tenant savedEntity = service.createWithDetails(entity, dto);
+        TenantDto resultDto = mapper.toDto(savedEntity);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(tenantDomainService.enrichTenantDto(savedEntity, resultDto));
     }
 
     @Override
@@ -54,8 +56,9 @@ public class TenantController extends BaseController implements TenantApi {
     public ResponseEntity<TenantDto> updateTenant(Long id, TenantDto dto) {
         Tenant existingTenant = service.getById(id);
         mapper.updateEntityFromDto(dto, existingTenant);
-        tenantDomainService.handleTenantAddress(existingTenant, dto);
-        return ResponseEntity.ok(mapper.toDto(service.update(id, existingTenant)));
+        Tenant updatedEntity = service.updateWithDetails(id, existingTenant, dto);
+        TenantDto resultDto = mapper.toDto(updatedEntity);
+        return ResponseEntity.ok(tenantDomainService.enrichTenantDto(updatedEntity, resultDto));
     }
 
     @Override
@@ -69,8 +72,8 @@ public class TenantController extends BaseController implements TenantApi {
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<TenantDto>> getAllTenants() {
         List<Tenant> entities = service.getAll();
-        List<TenantDto> dtos =  entities.stream()
-                .map(entity ->  {
+        List<TenantDto> dtos = entities.stream()
+                .map(entity -> {
                     TenantDto dto = mapper.toDto(entity);
                     return tenantDomainService.enrichTenantDto(entity, dto);
                 }).toList();
@@ -79,7 +82,8 @@ public class TenantController extends BaseController implements TenantApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<PageResponseDto<TenantDto>> getPaginatedTenants(TenantSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<TenantDto>> getPaginatedTenants(TenantSearchDto searchDto, Integer pageIndex,
+            Integer pageSize) {
         Page<Tenant> page = service.getAll(searchDto, pageIndex, pageSize);
         List<TenantDto> dtos = page.getContent()
                 .stream()
