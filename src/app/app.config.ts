@@ -7,6 +7,9 @@ import { HttpClient } from '@angular/common/http';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { TranslatePaginatorIntl } from './core/i18n/translate-paginator-intl';
 import { ToastrModule } from 'ngx-toastr';
+import { provideDateFnsAdapter } from '@angular/material-date-fns-adapter';
+import { es } from 'date-fns/locale';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { routes } from './app.routes';
 import { TokenService } from './core/token/token.service';
@@ -96,6 +99,8 @@ export const appConfig: ApplicationConfig = {
 
     TokenService,
     RefreshTokenService,
+    provideDateFnsAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: es },
     { provide: MatPaginatorIntl, useClass: TranslatePaginatorIntl }
   ]
 };

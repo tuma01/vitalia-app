@@ -15,9 +15,8 @@ export const routes: Routes = [
                 data: { title: 'menu.tenant_governance.organizations.title', icon: 'domain' }
             },
             {
-                path: 'onboarding',
-                component: PlatformShellComponent,
-                data: { title: 'menu.tenant_onboarding', icon: 'add_business' }
+                path: 'administrators',
+                loadChildren: () => import('./onboardings/onboardings.routes').then(m => m.routes)
             },
             {
                 path: 'billing',

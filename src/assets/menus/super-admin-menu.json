@@ -47,11 +47,34 @@
                     ]
                 },
                 {
-                    "id": "tenant-onboarding",
-                    "name": "tenant_onboarding",
-                    "type": "link",
-                    "route": "/platform/tenants/onboarding",
-                    "icon": "add_business"
+                    "id": "tenant-admins",
+                    "name": "tenant_governance.onboarding.title",
+                    "type": "sub",
+                    "icon": "admin_panel_settings",
+                    "visible": true,
+                    "children": [
+                        {
+                            "id": "admin-list",
+                            "name": "tenant_governance.onboarding.list",
+                            "type": "link",
+                            "route": "/platform/tenants/administrators/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "admin-add",
+                            "name": "tenant_governance.onboarding.add",
+                            "type": "link",
+                            "route": "/platform/tenants/administrators/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "admin-edit",
+                            "name": "tenant_governance.onboarding.edit",
+                            "type": "link",
+                            "route": "/platform/tenants/administrators/edit",
+                            "visible": false
+                        }
+                    ]
                 },
                 {
                     "id": "billing-licensing",

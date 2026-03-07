@@ -51,7 +51,7 @@ export abstract class CrudBaseAddEditComponent<T> {
             if (field.pattern != null) validators.push(Validators.pattern(field.pattern as string));
             if (field.validators?.length) validators.push(...field.validators);
 
-            const defaultValue = field.type === 'number' ? null : '';
+            const defaultValue = field.value !== undefined ? field.value : (field.type === 'number' ? null : '');
             controls[field.name as string] = [
                 { value: defaultValue, disabled: field.disabled ?? false },
                 validators

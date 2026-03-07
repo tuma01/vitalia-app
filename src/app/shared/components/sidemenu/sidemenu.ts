@@ -113,7 +113,13 @@ export class SidemenuComponent implements OnInit {
 
     isActiveRoute(route?: string): boolean {
         if (!route) return false;
-        return this.router.url.startsWith(route);
+        const currentUrl = this.router.url.split('?')[0]; // Ignore query params
+
+        // Exact match
+        if (currentUrl === route) return true;
+
+        // Partial match for hierarchy (only if it matches full segments)
+        return currentUrl.startsWith(route + '/');
     }
 
     private autoExpandActiveRoute(): void {
@@ -123,14 +129,16 @@ export class SidemenuComponent implements OnInit {
 
     private expandParentOfRoute(items: SidenavItem[], url: string): boolean {
         let anyExpanded = false;
+        const currentPath = url.split('?')[0];
+
         for (const item of items) {
             if (item.children) {
                 const hasActiveChild = this.expandParentOfRoute(item.children, url);
-                if (hasActiveChild || (item.route && url.startsWith(item.route))) {
+                if (hasActiveChild || (item.route && currentPath.startsWith(item.route))) {
                     this.addToExpanded(item.id);
                     anyExpanded = true;
                 }
-            } else if (item.route && url.startsWith(item.route)) {
+            } else if (item.route && currentPath.startsWith(item.route)) {
                 anyExpanded = true;
             }
         }

@@ -47,12 +47,17 @@ export interface CrudFormFieldConfig<T = any> {
     options?: { label: string; value: any }[]; // para selects
     validators?: any[];  // Angular Validators (extra, raw)
     colSpan?: number;    // How many columns to span in the grid
+    hint?: string;       // Small help text below the field
+    showPasswordToggle?: boolean; // Show eye icon for password fields
+    groupWithNext?: boolean;      // Render this field and the next one in the same grid cell
     // Declarative validator shortcuts
     minLength?: number;
     maxLength?: number;
     min?: number;
     max?: number;
     pattern?: string | RegExp;
+    value?: any;         // Default/Initial value for the field
+    icon?: string;        // Material icon name (optional)
 }
 
 export interface CrudFormConfig<T = any> {
