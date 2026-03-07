@@ -3,6 +3,24 @@
         "title": "Vitalia",
         "description": "Système de Gestion Hospitalière"
     },
+    "address": {
+        "section_title": "Adresse",
+        "loading": "Chargement des données géographiques...",
+        "country": "Pays",
+        "departamento": "Département",
+        "provincia": "Province",
+        "municipio": "Municipalité",
+        "ciudad": "Ville",
+        "direccion": "Adresse",
+        "direccion_placeholder": "Ex: 123 Avenue Principale",
+        "direccion_required": "L'adresse est requise",
+        "numero": "Numéro",
+        "piso": "Étage",
+        "casillaPostal": "Boîte Postale",
+        "select_country_first": "Sélectionnez d'abord un pays",
+        "select_departamento_first": "Sélectionnez d'abord un département",
+        "select_provincia_first": "Sélectionnez d'abord une province"
+    },
     "common": {
         "search": "Rechercher",
         "id": "ID",
@@ -48,8 +66,18 @@
         "field_max_length": "Maximum {{max}} caractères",
         "delete_success": "Enregistrement supprimé avec succès",
         "delete_error": "Erreur lors de la suppression. Veuillez réessayer",
-        "active": "Actif",
-        "inactive": "Inactif"
+        "inactive": "Inactif",
+        "show": "Afficher",
+        "hide": "Masquer",
+        "MASCULINO": "Masculin",
+        "FEMENINO": "Féminin",
+        "OTRO": "Autre",
+        "SOLTERO": "Célibataire",
+        "CASADO": "Marié(e)",
+        "DIVORCIADO": "Divorcé(e)",
+        "VIUDO": "Veuf(ve)",
+        "PASSPORT": "Passeport",
+        "FOREIGN_ID": "ID Étranger"
     },
     "entity": {
         "country": "Pays",
@@ -261,6 +289,19 @@
         "financial_reports": "Rapports Financiers",
         "clinical_quality": "Qualité Clinique",
         "geography_management": "Gestion de la Géographie",
+        "person": {
+            "fields": {
+                "nombre": "Prénom",
+                "segundoNombre": "Deuxième Prénom",
+                "apellidoPaterno": "Premier Nom de Famille",
+                "apellidoMaterno": "Deuxième Nom de Famille",
+                "fechaNacimiento": "Date de Naissance",
+                "genero": "Genre",
+                "estadoCivil": "État Civil",
+                "telefono": "Téléphone",
+                "email": "Courriel Personnel"
+            }
+        },
         "tenant_governance": {
             "title": "Gouvernance Locataire",
             "organizations": {
@@ -277,7 +318,12 @@
                     "type": "Type",
                     "isActive": "Actif",
                     "themeId": "Thème Visuel",
-                    "description": "Description"
+                    "description": "Description",
+                    "address_direccion": "Adresse",
+                    "address_ciudad": "Ville",
+                    "address_numero": "Numéro",
+                    "address_piso": "Étage",
+                    "address_casillaPostal": "Boîte Postale"
                 },
                 "types": {
                     "hospital": "Hôpital",
@@ -285,6 +331,33 @@
                     "pharmacy": "Pharmacie",
                     "laboratory": "Laboratoire",
                     "other": "Autre"
+                },
+                "tabs": {
+                    "general": "Informations Générales",
+                    "admins": "Administrateurs"
+                }
+            },
+            "onboarding": {
+                "title": "Gestion des Administrateurs",
+                "singular": "Administrateur",
+                "plural": "Administrateurs",
+                "list": "Liste des Administrateurs",
+                "add": "Ajouter un Administrateur",
+                "edit": "Modifier l'Administrateur",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "Organisation",
+                    "nombre": "Prénom",
+                    "apellidoPaterno": "Premier Nom",
+                    "apellidoMaterno": "Deuxième Nom",
+                    "telefono": "Téléphone",
+                    "email": "E-mail",
+                    "role_info": "Rôle Assigné",
+                    "password": "Mot de passe",
+                    "change_password": "Modifier le mot de passe",
+                    "password_hint": "Champ protégé. Utilisez la case à cocher pour activer.",
+                    "password_placeholder_edit": "Nouveau mot de passe",
+                    "adminLevel": "Niveau Admin"
                 }
             }
         },
@@ -406,6 +479,7 @@
                     "id": "ID",
                     "code": "Code",
                     "name": "Nom",
+                    "type": "Type",
                     "active": "Actif"
                 }
             },
@@ -436,6 +510,12 @@
                     "code": "Code",
                     "name": "Nom",
                     "description": "Description",
+                    "targetProfession": "Profession Cible",
+                    "targetProfession_options": {
+                        "doctor": "Médecin",
+                        "nurse": "Infirmier/ère",
+                        "both": "Tous les deux"
+                    },
                     "active": "Actif"
                 }
             },

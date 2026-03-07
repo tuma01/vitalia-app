@@ -54,6 +54,11 @@ export interface Address {
   medidor?: string;
 
   /**
+   * El municipio de la Direccion
+   */
+  municipioId?: number;
+
+  /**
    * Numero de la Direccion
    */
   numero?: string;
@@ -67,4 +72,9 @@ export interface Address {
    * Piso del address
    */
   piso?: number;
+
+  /**
+   * La provincia de la Direccion
+   */
+  provinciaId?: number;
 }

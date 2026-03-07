@@ -126,55 +126,117 @@
             <!-- Dynamic Form Grid (if config.form is provided) -->
             @if (config.form && formGroup) {
             <form [formGroup]="formGroup" class="m-t-16">
+                <!-- Use custom template if provided, otherwise use the auto-generated grid -->
+                @if (customFormTemplate) {
+                <ng-container *ngTemplateOutlet="customFormTemplate; context: { formGroup: formGroup }"></ng-container>
+                } @else {
                 <div class="dynamic-form-grid"
                     [style.gridTemplateColumns]="'repeat(' + config.form.layout.columns + ', 1fr)'">
-                    @for (field of config.form.fields; track field.name) {
-                    <div class="form-field-wrapper" [style.gridColumn]="'span ' + (field.colSpan || 1)">
-                        @if (field.type === 'checkbox') {
-                        <div class="checkbox-field-container">
-                            <mat-checkbox [formControlName]="$any(field.name)">
-                                {{ field.label | translate }}
-                            </mat-checkbox>
-                        </div>
-                        } @else if (field.type === 'radio') {
-                        <div class="radio-field-container">
-                            <label class="radio-group-label">{{ field.label | translate }}</label>
-                            <mat-radio-group [formControlName]="$any(field.name)" class="radio-group">
-                                @for (opt of field.options; track opt.value) {
-                                <mat-radio-button [value]="opt.value">
-                                    {{ opt.label | translate }}
-                                </mat-radio-button>
-                                }
-                            </mat-radio-group>
-                        </div>
-                        } @else {
-                        <mat-form-field appearance="outline" class="w-100">
-                            <mat-label>{{ field.label | translate }}</mat-label>
+                    @for (field of config.form.fields; track field.name; let i = $index) {
+                    <!-- Skip if this field was already grouped with previous one -->
+                    @if (i > 0 && config.form.fields[i-1].groupWithNext) {
+                    <!-- Skip -->
+                    } @else {
+                    <div class="form-field-wrapper" [class.flex-row-group]="field.groupWithNext"
+                        [style.gridColumn]="'span ' + (field.colSpan || 1)">
 
-                            @if (field.type === 'number') {
-                            <input matInput type="number" [formControlName]="$any(field.name)"
-                                [placeholder]="(field.placeholder || '') | translate">
-                            } @else if (field.type === 'select') {
-                            <mat-select [formControlName]="$any(field.name)">
-                                @for (opt of field.options; track opt.value) {
-                                <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
-                                }
-                            </mat-select>
-                            } @else if (field.type === 'textarea') {
-                            <textarea matInput [formControlName]="$any(field.name)" rows="3"></textarea>
-                            } @else {
-                            <input matInput [type]="field.type" [formControlName]="$any(field.name)"
-                                [placeholder]="(field.placeholder || '') | translate">
-                            }
+                        <!-- Render this field -->
+                        <div class="field-item main-field">
+                            <ng-container *ngTemplateOutlet="fieldRenderer; context: { field: field }"></ng-container>
+                        </div>
 
-                            @if (formGroup.get($any(field.name))?.invalid && formGroup.get($any(field.name))?.touched) {
-                            <mat-error>{{ getErrorMessage($any(field.name)) }}</mat-error>
-                            }
-                        </mat-form-field>
+                        <!-- Render next field if grouped (Horizontal alignment) -->
+                        @if (field.groupWithNext && config.form.fields[i+1]) {
+                        <div class="field-item grouped-item">
+                            <ng-container
+                                *ngTemplateOutlet="fieldRenderer; context: { field: config.form.fields[i+1] }"></ng-container>
+                        </div>
                         }
                     </div>
                     }
+                    }
                 </div>
+                } <!-- end @else (no customFormTemplate) -->
+
+                <!-- Reusable Field Renderer Template -->
+                <ng-template #fieldRenderer let-field="field">
+                    @if (field.type === 'checkbox') {
+                    <div class="checkbox-field-container">
+                        <mat-checkbox [formControlName]="$any(field.name)">
+                            {{ field.label | translate }}
+                        </mat-checkbox>
+                    </div>
+                    } @else if (field.type === 'radio') {
+                    <div class="radio-field-container">
+                        <label class="radio-group-label">{{ field.label | translate }}</label>
+                        <mat-radio-group [formControlName]="$any(field.name)" class="radio-group">
+                            @for (opt of field.options; track opt.value) {
+                            <mat-radio-button [value]="opt.value">
+                                {{ opt.label | translate }}
+                            </mat-radio-button>
+                            }
+                        </mat-radio-group>
+                    </div>
+                    } @else if (field.type === 'password') {
+                    <!--
+                        PASSWORD FIELD — dedicated branch, NOT nested inside @else.
+                        The matSuffix button is a STATIC DIRECT CHILD of mat-form-field.
+                        Angular Material needs this for content projection to the icon-suffix slot.
+                        This is the exact same structure as the super-admin login page.
+                    -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>{{ field.label | translate }}</mat-label>
+                        @if (field.icon) {
+                        <mat-icon matPrefix>{{ field.icon }}</mat-icon>
+                        }
+                        <input matInput [type]="isPasswordVisible(field.name) ? 'text' : 'password'"
+                            [formControlName]="$any(field.name)" [placeholder]="(field.placeholder || '') | translate">
+                        <button mat-icon-button matSuffix type="button"
+                            [hidden]="formGroup.get($any(field.name))?.disabled"
+                            (click)="togglePasswordVisibility(field.name)"
+                            [attr.aria-label]="'Toggle password visibility'">
+                            <mat-icon>{{ isPasswordVisible(field.name) ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </button>
+                        @if (field.hint) {
+                        <mat-hint>{{ field.hint | translate }}</mat-hint>
+                        }
+                        @if (formGroup.get($any(field.name))?.invalid && formGroup.get($any(field.name))?.touched) {
+                        <mat-error>{{ getErrorMessage($any(field.name)) }}</mat-error>
+                        }
+                    </mat-form-field>
+                    } @else {
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>{{ field.label | translate }}</mat-label>
+                        @if (field.icon) {
+                        <mat-icon matPrefix>{{ field.icon }}</mat-icon>
+                        }
+
+                        @if (field.type === 'number') {
+                        <input matInput type="number" [formControlName]="$any(field.name)"
+                            [placeholder]="(field.placeholder || '') | translate">
+                        } @else if (field.type === 'select') {
+                        <mat-select [formControlName]="$any(field.name)">
+                            @for (opt of field.options; track opt.value) {
+                            <mat-option [value]="opt.value">{{ opt.label | translate }}</mat-option>
+                            }
+                        </mat-select>
+                        } @else if (field.type === 'textarea') {
+                        <textarea matInput [formControlName]="$any(field.name)" rows="3"></textarea>
+                        } @else {
+                        <input matInput [type]="field.type" [formControlName]="$any(field.name)"
+                            [placeholder]="(field.placeholder || '') | translate">
+                        }
+
+                        @if (field.hint) {
+                        <mat-hint>{{ field.hint | translate }}</mat-hint>
+                        }
+
+                        @if (formGroup.get($any(field.name))?.invalid && formGroup.get($any(field.name))?.touched) {
+                        <mat-error>{{ getErrorMessage($any(field.name)) }}</mat-error>
+                        }
+                    </mat-form-field>
+                    }
+                </ng-template>
             </form>
             }
 

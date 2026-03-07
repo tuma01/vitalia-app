@@ -58,6 +58,8 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> implements Af
 
     @Input() cellTemplates: { [key: string]: TemplateRef<any> } = {};
     @Input() formGroup?: any; // The ReactiveForm from the implementation
+    @Input() customFormTemplate?: TemplateRef<any>; // Optional custom template for form body
+    passwordVisible: Record<string, boolean> = {};
 
     @ViewChild('grid') grid!: MtxGrid;
 
@@ -109,6 +111,14 @@ export class CrudTemplateComponent<T> extends CrudBaseComponent<T> implements Af
             return this.translate.instant('validation.pattern');
         }
         return '';
+    }
+
+    togglePasswordVisibility(fieldName: string): void {
+        this.passwordVisible[fieldName] = !this.passwordVisible[fieldName];
+    }
+
+    isPasswordVisible(fieldName: string): boolean {
+        return !!this.passwordVisible[fieldName];
     }
 
     clearSelection(): void {

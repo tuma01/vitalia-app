@@ -341,6 +341,12 @@ export class ThemeService {
     body.classList.remove('theme-light', 'theme-dark');
     body.classList.add(isDark ? 'theme-dark' : 'theme-light');
 
+    // 🧱 9. SIDEBAR MODE (Restore missing logic)
+    const userSidebar = this.storage.getItem('sidenav') as 'light' | 'dark' | null;
+    const effectiveSidebar = userSidebar || effectiveMode; // Default sidebar to match layout
+    body.classList.remove('sidebar-light', 'sidebar-dark');
+    body.classList.add(`sidebar-${effectiveSidebar}`);
+
     // 📏 9. DENSIDAD & CUSTOM PROPS
     if (theme.propertiesJson) {
       try {

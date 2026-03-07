@@ -1,4 +1,8 @@
 # Vitalia Web — Module Implementation Guide
+> [!IMPORTANT]
+> **REPOSITORIO DEL BACKEND**: El código del servidor (Spring Boot) se encuentra en:  
+> `F:\PROJECTOS\JAVA\VITALIA\workspace\vitalia-app`
+
 > **LEER OBLIGATORIAMENTE antes de implementar cualquier nueva sección.**  
 > Este documento define la arquitectura estándar que TODOS los módulos deben seguir sin excepción.
 
@@ -440,34 +444,34 @@ Por tanto, la estructura correcta en los JSON es:
 
 ## 10. Configuración del menú (super-admin-menu.json)
 
-Agregar dentro del grupo `medical_catalog`:
+Agregar dentro del grupo correspondiente (ej. `medical_catalog`, `tenant_governance`, etc.):
 
 ```json
 {
     "id": "{modules}",
-    "name": "catalog.{module}.title",
+    "name": "{group}.{module}.title",
     "type": "sub",
     "icon": "icon_name",
     "children": [
         {
             "id": "{module}-list",
-            "name": "catalog.{module}.list",
+            "name": "{group}.{module}.list",
             "type": "link",
-            "route": "/platform/catalog/{modules}/list",
+            "route": "/platform/{path}/{modules}/list",
             "visible": true
         },
         {
             "id": "{module}-add",
-            "name": "catalog.{module}.add",
+            "name": "{group}.{module}.add",
             "type": "link",
-            "route": "/platform/catalog/{modules}/add",
+            "route": "/platform/{path}/{modules}/add",
             "visible": true
         },
         {
             "id": "{module}-edit",
-            "name": "catalog.{module}.edit",
+            "name": "{group}.{module}.edit",
             "type": "link",
-            "route": "/platform/catalog/{modules}/edit",
+            "route": "/platform/{path}/{modules}/edit",
             "visible": false
         }
     ]
@@ -505,7 +509,7 @@ Antes de considerar un módulo completo, verificar cada punto:
 - [ ] Verificar que los 3 archivos tienen el **mismo número de claves** en el bloque del módulo
 
 ### Menú
-- [ ] Entrada en `super-admin-menu.json` dentro del grupo `medical_catalog`
+- [ ] Entrada en `super-admin-menu.json` dentro del grupo correspondiente
 - [ ] Los 3 items: `list` (visible: true), `add` (visible: true), `edit` (visible: false)
 
 ### Código
@@ -531,3 +535,12 @@ Antes de considerar un módulo completo, verificar cada punto:
 | Vacunas | `vaccines/` | `VaccinesListComponent` |
 | Estados Civiles | `demographics/civil-statuses/` | `CivilStatusesListComponent` |
 | Géneros | `demographics/genders/` | `GendersListComponent` |
+---
+
+## 12. Reglas de Multi-tenencia (Best Practices)
+
+Al implementar módulos de gestión para organizaciones (Tenants):
+
+1.  **Filtrado de Global Tenant**: En selectores de organizaciones destinadas a clientes finales, **SIEMPRE** filtrar el inquilino con `type: 'GLOBAL'`. Este inquilino es exclusivo para infraestructura y SuperAdmin.
+2.  **Aislamiento de Datos**: Validar que un administrador solo pueda ser asignado a una organización que no esté en conflicto con su identidad previa.
+3.  **Consistencia de Menú**: Mantener siempre la estructura de "Lista" y "Agregar" como sub-items para garantizar una navegación homogénea.

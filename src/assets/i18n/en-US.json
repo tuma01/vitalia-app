@@ -3,6 +3,24 @@
         "title": "Vitalia",
         "description": "Hospital Management System"
     },
+    "address": {
+        "section_title": "Address",
+        "loading": "Loading geographical data...",
+        "country": "Country",
+        "departamento": "Department",
+        "provincia": "Province",
+        "municipio": "Municipality",
+        "ciudad": "City",
+        "direccion": "Street Address",
+        "direccion_placeholder": "E.g.: 123 Main Ave.",
+        "direccion_required": "Address is required",
+        "numero": "Number",
+        "piso": "Floor",
+        "casillaPostal": "PO Box",
+        "select_country_first": "Select a country first",
+        "select_departamento_first": "Select a department first",
+        "select_provincia_first": "Select a province first"
+    },
     "common": {
         "search": "Search",
         "id": "ID",
@@ -48,8 +66,18 @@
         "field_max_length": "Maximum {{max}} characters",
         "delete_success": "Record deleted successfully",
         "delete_error": "Error deleting record. Please try again",
-        "active": "Active",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "show": "Show",
+        "hide": "Hide",
+        "MASCULINO": "Male",
+        "FEMENINO": "Female",
+        "OTRO": "Other",
+        "SOLTERO": "Single",
+        "CASADO": "Married",
+        "DIVORCIADO": "Divorced",
+        "VIUDO": "Widowed",
+        "PASSPORT": "Passport",
+        "FOREIGN_ID": "Foreign ID"
     },
     "entity": {
         "country": "Country",
@@ -261,6 +289,19 @@
         "financial_reports": "Financial Reports",
         "clinical_quality": "Clinical Quality",
         "geography_management": "Geography Management",
+        "person": {
+            "fields": {
+                "nombre": "Name",
+                "segundoNombre": "Middle Name",
+                "apellidoPaterno": "First Last Name",
+                "apellidoMaterno": "Second Last Name",
+                "fechaNacimiento": "Date of Birth",
+                "genero": "Gender",
+                "estadoCivil": "Civil Status",
+                "telefono": "Phone",
+                "email": "Personal Email"
+            }
+        },
         "tenant_governance": {
             "title": "Tenant Governance",
             "organizations": {
@@ -277,7 +318,12 @@
                     "type": "Type",
                     "isActive": "Active",
                     "themeId": "Visual Theme",
-                    "description": "Description"
+                    "description": "Description",
+                    "address_direccion": "Street Address",
+                    "address_ciudad": "City",
+                    "address_numero": "Number",
+                    "address_piso": "Floor",
+                    "address_casillaPostal": "PO Box"
                 },
                 "types": {
                     "hospital": "Hospital",
@@ -285,6 +331,33 @@
                     "pharmacy": "Pharmacy",
                     "laboratory": "Laboratory",
                     "other": "Other"
+                },
+                "tabs": {
+                    "general": "General Information",
+                    "admins": "Administrators"
+                }
+            },
+            "onboarding": {
+                "title": "Administrator Management",
+                "singular": "Administrator",
+                "plural": "Administrators",
+                "list": "Administrators List",
+                "add": "Add Administrator",
+                "edit": "Edit Administrator",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "Organization",
+                    "nombre": "First Name",
+                    "apellidoPaterno": "First Surname",
+                    "apellidoMaterno": "Second Surname",
+                    "telefono": "Phone",
+                    "email": "Email",
+                    "role_info": "Assigned Role",
+                    "password": "Password",
+                    "change_password": "Change password",
+                    "password_hint": "Field protected. Use the checkbox to enable editing.",
+                    "password_placeholder_edit": "New password",
+                    "adminLevel": "Admin Level"
                 }
             }
         },
@@ -406,6 +479,7 @@
                     "id": "ID",
                     "code": "Code",
                     "name": "Name",
+                    "type": "Type",
                     "active": "Active"
                 }
             },
@@ -436,6 +510,12 @@
                     "code": "Code",
                     "name": "Name",
                     "description": "Description",
+                    "targetProfession": "Target Profession",
+                    "targetProfession_options": {
+                        "doctor": "Doctor",
+                        "nurse": "Nurse",
+                        "both": "Both"
+                    },
                     "active": "Active"
                 }
             },

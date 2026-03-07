@@ -8658,6 +8658,18 @@
             "format": "int64",
             "description": "El departamento de la Direccion",
             "example": 2
+          },
+          "provinciaId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "La provincia de la Direccion",
+            "example": 3
+          },
+          "municipioId": {
+            "type": "integer",
+            "format": "int64",
+            "description": "El municipio de la Direccion",
+            "example": 5
           }
         },
         "required": [

@@ -3,6 +3,24 @@
         "title": "Vitalia",
         "description": "Sistema de Gestión Hospitalaria"
     },
+    "address": {
+        "section_title": "Dirección",
+        "loading": "Cargando datos geográficos...",
+        "country": "País",
+        "departamento": "Departamento",
+        "provincia": "Provincia",
+        "municipio": "Municipio",
+        "ciudad": "Ciudad",
+        "direccion": "Direccion",
+        "direccion_placeholder": "Ej: Av. Principal 123",
+        "direccion_required": "La dirección es requerida",
+        "numero": "Número",
+        "piso": "Piso",
+        "casillaPostal": "Casilla Postal",
+        "select_country_first": "Seleccione un país primero",
+        "select_departamento_first": "Seleccione un departamento primero",
+        "select_provincia_first": "Seleccione una provincia primero"
+    },
     "common": {
         "search": "Buscar",
         "id": "ID",
@@ -48,8 +66,18 @@
         "field_max_length": "Máximo {{max}} caracteres",
         "delete_success": "Registro eliminado correctamente",
         "delete_error": "Error al eliminar. Inténtalo de nuevo",
-        "active": "Activo",
-        "inactive": "Inactivo"
+        "inactive": "Inactivo",
+        "show": "Mostrar",
+        "hide": "Ocultar",
+        "MASCULINO": "Masculino",
+        "FEMENINO": "Femenino",
+        "OTRO": "Otro",
+        "SOLTERO": "Soltero(a)",
+        "CASADO": "Casado(a)",
+        "DIVORCIADO": "Divorciado(a)",
+        "VIUDO": "Viudo(a)",
+        "PASSPORT": "Pasaporte",
+        "FOREIGN_ID": "ID Extranjero"
     },
     "crud": {
         "save_success": "{{entity}} guardado correctamente",
@@ -261,6 +289,19 @@
         "financial_reports": "Informes Financieros",
         "clinical_quality": "Calidad Clínica",
         "geography_management": "Gestión de Geografía",
+        "person": {
+            "fields": {
+                "nombre": "Nombre",
+                "segundoNombre": "Segundo Nombre",
+                "apellidoPaterno": "Primer Apellido",
+                "apellidoMaterno": "Segundo Apellido",
+                "fechaNacimiento": "Fecha de Nacimiento",
+                "genero": "Género",
+                "estadoCivil": "Estado Civil",
+                "telefono": "Teléfono",
+                "email": "Correo Personal"
+            }
+        },
         "tenant_governance": {
             "title": "Gobernanza de Tenencia",
             "organizations": {
@@ -277,7 +318,12 @@
                     "type": "Tipo",
                     "isActive": "Activo",
                     "themeId": "Tema Visual",
-                    "description": "Descripción"
+                    "description": "Descripción",
+                    "address_direccion": "Dirección",
+                    "address_ciudad": "Ciudad",
+                    "address_numero": "Número",
+                    "address_piso": "Piso",
+                    "address_casillaPostal": "Casilla Postal"
                 },
                 "types": {
                     "hospital": "Hospital",
@@ -285,6 +331,33 @@
                     "pharmacy": "Farmacia",
                     "laboratory": "Laboratorio",
                     "other": "Otro"
+                },
+                "tabs": {
+                    "general": "Información General",
+                    "admins": "Administradores"
+                }
+            },
+            "onboarding": {
+                "title": "Gestión de Administradores",
+                "singular": "Administrador",
+                "plural": "Administradores",
+                "list": "Lista de Administradores",
+                "add": "Agregar Administrador",
+                "edit": "Editar Administrador",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "Organización",
+                    "nombre": "Nombre",
+                    "apellidoPaterno": "Primer Apellido",
+                    "apellidoMaterno": "Segundo Apellido",
+                    "telefono": "Teléfono",
+                    "email": "Correo Electrónico",
+                    "role_info": "Rol Asignado",
+                    "password": "Contraseña",
+                    "change_password": "Cambiar contraseña",
+                    "password_hint": "Campo protegido. Use el checkbox para habilitar el cambio.",
+                    "password_placeholder_edit": "Nueva contraseña",
+                    "adminLevel": "Nivel de Admin"
                 }
             }
         },
@@ -626,7 +699,7 @@
     "theme_branding": "Tema y Marca",
     "primary_color": "Color Primario",
     "accent_color": "Color de Acento",
-    "warm_color": "Color de Advertencia",
+    "warn_color": "Color de Advertencia",
     "upload_logo": "Cargar Logo",
     "upload_favicon": "Cargar Favicon",
     "theme_mode": "Modo de Tema",
