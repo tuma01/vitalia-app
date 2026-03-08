@@ -56,7 +56,6 @@ public class AddressServiceImpl implements GenericService<Address, AddressSearch
     @Transactional
     public Address create(Address entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        attachGeographicUnits(entity);
         return addressRepository.save(entity);
     }
 
@@ -72,30 +71,7 @@ public class AddressServiceImpl implements GenericService<Address, AddressSearch
                         () -> new ResourceNotFoundException(Address.class.getName(), "error.resource.not.found", id));
 
         entity.setId(id);
-        attachGeographicUnits(entity);
         return addressRepository.save(entity);
-    }
-
-    private void attachGeographicUnits(Address entity) {
-        if (entity.getCountry() != null && entity.getCountry().getId() != null) {
-            entity.setCountry(countryRepository.findById(entity.getCountry().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Country", "id", entity.getCountry().getId())));
-        }
-        if (entity.getDepartamento() != null && entity.getDepartamento().getId() != null) {
-            entity.setDepartamento(departamentoRepository.findById(entity.getDepartamento().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Departamento", "id",
-                            entity.getDepartamento().getId())));
-        }
-        if (entity.getProvincia() != null && entity.getProvincia().getId() != null) {
-            entity.setProvincia(provinciaRepository.findById(entity.getProvincia().getId())
-                    .orElseThrow(
-                            () -> new ResourceNotFoundException("Provincia", "id", entity.getProvincia().getId())));
-        }
-        if (entity.getMunicipio() != null && entity.getMunicipio().getId() != null) {
-            entity.setMunicipio(municipioRepository.findById(entity.getMunicipio().getId())
-                    .orElseThrow(
-                            () -> new ResourceNotFoundException("Municipio", "id", entity.getMunicipio().getId())));
-        }
     }
 
     @Override

@@ -11,4 +11,8 @@ public interface AuditableIgnoreConfig {
     @Mapping(target = "lastModifiedDate", ignore = true)
     @interface IgnoreAuditableFields {
     }
+
+    @Mapping(target = "deleted", ignore = true)
+    @interface IgnoreSoftDelete {
+    }
 }

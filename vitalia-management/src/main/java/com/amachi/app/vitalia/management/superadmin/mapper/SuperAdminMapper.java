@@ -21,12 +21,14 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
+    @AuditableIgnoreConfig.IgnoreSoftDelete
     SuperAdmin toEntity(SuperAdminDto dto);
 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
     @Mapping(target = "id", ignore = true)
+    @AuditableIgnoreConfig.IgnoreSoftDelete
     void updateEntityFromDto(SuperAdminDto dto, @MappingTarget SuperAdmin entity);
 
     @Override
