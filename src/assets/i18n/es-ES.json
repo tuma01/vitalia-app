@@ -124,6 +124,30 @@
         "logout": "Cerrar Sesión"
     },
     "menu": {
+        "platform_governance": {
+            "title": "Gobernanza de Plataforma",
+            "super_admins": {
+                "title": "Gestión de SuperAdmins",
+                "singular": "SuperAdmin",
+                "plural": "SuperAdmins",
+                "list": "Lista de SuperAdmins",
+                "add": "Agregar SuperAdmin",
+                "edit": "Editar SuperAdmin",
+                "fields": {
+                    "id": "ID",
+                    "nombre": "Nombre",
+                    "apellidoPaterno": "Primer Apellido",
+                    "apellidoMaterno": "Segundo Apellido",
+                    "email": "Correo Electrónico (Login)",
+                    "level": "Nivel de Acceso",
+                    "globalAccess": "Acceso Global",
+                    "password": "Contraseña",
+                    "change_password": "Cambiar contraseña",
+                    "password_hint": "Campo protegido. Use el checkbox para habilitar el cambio.",
+                    "password_placeholder_edit": "Nueva contraseña"
+                }
+            }
+        },
         "hospital": "Hospital",
         "hospitals": "Hospitales",
         "hospitalDepartments": "Departamentos Hospitalarios",
@@ -260,9 +284,7 @@
         "staff_management": "Gestión de Personal",
         "my_shifts": "Mis Turnos",
         "shift_handover": "Entrega de Turno",
-        "tenant_management": "Gestión de Inquilinos",
         "hospitals_clinics": "Hospitales y Clínicas",
-        "tenant_onboarding": "Incorporación de Inquilinos",
         "subscriptions_billing": "Suscripciones y Facturación",
         "master_registry": "Registro Maestro",
         "master_patient_index": "Índice Maestro de Pacientes",
@@ -337,7 +359,7 @@
                     "admins": "Administradores"
                 }
             },
-            "onboarding": {
+            "administrators": {
                 "title": "Gestión de Administradores",
                 "singular": "Administrador",
                 "plural": "Administradores",
@@ -364,8 +386,6 @@
         "billing_licensing": "Planes y Licenciamiento",
         "tenant_config": "Configuración Global de Tenencia",
         "medical_catalog": "Catálogo Médico Global",
-        "security_policies": "Políticas MFA y Seguridad",
-        "iam_superadmins": "Gestión de SuperAdmins",
         "consent_registry": "Registro de Consentimiento (DSQ)",
         "bridge_connectors": "Conectores (Bridge)",
         "fhir_hl7_profiles": "Perfiles FHIR/HL7",
@@ -635,9 +655,6 @@
                     }
                 }
             }
-        },
-        "dashboard": {
-            "title": "Panel de Control"
         }
     },
     "dashboard": {

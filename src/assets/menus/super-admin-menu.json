@@ -48,28 +48,28 @@
                 },
                 {
                     "id": "tenant-admins",
-                    "name": "tenant_governance.onboarding.title",
+                    "name": "tenant_governance.administrators.title",
                     "type": "sub",
                     "icon": "admin_panel_settings",
                     "visible": true,
                     "children": [
                         {
                             "id": "admin-list",
-                            "name": "tenant_governance.onboarding.list",
+                            "name": "tenant_governance.administrators.list",
                             "type": "link",
                             "route": "/platform/tenants/administrators/list",
                             "visible": true
                         },
                         {
                             "id": "admin-add",
-                            "name": "tenant_governance.onboarding.add",
+                            "name": "tenant_governance.administrators.add",
                             "type": "link",
                             "route": "/platform/tenants/administrators/add",
                             "visible": true
                         },
                         {
                             "id": "admin-edit",
-                            "name": "tenant_governance.onboarding.edit",
+                            "name": "tenant_governance.administrators.edit",
                             "type": "link",
                             "route": "/platform/tenants/administrators/edit",
                             "visible": false
@@ -582,6 +582,44 @@
             ]
         },
         {
+            "id": "platform_governance",
+            "name": "platform_governance.title",
+            "type": "group",
+            "icon": "admin_panel_settings",
+            "visible": true,
+            "children": [
+                {
+                    "id": "iam-superadmins",
+                    "name": "platform_governance.super_admins.title",
+                    "type": "sub",
+                    "icon": "manage_accounts",
+                    "children": [
+                        {
+                            "id": "superadmin-list",
+                            "name": "platform_governance.super_admins.list",
+                            "type": "link",
+                            "route": "/platform/system/iam/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "superadmin-add",
+                            "name": "platform_governance.super_admins.add",
+                            "type": "link",
+                            "route": "/platform/system/iam/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "superadmin-edit",
+                            "name": "platform_governance.super_admins.edit",
+                            "type": "link",
+                            "route": "/platform/system/iam/edit",
+                            "visible": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "security_compliance",
             "name": "security_compliance",
             "type": "group",
@@ -601,13 +639,6 @@
                     "type": "link",
                     "route": "/platform/system/security",
                     "icon": "admin_panel_settings"
-                },
-                {
-                    "id": "iam-superadmins",
-                    "name": "iam_superadmins",
-                    "type": "link",
-                    "route": "/platform/system/iam",
-                    "icon": "manage_accounts"
                 },
                 {
                     "id": "consent-registry",

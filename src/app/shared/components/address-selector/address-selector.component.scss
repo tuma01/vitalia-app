@@ -1,0 +1,60 @@
+:host {
+    display: block;
+}
+
+.address-selector {
+    width: 100%;
+}
+
+.address-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 0;
+    color: var(--mat-sys-on-surface-variant, #49454f);
+    font-size: 14px;
+
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.address-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mat-sys-primary, #1565c0);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant, #cac4d0);
+    margin-bottom: 16px;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.address-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 16px;
+
+    .col-span-2 {
+        grid-column: span 2;
+    }
+}

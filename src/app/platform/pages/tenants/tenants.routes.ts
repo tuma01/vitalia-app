@@ -16,7 +16,7 @@ export const routes: Routes = [
             },
             {
                 path: 'administrators',
-                loadChildren: () => import('./onboardings/onboardings.routes').then(m => m.routes)
+                loadChildren: () => import('./administrators/administrators.routes').then(m => m.routes)
             },
             {
                 path: 'billing',

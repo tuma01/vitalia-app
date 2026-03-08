@@ -92,7 +92,6 @@ export class ThemeService {
       this.appContext.contextChanges$,
       this.appContext.tenantChanges$
     ).pipe(
-      skip(2), // Skip both initial subjects emissions
       debounceTime(50) // Prevent double-load when context and tenant change simultaneously
     ).subscribe(async () => {
       console.log('[ThemeService] 🔄 Context or Tenant changed, reloading settings...');
