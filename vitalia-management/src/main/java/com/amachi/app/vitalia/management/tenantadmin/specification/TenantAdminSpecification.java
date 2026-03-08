@@ -32,6 +32,14 @@ public class TenantAdminSpecification implements Specification<TenantAdmin> {
             predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
         }
 
+        if (criteria.getNombre() != null && !criteria.getNombre().isBlank()) {
+            predicates.add(cb.like(cb.lower(root.get("nombre")), "%" + criteria.getNombre().toLowerCase() + "%"));
+        }
+
+        if (criteria.getApellidoPaterno() != null && !criteria.getApellidoPaterno().isBlank()) {
+            predicates.add(cb.like(cb.lower(root.get("apellidoPaterno")), "%" + criteria.getApellidoPaterno().toLowerCase() + "%"));
+        }
+
         if (criteria.getEnabled() != null) {
             predicates.add(cb.equal(root.get("enabled"), criteria.getEnabled()));
         }

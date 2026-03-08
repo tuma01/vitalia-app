@@ -6,12 +6,19 @@ import com.amachi.app.vitalia.management.superadmin.dto.search.SuperAdminSearchD
 import com.amachi.app.vitalia.management.superadmin.entity.SuperAdmin;
 import com.amachi.app.vitalia.management.superadmin.repository.SuperAdminRepository;
 import com.amachi.app.vitalia.management.superadmin.specification.SuperAdminSpecification;
+import com.amachi.app.core.auth.entity.User;
+import com.amachi.app.core.auth.repository.UserAccountRepository;
+import com.amachi.app.core.auth.repository.UserRepository;
+import com.amachi.app.core.common.enums.SuperAdminLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +33,8 @@ public class SuperAdminServiceImpl implements GenericService<SuperAdmin, SuperAd
 
     private final SuperAdminRepository superAdminRepository;
     private final SuperAdminDomainServiceImpl superAdminDomainService;
+    private final UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
 
     @Override
     public List<SuperAdmin> getAll() {
@@ -50,6 +59,7 @@ public class SuperAdminServiceImpl implements GenericService<SuperAdmin, SuperAd
     @Override
     public SuperAdmin create(SuperAdmin entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        validateAccessLevel(SuperAdminLevel.LEVEL_2); // Min Level 2 to create
         superAdminDomainService.encodePasswordIfNeeded(entity);
         SuperAdmin savedEntity = superAdminRepository.save(entity);
         superAdminDomainService.completeAccountSetup(savedEntity);
@@ -60,6 +70,8 @@ public class SuperAdminServiceImpl implements GenericService<SuperAdmin, SuperAd
     public SuperAdmin update(Long id, SuperAdmin entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        validateAccessLevel(SuperAdminLevel.LEVEL_2); // Min Level 2 to update
+
         // Verificar que el SuperAdmin exista
         superAdminRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(SuperAdmin.class.getName(), "error.resource.not.found",
@@ -71,6 +83,8 @@ public class SuperAdminServiceImpl implements GenericService<SuperAdmin, SuperAd
     @Override
     public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
+        validateAccessLevel(SuperAdminLevel.LEVEL_1); // Only Level 1 can delete
+
         SuperAdmin superAdmin = superAdminRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(SuperAdmin.class.getName(), "error.resource.not.found",
                         id));
@@ -82,5 +96,25 @@ public class SuperAdminServiceImpl implements GenericService<SuperAdmin, SuperAd
         }
 
         superAdminRepository.delete(superAdmin);
+    }
+
+    private void validateAccessLevel(SuperAdminLevel requiredLevel) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
+        if (principal instanceof UserDetails) {
+            email = ((UserDetails) principal).getUsername();
+        } else {
+            email = principal.toString();
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AccessDeniedException("User not found in context"));
+
+        SuperAdmin currentAdmin = superAdminRepository.findByUser(user)
+                .orElseThrow(() -> new AccessDeniedException("Current user is not a SuperAdmin"));
+
+        if (currentAdmin.getLevel().ordinal() > requiredLevel.ordinal()) {
+            throw new AccessDeniedException("Insufficient access level. Required: " + requiredLevel);
+        }
     }
 }

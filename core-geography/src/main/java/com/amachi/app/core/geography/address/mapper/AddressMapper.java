@@ -6,30 +6,64 @@ import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.core.geography.address.dto.AddressDto;
 import com.amachi.app.core.geography.address.entity.Address;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
-public interface AddressMapper extends EntityDtoMapper<Address, AddressDto> {
+public abstract class AddressMapper implements EntityDtoMapper<Address, AddressDto> {
+
+    @Autowired
+    protected com.amachi.app.core.geography.country.repository.CountryRepository countryRepository;
+    @Autowired
+    protected com.amachi.app.core.geography.departamento.repository.DepartamentoRepository departamentoRepository;
+    @Autowired
+    protected com.amachi.app.core.geography.provincia.repository.ProvinciaRepository provinciaRepository;
+    @Autowired
+    protected com.amachi.app.core.geography.municipio.repository.MunicipioRepository municipioRepository;
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
-    @Mapping(target = "country.id", source = "countryId")
-    @Mapping(target = "departamento.id", source = "departamentoId")
-    @Mapping(target = "provincia.id", source = "provinciaId")
-    @Mapping(target = "municipio.id", source = "municipioId")
-    Address toEntity(AddressDto dto);
+    @Mapping(target = "country", source = "countryId", qualifiedByName = "loadCountry")
+    @Mapping(target = "departamento", source = "departamentoId", qualifiedByName = "loadDepartamento")
+    @Mapping(target = "provincia", source = "provinciaId", qualifiedByName = "loadProvincia")
+    @Mapping(target = "municipio", source = "municipioId", qualifiedByName = "loadMunicipio")
+    public abstract Address toEntity(AddressDto dto);
 
     @Override
     @Mapping(target = "countryId", source = "country.id")
     @Mapping(target = "departamentoId", source = "departamento.id")
     @Mapping(target = "provinciaId", source = "provincia.id")
     @Mapping(target = "municipioId", source = "municipio.id")
-    AddressDto toDto(Address entity);
+    public abstract AddressDto toDto(Address entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @AuditableIgnoreConfig.IgnoreAuditableFields
-    @Mapping(target = "country.id", source = "countryId")
-    @Mapping(target = "departamento.id", source = "departamentoId")
-    @Mapping(target = "provincia.id", source = "provinciaId")
-    @Mapping(target = "municipio.id", source = "municipioId")
-    void updateEntityFromDto(AddressDto dto, @MappingTarget Address entity);
+    @Mapping(target = "country", source = "countryId", qualifiedByName = "loadCountry")
+    @Mapping(target = "departamento", source = "departamentoId", qualifiedByName = "loadDepartamento")
+    @Mapping(target = "provincia", source = "provinciaId", qualifiedByName = "loadProvincia")
+    @Mapping(target = "municipio", source = "municipioId", qualifiedByName = "loadMunicipio")
+    public abstract void updateEntityFromDto(AddressDto dto, @MappingTarget Address entity);
+
+    @Named("loadCountry")
+    protected com.amachi.app.core.geography.country.entity.Country loadCountry(Long id) {
+        if (id == null) return null;
+        return countryRepository.findById(id).orElse(null);
+    }
+
+    @Named("loadDepartamento")
+    protected com.amachi.app.core.geography.departamento.entity.Departamento loadDepartamento(Long id) {
+        if (id == null) return null;
+        return departamentoRepository.findById(id).orElse(null);
+    }
+
+    @Named("loadProvincia")
+    protected com.amachi.app.core.geography.provincia.entity.Provincia loadProvincia(Long id) {
+        if (id == null) return null;
+        return provinciaRepository.findById(id).orElse(null);
+    }
+
+    @Named("loadMunicipio")
+    protected com.amachi.app.core.geography.municipio.entity.Municipio loadMunicipio(Long id) {
+        if (id == null) return null;
+        return municipioRepository.findById(id).orElse(null);
+    }
 }

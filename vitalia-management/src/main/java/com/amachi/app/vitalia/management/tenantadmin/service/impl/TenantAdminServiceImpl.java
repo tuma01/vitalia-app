@@ -1,12 +1,10 @@
 package com.amachi.app.vitalia.management.tenantadmin.service.impl;
 
-import com.amachi.app.core.auth.entity.Role;
-import com.amachi.app.core.auth.entity.User;
-import com.amachi.app.core.auth.entity.UserTenantRole;
+import com.amachi.app.core.common.enums.TenantAdminLevel;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
 import com.amachi.app.core.common.service.GenericService;
-import com.amachi.app.core.common.utils.AppConstants;
+import com.amachi.app.core.domain.tenant.repository.TenantRepository;
 import com.amachi.app.vitalia.management.tenantadmin.dto.search.TenantAdminSearchDto;
 import com.amachi.app.vitalia.management.tenantadmin.entity.TenantAdmin;
 import com.amachi.app.vitalia.management.tenantadmin.repository.TenantAdminRepository;
@@ -33,7 +31,7 @@ public class TenantAdminServiceImpl implements GenericService<TenantAdmin, Tenan
 
     private final TenantAdminRepository tenantAdminRepository;
     private final TenantAdminDomainServiceImpl tenantAdminDomainService;
-    private final com.amachi.app.core.domain.tenant.repository.TenantRepository tenantRepository;
+    private final TenantRepository tenantRepository;
 
     @Override
     public List<TenantAdmin> getAll() {
@@ -61,21 +59,26 @@ public class TenantAdminServiceImpl implements GenericService<TenantAdmin, Tenan
     public TenantAdmin create(TenantAdmin entity) {
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
 
-        // Handle existing Tenant attachment to avoid "detached entity passed to
-        // persist"
+        // Handle existing Tenant attachment to avoid "detached entity passed to persist"
         if (entity.getTenant() != null && entity.getTenant().getId() != null) {
             Tenant detachedTenant = entity.getTenant();
             Tenant existingTenant = tenantRepository.findById(detachedTenant.getId())
                     .orElseThrow(() -> new ResourceNotFoundException(Tenant.class.getName(),
                             "error.resource.not.found", detachedTenant.getId()));
 
-            // Link Address if it was set on the detached entity (e.g. by
-            // handleTenantAddress)
+            // Link Address if it was set on the detached entity (e.g. by handleTenantAddress)
             if (detachedTenant.getAddressId() != null) {
                 existingTenant.setAddressId(detachedTenant.getAddressId());
             }
 
             entity.setTenant(existingTenant);
+
+            // 🛡️ Business Rule: The first administrator must be LEVEL_1
+            long adminCount = tenantAdminRepository.countByTenantIdAndDeletedFalse(existingTenant.getId());
+            if (adminCount == 0) {
+                log.info("Setting first administrator for tenant '{}' to LEVEL_1", existingTenant.getName());
+                entity.setAdminLevel(TenantAdminLevel.LEVEL_1);
+            }
         }
 
         TenantAdmin savedEntity = tenantAdminRepository.save(entity);
@@ -88,31 +91,61 @@ public class TenantAdminServiceImpl implements GenericService<TenantAdmin, Tenan
     public TenantAdmin update(Long id, TenantAdmin entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        tenantAdminRepository.findById(id)
+
+        TenantAdmin existingAdmin = tenantAdminRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TenantAdmin.class.getName(),
                         "error.resource.not.found", id));
+
+        // 🛡️ Business Rule: Cannot downgrade the last LEVEL_1 administrator
+        if (existingAdmin.getAdminLevel() == TenantAdminLevel.LEVEL_1 &&
+            entity.getAdminLevel() != TenantAdminLevel.LEVEL_1) {
+
+            long level1Count = tenantAdminRepository.countByTenantIdAndAdminLevelAndDeletedFalse(existingAdmin.getTenant().getId(),
+                    TenantAdminLevel.LEVEL_1);
+
+            if (level1Count <= 1) {
+                throw new IllegalStateException(String.format(
+                        "Cannot downgrade the last LEVEL_1 administrator for Tenant '%s'.",
+                        existingAdmin.getTenant().getName()));
+            }
+        }
+
         entity.setId(id);
         return tenantAdminRepository.save(entity);
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         TenantAdmin tenantAdmin = tenantAdminRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TenantAdmin.class.getName(),
                         "error.resource.not.found", id));
 
-        // 🛡️ Last Man Standing Protection (Tenant Scoped)
-        if (tenantAdmin.getTenant() != null) {
-            long adminCount = tenantAdminRepository.countByTenantId(tenantAdmin.getTenant().getId());
-            if (adminCount <= 1) {
+        // 🛡️ Last Man Standing Protection (Ensuring at least one LEVEL_1 remains)
+        if (tenantAdmin.getTenant() != null &&
+            tenantAdmin.getAdminLevel() == TenantAdminLevel.LEVEL_1) {
+
+            long level1Count = tenantAdminRepository.countByTenantIdAndAdminLevelAndDeletedFalse(tenantAdmin.getTenant().getId(),
+                    TenantAdminLevel.LEVEL_1);
+
+            if (level1Count <= 1) {
                 throw new IllegalStateException(
                         String.format(
-                                "Cannot delete the last administrator for Tenant '%s'. Assign a new administrator before deleting this one.",
+                                "Cannot delete the last LEVEL_1 administrator for Tenant '%s'. Assign a new LEVEL_1 administrator before deleting this one.",
                                 tenantAdmin.getTenant().getName()));
             }
         }
 
-        tenantAdminRepository.delete(tenantAdmin);
+        // 🛡️ Logical Deletion
+        tenantAdmin.setDeleted(true);
+
+        // Disable linked user account
+        if (tenantAdmin.getUser() != null) {
+            tenantAdmin.getUser().setEnabled(false);
+        }
+
+        tenantAdminRepository.save(tenantAdmin);
+        log.info("Logically deleted TenantAdmin with ID: {}", id);
     }
 }

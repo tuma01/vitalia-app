@@ -38,6 +38,7 @@ public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAd
         // MapStruct mapeará automáticamente TenantAdminDto.address ->
         // TenantAdmin.address
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
+        @AuditableIgnoreConfig.IgnoreSoftDelete
         TenantAdmin toEntity(TenantAdminDto dto);
 
         @AuditableIgnoreConfig.IgnoreAuditableFields
@@ -46,6 +47,7 @@ public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAd
         // @Mapping(target = "address", source = "addressId")
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
         @Mapping(target = "id", ignore = true)
+        @AuditableIgnoreConfig.IgnoreSoftDelete
         void updateEntityFromDto(TenantAdminDto dto, @MappingTarget TenantAdmin entity);
 
         @Override

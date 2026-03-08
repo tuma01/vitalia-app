@@ -18,6 +18,8 @@ public class TenantAdminSearchDto implements BaseSearchDto {
     private Long id;
     private String tenantCode;
     private String email;
+    private String nombre;
+    private String apellidoPaterno;
     private Boolean enabled;
 
     @Override

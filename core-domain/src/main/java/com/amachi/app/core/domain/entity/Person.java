@@ -26,6 +26,9 @@ import java.util.Set;
 // are visible.
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
 @Filter(name = "tenantFilter", condition = "exists (select 1 from person_tenant pt where pt.fk_id_person = id and pt.fk_id_tenant = :tenantId)")
+// 🛡️ SOFT DELETE: Filter out logically deleted records by default
+@FilterDef(name = "deletedFilter")
+@Filter(name = "deletedFilter", condition = "DELETED = false")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -55,6 +58,10 @@ public class Person extends Auditable<String> implements Model {
     @Size(min = 3, max = 50)
     @Column(name = "NOMBRE", nullable = false)
     private String nombre;
+
+    @Column(name = "DELETED", nullable = false)
+    @Builder.Default
+    private boolean deleted = false;
 
     @Column(name = "SEGUNDO_NOMBRE", length = 50)
     private String segundoNombre;
