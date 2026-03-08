@@ -1,0 +1,106 @@
+<div [formGroup]="parentForm" class="person-form-container">
+    <div class="form-grid">
+        <!-- Identificación Section -->
+        @if (config.showIdentification) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.catalog.identification_type.singular' | translate }}</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-select formControlName="documentType" [required]="!!config.isIdentificationRequired">
+                <mat-option value="DNI">DNI / CI</mat-option>
+                <mat-option value="PASSPORT">{{ 'common.PASSPORT' | translate }}</mat-option>
+                <mat-option value="FOREIGN_ID">{{ 'common.FOREIGN_ID' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.catalog.identification_type.fields.id' | translate }}</mat-label>
+            <mat-icon matPrefix>fingerprint</mat-icon>
+            <input matInput formControlName="nationalId" [required]="!!config.isIdentificationRequired">
+        </mat-form-field>
+        }
+
+        <!-- Names Section -->
+        <mat-form-field appearance="outline" [class.col-span-1]="config.showMiddleName"
+            [class.col-span-2]="!config.showMiddleName">
+            <mat-label>{{ 'menu.person.fields.nombre' | translate }}</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput formControlName="nombre" required>
+        </mat-form-field>
+
+        @if (config.showMiddleName) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.segundoNombre' | translate }}</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input matInput formControlName="segundoNombre">
+        </mat-form-field>
+        }
+
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.apellidoPaterno' | translate }}</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <input matInput formControlName="apellidoPaterno" required>
+        </mat-form-field>
+
+        @if (config.showMaidenName) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.apellidoMaterno' | translate }}</mat-label>
+            <mat-icon matPrefix>groups</mat-icon>
+            <input matInput formControlName="apellidoMaterno">
+        </mat-form-field>
+        }
+
+        <!-- Demographics Section -->
+        @if (config.showBirthDate) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.fechaNacimiento' | translate }}</mat-label>
+            <mat-icon matPrefix>cake</mat-icon>
+            <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento"
+                [required]="!!config.isBirthDateRequired">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+        }
+
+        @if (config.showGender) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.genero' | translate }}</mat-label>
+            <mat-icon matPrefix>wc</mat-icon>
+            <mat-select formControlName="genero" [required]="!!config.isGenderRequired">
+                <mat-option value="MASCULINO">{{ 'common.MASCULINO' | translate }}</mat-option>
+                <mat-option value="FEMENINO">{{ 'common.FEMENINO' | translate }}</mat-option>
+                <mat-option value="OTRO">{{ 'common.OTRO' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        }
+
+        @if (config.showCivilStatus) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.estadoCivil' | translate }}</mat-label>
+            <mat-icon matPrefix>favorite</mat-icon>
+            <mat-select formControlName="estadoCivil">
+                <mat-option value="SOLTERO">{{ 'common.SOLTERO' | translate }}</mat-option>
+                <mat-option value="CASADO">{{ 'common.CASADO' | translate }}</mat-option>
+                <mat-option value="DIVORCIADO">{{ 'common.DIVORCIADO' | translate }}</mat-option>
+                <mat-option value="VIUDO">{{ 'common.VIUDO' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        }
+
+        <!-- Contact Section -->
+        @if (config.showPhone) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.telefono' | translate }}</mat-label>
+            <mat-icon matPrefix>phone</mat-icon>
+            <input matInput formControlName="telefono" [required]="!!config.isPhoneRequired">
+        </mat-form-field>
+        }
+
+        @if (config.showPersonalEmail) {
+        <mat-form-field appearance="outline" class="col-span-1">
+            <mat-label>{{ 'menu.person.fields.email' | translate }}</mat-label>
+            <mat-icon matPrefix>contact_mail</mat-icon>
+            <input matInput formControlName="email">
+        </mat-form-field>
+        }
+    </div>
+</div>

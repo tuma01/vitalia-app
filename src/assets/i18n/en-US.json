@@ -124,6 +124,30 @@
         "logout": "Logout"
     },
     "menu": {
+        "platform_governance": {
+            "title": "Platform Governance",
+            "super_admins": {
+                "title": "SuperAdmin Management",
+                "singular": "SuperAdmin",
+                "plural": "SuperAdmins",
+                "list": "SuperAdmins List",
+                "add": "Add SuperAdmin",
+                "edit": "Edit SuperAdmin",
+                "fields": {
+                    "id": "ID",
+                    "nombre": "First Name",
+                    "apellidoPaterno": "First Surname",
+                    "apellidoMaterno": "Second Surname",
+                    "email": "Email (Login)",
+                    "level": "Access Level",
+                    "globalAccess": "Global Access",
+                    "password": "Password",
+                    "change_password": "Change password",
+                    "password_hint": "Field protected. Use the checkbox to enable editing.",
+                    "password_placeholder_edit": "New password"
+                }
+            }
+        },
         "hospital": "Hospital",
         "hospitals": "Hospitals",
         "hospitalDepartments": "Hospital Departments",
@@ -259,9 +283,7 @@
         "staff_management": "Staff Management",
         "my_shifts": "My Shifts",
         "shift_handover": "Shift Handover",
-        "tenant_management": "Tenant Management",
         "hospitals_clinics": "Hospitals & Clinics",
-        "tenant_onboarding": "Tenant Onboarding",
         "subscriptions_billing": "Subscriptions & Billing",
         "master_registry": "Master Registry",
         "master_patient_index": "Master Patient Index",
@@ -337,7 +359,7 @@
                     "admins": "Administrators"
                 }
             },
-            "onboarding": {
+            "administrators": {
                 "title": "Administrator Management",
                 "singular": "Administrator",
                 "plural": "Administrators",
@@ -364,8 +386,6 @@
         "billing_licensing": "Plans & Licensing",
         "tenant_config": "Global Tenant Configuration",
         "medical_catalog": "Global Medical Catalog",
-        "security_policies": "MFA & Security Policies",
-        "iam_superadmins": "SuperAdmin Management",
         "consent_registry": "Consent Registry (DSQ)",
         "bridge_connectors": "Bridge Connectors",
         "fhir_hl7_profiles": "FHIR/HL7 Profiles",

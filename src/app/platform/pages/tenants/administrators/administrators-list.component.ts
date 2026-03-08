@@ -2,17 +2,14 @@ import { Component, inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CrudTemplateComponent } from '@shared/components/crud-template/crud-template.component';
-import { ORGANIZATIONS_CRUD_CONFIG } from '../organizations-crud.config';
-import { Tenant } from 'app/api/models/tenant';
+import { ADMINISTRATORS_CRUD_CONFIG } from './administrators-crud.config';
+import { TenantAdmin } from 'app/api/models/tenant-admin';
 import { getOperationColumn } from '@shared/gridcolumn-config';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmDialogService } from '@shared/services/confirm-dialog.service';
-import { ThemeService } from 'app/api/services/theme.service';
-import { forkJoin, of } from 'rxjs';
-import { catchError, switchMap, map } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-organizations-list',
+    selector: 'app-administrators-list',
     standalone: true,
     imports: [CrudTemplateComponent],
     template: `
@@ -22,42 +19,26 @@ import { catchError, switchMap, map } from 'rxjs/operators';
     ></app-crud-template>
   `
 })
-export class OrganizationsListComponent {
-    @ViewChild('crud') private crud!: CrudTemplateComponent<Tenant>;
+export class AdministratorsListComponent {
+    @ViewChild('crud') private crud!: CrudTemplateComponent<TenantAdmin>;
 
     private router = inject(Router);
     private translate = inject(TranslateService);
     private confirmDialog = inject(ConfirmDialogService);
     private snackBar = inject(MatSnackBar);
-    private themeService = inject(ThemeService);
 
-    config = ORGANIZATIONS_CRUD_CONFIG();
+    config = ADMINISTRATORS_CRUD_CONFIG('list');
 
     constructor() {
-        // 🛡️ SECURITY: Filter out 'GLOBAL' tenant from the UI
-        // This ensures the SuperAdmin only manages client organizations.
-        const originalGetAll = this.config.apiService.getAll.bind(this.config.apiService);
-        this.config.apiService.getAll = () => originalGetAll().pipe(
-            map((response: any) => {
-                if (response && response.content) {
-                    return {
-                        ...response,
-                        content: response.content.filter((item: any) => item.type !== 'GLOBAL')
-                    };
-                }
-                return response;
-            })
-        );
-
         // Columna Operaciones
         this.config.columns.push(
             (getOperationColumn(
                 this.translate,
                 {
-                    editHandler: (record: Tenant) => this.edit(record),
-                    deleteHandler: (record: Tenant) => this.deleteOrganization(record),
-                    entityType: 'menu.tenant_governance.organizations.singular',
-                    fieldForMessage: 'name'
+                    editHandler: (record: TenantAdmin) => this.edit(record),
+                    deleteHandler: (record: TenantAdmin) => this.deleteAdministrator(record),
+                    entityType: 'menu.tenant_governance.administrators.singular',
+                    fieldForMessage: 'nombre'
                 },
                 this.confirmDialog
             ) as any)
@@ -65,16 +46,16 @@ export class OrganizationsListComponent {
     }
 
     createNew(): void {
-        this.router.navigate(['/platform/tenants/organizations/add']);
+        this.router.navigate(['/platform/tenants/administrators/add']);
     }
 
-    edit(record: Tenant): void {
-        this.router.navigate(['/platform/tenants/organizations/edit'], {
+    edit(record: TenantAdmin): void {
+        this.router.navigate(['/platform/tenants/administrators/edit'], {
             queryParams: { id: record.id },
         });
     }
 
-    private deleteOrganization(record: Tenant): void {
+    private deleteAdministrator(record: TenantAdmin): void {
         this.config.apiService.delete(record.id!).subscribe({
             next: () => {
                 this.snackBar.open(

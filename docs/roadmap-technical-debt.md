@@ -1,0 +1,24 @@
+# Vitalia - Roadmap & Technical Debt
+
+Este documento centraliza las tareas pendientes y deuda técnica identificada para futuras iteraciones.
+
+## 🚀 Tareas Pendientes (Roadmap)
+
+### 1. Gestión de Sesiones y Seguridad
+- **Purga de Refresh Tokens (Spring Batch)**: Implementar un job de Spring Batch para limpiar la tabla `AUT_REFRESH_TOKEN` periódicamente, ya que crecerá con el uso.
+- **Lógica de Niveles de Administrador (1, 2, 3)**: Implementar las restricciones por nivel en el backend. Asegurar que siempre exista al menos un Admin Nivel 1 y que las acciones críticas (borrar otros admins) estén restringidas.
+- **Seguridad en Desactivación**: Definir y aplicar el protocolo de manejo de credenciales (email/password) cuando un usuario es desactivado pero no borrado.
+
+### 2. Integridad de Datos
+- **Borrado Lógico (Soft Delete)**: Refactorizar `TenantAdmin` y `User` para usar un flag `enabled` o `deleted` en lugar de borrado físico, preservando la trazabilidad y auditoría.
+
+### 3. Estandarización de Infraestructura (Maven)
+- **Estandarización UTF-8**: Asegurar que todos los plugins críticos (`maven-compiler-plugin`, `maven-resources-plugin`) tengan configurado explícitamente el encoding UTF-8 en el BOM o POM raíz para evitar problemas de caracteres en diferentes entornos.
+
+---
+
+*Documento generado para seguimiento de tareas a largo plazo.*
+
+## 2026-03-07 Updates
+- [x] Global fixed for Date Shift bug (off-by-one).
+- [/] Synchronizing i18n files for Person and Onboarding fields.

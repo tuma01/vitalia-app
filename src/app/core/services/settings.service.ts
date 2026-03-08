@@ -54,7 +54,6 @@ export class SettingsService {
             this.appContext.contextChanges$,
             this.appContext.tenantChanges$
         ).pipe(
-            skip(2), // Skip initial emissions
             debounceTime(50)
         ).subscribe(() => {
             console.log('[SettingsService] 🔄 Refreshing settings due to context/tenant change');

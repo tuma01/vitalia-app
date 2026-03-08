@@ -8,6 +8,19 @@
 
 ---
 
+> [!IMPORTANT]
+> **ALINEACIÓN BACKEND OBLIGATORIA**  
+> Aunque esta guía se enfoca en el Frontend, es **REQUISITO CRÍTICO** que la implementación del Backend (Spring Boot) siga estrictamente la arquitectura del módulo `core-geography`.  
+> Esto incluye el uso consistente de:
+> - **DTOs y SearchDTOs**: Para la transferencia de datos y criterios de búsqueda.
+> - **Mappers (MapStruct)**: Para la conversión entre Entidades y DTOs.
+> - **Services (GenericService)**: Implementación de la lógica de negocio siguiendo el patrón estándar.
+> - **Specifications (Criteria API)**: Para el filtrado dinámico y paginación.
+> - **Controllers y APIs**: Definición homogeneous de endpoints y uso de `BaseController`.
+> - **Soft Delete**: Aplicación obligatoria del filtrado de registros eliminados lógicamente.
+
+---
+
 ## Índice
 1. [Principio fundamental: convención plural](#1-principio-fundamental-convención-plural)
 2. [Estructura de directorios](#2-estructura-de-directorios)
