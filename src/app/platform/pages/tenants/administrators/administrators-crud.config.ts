@@ -41,7 +41,12 @@ export const ADMINISTRATORS_CRUD_CONFIG = (mode: 'add' | 'edit' | 'list' = 'list
                 sortable: true,
                 formatter: (record: TenantAdmin) => `${record.nombre} ${record.apellidoPaterno}`
             },
-            { field: 'email', header: 'menu.tenant_governance.administrators.fields.email', sortable: true },
+            { 
+                field: 'email', 
+                header: 'menu.tenant_governance.administrators.fields.email', 
+                sortable: true,
+                formatter: (record: TenantAdmin) => record.user?.email || '-'
+            },
             {
                 field: 'adminLevel',
                 header: 'menu.tenant_governance.administrators.fields.adminLevel',
@@ -105,7 +110,7 @@ export const ADMINISTRATORS_CRUD_CONFIG = (mode: 'add' | 'edit' | 'list' = 'list
                     colSpan: 1
                 }] : []),
                 {
-                    name: 'email',
+                    name: 'userEmail',
                     label: 'menu.tenant_governance.administrators.fields.email',
                     type: 'text',
                     icon: 'email',

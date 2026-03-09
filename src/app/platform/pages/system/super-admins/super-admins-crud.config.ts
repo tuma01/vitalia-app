@@ -43,7 +43,8 @@ export const SUPER_ADMINS_CRUD_CONFIG = (mode: 'add' | 'edit' | 'list' = 'list')
                 field: 'email',
                 header: 'menu.platform_governance.super_admins.fields.email',
                 sortable: true,
-                width: '220px'
+                width: '220px',
+                formatter: (record: SuperAdmin) => record.user?.email || '-'
             },
             {
                 field: 'level',
@@ -73,13 +74,13 @@ export const SUPER_ADMINS_CRUD_CONFIG = (mode: 'add' | 'edit' | 'list' = 'list')
             layout: { columns: 2 },
             fields: [
                 {
-                    name: 'email',
+                    name: 'userEmail',
                     label: 'menu.platform_governance.super_admins.fields.email',
                     type: 'text',
                     icon: 'email',
                     required: true,
                     colSpan: 1,
-                    placeholder: 'superadmin@vitalia.com'
+                    placeholder: 'admin@example.com'
                 },
                 {
                     name: 'level',

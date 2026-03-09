@@ -124,6 +124,9 @@
         "logout": "Logout"
     },
     "menu": {
+        "dashboard": {
+            "title": "Dashboard"
+        },
         "platform_governance": {
             "title": "Platform Governance",
             "super_admins": {
@@ -148,6 +151,7 @@
                 }
             }
         },
+        "security_policies": "Security Policies",
         "hospital": "Hospital",
         "hospitals": "Hospitals",
         "hospitalDepartments": "Hospital Departments",
@@ -378,8 +382,7 @@
                     "password": "Password",
                     "change_password": "Change password",
                     "password_hint": "Field protected. Use the checkbox to enable editing.",
-                    "password_placeholder_edit": "New password",
-                    "adminLevel": "Admin Level"
+                    "password_placeholder_edit": "New password"
                 }
             }
         },
@@ -655,9 +658,6 @@
                     }
                 }
             }
-        },
-        "dashboard": {
-            "title": "Control Panel"
         }
     },
     "dashboard": {
@@ -751,6 +751,21 @@
             "wip_title": "Under Construction",
             "wip_message": "This feature is currently being implemented as part of the new platform governance model.",
             "back_dashboard": "Back to Dashboard"
+        }
+    },
+    "login": {
+        "email": "Email Address",
+        "password": "Password",
+        "rememberMe": "Remember Me",
+        "loggingIn": "Logging in...",
+        "platformTitle": "Vitalia Platform",
+        "systemAdmin": "System Administration",
+        "secureAccess": "Secure platform access",
+        "errors": {
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email address",
+            "passwordRequired": "Password is required",
+            "passwordMinLength": "At least 6 characters"
         }
     }
 }

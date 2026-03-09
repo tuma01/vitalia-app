@@ -124,6 +124,9 @@
         "logout": "Cerrar Sesión"
     },
     "menu": {
+        "dashboard": {
+            "title": "Panel de Control"
+        },
         "platform_governance": {
             "title": "Gobernanza de Plataforma",
             "super_admins": {
@@ -148,6 +151,7 @@
                 }
             }
         },
+        "security_policies": "Políticas de Seguridad",
         "hospital": "Hospital",
         "hospitals": "Hospitales",
         "hospitalDepartments": "Departamentos Hospitalarios",
@@ -748,6 +752,21 @@
             "wip_title": "En Construcción",
             "wip_message": "Esta funcionalidad se encuentra actualmente en fase de implementación como parte de la nueva gobernanza de plataforma.",
             "back_dashboard": "Volver al Panel"
+        }
+    },
+    "login": {
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "rememberMe": "Recordarme",
+        "loggingIn": "Iniciando sesión...",
+        "platformTitle": "Plataforma Vitalia",
+        "systemAdmin": "Administración del Sistema",
+        "secureAccess": "Acceso seguro a la plataforma",
+        "errors": {
+            "emailRequired": "El correo es obligatorio",
+            "emailInvalid": "Correo electrónico inválido",
+            "passwordRequired": "La contraseña es obligatoria",
+            "passwordMinLength": "Mínimo 6 caracteres"
         }
     }
 }
