@@ -31,23 +31,23 @@ import com.amachi.app.core.geography.address.mapper.AddressMapper;
 public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAdminDto> {
 
         @Override
-        @AuditableIgnoreConfig.IgnoreAuditableFields
         @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
-        // Eliminado mapping conflictivo: @Mapping(target = "address", source =
-        // "addressId")
-        // MapStruct mapeará automáticamente TenantAdminDto.address ->
-        // TenantAdmin.address
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
-        @AuditableIgnoreConfig.IgnoreSoftDelete
+        @Mapping(target = "createdBy", ignore = true)
+        @Mapping(target = "createdDate", ignore = true)
+        @Mapping(target = "lastModifiedBy", ignore = true)
+        @Mapping(target = "lastModifiedDate", ignore = true)
+        @Mapping(target = "deleted", ignore = true)
         TenantAdmin toEntity(TenantAdminDto dto);
 
-        @AuditableIgnoreConfig.IgnoreAuditableFields
         @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
-        // Eliminado mapping conflictivo para update también
-        // @Mapping(target = "address", source = "addressId")
         @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForTenantAdmin")
         @Mapping(target = "id", ignore = true)
-        @AuditableIgnoreConfig.IgnoreSoftDelete
+        @Mapping(target = "createdBy", ignore = true)
+        @Mapping(target = "createdDate", ignore = true)
+        @Mapping(target = "lastModifiedBy", ignore = true)
+        @Mapping(target = "lastModifiedDate", ignore = true)
+        @Mapping(target = "deleted", ignore = true)
         void updateEntityFromDto(TenantAdminDto dto, @MappingTarget TenantAdmin entity);
 
         @Override

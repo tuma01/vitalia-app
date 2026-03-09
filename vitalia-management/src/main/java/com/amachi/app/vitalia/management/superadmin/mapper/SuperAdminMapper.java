@@ -18,17 +18,23 @@ import org.mapstruct.*;
 public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdminDto> {
 
     @Override
-    @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
-    @AuditableIgnoreConfig.IgnoreSoftDelete
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     SuperAdmin toEntity(SuperAdminDto dto);
 
-    @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "personTenants", source = "personTenantsIds", qualifiedByName = "personTenantSetFromIdsForSuperAdmin")
     @Mapping(target = "id", ignore = true)
-    @AuditableIgnoreConfig.IgnoreSoftDelete
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedBy", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
+    @Mapping(target = "deleted", ignore = true)
     void updateEntityFromDto(SuperAdminDto dto, @MappingTarget SuperAdmin entity);
 
     @Override
