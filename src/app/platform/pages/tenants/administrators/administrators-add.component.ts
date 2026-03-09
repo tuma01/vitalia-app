@@ -96,15 +96,17 @@ export class AdministratorsAddComponent extends CrudBaseAddEditComponent<TenantA
             ...formData,
             ...personData,
             tenant: { id: formData.tenant.id },
-            personType: 'SUPER_ADMIN',
+            personType: 'ADMIN',
             celular: personData.telefono,
             user: {
-                email: formData.email || personData.email,
+                email: formData.userEmail, // Uso de userEmail
                 password: formData.password,
-                roles: ['ROLE_SUPER_ADMIN']
+                roles: ['ROLE_ADMIN']
             }
         };
 
+        // Limpiar campos auxiliares
+        delete (payload as any).userEmail;
         delete (payload as any).password;
 
         return this.config.apiService.create(payload);

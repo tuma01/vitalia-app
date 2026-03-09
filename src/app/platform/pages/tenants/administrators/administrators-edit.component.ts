@@ -85,7 +85,7 @@ export class AdministratorsEditComponent extends CrudBaseAddEditComponent<Tenant
 
                 this.form.patchValue(entity as any);
                 if (entity.user) {
-                    this.form.patchValue({ email: entity.user.email });
+                    this.form.patchValue({ userEmail: entity.user.email });
                 }
 
                 const personData = { ...entity };
@@ -138,13 +138,13 @@ export class AdministratorsEditComponent extends CrudBaseAddEditComponent<Tenant
             ...personData,
             id: this.entityId!,
             tenant: { id: formData.tenant.id },
-            personType: 'SUPER_ADMIN',
+            personType: 'ADMIN',
             celular: personData.telefono,
             user: {
                 id: this.entity?.user?.id,
-                email: formData.email || personData.email,
+                email: formData.userEmail, // Uso de userEmail
                 password: formData.password || undefined,
-                roles: ['ROLE_SUPER_ADMIN']
+                roles: ['ROLE_ADMIN']
             }
         };
 
@@ -153,6 +153,8 @@ export class AdministratorsEditComponent extends CrudBaseAddEditComponent<Tenant
             delete payload.user?.password;
         }
 
+        // Limpiar claves auxiliares
+        delete (payload as any).userEmail;
         delete (payload as any).password;
 
         return this.config.apiService.update(this.entityId!, payload);

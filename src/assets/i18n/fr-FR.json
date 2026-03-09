@@ -124,6 +124,9 @@
         "logout": "Déconnexion"
     },
     "menu": {
+        "dashboard": {
+            "title": "Tableau de Bord"
+        },
         "platform_governance": {
             "title": "Gouvernance de Plateforme",
             "super_admins": {
@@ -148,6 +151,7 @@
                 }
             }
         },
+        "security_policies": "Politiques de Sécurité",
         "hospital": "Hôpital",
         "hospitals": "Hôpitaux",
         "hospitalDepartments": "Départements Hospitaliers",
@@ -748,6 +752,21 @@
             "wip_title": "En Construction",
             "wip_message": "Cette fonctionnalité est en cours d'implémentation dans le cadre del nouveau modèle de gouvernance.",
             "back_dashboard": "Retour au Tableau de Bord"
+        }
+    },
+    "login": {
+        "email": "Adresse E-mail",
+        "password": "Mot de passe",
+        "rememberMe": "Se souvenir de moi",
+        "loggingIn": "Connexion en cours...",
+        "platformTitle": "Plateforme Vitalia",
+        "systemAdmin": "Administration du Système",
+        "secureAccess": "Accès sécurisé à la plateforme",
+        "errors": {
+            "emailRequired": "L'e-mail est requis",
+            "emailInvalid": "Adresse e-mail invalide",
+            "passwordRequired": "Le mot de passe est requis",
+            "passwordMinLength": "Au moins 6 caractères"
         }
     }
 }

@@ -36,9 +36,9 @@
                             </div>
                             }
                         </div>
-                        @if (loginForm.get('role')?.touched && loginForm.get('role')?.errors?.['required']) {
-                        <mat-error class="small-error">Por favor selecciona un rol</mat-error>
-                        }
+                                @if (loginForm.get('role')?.touched && loginForm.get('role')?.errors?.['required']) {
+                                <mat-error class="small-error">{{ 'crud.validation_error' | translate }}</mat-error>
+                                }
                     </div>
 
                     <!-- Tenant Selector -->
@@ -50,26 +50,26 @@
                             }
                         </mat-select>
                         @if (loginForm.get('tenantCode')?.hasError('required')) {
-                        <mat-error>Este campo es requerido</mat-error>
+                        <mat-error>{{ 'validation.required' | translate }}</mat-error>
                         }
                     </mat-form-field>
 
                     <!-- Email -->
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Correo Electrónico</mat-label>
+                        <mat-label>{{ 'login.email' | translate }}</mat-label>
                         <input matInput formControlName="email" type="email" placeholder="tu@email.com">
                         <mat-icon matPrefix>email</mat-icon>
                         @if (loginForm.get('email')?.hasError('required')) {
-                        <mat-error>Email es requerido</mat-error>
+                        <mat-error>{{ 'validation.required' | translate }}</mat-error>
                         }
                         @if (loginForm.get('email')?.hasError('email')) {
-                        <mat-error>Email inválido</mat-error>
+                        <mat-error>{{ 'validation.email' | translate }}</mat-error>
                         }
                     </mat-form-field>
 
                     <!-- Password -->
                     <mat-form-field appearance="outline" class="full-width">
-                        <mat-label>Contraseña</mat-label>
+                        <mat-label>{{ 'login.password' | translate }}</mat-label>
                         <input matInput formControlName="password" [type]="showPassword() ? 'text' : 'password'"
                             placeholder="••••••••">
                         <mat-icon matPrefix>lock</mat-icon>
@@ -77,17 +77,17 @@
                             <mat-icon>{{ showPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
                         </button>
                         @if (loginForm.get('password')?.hasError('required')) {
-                        <mat-error>Contraseña requerida</mat-error>
+                        <mat-error>{{ 'validation.required' | translate }}</mat-error>
                         }
                         @if (loginForm.get('password')?.hasError('minlength')) {
-                        <mat-error>Mínimo 8 caracteres</mat-error>
+                        <mat-error>{{ 'validation.minlength' | translate: { requiredLength: 8 } }}</mat-error>
                         }
                     </mat-form-field>
 
                     <!-- Remember Me & Forgot Password -->
                     <div class="login-options">
-                        <mat-checkbox formControlName="rememberMe">Recordarme</mat-checkbox>
-                        <a routerLink="/forgot-password" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                        <mat-checkbox formControlName="rememberMe">{{ 'login.rememberMe' | translate }}</mat-checkbox>
+                        <a routerLink="/forgot-password" class="forgot-link">{{ 'common.forgot_password' | translate }}</a>
                     </div>
 
                     <!-- Login Button -->

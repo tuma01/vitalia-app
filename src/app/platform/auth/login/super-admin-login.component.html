@@ -5,9 +5,9 @@
             <mat-card-header class="login-header">
                 <div class="logo-section">
                     <mat-icon class="platform-icon">admin_panel_settings</mat-icon>
-                    <h1>Vitalia Platform</h1>
+                    <h1>{{ 'login.platformTitle' | translate }}</h1>
                 </div>
-                <p class="subtitle">System Administration</p>
+                <p class="subtitle">{{ 'login.systemAdmin' | translate }}</p>
             </mat-card-header>
 
             <!-- Progress Bar -->
@@ -73,7 +73,7 @@
             <mat-card-footer class="login-footer">
                 <p class="footer-text">
                     <mat-icon>security</mat-icon>
-                    Secure platform access
+                    {{ 'login.secureAccess' | translate }}
                 </p>
             </mat-card-footer>
         </mat-card>

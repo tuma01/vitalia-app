@@ -27,7 +27,7 @@ import { PersonFormComponent, PersonFormConfig } from '@shared/components/person
     `
 })
 export class SuperAdminsEditComponent extends CrudBaseAddEditComponent<SuperAdmin> implements OnInit {
-    protected override entityNameKey = 'platform_governance.super_admins.singular';
+    protected override entityNameKey = 'menu.platform_governance.super_admins.singular';
     public readonly config = SUPER_ADMINS_CRUD_CONFIG('edit');
 
     private readonly _fb = inject(FormBuilder);
@@ -73,7 +73,7 @@ export class SuperAdminsEditComponent extends CrudBaseAddEditComponent<SuperAdmi
                 this.form.patchValue(entity as any);
                 
                 if (entity.user) {
-                    this.form.patchValue({ email: entity.user.email });
+                    this.form.patchValue({ userEmail: entity.user.email });
                 }
 
                 const personData = { ...entity };
@@ -125,7 +125,7 @@ export class SuperAdminsEditComponent extends CrudBaseAddEditComponent<SuperAdmi
             celular: personData.telefono,
             user: {
                 id: this.entity?.user?.id,
-                email: formData.email || personData.email,
+                email: formData.userEmail, // Uso de userEmail
                 password: formData.password || undefined,
                 roles: ['ROLE_SUPER_ADMIN']
             }
@@ -136,6 +136,8 @@ export class SuperAdminsEditComponent extends CrudBaseAddEditComponent<SuperAdmi
             delete payload.user?.password;
         }
 
+        // Delete formatting keys not needed in entity root
+        delete (payload as any).userEmail;
         delete (payload as any).password;
         delete (payload as any).changePassword;
 

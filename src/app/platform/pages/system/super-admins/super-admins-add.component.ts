@@ -27,7 +27,7 @@ import { PersonFormComponent, PersonFormConfig } from '@shared/components/person
     `
 })
 export class SuperAdminsAddComponent extends CrudBaseAddEditComponent<SuperAdmin> implements OnInit {
-    protected override entityNameKey = 'platform_governance.super_admins.singular';
+    protected override entityNameKey = 'menu.platform_governance.super_admins.singular';
     public readonly config = SUPER_ADMINS_CRUD_CONFIG('add');
 
     private readonly _fb = inject(FormBuilder);
@@ -72,7 +72,7 @@ export class SuperAdminsAddComponent extends CrudBaseAddEditComponent<SuperAdmin
             globalAccess: formData.globalAccess ?? true,
             celular: personData.telefono,
             user: {
-                email: formData.email || personData.email,
+                email: formData.userEmail, // Uso de userEmail desde el formulario
                 password: formData.password,
                 roles: ['ROLE_SUPER_ADMIN']
             }
