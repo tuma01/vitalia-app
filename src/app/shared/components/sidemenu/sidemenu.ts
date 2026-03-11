@@ -81,7 +81,7 @@ export class SidemenuComponent implements OnInit {
     private getMenuRoleFromUserRole(role: string): string | null {
         if (this.appContext.isPlatform()) return 'super-admin';
         if (role === 'ROLE_SUPER_ADMIN') return 'super-admin';
-        if (role === 'ROLE_ADMIN') return 'admin';
+        if (role === 'ROLE_ADMIN' || role === 'ROLE_TENANT_ADMIN') return 'tenant-admin';
         if (role === 'ROLE_DOCTOR') return 'doctor';
         if (role === 'ROLE_PATIENT') return 'patient';
         return null;

@@ -47,8 +47,8 @@ export const ORGANIZATIONS_CRUD_CONFIG = (): CrudConfig<Tenant> => {
         form: {
             layout: { columns: 2 },
             fields: [
-                { name: 'code', label: 'menu.tenant_governance.organizations.fields.code', type: 'text', required: true, colSpan: 1 },
-                { name: 'name', label: 'menu.tenant_governance.organizations.fields.name', type: 'text', required: true, colSpan: 1 },
+                { name: 'code', label: 'menu.tenant_governance.organizations.fields.code', type: 'text', required: true, colSpan: 1, icon: 'badge' },
+                { name: 'name', label: 'menu.tenant_governance.organizations.fields.name', type: 'text', required: true, colSpan: 1, icon: 'business' },
                 {
                     name: 'type',
                     label: 'menu.tenant_governance.organizations.fields.type',
@@ -57,10 +57,11 @@ export const ORGANIZATIONS_CRUD_CONFIG = (): CrudConfig<Tenant> => {
                     colSpan: 1,
                     options: [
                         { label: 'menu.tenant_governance.organizations.types.hospital', value: 'HOSPITAL' },
-                        { label: 'menu.tenant_governance.organizations.types.clinic', value: 'CLINIC' },
+                        { label: 'menu.tenant_governance.organizations.types.clinic', value: 'Clinic' },
                         { label: 'menu.tenant_governance.organizations.types.pharmacy', value: 'PHARMACY' },
                         { label: 'menu.tenant_governance.organizations.types.laboratory', value: 'LABORATORY' },
-                    ]
+                    ],
+                    icon: 'category'
                 },
                 {
                     name: 'themeId',
@@ -69,7 +70,8 @@ export const ORGANIZATIONS_CRUD_CONFIG = (): CrudConfig<Tenant> => {
                     required: true,
                     colSpan: 1,
                     // We will populate this from ThemeService in the component or via a dynamic option loader
-                    options: []
+                    options: [],
+                    icon: 'palette'
                 },
                 { name: 'isActive', label: 'menu.tenant_governance.organizations.fields.isActive', type: 'checkbox', colSpan: 1 },
                 { name: 'description', label: 'menu.tenant_governance.organizations.fields.description', type: 'textarea', colSpan: 2 },

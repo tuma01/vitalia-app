@@ -11,21 +11,22 @@ export const routes: Routes = [
     // data: {roles: ['ROLE_ADMIN', 'SUPER_ADMIN']},
     children: [
       {
-        path: 'pais',
-        loadChildren: () => import('./pais/pais.routes').then(m => m.routes),
+        path: 'countries',
+        loadChildren: () => import('./countries/countries.routes').then(m => m.routes),
       },
       {
-        path: 'departamento',
-        loadChildren: () => import('./departamento/departamento.routes').then(m => m.routes),
+        path: 'departments',
+        loadChildren: () => import('./departments/departments.routes').then(m => m.routes),
       },
       {
-        path: 'provincia',
-        loadChildren: () => import('./provincia/provincia.routes').then(m => m.routes),
+        path: 'provinces',
+        loadChildren: () => import('./provinces/provinces.routes').then(m => m.routes),
       },
       {
-        path: 'municipio',
-        loadChildren: () => import('./municipio/municipio.routes').then(m => m.routes),
+        path: 'municipalities',
+        loadChildren: () => import('./municipalities/municipalities.routes').then(m => m.routes),
       },
+      { path: '', redirectTo: 'countries', pathMatch: 'full' }
     ]
 
   }

@@ -168,6 +168,15 @@ export class ThemeService {
   applyTheme(theme: ThemeDto): void {
     if (!isPlatformBrowser(this.platformId)) return;
 
+    // 🛡️ Guard: Evitar reaplicación redundante (Rompe bucles circulares con SettingsService)
+    const themeSnapshot = JSON.stringify(theme);
+    const currentSnapshot = JSON.stringify(this.currentTheme);
+    if (themeSnapshot === currentSnapshot) {
+      // console.log('[ThemeService] ⏭️ Theme already applied, skipping...');
+      return;
+    }
+
+    console.log('[ThemeService] 🎨 Applying theme:', theme.name);
     this.currentTheme = theme;
 
     const root = this.document.documentElement;

@@ -41,7 +41,8 @@
                                 }
                     </div>
 
-                    <!-- Tenant Selector -->
+                    <!-- Tenant Selector (HIDDEN if resolved from URL) -->
+                    @if (!appContext.tenant()) {
                     <mat-form-field appearance="outline" class="full-width">
                         <mat-label>Hospital/Clínica</mat-label>
                         <mat-select formControlName="tenantCode" placeholder="Selecciona tu hospital">
@@ -53,6 +54,7 @@
                         <mat-error>{{ 'validation.required' | translate }}</mat-error>
                         }
                     </mat-form-field>
+                    }
 
                     <!-- Email -->
                     <mat-form-field appearance="outline" class="full-width">
@@ -155,9 +157,10 @@
                     <div class="hero-logo">
                         <mat-icon>local_hospital</mat-icon>
                     </div>
-                    <h2>Bienvenido a Vitalia</h2>
-                    <p>Sistema integral de gestión hospitalaria para mejorar la atención médica y optimizar procesos
-                        administrativos.</p>
+                    <h2>{{ appContext.tenant()?.name || 'Vitalia' }}</h2>
+                    <p>{{ appContext.tenant() 
+                        ? 'Bienvenido al portal oficial de ' + (appContext.tenant()?.name) + '. Por favor ingresa tus credenciales para continuar.' 
+                        : 'Sistema integral de gestión hospitalaria para mejorar la atención médica y optimizar procesos administrativos.' }}</p>
                     <div class="hero-features">
                         <div class="feature">
                             <mat-icon>verified</mat-icon>

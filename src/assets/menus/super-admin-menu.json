@@ -84,11 +84,34 @@
                     "icon": "payments"
                 },
                 {
-                    "id": "tenant-config",
-                    "name": "tenant_config",
-                    "type": "link",
-                    "route": "/platform/tenants/config",
-                    "icon": "settings_applications"
+                    "id": "tenant-configs",
+                    "name": "tenant_governance.tenant_config.title",
+                    "type": "sub",
+                    "icon": "settings_applications",
+                    "children": [
+                        {
+                            "id": "tenant-config-list",
+                            "name": "tenant_governance.tenant_config.list",
+                            "type": "link",
+                            "route": "/platform/tenants/tenant-configs/list",
+                            "visible": true
+                        },
+                        {
+                            "id": "tenant-config-add",
+                            "name": "tenant_governance.tenant_config.add",
+                            "type": "link",
+                            "route": "/platform/tenants/tenant-configs/add",
+                            "visible": true
+                        },
+                        {
+                            "id": "tenant-config-edit",
+                            "name": "tenant_governance.tenant_config.edit",
+                            "type": "link",
+                            "route": "/platform/tenants/tenant-configs/edit",
+                            "visible": false,
+                            "hidden": true
+                        }
+                    ]
                 }
             ]
         },
@@ -468,112 +491,128 @@
                             "icon": "flag",
                             "children": [
                                 {
-                                    "id": "countries-list",
+                                    "id": "country_list",
                                     "name": "catalog.geography.country.list",
                                     "type": "link",
-                                    "route": "/platform/geography/pais/paises",
+                                    "route": "/platform/geography/countries/list",
+                                    "icon": "list",
                                     "visible": true
                                 },
                                 {
-                                    "id": "countries-add",
+                                    "id": "country_add",
                                     "name": "catalog.geography.country.add",
                                     "type": "link",
-                                    "route": "/platform/geography/pais/addPais",
+                                    "route": "/platform/geography/countries/add",
+                                    "icon": "add",
                                     "visible": true
                                 },
                                 {
-                                    "id": "countries-edit",
+                                    "id": "country_edit",
                                     "name": "catalog.geography.country.edit",
                                     "type": "link",
-                                    "route": "/platform/geography/pais/editPais",
-                                    "visible": false
+                                    "route": "/platform/geography/countries/edit",
+                                    "icon": "edit",
+                                    "visible": false,
+                                    "hidden": true
                                 }
                             ]
                         },
                         {
-                            "id": "departamentos",
+                            "id": "departments",
                             "name": "catalog.geography.department.title",
                             "type": "sub",
                             "icon": "location_city",
                             "children": [
                                 {
-                                    "id": "departamentos-list",
+                                    "id": "department_list",
                                     "name": "catalog.geography.department.list",
                                     "type": "link",
-                                    "route": "/platform/geography/departamento/departamentos",
+                                    "route": "/platform/geography/departments/list",
+                                    "icon": "list",
                                     "visible": true
                                 },
                                 {
-                                    "id": "departamentos-add",
+                                    "id": "department_add",
                                     "name": "catalog.geography.department.add",
                                     "type": "link",
-                                    "route": "/platform/geography/departamento/addDepartamento",
+                                    "route": "/platform/geography/departments/add",
+                                    "icon": "add",
                                     "visible": true
                                 },
                                 {
-                                    "id": "departamentos-edit",
+                                    "id": "department_edit",
                                     "name": "catalog.geography.department.edit",
                                     "type": "link",
-                                    "route": "/platform/geography/departamento/editDepartamento",
-                                    "visible": false
+                                    "route": "/platform/geography/departments/edit",
+                                    "icon": "edit",
+                                    "visible": false,
+                                    "hidden": true
                                 }
                             ]
                         },
                         {
-                            "id": "provincias",
+                            "id": "provinces",
                             "name": "catalog.geography.province.title",
                             "type": "sub",
                             "icon": "map",
                             "children": [
                                 {
-                                    "id": "provincias-list",
+                                    "id": "province_list",
                                     "name": "catalog.geography.province.list",
                                     "type": "link",
-                                    "route": "/platform/geography/provincia/provincias",
+                                    "route": "/platform/geography/provinces/list",
+                                    "icon": "list",
                                     "visible": true
                                 },
                                 {
-                                    "id": "provincias-add",
+                                    "id": "province_add",
                                     "name": "catalog.geography.province.add",
                                     "type": "link",
-                                    "route": "/platform/geography/provincia/addProvincia",
+                                    "route": "/platform/geography/provinces/add",
+                                    "icon": "add",
                                     "visible": true
                                 },
                                 {
-                                    "id": "provincias-edit",
+                                    "id": "province_edit",
                                     "name": "catalog.geography.province.edit",
                                     "type": "link",
-                                    "route": "/platform/geography/provincia/editProvincia",
-                                    "visible": false
+                                    "route": "/platform/geography/provinces/edit",
+                                    "icon": "edit",
+                                    "visible": false,
+                                    "hidden": true
                                 }
                             ]
                         },
                         {
-                            "id": "municipios",
+                            "id": "municipalities",
                             "name": "catalog.geography.municipality.title",
                             "type": "sub",
                             "icon": "place",
                             "children": [
                                 {
-                                    "id": "municipios-list",
+                                    "id": "municipality_list",
                                     "name": "catalog.geography.municipality.list",
                                     "type": "link",
-                                    "route": "/platform/geography/municipio/municipios",
+                                    "route": "/platform/geography/municipalities/list",
+                                    "icon": "list",
                                     "visible": true
                                 },
                                 {
-                                    "id": "municipios-add",
+                                    "id": "municipality_add",
                                     "name": "catalog.geography.municipality.add",
                                     "type": "link",
-                                    "route": "/platform/geography/municipio/addMunicipio",
+                                    "route": "/platform/geography/municipalities/add",
+                                    "icon": "add",
                                     "visible": true
                                 },
                                 {
-                                    "id": "municipios-edit",
+                                    "id": "municipality_edit",
                                     "name": "catalog.geography.municipality.edit",
                                     "type": "link",
-                                    "route": "/platform/geography/municipio/editMunicipio",
-                                    "visible": false
+                                    "route": "/platform/geography/municipalities/edit",
+                                    "icon": "edit",
+                                    "visible": false,
+                                    "hidden": true
                                 }
                             ]
                         }

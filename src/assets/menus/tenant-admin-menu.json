@@ -4,42 +4,348 @@
     "menu": [
         {
             "id": "dashboard",
-            "name": "dashboard.title",
+            "name": "tenant_admin.dashboard.title",
             "type": "link",
             "icon": "dashboard",
             "route": "/admin/dashboard",
             "visible": true
         },
         {
-            "id": "users",
-            "name": "users",
-            "type": "group",
-            "icon": "people",
+            "id": "patients",
+            "name": "tenant_admin.patients.title",
+            "type": "sub",
+            "icon": "personal_injury",
             "visible": true,
             "children": [
                 {
-                    "id": "staff",
-                    "name": "staff",
+                    "id": "patients-registration",
+                    "name": "tenant_admin.patients.registration",
                     "type": "link",
-                    "route": "/admin/users/staff",
-                    "icon": "badge"
+                    "route": "/admin/patients/registration",
+                    "icon": "how_to_reg"
                 },
                 {
-                    "id": "patients",
-                    "name": "patients",
+                    "id": "medical-records",
+                    "name": "tenant_admin.patients.records",
                     "type": "link",
-                    "route": "/admin/users/patients",
-                    "icon": "personal_injury"
+                    "route": "/admin/patients/records",
+                    "icon": "history_edu"
+                },
+                {
+                    "id": "patient-documents",
+                    "name": "tenant_admin.patients.documents",
+                    "type": "link",
+                    "route": "/admin/patients/documents",
+                    "icon": "description"
                 }
             ]
         },
         {
-            "id": "settings",
-            "name": "settings",
-            "type": "link",
+            "id": "admissions",
+            "name": "tenant_admin.admissions.title",
+            "type": "sub",
+            "icon": "login",
+            "visible": true,
+            "children": [
+                {
+                    "id": "hospital-admission",
+                    "name": "tenant_admin.admissions.admission",
+                    "type": "link",
+                    "route": "/admin/admissions/admission",
+                    "icon": "hotel"
+                },
+                {
+                    "id": "emergency-admission",
+                    "name": "tenant_admin.admissions.emergency",
+                    "type": "link",
+                    "route": "/admin/admissions/emergency",
+                    "icon": "emergency"
+                },
+                {
+                    "id": "internal-transfers",
+                    "name": "tenant_admin.admissions.transfers",
+                    "type": "link",
+                    "route": "/admin/admissions/transfers",
+                    "icon": "move_up"
+                },
+                {
+                    "id": "medical-discharges",
+                    "name": "tenant_admin.admissions.discharges",
+                    "type": "link",
+                    "route": "/admin/admissions/discharges",
+                    "icon": "logout"
+                }
+            ]
+        },
+        {
+            "id": "appointments",
+            "name": "tenant_admin.appointments.title",
+            "type": "sub",
+            "icon": "event",
+            "visible": true,
+            "children": [
+                {
+                    "id": "medical-schedule",
+                    "name": "tenant_admin.appointments.calendar",
+                    "type": "link",
+                    "route": "/admin/appointments/calendar",
+                    "icon": "calendar_month"
+                },
+                {
+                    "id": "outpatient-care",
+                    "name": "tenant_admin.appointments.outpatient",
+                    "type": "link",
+                    "route": "/admin/appointments/outpatient",
+                    "icon": "medical_services"
+                },
+                {
+                    "id": "telemedicine",
+                    "name": "tenant_admin.appointments.telemedicine",
+                    "type": "link",
+                    "route": "/admin/appointments/telemedicine",
+                    "icon": "videocam"
+                }
+            ]
+        },
+        {
+            "id": "hospitalization",
+            "name": "tenant_admin.hospitalization.title",
+            "type": "sub",
+            "icon": "bed",
+            "visible": true,
+            "children": [
+                {
+                    "id": "bed-map",
+                    "name": "tenant_admin.hospitalization.beds",
+                    "type": "link",
+                    "route": "/admin/hospitalization/beds",
+                    "icon": "grid_view"
+                },
+                {
+                    "id": "inpatient-list",
+                    "name": "tenant_admin.hospitalization.list",
+                    "type": "link",
+                    "route": "/admin/hospitalization/list",
+                    "icon": "list_alt"
+                }
+            ]
+        },
+        {
+            "id": "clinical-services",
+            "name": "tenant_admin.clinical_services.title",
+            "type": "sub",
+            "icon": "biotech",
+            "visible": true,
+            "children": [
+                {
+                    "id": "lab-services",
+                    "name": "tenant_admin.clinical_services.lab",
+                    "type": "link",
+                    "route": "/admin/clinical/lab",
+                    "icon": "science"
+                },
+                {
+                    "id": "imaging-services",
+                    "name": "tenant_admin.clinical_services.imaging",
+                    "type": "link",
+                    "route": "/admin/clinical/imaging",
+                    "icon": "settings_brightness"
+                },
+                {
+                    "id": "diagnostic-results",
+                    "name": "tenant_admin.clinical_services.results",
+                    "type": "link",
+                    "route": "/admin/clinical/results",
+                    "icon": "task_alt"
+                }
+            ]
+        },
+        {
+            "id": "pharmacy",
+            "name": "tenant_admin.pharmacy.title",
+            "type": "sub",
+            "icon": "medication",
+            "visible": true,
+            "children": [
+                {
+                    "id": "drug-inventory",
+                    "name": "tenant_admin.pharmacy.inventory",
+                    "type": "link",
+                    "route": "/admin/pharmacy/inventory",
+                    "icon": "inventory"
+                },
+                {
+                    "id": "e-prescriptions",
+                    "name": "tenant_admin.pharmacy.prescriptions",
+                    "type": "link",
+                    "route": "/admin/pharmacy/prescriptions",
+                    "icon": "receipt_long"
+                },
+                {
+                    "id": "pharmacy-purchases",
+                    "name": "tenant_admin.pharmacy.purchases",
+                    "type": "link",
+                    "route": "/admin/pharmacy/purchases",
+                    "icon": "shopping_cart"
+                }
+            ]
+        },
+        {
+            "id": "medical-staff",
+            "name": "tenant_admin.medical_staff.title",
+            "type": "sub",
+            "icon": "groups",
+            "visible": true,
+            "children": [
+                {
+                    "id": "staff-directory",
+                    "name": "tenant_admin.medical_staff.directory",
+                    "type": "link",
+                    "route": "/admin/staff/list",
+                    "icon": "contacts"
+                },
+                {
+                    "id": "staff-shifts",
+                    "name": "tenant_admin.medical_staff.shifts",
+                    "type": "link",
+                    "route": "/admin/staff/shifts",
+                    "icon": "schedule"
+                },
+                {
+                    "id": "medical-teams",
+                    "name": "tenant_admin.medical_staff.teams",
+                    "type": "link",
+                    "route": "/admin/staff/teams",
+                    "icon": "diversity_3"
+                }
+            ]
+        },
+        {
+            "id": "finance",
+            "name": "tenant_admin.finance.title",
+            "type": "sub",
+            "icon": "payments",
+            "visible": true,
+            "children": [
+                {
+                    "id": "billing",
+                    "name": "tenant_admin.finance.billing",
+                    "type": "link",
+                    "route": "/admin/finance/billing",
+                    "icon": "point_of_sale"
+                },
+                {
+                    "id": "contracts",
+                    "name": "tenant_admin.finance.contracts",
+                    "type": "link",
+                    "route": "/admin/finance/contracts",
+                    "icon": "handshake"
+                },
+                {
+                    "id": "payments",
+                    "name": "tenant_admin.finance.payments",
+                    "type": "link",
+                    "route": "/admin/finance/payments",
+                    "icon": "account_balance_wallet"
+                }
+            ]
+        },
+        {
+            "id": "resources",
+            "name": "tenant_admin.resources.title",
+            "type": "sub",
+            "icon": "inventory_2",
+            "visible": true,
+            "children": [
+                {
+                    "id": "medical-equipment",
+                    "name": "tenant_admin.resources.equipment",
+                    "type": "link",
+                    "route": "/admin/resources/equipment",
+                    "icon": "precision_manufacturing"
+                },
+                {
+                    "id": "rooms-operating",
+                    "name": "tenant_admin.resources.rooms",
+                    "type": "link",
+                    "route": "/admin/resources/rooms",
+                    "icon": "meeting_room"
+                },
+                {
+                    "id": "maintenance",
+                    "name": "tenant_admin.resources.maintenance",
+                    "type": "link",
+                    "route": "/admin/resources/maintenance",
+                    "icon": "build"
+                }
+            ]
+        },
+        {
+            "id": "reports",
+            "name": "tenant_admin.reports.title",
+            "type": "sub",
+            "icon": "analytics",
+            "visible": true,
+            "children": [
+                {
+                    "id": "patient-stats",
+                    "name": "tenant_admin.reports.statistics",
+                    "type": "link",
+                    "route": "/admin/reports/statistics",
+                    "icon": "bar_chart"
+                },
+                {
+                    "id": "hospital-kpis",
+                    "name": "tenant_admin.reports.kpis",
+                    "type": "link",
+                    "route": "/admin/reports/kpis",
+                    "icon": "speed"
+                }
+            ]
+        },
+        {
+            "id": "admin",
+            "name": "tenant_admin.admin.title",
+            "type": "sub",
             "icon": "settings",
-            "route": "/admin/settings",
-            "visible": true
+            "visible": true,
+            "children": [
+                {
+                    "id": "hospital-profile",
+                    "name": "tenant_admin.admin.profile.title",
+                    "type": "link",
+                    "route": "/admin/admin/profile",
+                    "icon": "account_balance"
+                },
+                {
+                    "id": "tenant-users",
+                    "name": "tenant_admin.admin.users",
+                    "type": "link",
+                    "route": "/admin/admin/users",
+                    "icon": "manage_accounts"
+                },
+                {
+                    "id": "tenant-roles",
+                    "name": "tenant_admin.admin.roles",
+                    "type": "link",
+                    "route": "/admin/admin/roles",
+                    "icon": "verified_user"
+                },
+                {
+                    "id": "audit-logs",
+                    "name": "tenant_admin.admin.audit",
+                    "type": "link",
+                    "route": "/admin/admin/audit",
+                    "icon": "fact_check"
+                },
+                {
+                    "id": "api-integrations",
+                    "name": "tenant_admin.admin.integrations",
+                    "type": "link",
+                    "route": "/admin/admin/integrations",
+                    "icon": "api"
+                }
+            ]
         }
     ]
 }

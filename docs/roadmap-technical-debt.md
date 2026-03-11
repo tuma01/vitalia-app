@@ -12,7 +12,14 @@ Este documento centraliza las tareas pendientes y deuda técnica identificada pa
 ### 2. Integridad de Datos
 - **Borrado Lógico (Soft Delete)**: Refactorizar `TenantAdmin` y `User` para usar un flag `enabled` o `deleted` en lugar de borrado físico, preservando la trazabilidad y auditoría.
 
-### 3. Estandarización de Infraestructura (Maven)
+### 3. Gobernanza de Tenencia (Tenant Configuration)
+- **Validación de Límites (Backend)**: Implementar la lógica de negocio para los campos de `TenantConfig`:
+    - **Max. Usuarios**: Restringir creación de usuarios si se supera el límite.
+    - **Storage Quota**: Bloquear subidas de archivos si se excede el espacio en bytes.
+    - **Login Local / Email Verification**: Aplicar estas políticas en el flujo de autenticación.
+- **Header Identification (Branding)**: Consumir el `fallbackHeader` en el Frontend para personalización dinámica.
+
+### 4. Estandarización de Infraestructura (Maven)
 - **Estandarización UTF-8**: Asegurar que todos los plugins críticos (`maven-compiler-plugin`, `maven-resources-plugin`) tengan configurado explícitamente el encoding UTF-8 en el BOM o POM raíz para evitar problemas de caracteres en diferentes entornos.
 
 ---

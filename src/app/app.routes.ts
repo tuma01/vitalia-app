@@ -68,10 +68,6 @@ export const routes: Routes = [
                 path: 'communication',
                 loadChildren: () => import('./platform/pages/communication/communication.routes').then(m => m.routes),
             },
-            // {
-            //     path: 'geography/pais',
-            //     loadChildren: () => import('./platform/pages/geography/pais/pais.routes').then(m => m.routes)
-            // },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
@@ -102,12 +98,7 @@ export const routes: Routes = [
                 path: 'admin',
                 canActivate: [roleGuard],
                 data: { roles: ['ROLE_TENANT_ADMIN', 'ROLE_ADMIN'] },
-                children: [
-                    {
-                        path: 'dashboard',
-                        loadComponent: () => import('./tenant/admin/dashboard/role-dashboard.component').then(m => m.RoleDashboardComponent)
-                    }
-                ]
+                loadChildren: () => import('./tenant/admin/admin.routes').then(m => m.ADMIN_ROUTES)
             },
 
             // Doctor

@@ -47,4 +47,6 @@
     padding: 24px;
     overflow-y: auto !important;
     min-height: 0;
+    // ⚠️ Required for position:sticky children (footer in crud-form-card)
+    // The scroll container must NOT have overflow:hidden on this axis
 }

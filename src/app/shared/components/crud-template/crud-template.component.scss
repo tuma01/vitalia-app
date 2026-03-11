@@ -104,6 +104,13 @@
             }
         }
     }
+
+    // ── Modern Ultra-Clean Card Override: no border, no shadow ───────────────
+    .mat-mdc-card.crud-form-card {
+        border: none !important;
+        box-shadow: none !important;
+        background-color: var(--mat-sys-surface) !important;
+    }
 }
 
 /* 🔹 TOOLBAR STYLES */
@@ -249,13 +256,25 @@
     }
 }
 
+// ── Form Page Wrapper ────────────────────────────────────────────────────────
+.form-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    // Reserve space for the fixed action bar (65px) + platform footer (56px)
+    padding-bottom: 125px;
+}
+
 .crud-form-card {
     padding: 0;
-    overflow: hidden;
+    overflow: visible;
+
+    // Border and shadow now handled in the top-level ng-deep block for reliability
 
     .form-header {
-        padding: 16px 24px;
-        border-bottom: 1px solid var(--sys-border-subtle);
+        // No border-bottom — separation is handled by padding + accent bar
+        padding: 20px 24px 16px;
+        background: transparent;
 
         mat-card-header {
             padding: 0;
@@ -263,27 +282,129 @@
         }
 
         mat-card-title {
-            font-size: 1.25rem;
-            font-weight: 500;
+            // ── Vertical accent bar — modern ERP pattern (Notion, Linear, Salesforce 2024) ──
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            color: var(--mat-sys-on-surface);
+
+            &::before {
+                content: '';
+                display: block;
+                width: 4px;
+                height: 1.3em;
+                border-radius: 2px;
+                background: var(--mat-sys-primary);
+                flex-shrink: 0;
+            }
         }
     }
 
     .form-body {
-        padding: 24px;
-    }
+        padding: 8px 24px 24px; // reduced top padding since header already provides space
 
-    .form-footer {
-        padding: 16px 24px;
-        border-top: 1px solid var(--sys-border-subtle);
-        background-color: var(--sys-surface-container-low);
-
-        mat-card-actions {
+        mat-card-content {
             padding: 0;
             margin: 0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
         }
+    }
+}
+
+// ── Full-Width Sticky Footer ──────────────────────────────────────────────────
+// Positioned OUTSIDE mat-card, inside .form-page wrapper.
+// Negative margins counteract the 24px padding of platform-main on all sides,
+// making the footer span the full width and sit flush at the visual bottom edge.
+.form-footer {
+    // ── Experimental: PILL-STYLE Floating Action Bar ─────────────────────────
+    // A more modern, centered "capsule" design. 
+    position: fixed;
+    bottom: 76px; // Floating clearly above the platform footer
+    left: calc(var(--sidebar-width, 270px) + (100% - var(--sidebar-width, 270px)) / 2);
+    transform: translateX(-50%);
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 10px 32px;
+    width: fit-content;
+    min-width: 500px;
+    max-width: 90%;
+
+    background-color: var(--mat-sys-surface-container) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--sys-border-subtle);
+    border-radius: 50px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+    
+    // 🌙 Dark Mode Enhancement: more prominent border and subtle glow
+    :host-context(body.theme-dark) & {
+        border: 1.5px solid color-mix(in srgb, var(--mat-sys-primary) 35%, var(--sys-border-subtle));
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 
+                    0 0 12px color-mix(in srgb, var(--mat-sys-primary) 15%, transparent);
+    }
+    
+    // Smooth transitions for sidebar and hover
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        
+        :host-context(body.theme-dark) & {
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 
+                        0 0 20px color-mix(in srgb, var(--mat-sys-primary) 25%, transparent);
+        }
+    }
+
+    .footer-left {
+        display: flex;
+        align-items: center;
+        flex: 1 1 auto;
+    }
+
+    .footer-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.78rem;
+        color: var(--mat-sys-on-surface-variant);
+        opacity: 0.7;
+
+        .footer-hint-icon {
+            font-size: 15px;
+            width: 15px;
+            height: 15px;
+        }
+    }
+
+    .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 20px;
+        transition: background 200ms ease;
+    }
+
+    .btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 24px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
     }
 }
 
