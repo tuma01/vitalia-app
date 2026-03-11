@@ -172,8 +172,8 @@ export const {MODULES}_CRUD_CONFIG = (): CrudConfig<{Entity}> => {
         form: {
             layout: { columns: 2 },
             fields: [
-                { name: 'code', label: 'menu.catalog.{module}.fields.code', type: 'text', required: true, colSpan: 1, maxLength: 20 },
-                { name: 'name', label: 'menu.catalog.{module}.fields.name', type: 'text', required: true, colSpan: 1, maxLength: 100 },
+                { name: 'code', label: 'menu.catalog.{module}.fields.code', type: 'text', required: true, colSpan: 1, maxLength: 20, icon: 'badge' },
+                { name: 'name', label: 'menu.catalog.{module}.fields.name', type: 'text', required: true, colSpan: 1, maxLength: 100, icon: 'label' },
                 { name: 'active', label: 'menu.catalog.{module}.fields.active', type: 'radio', colSpan: 1,
                     options: [
                         { label: 'common.active', value: true },
@@ -492,6 +492,9 @@ Agregar dentro del grupo correspondiente (ej. `medical_catalog`, `tenant_governa
 ```
 
 > **Nota:** El `edit` siempre `"visible": false` porque se accede desde la fila del listado, no desde el menú.
+> 
+> [!IMPORTANT]
+> **Regla de Iconografía en Menús**: Es obligatorio asignar un Material Icon pertinente a cada nivel principal y a todos sus subperfiles para garantizar una navegación visual rápida y profesional (ej: `personal_injury` para Pacientes, `medication` para Farmacia, `bed` para Hospitalización).
 
 ---
 
@@ -506,6 +509,11 @@ Antes de considerar un módulo completo, verificar cada punto:
 - [ ] `{modules}-add.component.ts` con clase plural
 - [ ] `{modules}-edit.component.ts` con clase plural
 - [ ] `{modules}.routes.ts` importando las 3 clases plurales
+
+### UI/UX
+- [ ] Inputs pertinentes tienen **iconos** configurados (Material Icons)
+- [ ] Títulos de sección con barra de acento vertical
+- [ ] Action Bar en estilo "Pill" (automático por `CrudTemplate`)
 
 ### Rutas
 - [ ] Registrado en `catalog.routes.ts` con `path: '{modules}'`
@@ -557,3 +565,14 @@ Al implementar módulos de gestión para organizaciones (Tenants):
 1.  **Filtrado de Global Tenant**: En selectores de organizaciones destinadas a clientes finales, **SIEMPRE** filtrar el inquilino con `type: 'GLOBAL'`. Este inquilino es exclusivo para infraestructura y SuperAdmin.
 2.  **Aislamiento de Datos**: Validar que un administrador solo pueda ser asignado a una organización que no esté en conflicto con su identidad previa.
 3.  **Consistencia de Menú**: Mantener siempre la estructura de "Lista" y "Agregar" como sub-items para garantizar una navegación homogénea.
+
+---
+
+## 13. Detalles de UI/UX (Formularios)
+
+Para mantener una interfaz profesional y moderna:
+
+1.  **Iconos en Inputs**: Es obligatorio añadir iconos a los campos más pertinentes (ej: email, password, nombre, código, teléfono). No es necesario en campos extensos como "Descripción" o "Notas".
+    - Uso: Añadir `icon: 'icon_name'` en la configuración del campo en el `CRUD_CONFIG`.
+2.  **Agrupación Visual**: Evitar el uso de bordes pesados. El `CrudTemplate` ya gestiona el estilo "Ultra-Clean" sin bordes ni sombras internas.
+3.  **Action Bar**: El sistema de botones Guardar/Cancelar flota automáticamente en la parte inferior. Asegurarse de que el contenido del formulario tenga suficiente padding inferior para no quedar oculto detrás de la barra (gestionado por `.form-page`).

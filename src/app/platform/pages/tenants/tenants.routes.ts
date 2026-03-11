@@ -24,9 +24,8 @@ export const routes: Routes = [
                 data: { title: 'menu.billing_licensing', icon: 'payments' }
             },
             {
-                path: 'config',
-                component: PlatformShellComponent,
-                data: { title: 'menu.tenant_config', icon: 'settings_applications' }
+                path: 'tenant-configs',
+                loadChildren: () => import('./tenant-configs/tenant-configs.routes').then(m => m.routes)
             }
         ]
     }

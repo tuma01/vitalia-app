@@ -26,6 +26,7 @@
         "id": "ID",
         "save": "Guardar",
         "cancel": "Cancelar",
+        "required_fields": "Los campos con * son obligatorios",
         "delete": "Eliminar",
         "edit": "Editar",
         "add": "Agregar",
@@ -385,6 +386,28 @@
                     "password_placeholder_edit": "Nueva contraseña",
                     "adminLevel": "Nivel de Admin"
                 }
+            },
+            "tenant_config": {
+                "title": "Configuraciones de Tenencia",
+                "singular": "Configuración de Tenencia",
+                "plural": "Configuraciones de Tenencia",
+                "list": "Lista de Configuraciones",
+                "add": "Crear Configuración",
+                "edit": "Editar Configuración",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "ID de Organización",
+                    "defaultDomain": "Dominio Principal",
+                    "maxUsers": "Máx. Usuarios",
+                    "storageQuotaBytes": "Cuota de Storage (Bytes)",
+                    "allowLocal": "Permitir Login Local",
+                    "requireEmailVerification": "Requerir Verif. Email",
+                    "timezone": "Zona Horaria",
+                    "locale": "Idioma (Locale)",
+                    "fallbackHeader": "Header de Identificación",
+                    "passwordPolicyJson": "Política de Contraseñas (JSON)",
+                    "extraJson": "Config. Extra (JSON)"
+                }
             }
         },
         "billing_licensing": "Planes y Licenciamiento",
@@ -658,6 +681,92 @@
                         "provinciaId": "ID de Provincia"
                     }
                 }
+            }
+        },
+        "tenant_admin": {
+            "dashboard": {
+                "title": "Panel de Control"
+            },
+            "patients": {
+                "title": "Pacientes",
+                "registration": "Registro",
+                "records": "Historias Clínicas",
+                "documents": "Documentos"
+            },
+            "admissions": {
+                "title": "Admisiones",
+                "admission": "Admisión",
+                "emergency": "Urgencias",
+                "transfers": "Traslados",
+                "discharges": "Altas"
+            },
+            "appointments": {
+                "title": "Citas y Atención",
+                "calendar": "Agenda Médica",
+                "outpatient": "Consulta Externa",
+                "telemedicine": "Telemedicina"
+            },
+            "hospitalization": {
+                "title": "Hospitalización",
+                "beds": "Mapa de Camas",
+                "list": "Pacientes Hospitalizados"
+            },
+            "clinical_services": {
+                "title": "Servicios Clínicos",
+                "lab": "Laboratorio",
+                "imaging": "Imagenología",
+                "results": "Resultados"
+            },
+            "pharmacy": {
+                "title": "Farmacia",
+                "inventory": "Inventario",
+                "prescriptions": "Recetas",
+                "purchases": "Compras"
+            },
+            "medical_staff": {
+                "title": "Personal Médico",
+                "directory": "Directorio",
+                "shifts": "Turnos",
+                "teams": "Equipos"
+            },
+            "finance": {
+                "title": "Seguros y Facturación",
+                "billing": "Facturación",
+                "contracts": "Convenios",
+                "payments": "Pagos"
+            },
+            "resources": {
+                "title": "Recursos",
+                "equipment": "Equipamiento",
+                "rooms": "Salas",
+                "maintenance": "Mantenimiento"
+            },
+            "reports": {
+                "title": "Reportes",
+                "statistics": "Estadísticas",
+                "kpis": "KPIs"
+            },
+            "admin": {
+                "title": "Administración",
+                "hospital_profile": {
+                    "title": "Perfil Hospital",
+                    "singular": "Perfil de Hospital",
+                    "plural": "Perfiles de Hospital",
+                    "edit": "Editar Perfil",
+                    "fields": {
+                        "defaultDomain": "Dominio Principal",
+                        "timezone": "Zona Horaria",
+                        "locale": "Idioma",
+                        "requireEmailVerification": "Verificar Email",
+                        "fallbackHeader": "Header Alternativo",
+                        "passwordPolicyJson": "Política de Password (JSON)",
+                        "extraJson": "Configuración Extra (JSON)"
+                    }
+                },
+                "users": "Usuarios",
+                "roles": "Roles",
+                "audit": "Auditoría",
+                "integrations": "Integraciones"
             }
         }
     },

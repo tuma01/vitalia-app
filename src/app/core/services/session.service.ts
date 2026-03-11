@@ -61,8 +61,9 @@ export class SessionService {
     } else {
       // Tenant user - set app context with tenant info
       const tenantInfo = {
+        id: loginData.user.tenantId,
         code: loginData.user.tenantCode || 'unknown',
-        name: loginData.user.tenantCode // Could be enhanced with tenant name from API
+        name: loginData.user.tenantName || loginData.user.tenantCode
       };
 
       this.appContext.setContext('app', tenantInfo);
@@ -70,8 +71,13 @@ export class SessionService {
       // Store in storage for context initialization on refresh
       localStorage.setItem('vitalia-current-user', JSON.stringify(loginData.user));
       localStorage.setItem('vitalia-tenant-code', loginData.user.tenantCode || '');
+      
+      // Store in sessionStorage for AppContextService.initFromSession
+      sessionStorage.setItem('tenant-id', loginData.user.tenantId?.toString() || '');
+      sessionStorage.setItem('tenant-code', loginData.user.tenantCode || '');
+      sessionStorage.setItem('tenant-name', loginData.user.tenantName || '');
 
-      console.log('[SessionService] 🔥 Context set to APP for tenant:', tenantInfo.code);
+      console.log('[SessionService] 🔥 Context set to APP for tenant:', tenantInfo.code, 'ID:', tenantInfo.id);
     }
   }
 

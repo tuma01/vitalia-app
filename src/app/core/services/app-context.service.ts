@@ -1,5 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { TenantService } from 'app/api/services/tenant.service';
 
 /**
  * Application context types
@@ -10,6 +11,7 @@ export type AppContext = 'platform' | 'app';
  * Tenant information interface
  */
 export interface TenantInfo {
+    id?: number;
     code: string;
     name?: string;
 }
@@ -32,6 +34,8 @@ export interface TenantInfo {
  */
 @Injectable({ providedIn: 'root' })
 export class AppContextService {
+    private tenantService = inject(TenantService);
+
     // 🔄 Reactive context stream (for services to subscribe)
     private contextSubject = new BehaviorSubject<AppContext | null>(null);
     public readonly contextChanges$: Observable<AppContext | null> = this.contextSubject.asObservable();
@@ -113,21 +117,62 @@ export class AppContextService {
     }
 
     /**
-     * Detects context from the current URL
+     * Detects context from the current URL (Platform vs Tenant)
+     * Supports subdomain-based tenant resolution (e.g., hospital-a.vitalia.com)
      */
     private detectFromUrl(): void {
-        const url = window.location.pathname;
-        if (url.startsWith('/platform')) {
-            this.setContext('platform');
-            console.log('[AppContext] ✅ Context set to PLATFORM from URL');
-        } else {
-            // Default to app context for tenant login
-            this.currentContext.set('app');
-            this.contextSubject.next('app');
-            this.tenantInfo.set(null);
-            this.tenantSubject.next(null);
-            console.log('[AppContext] ✅ Context set to APP from URL (no tenant)');
+        const hostname = window.location.hostname;
+        const pathname = window.location.pathname;
+
+        console.log(`[AppContext] 🔍 Detecting context from URL: ${hostname}${pathname}`);
+
+        // 1. Platform Context Detection
+        if (pathname.startsWith('/platform')) {
+            this.setPlatformContext();
+            return;
         }
+
+        // 2. Subdomain-based Tenant Resolution
+        // Pattern: [tenant].vitalia.com or [tenant].localhost
+        const parts = hostname.split('.');
+        
+        // If we have a subdomain (e.g., hospital-san-borja.localhost)
+        if (parts.length > 1) {
+            const sub = parts[0].toLowerCase();
+            
+            // Exclude common non-tenant subdomains
+            const reserved = ['www', 'app', 'vitalia', 'platform', 'localhost'];
+            
+            if (!reserved.includes(sub)) {
+                console.log(`[AppContext] 🌐 Tenant subdomain detected: ${sub}`);
+                this.setTenantContext({ code: sub });
+                this.loadTenantDetails(sub);
+                return;
+            }
+        }
+
+        // 3. Default Fallback (no tenant detected yet)
+        this.setTenantContext(undefined);
+        console.log('[AppContext] ⚠️ No tenant detected from URL subdomain');
+    }
+
+    /**
+     * Fetch full tenant details by code (publicly)
+     */
+    private loadTenantDetails(code: string): void {
+        this.tenantService.getPublicTenantByCode({ code }).subscribe({
+            next: (tenant: any) => {
+                console.log(`[AppContext] ✅ Tenant details loaded for: ${code}`, tenant);
+                this.setTenantContext({
+                    id: tenant.id,
+                    code: tenant.code,
+                    name: tenant.name
+                });
+            },
+            error: (err: any) => {
+                console.warn(`[AppContext] ⚠️ Could not load details for tenant: ${code}`, err);
+            }
+        });
     }
 
     /**
@@ -174,10 +219,12 @@ export class AppContextService {
                     console.log('[AppContext] ✅ Context initialized as PLATFORM from session');
                 } else {
                     // Get tenant from session
+                    const tenantId = sessionStorage.getItem('tenant-id');
                     const tenantCode = sessionStorage.getItem('tenant-code');
                     const tenantName = sessionStorage.getItem('tenant-name');
 
                     this.setContext('app', {
+                        id: tenantId ? Number(tenantId) : undefined,
                         code: tenantCode || 'unknown',
                         name: tenantName || undefined
                     });

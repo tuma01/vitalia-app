@@ -110,7 +110,8 @@
     </ng-template>
 </mtx-grid>
 } @else {
-<mat-card class="m-16 crud-form-card">
+<div class="form-page">
+<mat-card class="crud-form-card">
     <!-- HEADER (ERP Standard) -->
     <div class="form-header">
         <mat-card-header>
@@ -120,7 +121,7 @@
         </mat-card-header>
     </div>
 
-    <!-- BODY (ERP Standard) -->
+    <!-- BODY — Scrollable Zone -->
     <div class="form-body">
         <mat-card-content>
             <!-- Dynamic Form Grid (if config.form is provided) -->
@@ -245,16 +246,26 @@
         </mat-card-content>
     </div>
 
-    <!-- FOOTER (ERP Standard) -->
-    <div class="form-footer">
-        <mat-card-actions class="d-flex justify-content-end gap-8">
-            <button mat-stroked-button type="button" (click)="cancel.emit()">
-                {{ 'common.cancel' | translate }}
-            </button>
-            <button mat-flat-button color="primary" type="button" (click)="save.emit()">
-                {{ 'common.save' | translate }}
-            </button>
-        </mat-card-actions>
-    </div>
 </mat-card>
+
+<!-- FOOTER — Sticky Action Bar (Full Width, always visible) -->
+<div class="form-footer">
+    <div class="footer-left">
+        <span class="footer-hint">
+            <mat-icon class="footer-hint-icon">info_outline</mat-icon>
+            {{ 'common.required_fields' | translate }}
+        </span>
+    </div>
+    <div class="footer-actions">
+        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel.emit()">
+            <mat-icon>close</mat-icon>
+            {{ 'common.cancel' | translate }}
+        </button>
+        <button mat-flat-button color="primary" type="button" class="btn-save" (click)="save.emit()">
+            <mat-icon>save</mat-icon>
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+</div>
 }

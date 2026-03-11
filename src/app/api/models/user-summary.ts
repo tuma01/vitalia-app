@@ -40,6 +40,11 @@ export interface UserSummary {
   tenantCode?: string;
 
   /**
+   * Identificador único del tenant (hospital) actual
+   */
+  tenantId?: number;
+
+  /**
    * Nombre del tenant (hospital) actual
    */
   tenantName?: string;

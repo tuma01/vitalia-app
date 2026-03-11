@@ -26,6 +26,7 @@
         "id": "ID",
         "save": "Enregistrer",
         "cancel": "Annuler",
+        "required_fields": "Les champs marqués avec * sont obligatoires",
         "delete": "Supprimer",
         "edit": "Modifier",
         "add": "Ajouter",
@@ -385,6 +386,28 @@
                     "password_placeholder_edit": "Nouveau mot de passe",
                     "adminLevel": "Niveau Admin"
                 }
+            },
+            "tenant_config": {
+                "title": "Configurations des Locataires",
+                "singular": "Configuration du Locataire",
+                "plural": "Configurations des Locataires",
+                "list": "Liste des Configurations",
+                "add": "Créer une Configuration",
+                "edit": "Modifier la Configuration",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "ID de l'Organisation",
+                    "defaultDomain": "Domaine par Défaut",
+                    "maxUsers": "Utilisateurs Max",
+                    "storageQuotaBytes": "Quota de Stockage (Bytes)",
+                    "allowLocal": "Autoriser Connexion Locale",
+                    "requireEmailVerification": "Vérif. Email Requise",
+                    "timezone": "Fuseau Horaire",
+                    "locale": "Langue (Locale)",
+                    "fallbackHeader": "En-tête d'Identification",
+                    "passwordPolicyJson": "Politique de Mots de Passe (JSON)",
+                    "extraJson": "Config. Extra (JSON)"
+                }
             }
         },
         "billing_licensing": "Abonnements et Licences",
@@ -627,7 +650,7 @@
                     }
                 },
                 "province": {
-                    "title": "Provincias",
+                    "title": "Provinces",
                     "singular": "Province",
                     "plural": "Provinces",
                     "list": "Liste des Provinces",
@@ -658,6 +681,92 @@
                         "provinciaId": "ID de la Province"
                     }
                 }
+            }
+        },
+        "tenant_admin": {
+            "dashboard": {
+                "title": "Tableau de Bord"
+            },
+            "patients": {
+                "title": "Patients",
+                "registration": "Enregistrement",
+                "records": "Dossiers Médicaux",
+                "documents": "Documents"
+            },
+            "admissions": {
+                "title": "Admissions",
+                "admission": "Admission",
+                "emergency": "Urgences",
+                "transfers": "Transferts",
+                "discharges": "Sorties"
+            },
+            "appointments": {
+                "title": "Soins et Rendez-vous",
+                "calendar": "Planning Médical",
+                "outpatient": "Soins Ambulatoires",
+                "telemedicine": "Télémédecine"
+            },
+            "hospitalization": {
+                "title": "Hospitalisation",
+                "beds": "Plan des Lits",
+                "list": "Patients Hospitalisés"
+            },
+            "clinical_services": {
+                "title": "Services Clíniques",
+                "lab": "Laboratoire",
+                "imaging": "Imagerie",
+                "results": "Résultats"
+            },
+            "pharmacy": {
+                "title": "Pharmacie",
+                "inventory": "Inventaire",
+                "prescriptions": "Ordonnances",
+                "purchases": "Achats"
+            },
+            "medical_staff": {
+                "title": "Corps Médical",
+                "directory": "Annuaire",
+                "shifts": "Quarts",
+                "teams": "Équipes"
+            },
+            "finance": {
+                "title": "Assurances et Facturation",
+                "billing": "Facturation",
+                "contracts": "Contrats",
+                "payments": "Paiements"
+            },
+            "resources": {
+                "title": "Ressources",
+                "equipment": "Équipement",
+                "rooms": "Salles",
+                "maintenance": "Maintenance"
+            },
+            "reports": {
+                "title": "Rapports",
+                "statistics": "Statistiques",
+                "kpis": "KPIs"
+            },
+            "admin": {
+                "title": "Administration",
+                "hospital_profile": {
+                    "title": "Profil de l'Hôpital",
+                    "singular": "Profil de l'Hôpital",
+                    "plural": "Profils de l'Hôpital",
+                    "edit": "Modifier le Profil",
+                    "fields": {
+                        "defaultDomain": "Domaine par Défaut",
+                        "timezone": "Fuseau Horaire",
+                        "locale": "Langue",
+                        "requireEmailVerification": "Vérifier l'E-mail",
+                        "fallbackHeader": "En-tête de Secours",
+                        "passwordPolicyJson": "Politique de Mot de Passe (JSON)",
+                        "extraJson": "Config. Supplémentaire (JSON)"
+                    }
+                },
+                "users": "Utilisateurs",
+                "roles": "Rôles",
+                "audit": "Audit",
+                "integrations": "Intégrations"
             }
         }
     },

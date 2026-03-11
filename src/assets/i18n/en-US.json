@@ -26,6 +26,7 @@
         "id": "ID",
         "save": "Save",
         "cancel": "Cancel",
+        "required_fields": "Fields marked with * are required",
         "delete": "Delete",
         "edit": "Edit",
         "add": "Add",
@@ -133,20 +134,20 @@
                 "title": "SuperAdmin Management",
                 "singular": "SuperAdmin",
                 "plural": "SuperAdmins",
-                "list": "SuperAdmins List",
+                "list": "SuperAdmin List",
                 "add": "Add SuperAdmin",
                 "edit": "Edit SuperAdmin",
                 "fields": {
                     "id": "ID",
                     "nombre": "First Name",
-                    "apellidoPaterno": "First Surname",
-                    "apellidoMaterno": "Second Surname",
+                    "apellidoPaterno": "Last Name",
+                    "apellidoMaterno": "Middle Name",
                     "email": "Email (Login)",
                     "level": "Access Level",
                     "globalAccess": "Global Access",
                     "password": "Password",
                     "change_password": "Change password",
-                    "password_hint": "Field protected. Use the checkbox to enable editing.",
+                    "password_hint": "Protected field. Use checkbox to enable change.",
                     "password_placeholder_edit": "New password"
                 }
             }
@@ -156,7 +157,7 @@
         "hospitals": "Hospitals",
         "hospitalDepartments": "Hospital Departments",
         "hospitalServices": "Hospital Services",
-        "bedsRooms": "Beds & Rooms",
+        "bedsRooms": "Beds and Rooms",
         "patient": "Patient",
         "patients": "Patients",
         "all_patients": "All Patients",
@@ -172,11 +173,8 @@
         "admissions": "Admissions",
         "discharges": "Discharges",
         "medicalRecords": "Medical Records",
-        "my_tasks": "My Tasks",
-        "staff": "Staff",
-        "billingPayments": "Billing & Payments",
         "medico": "Doctor",
-        "listaMedicos": "Doctors List",
+        "listaMedicos": "Doctor List",
         "registrarMedico": "Register Doctor",
         "editarMedico": "Edit Doctor",
         "asignarDepartamento": "Assign Department",
@@ -198,8 +196,8 @@
         "departamentos-hospitalarios": "Hospital Departments",
         "add-departamento-hospital": "Add Department",
         "edit-departamento-hospital": "Edit Department",
-        "beds-room": "Beds & Rooms",
-        "beds-rooms": "Beds & Rooms",
+        "beds-room": "Beds and Rooms",
+        "beds-rooms": "Beds and Rooms",
         "add-beds-room": "Add Bed/Room",
         "edit-beds-room": "Edit Bed/Room",
         "location": "Location",
@@ -222,7 +220,7 @@
         "admin": "Administration",
         "users": "Users",
         "userManagement": "User Management",
-        "rolesPermissions": "Roles & Permissions",
+        "rolesPermissions": "Roles and Permissions",
         "siteConfiguration": "Site Configuration",
         "generalConfiguration": "General Configuration",
         "general_configuration": "General Configuration",
@@ -230,43 +228,47 @@
         "billingConfiguration": "Billing Configuration",
         "otherParameters": "Other Parameters",
         "auditLog": "Audit Log",
-        "backupRestore": "Backup & Restore",
+        "backupRestore": "Backup and Restore",
         "profile": "Profile",
         "my_patients": "My Patients",
         "triage": "Triage",
         "vitals": "Vital Signs",
-        "shift_schedule": "Shift Schedule",
+        "shift_schedule": "Shifts",
         "medical_records": "Medical Records",
         "patient_list": "Patient List",
+        "billingPayments": "Billing and Payments",
+        "my_tasks": "My Tasks",
+        "staff": "Staff",
+        "staff_directory": "Staff Directory",
         "overview": "Overview",
         "logout": "Logout",
         "my_health_record": "My Health Record",
         "health_summary": "Health Summary",
         "lab_results": "Lab Results",
-        "medications": "Current Medications",
-        "allergies_immunizations": "Allergies & Immunizations",
+        "medications": "Active Medications",
+        "allergies_immunizations": "Allergies and Immunizations",
         "imaging_reports": "Imaging Reports",
         "clinical_documents": "Clinical Documents",
         "care_services": "Care Services",
         "book_appointment": "Book Appointment",
         "my_appointments": "My Appointments",
-        "find_doctor": "Find a Doctor",
+        "find_doctor": "Find Doctor",
         "virtual_visits": "Virtual Visits",
         "financial": "Financial",
         "my_bills": "My Bills",
         "insurance_info": "Insurance Info",
         "account_settings": "Account Settings",
         "my_profile": "My Profile",
-        "privacy_consent": "Privacy & Consent",
+        "privacy_consent": "Privacy and Consent",
         "family_access": "Family Access",
         "clinical_workspace": "Clinical Workspace",
         "patient_queue": "Patient Queue",
         "my_schedule": "My Schedule",
         "clinical_care": "Clinical Care",
         "inpatient_rounds": "Inpatient Rounds",
-        "orders_entry": "Order Entry",
+        "orders_entry": "Orders Entry",
         "search_records": "Search Records",
-        "lab_results_review": "Result Review",
+        "lab_results_review": "Results Review",
         "pacs_imaging": "PACS Imaging",
         "communication": "Communication",
         "clinical_inbox": "Clinical Inbox",
@@ -278,8 +280,8 @@
         "chat_provider": "Chat with Provider",
         "active_patients": "Active Patients",
         "inpatient_management": "Inpatient Management",
-        "floor_view": "Floor Plan",
-        "medication_admin": "eMAR",
+        "floor_view": "Floor View",
+        "medication_admin": "Medication Admin (eMAR)",
         "nursing_notes": "Nursing Notes",
         "care_coordination": "Care Coordination",
         "care_plans": "Care Plans",
@@ -287,43 +289,42 @@
         "staff_management": "Staff Management",
         "my_shifts": "My Shifts",
         "shift_handover": "Shift Handover",
-        "hospitals_clinics": "Hospitals & Clinics",
-        "subscriptions_billing": "Subscriptions & Billing",
+        "hospitals_clinics": "Hospitals and Clinics",
+        "subscriptions_billing": "Subscriptions and Billing",
         "master_registry": "Master Registry",
-        "master_patient_index": "Master Patient Index",
+        "master_patient_index": "Master Patient Index (MPI)",
         "provider_registry": "Provider Registry",
         "infrastructure": "Infrastructure",
         "audit_logs": "Audit Logs",
-        "security_compliance": "Security Compliance",
+        "security_compliance": "Security and Compliance",
         "interoperability": "Interoperability",
         "data_management": "Data Management",
-        "backups_recovery": "Backups & Recovery",
+        "backups_recovery": "Backups and Recovery",
         "reference_data": "Reference Data",
         "hospital_operations": "Hospital Operations",
-        "departments_clinics": "Departments & Clinics",
+        "departments_clinics": "Departments and Clinics",
         "bed_management": "Bed Management",
         "facility_scheduling": "Facility Scheduling",
         "human_resources": "Human Resources",
-        "roles_permissions": "Roles & Permissions",
-        "staff_directory": "Staff Directory",
-        "payroll_benefits": "Payroll & Benefits",
+        "roles_permissions": "Roles and Permissions",
+        "payroll_benefits": "Payroll and Benefits",
         "clinical_configuration": "Clinical Configuration",
         "service_catalog": "Service Catalog",
         "pharmacy_formulary": "Pharmacy Formulary",
         "care_pathways": "Care Pathways",
-        "reports_analytics": "Reports & Analytics",
+        "reports_analytics": "Reports and Analytics",
         "financial_reports": "Financial Reports",
         "clinical_quality": "Clinical Quality",
         "geography_management": "Geography Management",
         "person": {
             "fields": {
-                "nombre": "Name",
+                "nombre": "First Name",
                 "segundoNombre": "Middle Name",
-                "apellidoPaterno": "First Last Name",
+                "apellidoPaterno": "Last Name",
                 "apellidoMaterno": "Second Last Name",
                 "fechaNacimiento": "Date of Birth",
                 "genero": "Gender",
-                "estadoCivil": "Civil Status",
+                "estadoCivil": "Marital Status",
                 "telefono": "Phone",
                 "email": "Personal Email"
             }
@@ -334,7 +335,7 @@
                 "title": "Organizations",
                 "singular": "Organization",
                 "plural": "Organizations",
-                "list": "Organizations List",
+                "list": "Organization List",
                 "add": "Add Organization",
                 "edit": "Edit Organization",
                 "fields": {
@@ -345,7 +346,7 @@
                     "isActive": "Active",
                     "themeId": "Visual Theme",
                     "description": "Description",
-                    "address_direccion": "Street Address",
+                    "address_direccion": "Address",
                     "address_ciudad": "City",
                     "address_numero": "Number",
                     "address_piso": "Floor",
@@ -367,56 +368,79 @@
                 "title": "Administrator Management",
                 "singular": "Administrator",
                 "plural": "Administrators",
-                "list": "Administrators List",
+                "list": "Administrator List",
                 "add": "Add Administrator",
                 "edit": "Edit Administrator",
                 "fields": {
                     "id": "ID",
                     "tenantId": "Organization",
-                    "nombre": "First Name",
-                    "apellidoPaterno": "First Surname",
-                    "apellidoMaterno": "Second Surname",
+                    "nombre": "Name",
+                    "apellidoPaterno": "First Last Name",
+                    "apellidoMaterno": "Second Last Name",
                     "telefono": "Phone",
                     "email": "Email",
                     "role_info": "Assigned Role",
                     "password": "Password",
                     "change_password": "Change password",
-                    "password_hint": "Field protected. Use the checkbox to enable editing.",
-                    "password_placeholder_edit": "New password"
+                    "password_hint": "Protected field. Use checkbox to enable change.",
+                    "password_placeholder_edit": "New password",
+                    "adminLevel": "Admin Level"
+                }
+            },
+            "tenant_config": {
+                "title": "Tenant Configurations",
+                "singular": "Tenant Configuration",
+                "plural": "Tenant Configurations",
+                "list": "Configuration List",
+                "add": "Create Configuration",
+                "edit": "Edit Configuration",
+                "fields": {
+                    "id": "ID",
+                    "tenantId": "Organization ID",
+                    "defaultDomain": "Primary Domain",
+                    "maxUsers": "Max Users",
+                    "storageQuotaBytes": "Storage Quota (Bytes)",
+                    "allowLocal": "Allow Local Login",
+                    "requireEmailVerification": "Require Email Verification",
+                    "timezone": "Timezone",
+                    "locale": "Language (Locale)",
+                    "fallbackHeader": "Identification Header",
+                    "passwordPolicyJson": "Password Policy (JSON)",
+                    "extraJson": "Extra Config (JSON)"
                 }
             }
         },
-        "billing_licensing": "Plans & Licensing",
+        "billing_licensing": "Plans and Licensing",
         "tenant_config": "Global Tenant Configuration",
         "medical_catalog": "Global Medical Catalog",
         "consent_registry": "Consent Registry (DSQ)",
-        "bridge_connectors": "Bridge Connectors",
+        "bridge_connectors": "Connectors (Bridge)",
         "fhir_hl7_profiles": "FHIR/HL7 Profiles",
         "empi_matching": "EMPI (Patient Master)",
         "platform_intelligence": "Platform Intelligence",
         "operational_stats": "Operational Statistics",
-        "broadcast_center": "Broadcast Center",
+        "broadcast_center": "Massive Communication Center",
         "catalog": {
             "title": "Medical Catalog",
             "icd10": {
                 "title": "Diagnostics (ICD-10)",
-                "singular": "Diagnosis",
+                "singular": "Diagnostic",
                 "plural": "Diagnostics",
-                "list": "Diagnostics List",
-                "add": "Add Diagnosis",
-                "edit": "Edit Diagnosis",
+                "list": "Diagnostic List",
+                "add": "Add Diagnostic",
+                "edit": "Edit Diagnostic",
                 "fields": {
                     "id": "ID",
                     "code": "ICD Code",
                     "description": "Description",
-                    "active": "Active Status"
+                    "active": "Active"
                 }
             },
             "allergy": {
                 "title": "Allergies",
                 "singular": "Allergy",
                 "plural": "Allergies",
-                "list": "Allergies List",
+                "list": "Allergy List",
                 "add": "Add Allergy",
                 "edit": "Edit Allergy",
                 "fields": {
@@ -425,38 +449,38 @@
                     "name": "Name",
                     "type": "Type",
                     "description": "Description",
-                    "active": "Active Status"
+                    "active": "Active"
                 }
             },
             "blood_type": {
                 "title": "Blood Types",
                 "singular": "Blood Type",
                 "plural": "Blood Types",
-                "list": "Blood Types List",
+                "list": "Blood Type List",
                 "add": "Add Blood Type",
                 "edit": "Edit Blood Type",
                 "fields": {
                     "id": "ID",
                     "code": "Code",
                     "name": "Name",
-                    "active": "Active Status"
+                    "active": "Active"
                 }
             },
             "healthcare_provider": {
-                "title": "Healthcare Providers",
-                "singular": "Healthcare Provider",
-                "plural": "Healthcare Providers",
-                "list": "Healthcare Providers List",
-                "add": "Add Healthcare Provider",
-                "edit": "Edit Healthcare Provider",
+                "title": "Insurers and Payers",
+                "singular": "Insurer",
+                "plural": "Insurers and Payers",
+                "list": "Insurer List",
+                "add": "Add Insurer",
+                "edit": "Edit Insurer",
                 "fields": {
                     "id": "ID",
                     "code": "Code",
                     "name": "Name",
-                    "taxId": "Tax ID (NIT/RUT)",
+                    "taxId": "Tax ID",
                     "email": "Email",
                     "phone": "Phone",
-                    "active": "Active Status"
+                    "active": "Active"
                 }
             },
             "identification_type": {
@@ -477,7 +501,7 @@
                 "title": "Medications",
                 "singular": "Medication",
                 "plural": "Medications",
-                "list": "List of Medications",
+                "list": "Medication List",
                 "add": "Add Medication",
                 "edit": "Edit Medication",
                 "fields": {
@@ -485,17 +509,17 @@
                     "code": "Code",
                     "genericName": "Generic Name",
                     "commercialName": "Commercial Name",
-                    "concentration": "Concentración",
+                    "concentration": "Concentration",
                     "pharmaceuticalForm": "Pharmaceutical Form",
                     "presentation": "Presentation",
                     "active": "Active"
                 }
             },
             "procedures": {
-                "title": "Procedures",
+                "title": "Medical Procedures",
                 "singular": "Procedure",
                 "plural": "Procedures",
-                "list": "List of Procedures",
+                "list": "Procedure List",
                 "add": "Add Procedure",
                 "edit": "Edit Procedure",
                 "fields": {
@@ -510,7 +534,7 @@
                 "title": "Vaccines",
                 "singular": "Vaccine",
                 "plural": "Vaccines",
-                "list": "List of Vaccines",
+                "list": "Vaccine List",
                 "add": "Add Vaccine",
                 "edit": "Edit Vaccine",
                 "fields": {
@@ -522,10 +546,10 @@
                 }
             },
             "specialty": {
-                "title": "Specialties",
+                "title": "Medical Specialties",
                 "singular": "Specialty",
                 "plural": "Specialties",
-                "list": "List of Specialties",
+                "list": "Specialty List",
                 "add": "Add Specialty",
                 "edit": "Edit Specialty",
                 "fields": {
@@ -546,7 +570,7 @@
                 "title": "Kinships",
                 "singular": "Kinship",
                 "plural": "Kinships",
-                "list": "List of Kinships",
+                "list": "Kinship List",
                 "add": "Add Kinship",
                 "edit": "Edit Kinship",
                 "fields": {
@@ -557,12 +581,12 @@
                 }
             },
             "demographics": {
-                "title": "Demographics",
+                "title": "Demographic Data",
                 "civil_status": {
                     "title": "Civil Statuses",
                     "singular": "Civil Status",
                     "plural": "Civil Statuses",
-                    "list": "List of Civil Statuses",
+                    "list": "Civil Status List",
                     "add": "Add Civil Status",
                     "edit": "Edit Civil Status",
                     "fields": {
@@ -576,7 +600,7 @@
                     "title": "Genders",
                     "singular": "Gender",
                     "plural": "Genders",
-                    "list": "List of Genders",
+                    "list": "Gender List",
                     "add": "Add Gender",
                     "edit": "Edit Gender",
                     "fields": {
@@ -593,7 +617,7 @@
                     "title": "Countries",
                     "singular": "Country",
                     "plural": "Countries",
-                    "list": "Countries List",
+                    "list": "Country List",
                     "add": "Add Country",
                     "edit": "Edit Country",
                     "notFound": "No countries found",
@@ -614,7 +638,7 @@
                     "title": "Departments",
                     "singular": "Department",
                     "plural": "Departments",
-                    "list": "Departments List",
+                    "list": "Department List",
                     "add": "Add Department",
                     "edit": "Edit Department",
                     "fields": {
@@ -629,7 +653,7 @@
                     "title": "Provinces",
                     "singular": "Province",
                     "plural": "Provinces",
-                    "list": "Provinces List",
+                    "list": "Province List",
                     "add": "Add Province",
                     "edit": "Edit Province",
                     "fields": {
@@ -644,7 +668,7 @@
                     "title": "Municipalities",
                     "singular": "Municipality",
                     "plural": "Municipalities",
-                    "list": "Municipalities List",
+                    "list": "Municipality List",
                     "add": "Add Municipality",
                     "edit": "Edit Municipality",
                     "fields": {
@@ -658,8 +682,95 @@
                     }
                 }
             }
+        },
+        "tenant_admin": {
+            "dashboard": {
+                "title": "Dashboard"
+            },
+            "patients": {
+                "title": "Patients",
+                "registration": "Registration",
+                "records": "Medical Records",
+                "documents": "Documents"
+            },
+            "admissions": {
+                "title": "Admissions",
+                "admission": "Admission",
+                "emergency": "Emergency",
+                "transfers": "Transfers",
+                "discharges": "Discharges"
+            },
+            "appointments": {
+                "title": "Care & Appointments",
+                "calendar": "Medical Schedule",
+                "outpatient": "Outpatient Care",
+                "telemedicine": "Telemedicine"
+            },
+            "hospitalization": {
+                "title": "Hospitalization",
+                "beds": "Bed Map",
+                "list": "Inpatients"
+            },
+            "clinical_services": {
+                "title": "Clinical Services",
+                "lab": "Laboratory",
+                "imaging": "Imaging",
+                "results": "Results"
+            },
+            "pharmacy": {
+                "title": "Pharmacy",
+                "inventory": "Inventory",
+                "prescriptions": "Prescriptions",
+                "purchases": "Purchases"
+            },
+            "medical_staff": {
+                "title": "Medical Staff",
+                "directory": "Directory",
+                "shifts": "Shifts",
+                "teams": "Teams"
+            },
+            "finance": {
+                "title": "Insurance & Billing",
+                "billing": "Billing",
+                "contracts": "Contracts",
+                "payments": "Payments"
+            },
+            "resources": {
+                "title": "Resources",
+                "equipment": "Equipment",
+                "rooms": "Rooms",
+                "maintenance": "Maintenance"
+            },
+            "reports": {
+                "title": "Reports",
+                "statistics": "Statistics",
+                "kpis": "KPIs"
+            },
+            "admin": {
+                "title": "Administration",
+                "hospital_profile": {
+                    "title": "Hospital Profile",
+                    "singular": "Hospital Profile",
+                    "plural": "Hospital Profiles",
+                    "edit": "Edit Profile",
+                    "fields": {
+                        "defaultDomain": "Default Domain",
+                        "timezone": "Timezone",
+                        "locale": "Language",
+                        "requireEmailVerification": "Verify Email",
+                        "fallbackHeader": "Fallback Header",
+                        "passwordPolicyJson": "Password Policy (JSON)",
+                        "extraJson": "Extra Config (JSON)"
+                    }
+                },
+                "users": "Users",
+                "roles": "Roles",
+                "audit": "Audit",
+                "integrations": "Integrations"
+            }
         }
     },
+
     "dashboard": {
         "title": "Control Panel",
         "welcome": "Welcome",

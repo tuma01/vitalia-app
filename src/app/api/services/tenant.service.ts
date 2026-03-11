@@ -315,4 +315,30 @@ export class TenantService extends BaseService {
     );
   }
 
+  /**
+   * Obtiene un tenant por su código (público).
+   */
+  getPublicTenantByCode$Response(params: { code: string }, context?: HttpContext): Observable<StrictHttpResponse<Tenant>> {
+    const rb = new (class {
+      url = '';
+      method = 'GET';
+      body = null;
+    })();
+    rb.url = this.rootUrl + '/tenants/by-code/' + params.code;
+    
+    return this.http.request(rb.method, rb.url, {
+      observe: 'response',
+      responseType: 'json',
+      context
+    } as any).pipe(
+      map((r: any) => r as StrictHttpResponse<Tenant>)
+    );
+  }
+
+  getPublicTenantByCode(params: { code: string }, context?: HttpContext): Observable<Tenant> {
+    return this.getPublicTenantByCode$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Tenant>): Tenant => r.body)
+    );
+  }
+
 }

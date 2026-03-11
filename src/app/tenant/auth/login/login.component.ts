@@ -62,7 +62,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private toastService = inject(ToastrService);
-  private appContext = inject(AppContextService); // 🔥 ADDED
+  public appContext = inject(AppContextService); // 🔥 CHANGED to public for template access
 
   // Signals
   selectedRole = signal<string>('');
@@ -96,8 +96,20 @@ export class LoginComponent {
   });
 
   constructor() {
+    this.checkInitialTenant();
     this.loadTenants();
     this.setupTenantBrandingListener();
+  }
+
+  /**
+   * 🌐 Checks if a tenant was already detected from the URL subdomain
+   */
+  private checkInitialTenant(): void {
+    const detectedTenant = this.appContext.tenant();
+    if (detectedTenant?.code) {
+      console.log('[Login] 🌐 Detected tenant from URL:', detectedTenant.code);
+      // We don't patch form yet, loadTenants will handle the full strategy
+    }
   }
 
   /**
@@ -107,20 +119,21 @@ export class LoginComponent {
     const tenantControl = this.loginForm.get('tenantCode');
     if (!tenantControl) return;
 
-    // 1️⃣ Listen for changes (User selection or patchValue)
+    // Listen for changes (User selection or patchValue)
+    // Use { emitEvent: false } in patchValue when setting initial state to avoid redundant triggers
     tenantControl.valueChanges.subscribe(code => {
-      console.log('[Login] 🔄 Tenant selection changed:', code);
       this.applyTenantBranding(code);
     });
-
-    // 2️⃣ Apply initial value if already present
-    if (tenantControl.value) {
-      this.applyTenantBranding(tenantControl.value);
-    }
   }
 
   private applyTenantBranding(code: string | null): void {
     if (!code) return;
+
+    // 🛡️ Guard: Avoid redundant context updates if already set
+    const currentContext = this.appContext.tenant();
+    if (currentContext?.code === code && currentContext?.name) {
+      return;
+    }
 
     const selectedTenant = this.tenants().find(t => t.code === code);
     if (selectedTenant && selectedTenant.code) {
@@ -135,23 +148,32 @@ export class LoginComponent {
   loadTenants(): void {
     this.tenantApiService.getPublicAllTenants().subscribe({
       next: (tenants) => {
-        this.tenants.set(tenants);
+        // 🛡️ SECURITY & UX: Filter out 'GLOBAL' tenant (internal use only)
+        const publicTenants = tenants.filter(t => t.type !== 'GLOBAL');
+        this.tenants.set(publicTenants);
 
         // 🚀 AUTO-SELECT STRATEGY:
-        // 1. Try to restore last used tenant from localStorage
+        // 1. Check if we have a detected tenant from URL
+        const detectedTenant = this.appContext.tenant();
+        if (detectedTenant?.code && publicTenants.some(t => t.code === detectedTenant.code)) {
+          console.log('[Login] 🌐 Applying subdomain tenant branding:', detectedTenant.code);
+          this.loginForm.get('tenantCode')?.patchValue(detectedTenant.code, { emitEvent: false });
+          this.applyTenantBranding(detectedTenant.code);
+          return;
+        }
+
+        // 2. Try to restore last used tenant from localStorage
         const lastTenantCode = localStorage.getItem('vitalia-tenant-code');
 
-        if (lastTenantCode && tenants.some(t => t.code === lastTenantCode)) {
+        if (lastTenantCode && publicTenants.some(t => t.code === lastTenantCode)) {
           console.log('[Login] 🔄 Restoring last used tenant:', lastTenantCode);
-          this.loginForm.patchValue({ tenantCode: lastTenantCode });
-
-          // 🔥 FORCE BRANDING after patchValue to ensure signals are ready
+          this.loginForm.get('tenantCode')?.patchValue(lastTenantCode, { emitEvent: false });
           this.applyTenantBranding(lastTenantCode);
         }
-        // 2. Fallback: Autoselect first tenant if ONLY one available
-        else if (tenants.length === 1 && tenants[0].code) {
-          const firstCode = tenants[0].code;
-          this.loginForm.patchValue({ tenantCode: firstCode });
+        // 3. Fallback: Autoselect first tenant if ONLY one available
+        else if (publicTenants.length === 1 && publicTenants[0].code) {
+          const firstCode = publicTenants[0].code;
+          this.loginForm.get('tenantCode')?.patchValue(firstCode, { emitEvent: false });
           this.applyTenantBranding(firstCode);
         }
       },

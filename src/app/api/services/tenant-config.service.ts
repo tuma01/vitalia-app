@@ -234,4 +234,30 @@ export class TenantConfigService extends BaseService {
     );
   }
 
+  /**
+   * Obtiene la configuración del tenant actual (de contexto).
+   */
+  getMyTenantConfig$Response(params?: {}, context?: HttpContext): Observable<StrictHttpResponse<TenantConfig>> {
+    const rb = new (class {
+      url = '';
+      method = 'GET';
+      body = null;
+    })();
+    rb.url = this.rootUrl + '/tenantConfigs/current';
+    
+    return this.http.request(rb.method, rb.url, {
+      observe: 'response',
+      responseType: 'json',
+      context
+    } as any).pipe(
+      map((r: any) => r as StrictHttpResponse<TenantConfig>)
+    );
+  }
+
+  getMyTenantConfig(params?: {}, context?: HttpContext): Observable<TenantConfig> {
+    return this.getMyTenantConfig$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TenantConfig>): TenantConfig => r.body)
+    );
+  }
+
 }
