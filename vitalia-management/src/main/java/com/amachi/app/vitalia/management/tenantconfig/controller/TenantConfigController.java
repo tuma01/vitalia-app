@@ -32,7 +32,14 @@ public class TenantConfigController extends BaseController implements TenantConf
     private final TenantConfigMapper mapper;
 
     @Override
-    @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TenantConfigDto> getMyTenantConfig() {
+        TenantConfig entity = service.getByCurrentTenant();
+        return ResponseEntity.ok(mapper.toDto(entity));
+    }
+
+    @Override
+    @GetMapping(value = "/{id:[0-9]+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TenantConfigDto> getTenantConfigById(@PathVariable Long id) {
         TenantConfig entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));

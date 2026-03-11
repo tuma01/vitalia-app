@@ -24,6 +24,17 @@ public interface TenantConfigApi extends GenericApi<TenantConfigDto> {
     String NAME_API = "TenantConfig";
 
     @Operation(
+            summary = "Obtener configuración del Tenant actual",
+            description = "Devuelve la configuración del hospital asociado al usuario autenticado.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Configuración encontrada."),
+                    @ApiResponse(responseCode = "404", description = "Configuración no encontrada para el tenant actual.")
+            }
+    )
+    @GetMapping(value = "/current", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<TenantConfigDto> getMyTenantConfig();
+
+    @Operation(
             summary = "Obtener un " + NAME_API + " por ID",
             description = "Devuelve un objeto " + NAME_API + " por ID especificado.",
             responses = {
@@ -33,7 +44,7 @@ public interface TenantConfigApi extends GenericApi<TenantConfigDto> {
                     @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
             }
     )
-    @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{id:[0-9]+}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<TenantConfigDto> getTenantConfigById(
             @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
             @PathVariable("id") Long id
@@ -64,7 +75,7 @@ public interface TenantConfigApi extends GenericApi<TenantConfigDto> {
                     @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
             }
     )
-    @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id:[0-9]+}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<TenantConfigDto> updateTenantConfig(
             @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
             @PathVariable("id") Long id,
@@ -82,7 +93,7 @@ public interface TenantConfigApi extends GenericApi<TenantConfigDto> {
                     @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
             }
     )
-    @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/{id:[0-9]+}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteTenantConfig(
             @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
             @PathVariable("id") Long id

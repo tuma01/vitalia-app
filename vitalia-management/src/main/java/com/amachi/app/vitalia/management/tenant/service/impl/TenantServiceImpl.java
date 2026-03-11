@@ -59,6 +59,14 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
                         "error.resource.not.found", id));
     }
 
+    @Transactional(readOnly = true)
+    public Tenant getByCode(String code) {
+        requireNonNull(code, "Tenant code must not be null");
+        return tenantRepository.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException(Tenant.class.getName(),
+                        "error.tenant_not_found_by_code", code));
+    }
+
     @Override
     @Transactional
     public Tenant create(Tenant entity) {

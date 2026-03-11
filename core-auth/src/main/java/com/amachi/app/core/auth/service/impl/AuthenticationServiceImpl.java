@@ -148,7 +148,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .id(user.getId())
                                 .email(user.getEmail())
                                 .personName(request.getNombre() + " " + request.getApellidoPaterno())
+                                .tenantId(tenant.getId())
                                 .tenantCode(tenant.getCode())
+                                .tenantName(tenant.getName())
                                 .personType(request.getPersonType())
                                 .roles(List.of(defaultRole.getName()))
                                 .enabled(user.isEnabled())
@@ -326,7 +328,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .email(user.getEmail())
                                 .personName(user.getPerson() != null ? user.getPerson().getNombreCompleto() : null)
                                 .personType(user.getPerson() != null ? user.getPerson().getPersonType() : null)
+                                .tenantId(tenant.getId())
                                 .tenantCode(tenant.getCode())
+                                .tenantName(tenant.getName())
                                 .roles(roles)
                                 .build();
 
@@ -360,7 +364,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .email(user.getEmail())
                                 .personName(user.getPerson() != null ? user.getPerson().getNombreCompleto() : null)
                                 .personType(user.getPerson() != null ? user.getPerson().getPersonType() : null)
+                                .tenantId(tenant.getId())
                                 .tenantCode(tenant.getCode())
+                                .tenantName(tenant.getName())
                                 .roles(roles)
                                 .build();
 

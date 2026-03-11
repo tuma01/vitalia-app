@@ -5,16 +5,18 @@ app:
     # TENANT LOCAL – OVERRIDES SOLO PARA DESARROLLO
     # ======================================================
     tenantLocal:
-      name: "Hospital A - DEV"
+      name: "Hospital San Borja - DEV"
       defaultDomain: localhost
 
       address:
-        numero: "100-DEV"
-        direccion: "Av. Principal DEV 123"
-        ciudad: "La Paz (DEV)"
-        departamentoId: 1
+        numero: "123 DEV"
+        direccion: "Calle Cochabamba DEV"
+        ciudad: "San Borja (DEV)"
+        municipioId: 6   # San Borja
+        provinciaId: 3   # Jose Ballivian
+        departamentoId: 8
         paisId: 26
-        telefono: "+591 2 0000000"
+        telefono: "+591 2 1234567"
 
     # ======================================================
     # SUPER ADMIN GLOBAL – DEV

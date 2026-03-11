@@ -52,13 +52,12 @@ public class SecurityConfig {
                                                 .requestMatchers(
                                                                 "/auth/**", // login, register, refresh
                                                                 "/account/activate", // Public activation
-                                                                "/account/request-reset-password", // Public reset
-                                                                                                   // request
+                                                                "/account/request-reset-password", // Public reset request
                                                                 "/account/reset-password", // Public reset confirmation
-                                                                "/tenants/**", // Permitir listar tenants públicamente
-                                                                               // para login
+                                                                "/tenants/**", // Permitir listar tenants públicamente para login
                                                                 "/public/**", // healthcheck o documentación
-                                                                "/v3/api-docs/**", "/swagger-ui/**")
+                                                                "/v3/api-docs/**",
+                                                                "/swagger-ui/**")
                                                 .permitAll()
 
                                                 // --- 🔐 ENDPOINTS PROTEGIDOS POR ROL ---

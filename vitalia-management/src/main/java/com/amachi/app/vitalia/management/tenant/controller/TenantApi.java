@@ -118,6 +118,9 @@ public interface TenantApi extends GenericApi<TenantDto> {
     @GetMapping(value = "/tenants", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<TenantDto>> getPublicAllTenants();
 
+    @GetMapping(value = "/tenants/by-code/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<TenantDto> getPublicTenantByCode(@PathVariable("code") String code);
+
     // --- SUPER ADMIN ENDPOINTS EXTRAS ---
     @PatchMapping(value = "/super-admin/tenants/{id}/enable", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> enable(@PathVariable Long id);

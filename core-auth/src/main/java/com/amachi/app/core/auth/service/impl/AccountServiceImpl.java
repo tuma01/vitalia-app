@@ -9,6 +9,7 @@ import com.amachi.app.core.auth.exception.AppSecurityException;
 import com.amachi.app.core.auth.repository.*;
 import com.amachi.app.core.auth.service.AccountService;
 import com.amachi.app.core.auth.service.JwtService;
+import com.amachi.app.core.common.context.TenantContext;
 import com.amachi.app.core.common.dto.*;
 //import com.amachi.app.core.common.service.EmailService;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
@@ -150,8 +151,16 @@ public class AccountServiceImpl implements AccountService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new SecurityException("User not found: " + userId));
 
-        // Obtener tenant del contexto de seguridad
-        String tenantCode = getCurrentTenantCode();
+        // Obtener tenant del contexto (ThreadLocal)
+        Long tenantId = TenantContext.getTenantId().orElse(null);
+        Tenant tenant = null;
+        if (tenantId != null) {
+            tenant = tenantBridge.findById(tenantId);
+        }
+
+        String tenantCode = tenant != null ? tenant.getCode() : null;
+        String tenantName = tenant != null ? tenant.getName() : null;
+
         List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user, tenantCode);
 
         return UserSummaryDto.builder()
@@ -159,7 +168,9 @@ public class AccountServiceImpl implements AccountService {
                 .email(user.getEmail())
                 .personName(user.getPerson() != null ? user.getPerson().getNombreCompleto() : null)
                 .personType(user.getPerson() != null ? user.getPerson().getPersonType() : null)
+                .tenantId(tenantId)
                 .tenantCode(tenantCode)
+                .tenantName(tenantName)
                 .roles(roles)
                 .build();
     }
