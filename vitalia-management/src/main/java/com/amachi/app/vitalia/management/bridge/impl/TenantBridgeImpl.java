@@ -37,4 +37,16 @@ public class TenantBridgeImpl implements TenantBridge {
                             tenantCode);
                 });
     }
+
+    @Override
+    public Tenant findById(Long tenantId) {
+        return tenantRepository.findById(tenantId)
+                .orElseThrow(() -> {
+                    log.error("❌ Tenant ID [{}] no encontrado en DB", tenantId);
+                    return new AppSecurityException(
+                            ErrorCode.SEC_TENANT_NOT_FOUND,
+                            "security.tenant.id_not_found",
+                            tenantId.toString());
+                });
+    }
 }

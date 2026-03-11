@@ -25,6 +25,9 @@ public class UserSummaryDto {
     @Schema(description = "Nombre completo derivado de la entidad Person")
     private String personName;
 
+    @Schema(description = "ID del tenant (hospital) actual", example = "1")
+    private Long tenantId;
+
     @Schema(description = "Código del tenant (hospital) actual", example = "HSP001")
     private String tenantCode;
 

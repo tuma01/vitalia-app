@@ -1,7 +1,10 @@
 package com.amachi.app.vitalia.management.tenantconfig.service.impl;
 
+import com.amachi.app.core.auth.config.multiTenant.TenantCache;
+import com.amachi.app.core.common.context.TenantContext;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
 import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.vitalia.management.tenantconfig.dto.search.TenantConfigSearchDto;
 import com.amachi.app.vitalia.management.tenantconfig.entity.TenantConfig;
 import com.amachi.app.vitalia.management.tenantconfig.repository.TenantConfigRepository;
@@ -25,6 +28,7 @@ import static java.util.Objects.requireNonNull;
 public class TenantConfigServiceImpl implements GenericService<TenantConfig, TenantConfigSearchDto> {
 
     TenantConfigRepository tenantConfigRepository;
+    TenantCache tenantCache;
 
     @Override
     public List<TenantConfig> getAll() {
@@ -43,6 +47,37 @@ public class TenantConfigServiceImpl implements GenericService<TenantConfig, Ten
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         return tenantConfigRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.resource.not.found", id));
+    }
+
+    /**
+     * Obtiene la configuración para el tenant actual del contexto.
+     * Si no existe, crea una por defecto para no romper el flujo del frontend.
+     */
+    public TenantConfig getByCurrentTenant() {
+        String tenantCode = TenantContext.getTenantCode()
+                .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.tenant.context_missing", "UNKNOWN"));
+
+        return tenantConfigRepository.findByTenant_Code(tenantCode)
+                .orElseGet(() -> {
+                    // Si no existe, inicializamos uno proactivamente (Patrón Professional Resilience)
+                    Tenant tenant = tenantCache.getTenant(tenantCode);
+                    if (tenant == null) {
+                        throw new ResourceNotFoundException("Tenant", "error.tenant.not_found", tenantCode);
+                    }
+
+                    TenantConfig newConfig = TenantConfig.builder()
+                            .tenant(tenant)
+                            .defaultDomain(tenantCode + ".vitalia.com")
+                            .locale("es-ES")
+                            .timezone("UTC")
+                            .allowLocal(true)
+                            .maxUsers(50)
+                            .storageQuotaBytes(1073741824L) // 1GB
+                            .requireEmailVerification(false)
+                            .build();
+
+                    return tenantConfigRepository.save(newConfig);
+                });
     }
 
     @Override

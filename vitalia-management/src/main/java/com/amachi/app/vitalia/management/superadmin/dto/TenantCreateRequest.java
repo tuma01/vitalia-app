@@ -14,12 +14,12 @@ public class TenantCreateRequest {
     // Tenant
     @NotBlank(message = "El código es obligatorio")
     @Size(max = 100, message = "El código no puede exceder 100 caracteres")
-    @Schema(example = "HOSP_B")
+    @Schema(example = "hospital-caranavi")
     private String code;
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 200, message = "El nombre no puede exceder 200 caracteres")
-    @Schema(example = "Hospital B")
+    @Schema(example = "Hospital Caranavi")
     private String name;
 
     @NotBlank(message = "El typo es obligatorio")

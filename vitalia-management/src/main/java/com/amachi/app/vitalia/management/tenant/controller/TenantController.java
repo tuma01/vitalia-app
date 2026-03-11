@@ -115,6 +115,12 @@ public class TenantController extends BaseController implements TenantApi {
         return ResponseEntity.ok(entities.stream().map(mapper::toDto).toList());
     }
 
+    @Override
+    public ResponseEntity<TenantDto> getPublicTenantByCode(String code) {
+        Tenant entity = service.getByCode(code);
+        return ResponseEntity.ok(mapper.toDto(entity));
+    }
+
     // --- SUPER ADMIN ENDPOINTS EXTRAS ---
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")

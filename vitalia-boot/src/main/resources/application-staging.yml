@@ -14,8 +14,8 @@ server:
 app:
   bootstrap:
     tenant:
-      code: HOSP_A
-      name: "Hospital A"
+      code: hospital-san-borja
+      name: Remove key
       type: HOSPITAL
       fallbackHeader: X-Tenant-Code
       allowLocal: false              # ✅ permite usar tenant por defecto si es localhost

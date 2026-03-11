@@ -64,7 +64,7 @@ public class BootstrapService {
                 // 3️⃣ Crear SUPER_ADMIN (Cascade Strategy)
                 createSuperAdminWithCascade(appBootstrapProperties.getSuperAdmin(), globalTenant);
 
-                // 4️⃣ Crear Tenant LOCAL (HOSP_A)
+                // 4️⃣ Crear Tenant LOCAL (hospital-san-borja)
                 Tenant localTenant = createOrUpdateTenant(appBootstrapProperties.getTenant().getTenantLocal(),
                                 defaultTheme);
 
@@ -142,8 +142,29 @@ public class BootstrapService {
         // -------------------------------------------------------
 
         private void createSuperAdminWithCascade(AppBootstrapProperties.AdminProperties config, Tenant tenant) {
-                if (userRepository.existsByEmail(config.getEmail())) {
-                        log.info("👤 SuperAdmin [{}] ya existe. Omitiendo..", config.getEmail());
+                User existingUser = userRepository.findByEmail(config.getEmail()).orElse(null);
+                if (existingUser != null) {
+                        log.info("👤 SuperAdmin [{}] ya existe. Sincronizando credenciales y cuenta de tenant..", config.getEmail());
+                        existingUser.setPassword(passwordEncoder.encode(config.getPassword()));
+                        userRepository.save(existingUser);
+
+                        // 🟢 Asegurar que tiene cuenta en el tenant GLOBAL
+                        boolean hasAccount = existingUser.getUserAccounts().stream()
+                                        .anyMatch(acc -> acc.getTenant().getCode().equals(tenant.getCode()));
+
+                        if (!hasAccount) {
+                                log.info("👤 Agregando cuenta faltante en tenant [{}] para SuperAdmin existente..", tenant.getCode());
+                                UserAccount account = UserAccount.builder()
+                                                .user(existingUser)
+                                                .tenant(tenant)
+                                                .person(existingUser.getPerson())
+                                                .build();
+                                existingUser.getUserAccounts().add(account);
+                                userRepository.save(existingUser);
+                        }
+
+                        Set<Role> roles = resolveRoles(RoleContext.SUPER_ADMIN);
+                        userTenantRoleService.assignRolesToUserAndTenant(existingUser, tenant, roles);
                         return;
                 }
 
@@ -204,8 +225,29 @@ public class BootstrapService {
         }
 
         private void createTenantAdminWithCascade(AppBootstrapProperties.AdminProperties config, Tenant tenant) {
-                if (userRepository.existsByEmail(config.getEmail())) {
-                        log.info("👤 TenantAdmin [{}] ya existe. Omitiendo..", config.getEmail());
+                User existingUser = userRepository.findByEmail(config.getEmail()).orElse(null);
+                if (existingUser != null) {
+                        log.info("👤 TenantAdmin [{}] ya existe. Sincronizando credenciales y cuenta de tenant..", config.getEmail());
+                        existingUser.setPassword(passwordEncoder.encode(config.getPassword()));
+                        userRepository.save(existingUser);
+
+                        // 🟢 Asegurar que tiene cuenta en el tenant LOCAL
+                        boolean hasAccount = existingUser.getUserAccounts().stream()
+                                        .anyMatch(acc -> acc.getTenant().getCode().equals(tenant.getCode()));
+
+                        if (!hasAccount) {
+                                log.info("👤 Agregando cuenta faltante en tenant [{}] para TenantAdmin existente..", tenant.getCode());
+                                UserAccount account = UserAccount.builder()
+                                                .user(existingUser)
+                                                .tenant(tenant)
+                                                .person(existingUser.getPerson())
+                                                .build();
+                                existingUser.getUserAccounts().add(account);
+                                userRepository.save(existingUser);
+                        }
+
+                        Set<Role> roles = resolveRoles(RoleContext.ADMIN);
+                        userTenantRoleService.assignRolesToUserAndTenant(existingUser, tenant, roles);
                         return;
                 }
 
