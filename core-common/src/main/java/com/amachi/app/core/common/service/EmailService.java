@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 /**
  * Módulo: vitalia-security
  *
- * Interfaz MOCK para el envío de correos. Esta implementación reside en el módulo vitalia-app-service.
+ * Interfaz MOCK para el envío de correos. Esta implementación reside en el módulo amachi-platform.
  */
 public interface EmailService {
     /**

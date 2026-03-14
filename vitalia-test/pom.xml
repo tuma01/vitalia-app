@@ -12,8 +12,8 @@
     <packaging>jar</packaging>
 
     <parent>
-        <artifactId>vitalia-app</artifactId>
-        <groupId>com.amachi.app.vitalia</groupId>
+        <artifactId>amachi-platform</artifactId>
+        <groupId>com.amachi.app.platform</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
