@@ -1,4 +1,4 @@
-# Vitalia Management Module
+# Core Management Module
 
 ## Overview
 This module acts as the "Governance Layer" of the application. It handles the administrative aspects of multi-tenancy, platform-wide configuration, and institutional settings.
@@ -21,7 +21,7 @@ Tables in this module use the **`MGT_`** prefix (Management).
 This module is a consumer of the `core-*` series and provides the necessary administrative interfaces for the backend.
 ```xml
 <dependency>
-    <groupId>com.amachi.app.vitalia</groupId>
-    <artifactId>vitalia-management</artifactId>
+    <groupId>com.amachi.app.platform</groupId>
+    <artifactId>core-management</artifactId>
 </dependency>
 ```

@@ -18,7 +18,7 @@ import java.util.Set;
  * Repositorio para la entidad UserAccount.
  * Es crucial en la arquitectura Multi-Tenant ya que vincula a User, Person,
  * Tenant y Roles.
- * Ubicado en vitalia-app-service.
+ * Ubicado en amachi-platform.
  */
 @Repository
 public interface UserAccountRepository extends JpaRepository<UserAccount, Long>, JpaSpecificationExecutor<UserAccount> {

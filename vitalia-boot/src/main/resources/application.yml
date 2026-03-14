@@ -2,7 +2,7 @@ spring:
   config:
     import: "classpath:bootstrap.yml" # importa bootstrap con datos iniciales
   application:
-    name: vitalia-app
+    name: amachi-platform
 
   profiles:
     active: dev

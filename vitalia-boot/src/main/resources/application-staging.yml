@@ -1,6 +1,6 @@
 spring:
   application:
-    name: vitalia-app
+    name: amachi-platform
 
   profiles:
     active: staging

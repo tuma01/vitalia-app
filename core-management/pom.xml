@@ -3,37 +3,35 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.amachi.app.vitalia</groupId>
     <artifactId>core-management</artifactId>
     <name>core-management</name>
     <description>Core Management module handles administrative logic, tenant management, and core business services for Amachi Platform.</description>
     <packaging>jar</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <parent>
-        <artifactId>vitalia-app</artifactId>
-        <groupId>com.amachi.app.vitalia</groupId>
+        <artifactId>amachi-platform</artifactId>
+        <groupId>com.amachi.app.platform</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <!-- Módulo común interno -->
         <dependency>
-            <groupId>com.amachi.app.vitalia</groupId>
+            <groupId>com.amachi.app.platform</groupId>
             <artifactId>core-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Módulo geography -->
         <dependency>
-            <groupId>com.amachi.app.vitalia</groupId>
+            <groupId>com.amachi.app.platform</groupId>
             <artifactId>core-geography</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Módulo geography -->
         <dependency>
-            <groupId>com.amachi.app.vitalia</groupId>
+            <groupId>com.amachi.app.platform</groupId>
             <artifactId>core-domain</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -48,7 +46,7 @@
         <!-- Módulo de autenticación -->
 
         <dependency>
-            <groupId>com.amachi.app.vitalia</groupId>
+            <groupId>com.amachi.app.platform</groupId>
             <artifactId>core-auth</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>

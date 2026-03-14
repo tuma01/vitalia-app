@@ -39,13 +39,13 @@ These modules provide the base infrastructure and centralized domain models used
 | **`core-geography`** | Geo-Context | `GEO_` | Global master data for Countries, Regions, and Cities. |
 | **`core-domain`** | Centralized Entities | `DMN_` | Centralized models for `Person`, `Tenant`, and `Theme`. `Person` is a concrete entity here. |
 | **`core-auth`** | Security Layer | `AUT_` | Identity management, JWT/Refresh Token, RBAC, and security configuration. |
+| **`core-management`** | Tenant Governance | `MGT_` | SuperAdmin and TenantAdmin logic, organization settings, and tenant-specific users. |
 
 ### 🏥 Vitalia Domain Modules (Application)
 These modules contain the business-specific logic for the healthcare domain and administrative management.
 
 | Module | Responsibility | Trigram | Key Features |
 | :--- | :--- | :--- | :--- |
-| **`vitalia-management`** | Tenant Governance | `MGT_` | SuperAdmin and TenantAdmin logic, organization settings, and tenant-specific users. |
 | **`vitalia-medical-catalog`** | Clinical Truth | `CAT_` | Master Data Management (ICD-10, CUPS, Medications, Specialties). |
 | **`vitalia-medical`** | Medical Domain | `MED_` | Patient records, Medical Employees, Clinicians, and Avatar/Physical traits. |
 | **`vitalia-boot`** | Application Runner | - | Main entry point (`VitaliaApplication`), Flyway migrations, and global configuration. |
@@ -69,6 +69,11 @@ The `core-*` modules form the skeleton of the application, providing infrastruct
     *(Gestiona toda la lógica de autenticación usando Spring Security y JWT.)*
 *   **`core-geography`**: A standardized module for geographic data (Countries, States, Cities), using the `GEO_` prefix.
     *(Módulo estándar para datos geográficos, usando el prefijo `GEO_`.)*
+*   **`core-management`**: Focused on the governance of the platform.
+    *(Enfocado en el gobierno de la plataforma.)*
+    *   **Focus**: `SuperAdmin` operations and `TenantAdmin` operations (theme settings).
+        *(Operaciones de SuperAdmin y TenantAdmin.)*
+    *   **Table Prefix**: `MGT_` (Management).
 
 ### 🏥 Domain Modules (Business Logic) / Módulos de Dominio (Lógica de Negocio)
 The `vitalia-*` modules implement the specific healthcare and administrative functionality.
@@ -79,11 +84,6 @@ The `vitalia-*` modules implement the specific healthcare and administrative fun
     *   **Focus**: Manages `Patient` records, `Employee` profiles, and `Avatar` traits.
         *(Gestión de registros de Pacientes, perfiles de Empleados y rasgos de Avatar.)*
     *   **Table Prefix**: `MED_` (Medical).
-*   **`vitalia-management`**: Focused on the governance of the platform.
-    *(Enfocado en el gobierno de la plataforma.)*
-    *   **Focus**: `SuperAdmin` operations and `TenantAdmin` operations (theme settings).
-        *(Operaciones de SuperAdmin y TenantAdmin.)*
-    *   **Table Prefix**: `MGT_` (Management).
 *   **`vitalia-medical-catalog`**: The clinical source of truth.
     *(La fuente de verdad clínica.)*
     *   **Focus**: Standardized medical data like ICD-10 codes, CUPS, and medication lists.
@@ -104,7 +104,7 @@ To avoid table name collisions and improve database organization, every module u
 *   **`GEO_`**: Geography (Country, City) - `core-geography`
 *   **`DMN_`**: Domain Models (Tenant, Theme, Person) - `core-domain`
 *   **`AUT_`**: Authentication & Security (UserAccount, Tokens) - `core-auth`
-*   **`MGT_`**: Management (SuperAdmin, TenantAdmin) - `vitalia-management`
+*   **`MGT_`**: Management (SuperAdmin, TenantAdmin) - `core-management`
 *   **`CAT_`**: Medical Catalogs (Medicines, Procedures) - `vitalia-medical-catalog`
 *   **`MED_`**: Medical Records (Patient, Employee) - `vitalia-medical`
 
