@@ -47,7 +47,7 @@ These modules contain the business-specific logic for the healthcare domain and 
 | :--- | :--- | :--- | :--- |
 | **`vitalia-management`** | Tenant Governance | `MGT_` | SuperAdmin and TenantAdmin logic, organization settings, and tenant-specific users. |
 | **`vitalia-medical-catalog`** | Clinical Truth | `CAT_` | Master Data Management (ICD-10, CUPS, Medications, Specialties). |
-| **`vitalia-clinical`** | Medical Domain | `CLN_` | Patient records, Medical Employees, Clinicians, and Avatar/Physical traits. |
+| **`vitalia-medical`** | Medical Domain | `MED_` | Patient records, Medical Employees, Clinicians, and Avatar/Physical traits. |
 | **`vitalia-boot`** | Application Runner | - | Main entry point (`VitaliaApplication`), Flyway migrations, and global configuration. |
 | **`vitalia-test`** | Quality Assurance | - | Shared test builders, mock data, and integration testing base classes. |
 
@@ -74,11 +74,11 @@ The `core-*` modules form the skeleton of the application, providing infrastruct
 The `vitalia-*` modules implement the specific healthcare and administrative functionality.
 *(Los módulos `vitalia-*` implementan la funcionalidad específica de salud y administración.)*
 
-*   **`vitalia-clinical`**: Encapsulates the medical business logic.
+*   **`vitalia-medical`**: Encapsulates the medical business logic.
     *(Encapsula la lógica de negocio médica.)*
     *   **Focus**: Manages `Patient` records, `Employee` profiles, and `Avatar` traits.
         *(Gestión de registros de Pacientes, perfiles de Empleados y rasgos de Avatar.)*
-    *   **Table Prefix**: `CLN_` (Clinical).
+    *   **Table Prefix**: `MED_` (Medical).
 *   **`vitalia-management`**: Focused on the governance of the platform.
     *(Enfocado en el gobierno de la plataforma.)*
     *   **Focus**: `SuperAdmin` operations and `TenantAdmin` operations (theme settings).
@@ -106,7 +106,7 @@ To avoid table name collisions and improve database organization, every module u
 *   **`AUT_`**: Authentication & Security (UserAccount, Tokens) - `core-auth`
 *   **`MGT_`**: Management (SuperAdmin, TenantAdmin) - `vitalia-management`
 *   **`CAT_`**: Medical Catalogs (Medicines, Procedures) - `vitalia-medical-catalog`
-*   **`CLN_`**: Clinical Records (Patient, Employee) - `vitalia-clinical`
+*   **`MED_`**: Medical Records (Patient, Employee) - `vitalia-medical`
 
 ### 🔄 Flyway Migration Order
 The database modules must be initialized in the following order to respect foreign key constraints:
@@ -117,12 +117,12 @@ The database modules must be initialized in the following order to respect forei
 5. Gap (`V5`, `V6`, `V7`) for future modules.
 6. `V8__` -> `MGT`
 7. `V9__` -> `CAT`
-8. `V10__` -> `CLN`
+10. `V10__` -> `MED`
 
 ### Package Naming Convention
 All classes follow a strict hierarchical structure:
 `com.amachi.app.[module_name].[feature].[layer]`
-Example: `com.amachi.app.vitalia.clinical.patient.service.PatientService`
+Example: `com.amachi.app.vitalia.medical.patient.service.PatientService`
 
 ---
 

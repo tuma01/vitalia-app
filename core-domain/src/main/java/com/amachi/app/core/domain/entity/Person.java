@@ -25,7 +25,7 @@ import java.util.Set;
 // Enforces that only Persons linked to the current Tenant (via PERSON_TENANT)
 // are visible.
 @FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
-@Filter(name = "tenantFilter", condition = "exists (select 1 from person_tenant pt where pt.fk_id_person = id and pt.fk_id_tenant = :tenantId)")
+@Filter(name = "tenantFilter", condition = "exists (select 1 from DMN_PERSON_TENANT pt where pt.fk_id_person = id and pt.fk_id_tenant = :tenantId)")
 // 🛡️ SOFT DELETE: Filter out logically deleted records by default
 @FilterDef(name = "deletedFilter")
 @Filter(name = "deletedFilter", condition = "DELETED = false")

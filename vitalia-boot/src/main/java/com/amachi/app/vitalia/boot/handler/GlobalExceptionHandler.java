@@ -1,7 +1,7 @@
 package com.amachi.app.vitalia.boot.handler;
 
 import com.amachi.app.core.auth.exception.*;
-import com.amachi.app.vitalia.clinical.avatar.exception.InvalidAvatarException;
+import com.amachi.app.vitalia.medical.avatar.exception.InvalidAvatarException;
 import com.amachi.app.core.common.api.ApiResponse;
 import com.amachi.app.core.common.error.ErrorCode;
 import com.amachi.app.core.common.error.ErrorDetail;
