@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,13 +17,20 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class MultiTenantFilter extends OncePerRequestFilter {
 
     private final TenantResolver tenantResolver;
     private final TenantCache tenantCache;
     private final Translator translator;
+
+    public MultiTenantFilter(TenantResolver tenantResolver, 
+                              @Lazy TenantCache tenantCache, 
+                              Translator translator) {
+        this.tenantResolver = tenantResolver;
+        this.tenantCache = tenantCache;
+        this.translator = translator;
+    }
 
     @Value("${spring.profiles.active:dev}")
     private String activeProfile;

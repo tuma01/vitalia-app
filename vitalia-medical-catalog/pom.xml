@@ -11,7 +11,7 @@
     <artifactId>vitalia-medical-catalog</artifactId>
     <packaging>jar</packaging>
     <name>vitalia-medical-catalog</name>
-    <description>Clinical Master Data Catalogs</description>
+    <description>Medical Master Data Catalogs</description>
     <version>1.0.0-SNAPSHOT</version>
 
 

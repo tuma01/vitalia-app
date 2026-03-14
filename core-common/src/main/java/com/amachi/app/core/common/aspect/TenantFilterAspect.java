@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.amachi.app.core.common.utils.AppConstants;
 
+import java.util.Optional;
+
 /**
  * Aspecto de Seguridad para Aislamiento Multi-Tenant.
  * Intercepta el inicio de transacciones y activa el filtro de Hibernate
@@ -39,25 +41,25 @@ public class TenantFilterAspect {
         Session session = entityManager.unwrap(Session.class);
 
         try {
-            // Zero Trust: Por defecto habilitamos con ID inválido (-1)
-            // Solo si hay contexto válido, usamos el ID real.
-            if (TenantContext.getTenantId().isPresent()) {
-                Long tenantId = TenantContext.getTenantId().get();
+            // 🛡️ SECURITY BYPASS: SuperAdmin should NEVER be filtered.
+            // They have a global view across all tenants.
+            if (isSuperAdmin()) {
+                log.info("🔓 Tenant Isolation BYPASSED for Super Admin (Global View)");
+                return pjp.proceed();
+            }
+
+            // Obtenemos el ID del tenant desde el contexto
+            Optional<Long> tenantIdOpt = TenantContext.getTenantId();
+
+            if (tenantIdOpt.isPresent()) {
+                Long tenantId = tenantIdOpt.get();
                 session.enableFilter("tenantFilter").setParameter("tenantId", tenantId);
                 log.trace("🛡️ Tenant Isolation ACTIVE for TenantID: {}", tenantId);
             } else {
-                // -------------------------------------------------------------
-                // MODIFICACIÓN: Si es SuperAdmin, NO activamos el filtro (Bypass)
-                // -------------------------------------------------------------
-                if (isSuperAdmin()) {
-                    log.info("🔓 Tenant Isolation BYPASSED for Super Admin (Global View)");
-                } else {
-                    // "No Context" = "No Data" (Excepto para Global/System calls que explicitamente
-                    // deban ser 'ignorant')
-                    // Para proteger SuperAdmin sin tenant seleccionado:
-                    session.enableFilter("tenantFilter").setParameter("tenantId", -1L);
-                    log.trace("🔒 Tenant Isolation ACTIVE (Zero Trust Mode): No Tenant Context -> Showing Empty Data");
-                }
+                // Zero Trust Mode: If no tenant context and NOT SuperAdmin,
+                // we hide everything to prevent data leakage.
+                session.enableFilter("tenantFilter").setParameter("tenantId", -1L);
+                log.trace("🔒 Tenant Isolation ACTIVE (Zero Trust Mode): No Tenant Context -> Showing Empty Data");
             }
 
             return pjp.proceed();
