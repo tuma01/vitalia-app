@@ -1,7 +1,6 @@
 package com.amachi.app.core.common.dto;
 
 
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Hidden
 public class PageResponseDto<T> {
     private List<T> content;
     private long totalElements;

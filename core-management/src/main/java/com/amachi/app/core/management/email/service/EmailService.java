@@ -23,7 +23,8 @@ public interface EmailService {
             EmailTemplateName templateName,
             String activationUrl,
             String activationCode,
-            String subject
+            String subject,
+            java.util.Map<String, Object> additionalContext
     );
 
     void sendPasswordResetEmail(@NotBlank(message = "Email {err.required}") @Email(message = "El email debe tener un formato válido") String email, String resetToken, @NotEmpty(message = "Tenant code is required") String tenantCode);

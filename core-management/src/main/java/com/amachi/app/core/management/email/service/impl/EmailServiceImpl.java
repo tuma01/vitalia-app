@@ -38,7 +38,8 @@ public class EmailServiceImpl implements EmailService {
             EmailTemplateName templateName,
             String activationUrl,
             String activationCode,
-            String subject) {
+            String subject,
+            java.util.Map<String, Object> additionalContext) {
         try {
             String template = templateName != null ? templateName.getName() : "confirm-email";
 
@@ -48,10 +49,14 @@ public class EmailServiceImpl implements EmailService {
                     MimeMessageHelper.MULTIPART_MODE_MIXED,
                     StandardCharsets.UTF_8.name());
 
-            Map<String, Object> props = Map.of(
-                    "username", username,
-                    "activationUrl", activationUrl,
-                    "activationCode", activationCode);
+            java.util.Map<String, Object> props = new java.util.HashMap<>();
+            props.put("username", username);
+            props.put("activationUrl", activationUrl);
+            props.put("activationCode", activationCode);
+            
+            if (additionalContext != null) {
+                props.putAll(additionalContext);
+            }
 
             Context context = new Context();
             context.setVariables(props);

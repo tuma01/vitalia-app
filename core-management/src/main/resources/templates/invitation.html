@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación al Portal — Vitalia</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 40px 20px;
+        }
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1565c0 0%, #0288d1 100%);
+            padding: 40px 40px 32px;
+            text-align: center;
+        }
+        .header-logo {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            color: rgba(255,255,255,0.85);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+        /* Body */
+        .body {
+            padding: 40px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a237e;
+            margin-bottom: 16px;
+        }
+        .body p {
+            font-size: 14px;
+            color: #546e7a;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .hospital-name {
+            font-weight: 700;
+            color: #0288d1;
+        }
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 36px 0;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #1565c0, #0288d1);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(2, 136, 209, 0.4);
+        }
+        /* Expiry notice */
+        .notice {
+            background: #e3f2fd;
+            border-left: 4px solid #0288d1;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 24px 0;
+            font-size: 13px;
+            color: #1565c0;
+        }
+        /* Alt link */
+        .alt-link {
+            background: #f5f7fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 24px;
+            word-break: break-all;
+        }
+        .alt-link p {
+            font-size: 12px;
+            color: #78909c;
+            margin-bottom: 8px;
+        }
+        .alt-link a {
+            font-size: 11px;
+            color: #0288d1;
+        }
+        /* Footer */
+        .footer {
+            background: #f5f7fa;
+            padding: 24px 40px;
+            text-align: center;
+            border-top: 1px solid #eceff1;
+        }
+        .footer p {
+            font-size: 12px;
+            color: #90a4ae;
+            line-height: 1.6;
+        }
+        .footer strong {
+            color: #546e7a;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="card">
+
+        <!-- ── HEADER ── -->
+        <div class="header">
+            <div class="header-logo">🏥</div>
+            <h1>Vitalia — Portal de Salud</h1>
+            <p>Sistema integral de gestión hospitalaria</p>
+        </div>
+
+        <!-- ── BODY ── -->
+        <div class="body">
+
+            <p class="greeting" th:text="'¡Hola, ' + ${nombre} + '!'">¡Hola!</p>
+
+            <p>
+                El equipo de <span class="hospital-name" th:text="${tenantName}">Hospital San Borja</span>
+                te ha enviado una invitación para unirte a su portal de gestión de salud.
+            </p>
+
+            <p>
+                Al hacer clic en el botón de abajo, podrás completar tu registro con tus datos personales
+                y establecer tu contraseña. Una vez registrado, tendrás acceso inmediato al sistema.
+            </p>
+
+            <!-- CTA -->
+            <div class="cta-container">
+                <a th:href="${activationUrl}" class="cta-btn" target="_blank">
+                    ✅ Completar mi Registro
+                </a>
+            </div>
+
+            <!-- Expiry notice -->
+            <div class="notice">
+                ⏰ Este enlace es válido por <strong>48 horas</strong>. Si no puedes acceder antes de que expire,
+                solicita al administrador del hospital que te envíe una nueva invitación.
+            </div>
+
+            <!-- Alt link fallback -->
+            <div class="alt-link">
+                <p>Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+                <a th:href="${activationUrl}" th:text="${activationUrl}"></a>
+            </div>
+
+        </div>
+
+        <!-- ── FOOTER ── -->
+        <div class="footer">
+            <p>
+                Este email fue enviado automáticamente por <strong>Vitalia</strong>.<br>
+                Si no esperabas esta invitación, puedes ignorar este mensaje con seguridad.<br>
+                <strong>No respondas a este correo.</strong>
+            </p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

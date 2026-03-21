@@ -43,6 +43,9 @@ mailing:
   frontend:
     base-url: http://localhost:4200
     activation-path: /#/activate-account
+    invitation-path: /complete-registration
+  invitation:
+    token-ttl-hours: 48
 #hospital:
 #  default:
 #    code: "HOSPITAL_CLINICA_MULHOUSE"
