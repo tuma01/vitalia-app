@@ -1,6 +1,7 @@
 package com.amachi.app.core.auth.config.multiTenant;
 
 import com.amachi.app.core.auth.exception.AppSecurityException;
+import com.amachi.app.core.common.context.TenantContext;
 import com.amachi.app.core.common.i18n.Translator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,17 +47,18 @@ public class MultiTenantFilter extends OncePerRequestFilter {
             // 1️⃣ Resolver tenantCode (fuente única)
             String tenantCode = tenantResolver.resolveTenant(request);
 
-            // 2️⃣ DEV → no validar en DB
-            if ("dev".equalsIgnoreCase(activeProfile)) {
-                request.setAttribute("tenantCode", tenantCode);
-                filterChain.doFilter(request, response);
-                return;
+            // 2️⃣ Establecer Contexto (Crucial para evitar bucles en TenantFilterAspect)
+            TenantContext.setTenantCode(tenantCode);
+            try {
+                com.amachi.app.core.domain.tenant.entity.Tenant tenant = tenantCache.getTenant(tenantCode);
+                if (tenant != null) {
+                    TenantContext.setTenantId(tenant.getId());
+                }
+            } catch (Exception e) {
+                log.warn("⚠️ No se pudo cargar el ID del tenant [{}] en el contexto inicial", tenantCode);
             }
 
-            // 3️⃣ PROD → validar usando cache + DB
-            tenantCache.getTenant(tenantCode);
-
-            // 4️⃣ Propagar a request
+            // 3️⃣ Propagar a request
             request.setAttribute("tenantCode", tenantCode);
 
             filterChain.doFilter(request, response);
@@ -68,6 +70,10 @@ public class MultiTenantFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             log.error("❌ Error inesperado resolviendo tenant", ex);
             writeGenericError(request, response);
+        } finally {
+            // 🧹 LIMPIEZA ABSOLUTA: Evita fugas entre hilos del pool
+            TenantContext.clear();
+            log.trace("🧹 TenantContext cleared");
         }
     }
 

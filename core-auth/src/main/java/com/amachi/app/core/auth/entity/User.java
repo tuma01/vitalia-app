@@ -51,7 +51,7 @@ public class User extends Auditable<String> implements UserDetails, Principal {
     @Column(name = "LAST_LOGIN")
     private LocalDateTime lastLogin;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 

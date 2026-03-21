@@ -13,17 +13,13 @@ public final class PersonTypeValidator {
     }
 
     public static boolean matches(Person person, PersonType type) {
-        return switch (type) {
-
-            // TIPOS IMPLEMENTADOS (validamos)
-            case SUPER_ADMIN -> person instanceof SuperAdmin;
-            case ADMIN -> person instanceof TenantAdmin;
-            case PATIENT -> person instanceof Patient;
-            case EMPLOYEE -> person instanceof Employee;
-
-            // TODO TIPOS AÚN NO IMPLEMENTADOS → no validamos
-            case DOCTOR, NURSE, RECEPTIONIST, LAB_TECHNICIAN, PHARMACIST -> true;
-        };
+        if (person == null || type == null) {
+            return false;
+        }
+        // Robust Architectural Choice: Use the persisted personType discriminator.
+        // This is superior to 'instanceof' because it works seamlessly with 
+        // Hibernate Proxies and Lazy Loading without needing to unproxy entities.
+        return person.getPersonType() == type;
     }
 
     // public static boolean matches(Person person, PersonType type) {

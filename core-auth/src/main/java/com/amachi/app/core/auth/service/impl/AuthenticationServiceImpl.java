@@ -7,6 +7,8 @@ import com.amachi.app.core.auth.dto.AuthenticationResponse;
 import com.amachi.app.core.auth.dto.JwtUserDto;
 import com.amachi.app.core.auth.dto.UserRegisterRequest;
 import com.amachi.app.core.auth.entity.*;
+import java.util.HashMap;
+import java.util.Map;
 import com.amachi.app.core.auth.exception.AppSecurityException;
 import com.amachi.app.core.auth.repository.*;
 import com.amachi.app.core.auth.service.*;
@@ -56,6 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         private final ActivationTokenRepository activationTokenRepository;
         private final AuditService auditService;
         private final UserTenantRoleService userTenantRoleService;
+        private final PersonIdentityBridge personIdentityBridge;
 
         @Override
         @Transactional
@@ -75,16 +78,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 Tenant tenant = tenantBridge.findByCode(request.getTenantCode());
 
                 // 3️⃣ Crear la persona directamente
-                Person person = Person.builder()
-                                .nombre(request.getNombre())
-                                .apellidoPaterno(request.getApellidoPaterno())
-                                .apellidoMaterno(request.getApellidoMaterno())
-                                .personType(request.getPersonType())
-                                .createdBy("SYSTEM")
-                                .createdDate(LocalDateTime.now())
-                                .build();
-                personRepository.save(person);
-                log.info("👤 Persona creada exitosamente con ID [{}]", person.getId());
+                // Hybrid Model: Use the bridge with context to ensure the correct subtype is instantiated
+                Map<String, Object> context = new HashMap<>();
+                context.put("tenant", tenant);
+                Person person = personIdentityBridge.createPerson(request.getPersonType(), context);
+                person.setNombre(request.getNombre());
+                person.setApellidoPaterno(request.getApellidoPaterno());
+                person.setApellidoMaterno(request.getApellidoMaterno());
+                person.setPersonType(request.getPersonType());
+                person.setCreatedBy("SYSTEM");
+                person.setCreatedDate(LocalDateTime.now());
 
                 // 4️⃣ Crear el User
                 User user = User.builder()
@@ -94,8 +97,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                                 .accountLocked(false)
                                 .person(person)
                                 .build();
-                userRepository.save(user);
-                log.debug("🔹 Usuario creado con id {}", user.getId());
+
+                // 4.1 Bidirectional link (essential for subclasses with mandatory references)
+                personIdentityBridge.linkUser(person, user);
+
+                // 4.2 Atomic save via Cascade (User -> Person)
+                user = userRepository.save(user);
+
+                log.debug("✅ Usuario/Persona (Registro) creados atómicamente con id {}", user.getId());
 
                 // 5️⃣ Crear el UserAccount (user + tenant + person)
                 UserAccount userAccount = UserAccount.builder()

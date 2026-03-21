@@ -5,19 +5,9 @@ import com.amachi.app.core.auth.exception.AppSecurityException;
 import com.amachi.app.core.common.error.ErrorCode;
 import com.amachi.app.core.domain.tenant.repository.TenantRepository;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
-import com.amachi.app.core.common.enums.PersonType;
-import com.amachi.app.core.common.enums.RelationStatus;
-import com.amachi.app.core.common.enums.RoleContext;
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.domain.entity.Person;
-import com.amachi.app.core.domain.entity.PersonTenant;
-import com.amachi.app.core.management.util.PersonTypeValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor

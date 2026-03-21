@@ -55,6 +55,7 @@ public class SecurityConfig {
                                                                 "/account/request-reset-password", // Public reset request
                                                                 "/account/reset-password", // Public reset confirmation
                                                                 "/tenants/**", // Permitir listar tenants públicamente para login
+                                                                "/themes/tenant/**", // Public branding access
                                                                 "/public/**", // healthcheck o documentación
                                                                 "/v3/api-docs/**",
                                                                 "/swagger-ui/**")
