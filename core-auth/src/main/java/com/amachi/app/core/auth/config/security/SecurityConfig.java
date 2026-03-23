@@ -65,9 +65,11 @@ public class SecurityConfig {
                                                 .requestMatchers("/super-admin/tenants/**",
                                                                 "/super-admin/tenant-admins/**")
                                                 .hasRole("SUPER_ADMIN")
+                                                .requestMatchers(HttpMethod.GET, "/countries/**", "/departamentos/**", "/provincias/**",
+                                                                "/municipios/**", "/addresses/**")
+                                                .authenticated()
                                                 .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**",
-                                                                "/municipios/**",
-                                                                "/addresses/**")
+                                                                "/municipios/**", "/addresses/**")
                                                 .hasRole("SUPER_ADMIN")
                                                 .requestMatchers("/employee/**").hasRole("ADMIN")
                                                 .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
@@ -78,6 +80,9 @@ public class SecurityConfig {
                                                 .requestMatchers("/nurse/**").hasAnyRole("NURSE", "DOCTOR", "ADMIN")
                                                 .requestMatchers("/patient/**")
                                                 .hasAnyRole("PATIENT", "DOCTOR", "NURSE", "ADMIN")
+
+                                                .requestMatchers("/tenantConfigs/**")
+                                                .hasAnyRole("ADMIN", "TENANT_ADMIN", "SUPER_ADMIN")
 
                                                 // --- 🔒 CUALQUIER OTRO ENDPOINT REQUIERE AUTENTICACIÓN ---
                                                 .anyRequest().authenticated())

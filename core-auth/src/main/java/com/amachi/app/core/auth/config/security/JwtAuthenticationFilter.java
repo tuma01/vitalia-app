@@ -54,7 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         "/public/",
                         "/v3/api-docs",
                         "/swagger-ui",
-                        "/tenants");
+                        "/tenants",
+                        "/themes/tenant/");
 
         @Override
         protected void doFilterInternal(HttpServletRequest request,
@@ -92,7 +93,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 if (!isGlobalEndpoint && !isSuperAdmin) {
                                         // Anti-Spoofing: El tenant del Token debe coincidir con el de la request
                                         String requestTenantCode = (String) request.getAttribute("tenantCode");
-                                        if (requestTenantCode != null && !requestTenantCode.equals(tenantCode)) {
+                                        if (requestTenantCode != null && !requestTenantCode.equals(tenantCode)
+                                                        && !"GLOBAL".equalsIgnoreCase(requestTenantCode)) {
                                                 log.error("🚨 POTENTIAL SPOOFING ATTEMPT: Token Tenant '{}' vs Request Tenant '{}' on path '{}'",
                                                                 tenantCode, requestTenantCode, servletPath);
                                                 throw new RuntimeException("Security Error: Token tenant mismatch");

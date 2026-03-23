@@ -1,6 +1,6 @@
 package com.amachi.app.core.domain.tenant.entity;
 
-import com.amachi.app.core.domain.tenant.enums.TenantType;
+import com.amachi.app.core.common.enums.TenantType;
 import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.theme.entity.Theme;
@@ -18,7 +18,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED) // <-- JOINED strategy
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("GLOBAL")
 public class Tenant extends Auditable<String> implements Model {
 
     // ID heredado de BaseEntity
@@ -34,7 +36,7 @@ public class Tenant extends Auditable<String> implements Model {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE", nullable = false, length = 20)
+    @Column(name = "TYPE", nullable = false, length = 20, insertable = false, updatable = false)
     private TenantType type;// Ej: HOSPITAL, CLINIC, LABORATORY, PHARMACY, GLOBAL
 
     @Column(name = "IS_ACTIVE", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
@@ -44,10 +46,16 @@ public class Tenant extends Auditable<String> implements Model {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "THEME_ID", nullable = true)
     private Theme theme;
 
     @Column(name = "ADDRESS_ID")
     private Long addressId;
+
+    @Column(name = "LOGO_URL")
+    private String logoUrl;
+
+    @Column(name = "FAVICON_URL")
+    private String faviconUrl;
 }

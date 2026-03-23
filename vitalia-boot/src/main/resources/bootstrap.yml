@@ -22,6 +22,9 @@ app:
         code: hospital-san-borja
         name: "Hospital San Borja"
         type: HOSPITAL
+        legalName: "Hospital Materno Infantil San Borja S.R.L."
+        taxId: "NIT-123456789-0"
+        medicalLicense: "MS-MIN-1992-001"
         fallbackHeader: X-Tenant-Code
         allowLocal: true
         defaultDomain: localhost

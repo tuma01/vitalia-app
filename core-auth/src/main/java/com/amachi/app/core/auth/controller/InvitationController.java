@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST controller implementing {@link InvitationApi}.
  *
  * <p>Delegates all business logic to {@link InvitationService}.
- * This class contains no business logic — it is responsible only for:
+ * This class contains no business logic - it is responsible only for:
  * <ul>
  *     <li>HTTP method mapping (via {@link InvitationApi}).</li>
  *     <li>Request logging at INFO level.</li>
