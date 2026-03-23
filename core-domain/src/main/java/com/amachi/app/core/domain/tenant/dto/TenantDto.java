@@ -1,15 +1,16 @@
 package com.amachi.app.core.domain.tenant.dto;
 
-import com.amachi.app.core.domain.tenant.enums.TenantType;
+import com.amachi.app.core.common.enums.TenantType;
 import com.amachi.app.core.geography.address.dto.AddressDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "Tenant", description = "Schema to hold Tenant information")
@@ -42,4 +43,10 @@ public class TenantDto {
 
     @Schema(description = "Address of the Tenant")
     private AddressDto address;
+
+    @Schema(description = "Primary Logo URL for branding", example = "https://cdn.vitalia.com/logos/tenant1.png")
+    private String logoUrl;
+
+    @Schema(description = "Favicon URL for branding", example = "https://cdn.vitalia.com/favicons/tenant1.ico")
+    private String faviconUrl;
 }

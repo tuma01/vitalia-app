@@ -1,6 +1,6 @@
 package com.amachi.app.core.domain.config;
 
-import com.amachi.app.core.domain.tenant.enums.TenantType;
+import com.amachi.app.core.common.enums.TenantType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

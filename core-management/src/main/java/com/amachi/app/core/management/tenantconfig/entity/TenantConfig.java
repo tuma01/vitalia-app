@@ -3,9 +3,12 @@ package com.amachi.app.core.management.tenantconfig.entity;
 import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
+import com.amachi.app.core.common.enums.SubscriptionPlan;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "MGT_TENANT_CONFIG")
@@ -18,7 +21,7 @@ public class TenantConfig extends Auditable<String> implements Model {
 
     // ID heredado de Auditable/BaseEntity
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "TENANT_ID", nullable = false, foreignKey = @ForeignKey(name = "FK_TENANTCONFIG_TENANT"))
     private Tenant tenant;
 
@@ -48,6 +51,16 @@ public class TenantConfig extends Auditable<String> implements Model {
 
     @Column(name = "PASSWORD_POLICY_JSON", columnDefinition = "TEXT")
     private String passwordPolicyJson;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SUBSCRIPTION_PLAN", length = 30)
+    private SubscriptionPlan subscriptionPlan;
+
+    @Column(name = "ONBOARDING_DATE")
+    private LocalDate onboardingDate;
+
+    @Column(name = "EXPIRATION_DATE")
+    private LocalDate expirationDate;
 
     @Column(name = "EXTRA_JSON", columnDefinition = "TEXT")
     private String extraJson;

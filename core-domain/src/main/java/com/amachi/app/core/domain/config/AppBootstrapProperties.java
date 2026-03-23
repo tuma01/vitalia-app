@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import com.amachi.app.core.domain.tenant.enums.TenantType;
+import com.amachi.app.core.common.enums.TenantType;
 
 @Configuration
 @ConfigurationProperties(prefix = "app.bootstrap")
@@ -30,7 +30,11 @@ public class AppBootstrapProperties {
         String getDescription();
 
         TenantType getTenantType();
-
+        
+        default String getLegalName() { return null; }
+        default String getTaxId() { return null; }
+        default String getMedicalLicense() { return null; }
+        
         default AddressProperties getAddress() {
             return null;
         }
@@ -56,6 +60,9 @@ public class AppBootstrapProperties {
         private String code;
         private String name;
         private String type;
+        private String legalName;
+        private String taxId;
+        private String medicalLicense;
         private String fallbackHeader;
         private boolean allowLocal = true;
         private String defaultDomain = "vitalia.local";

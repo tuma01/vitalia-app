@@ -121,7 +121,7 @@ public interface InvitationApi {
     )
     @GetMapping
     ResponseEntity<PageResponseDto<InvitationResponse>> getInvitations(
-            @Parameter(description = "The target Hospital tenant code.", required = true)
+            @Parameter(description = "The target tenant code.", required = true)
             @RequestParam("tenantCode") String tenantCode,
             @Parameter(description = "Optional filter by invitation status.")
             @RequestParam(value = "status", required = false) String status,

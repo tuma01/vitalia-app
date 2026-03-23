@@ -39,6 +39,7 @@ public class TenantServiceImpl implements GenericService<Tenant, TenantSearchDto
     private final AddressServiceImpl addressService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Tenant> getAll() {
         return tenantRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }

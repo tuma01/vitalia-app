@@ -85,11 +85,20 @@ public class BootstrapService {
 
                 if (tenant == null) {
                         log.info("🏢 Creando Tenant [{}]..", code);
-                        tenant = Tenant.builder()
+                        Tenant.TenantBuilder<?, ?> builder;
+                        if (config.getTenantType() == TenantType.HOSPITAL) {
+                                builder = com.amachi.app.core.domain.hospital.entity.Hospital.builder()
+                                                .legalName(config.getLegalName())
+                                                .taxId(config.getTaxId())
+                                                .medicalLicense(config.getMedicalLicense());
+                        } else {
+                                builder = Tenant.builder();
+                        }
+
+                        tenant = builder
                                         .code(code)
                                         .name(config.getName())
                                         .description(config.getDescription())
-                                        .type(config.getTenantType())
                                         .isActive(true)
                                         .build();
                 } else {

@@ -1,4 +1,4 @@
-package com.amachi.app.core.domain.tenant.enums;
+package com.amachi.app.core.common.enums;
 
 /**
  * Organizations Types Enum

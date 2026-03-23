@@ -1,7 +1,7 @@
 package com.amachi.app.core.management.superadmin.dto;
 
 
-import com.amachi.app.core.domain.tenant.enums.TenantType;
+import com.amachi.app.core.common.enums.TenantType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
