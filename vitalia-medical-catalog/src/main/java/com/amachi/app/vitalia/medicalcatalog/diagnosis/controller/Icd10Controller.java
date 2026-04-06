@@ -66,8 +66,8 @@ public class Icd10Controller extends BaseController implements Icd10Api {
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<Icd10Dto>> getPaginatedIcd10(
-            @NonNull Icd10SearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+    public ResponseEntity<PageResponseDto<Icd10Dto>> getPaginatedIcd10s(
+            @NonNull Icd10SearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Icd10> page = service.getAll(searchDto, pageIndex, pageSize);
         List<Icd10Dto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

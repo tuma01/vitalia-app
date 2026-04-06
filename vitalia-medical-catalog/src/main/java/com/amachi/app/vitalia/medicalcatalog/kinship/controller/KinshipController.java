@@ -65,7 +65,7 @@ public class KinshipController extends BaseController implements KinshipApi {
 
     @Override
     public ResponseEntity<PageResponseDto<KinshipDto>> getPaginatedKinships(
-            @NonNull KinshipSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull KinshipSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Kinship> page = service.getAll(searchDto, pageIndex, pageSize);
         List<KinshipDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

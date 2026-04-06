@@ -66,7 +66,7 @@ public class GenderController extends BaseController implements GenderApi {
 
     @Override
     public ResponseEntity<PageResponseDto<GenderDto>> getPaginatedGenders(
-            @NonNull GenderSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull GenderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Gender> page = service.getAll(searchDto, pageIndex, pageSize);
         List<GenderDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

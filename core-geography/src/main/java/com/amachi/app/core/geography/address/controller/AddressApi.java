@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public interface AddressApi extends GenericApi<AddressDto> {
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AddressDto> getAddressById(
             @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -51,7 +52,7 @@ public interface AddressApi extends GenericApi<AddressDto> {
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AddressDto> createAddress(
             @Parameter(description = "Detalles del " + NAME_API + " a crear.", required = true)
-            @Valid @RequestBody AddressDto dto
+            @Valid @RequestBody @NonNull AddressDto dto
     );
 
     @Operation(
@@ -67,9 +68,9 @@ public interface AddressApi extends GenericApi<AddressDto> {
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AddressDto> updateAddress(
             @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NonNull Long id,
             @Parameter(description = "Nuevos detalles del " + NAME_API + ".", required = true)
-            @Valid @RequestBody AddressDto dto
+            @Valid @RequestBody @NonNull AddressDto dto
     );
 
     @Operation(
@@ -85,7 +86,7 @@ public interface AddressApi extends GenericApi<AddressDto> {
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteAddress(
             @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -109,8 +110,9 @@ public interface AddressApi extends GenericApi<AddressDto> {
             }
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PageResponseDto<AddressDto>> getPaginatedAddresses(AddressSearchDto searchDto,
-                                                                      @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false)final Integer pageIndex,
-                                                                      @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false)final Integer pageSize
+    ResponseEntity<PageResponseDto<AddressDto>> getPaginatedAddresses(
+                                                                      @NonNull AddressSearchDto searchDto,
+                                                                      @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+                                                                      @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }

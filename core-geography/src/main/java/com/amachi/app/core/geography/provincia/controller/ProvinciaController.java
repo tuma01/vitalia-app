@@ -7,13 +7,14 @@ import com.amachi.app.core.geography.provincia.dto.search.ProvinciaSearchDto;
 import com.amachi.app.core.geography.provincia.entity.Provincia;
 import com.amachi.app.core.geography.provincia.mapper.ProvinciaMapper;
 import com.amachi.app.core.geography.provincia.service.impl.ProvinciaServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,20 +28,20 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
     private final ProvinciaMapper mapper;
 
     @Override
-    public ResponseEntity<ProvinciaDto> getProvinciaById(Long id) {
+    public ResponseEntity<ProvinciaDto> getProvinciaById(@NonNull Long id) {
         Provincia entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
-    public ResponseEntity<ProvinciaDto> createProvincia(ProvinciaDto dto) {
+    public ResponseEntity<ProvinciaDto> createProvincia(@Valid @RequestBody @NonNull ProvinciaDto dto) {
         Provincia entity = mapper.toEntity(dto);
         Provincia savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ProvinciaDto> updateProvincia(Long id, ProvinciaDto dto) {
+    public ResponseEntity<ProvinciaDto> updateProvincia(@NonNull Long id, @Valid @RequestBody @NonNull ProvinciaDto dto) {
         Provincia existingEntity = service.getById(id);
         mapper.updateEntityFromDto(dto, existingEntity);
         Provincia updatedEntity = service.update(id, existingEntity);
@@ -48,7 +49,7 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
     }
 
     @Override
-    public ResponseEntity<Void> deleteProvincia(Long id) {
+    public ResponseEntity<Void> deleteProvincia(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -57,17 +58,17 @@ public class ProvinciaController extends BaseController implements ProvinciaApi 
     public ResponseEntity<List<ProvinciaDto>> getAllProvincias() {
         List<Provincia> entities = service.getAll();
         List<ProvinciaDto> dtos = entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(ProvinciaSearchDto searchDto,
-            Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(
+            @NonNull ProvinciaSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Provincia> page = service.getAll(searchDto, pageIndex, pageSize);
         List<ProvinciaDto> dtos = page.getContent()
                 .stream()
-                .map(provincia -> mapper.toDto(provincia)).toList();
+                .map(mapper::toDto).toList();
 
         PageResponseDto<ProvinciaDto> response = PageResponseDto.<ProvinciaDto>builder()
                 .content(dtos)

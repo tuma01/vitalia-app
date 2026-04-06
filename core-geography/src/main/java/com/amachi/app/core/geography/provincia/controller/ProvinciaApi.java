@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ProvinciaDto> getProvinciaById(
             @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -49,7 +50,7 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ProvinciaDto> createProvincia(
             @Parameter(description = "Detalles del " + NAME_API + " a crear.", required = true)
-            @Valid @RequestBody ProvinciaDto dto
+            @Valid @RequestBody @NonNull ProvinciaDto dto
     );
 
     @Operation(
@@ -65,9 +66,9 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ProvinciaDto> updateProvincia(
             @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NonNull Long id,
             @Parameter(description = "Nuevos detalles del " + NAME_API + ".", required = true)
-            @Valid @RequestBody ProvinciaDto dto
+            @Valid @RequestBody @NonNull ProvinciaDto dto
     );
 
     @Operation(
@@ -83,7 +84,7 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteProvincia(
             @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -107,8 +108,9 @@ public interface ProvinciaApi extends GenericApi<ProvinciaDto> {
             }
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(ProvinciaSearchDto searchDto,
-                   @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false)final Integer pageIndex,
-                   @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false)final Integer pageSize
+    ResponseEntity<PageResponseDto<ProvinciaDto>> getPaginatedProvincias(
+                   @NonNull ProvinciaSearchDto searchDto,
+                   @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+                   @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }

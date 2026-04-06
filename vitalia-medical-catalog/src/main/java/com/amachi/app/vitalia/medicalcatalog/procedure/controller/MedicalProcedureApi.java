@@ -95,6 +95,6 @@ public interface MedicalProcedureApi extends GenericApi<MedicalProcedureDto> {
         @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         ResponseEntity<PageResponseDto<MedicalProcedureDto>> getPaginatedProcedures(
                         @NonNull MedicalProcedureSearchDto searchDto,
-                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) @NonNull final Integer pageIndex,
-                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) @NonNull final Integer pageSize);
+                        @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+                        @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize);
 }

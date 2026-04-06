@@ -67,7 +67,7 @@ public class MedicationController extends BaseController implements MedicationAp
 
     @Override
     public ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(
-            @NonNull MedicationSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull MedicationSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Medication> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicationDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -67,7 +67,7 @@ public class VaccineController extends BaseController implements VaccineApi {
 
     @Override
     public ResponseEntity<PageResponseDto<VaccineDto>> getPaginatedVaccines(
-            @NonNull VaccineSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull VaccineSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Vaccine> page = service.getAll(searchDto, pageIndex, pageSize);
         List<VaccineDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 
