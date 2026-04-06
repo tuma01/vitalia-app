@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface MunicipioApi extends GenericApi<MunicipioDto> {
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<MunicipioDto> getMunicipioById(
             @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -50,7 +51,7 @@ public interface MunicipioApi extends GenericApi<MunicipioDto> {
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<MunicipioDto> createMunicipio(
             @Parameter(description = "Detalles del municipio a crear.", required = true)
-            @Valid @RequestBody MunicipioDto dto
+            @Valid @RequestBody @NonNull MunicipioDto dto
     );
 
     @Operation(
@@ -66,9 +67,9 @@ public interface MunicipioApi extends GenericApi<MunicipioDto> {
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<MunicipioDto> updateMunicipio(
             @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NonNull Long id,
             @Parameter(description = "Nuevos detalles del " + NAME_API + ".", required = true)
-            @Valid @RequestBody MunicipioDto dto
+            @Valid @RequestBody @NonNull MunicipioDto dto
     );
 
     @Operation(
@@ -84,7 +85,7 @@ public interface MunicipioApi extends GenericApi<MunicipioDto> {
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteMunicipio(
             @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -108,8 +109,9 @@ public interface MunicipioApi extends GenericApi<MunicipioDto> {
             }
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(MunicipioSearchDto searchDto,
-                   @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false)final Integer pageIndex,
-                   @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false)final Integer pageSize
+    ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(
+                   @NonNull MunicipioSearchDto searchDto,
+                   @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+                   @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }

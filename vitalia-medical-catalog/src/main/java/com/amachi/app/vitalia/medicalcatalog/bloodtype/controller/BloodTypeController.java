@@ -66,7 +66,7 @@ public class BloodTypeController extends BaseController implements BloodTypeApi 
 
     @Override
     public ResponseEntity<PageResponseDto<BloodTypeDto>> getPaginatedBloodTypes(
-            @NonNull BloodTypeSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull BloodTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<BloodType> page = service.getAll(searchDto, pageIndex, pageSize);
         List<BloodTypeDto> dtos = page.getContent()
                 .stream()

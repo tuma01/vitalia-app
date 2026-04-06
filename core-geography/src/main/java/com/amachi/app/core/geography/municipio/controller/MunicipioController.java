@@ -7,40 +7,41 @@ import com.amachi.app.core.geography.municipio.dto.search.MunicipioSearchDto;
 import com.amachi.app.core.geography.municipio.entity.Municipio;
 import com.amachi.app.core.geography.municipio.mapper.MunicipioMapper;
 import com.amachi.app.core.geography.municipio.service.impl.MunicipioServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/municipios")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class MunicipioController extends BaseController implements MunicipioApi {
 
-    private MunicipioServiceImpl service;
-    private MunicipioMapper mapper;
+    private final MunicipioServiceImpl service;
+    private final MunicipioMapper mapper;
 
     @Override
-    public ResponseEntity<MunicipioDto> getMunicipioById(Long id) {
+    public ResponseEntity<MunicipioDto> getMunicipioById(@NonNull Long id) {
         Municipio entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
-    public ResponseEntity<MunicipioDto> createMunicipio(MunicipioDto dto) {
+    public ResponseEntity<MunicipioDto> createMunicipio(@Valid @RequestBody @NonNull MunicipioDto dto) {
         Municipio entity = mapper.toEntity(dto);
         Municipio savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<MunicipioDto> updateMunicipio(Long id, MunicipioDto dto) {
+    public ResponseEntity<MunicipioDto> updateMunicipio(@NonNull Long id, @Valid @RequestBody @NonNull MunicipioDto dto) {
         Municipio existingEntity = service.getById(id);
         mapper.updateEntityFromDto(dto, existingEntity);
         Municipio updatedEntity = service.update(id, existingEntity);
@@ -48,7 +49,7 @@ public class MunicipioController extends BaseController implements MunicipioApi 
     }
 
     @Override
-    public ResponseEntity<Void> deleteMunicipio(Long id) {
+    public ResponseEntity<Void> deleteMunicipio(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -57,17 +58,17 @@ public class MunicipioController extends BaseController implements MunicipioApi 
     public ResponseEntity<List<MunicipioDto>> getAllMunicipios() {
         List<Municipio> entities = service.getAll();
         List<MunicipioDto> dtos = entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
-    public ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(MunicipioSearchDto searchDto,
-            Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<MunicipioDto>> getPaginatedMunicipios(
+            @NonNull MunicipioSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Municipio> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MunicipioDto> dtos = page.getContent()
                 .stream()
-                .map(municipio -> mapper.toDto(municipio)).toList();
+                .map(mapper::toDto).toList();
 
         PageResponseDto<MunicipioDto> response = PageResponseDto.<MunicipioDto>builder()
                 .content(dtos)

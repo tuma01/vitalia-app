@@ -67,7 +67,7 @@ public class CivilStatusController extends BaseController implements CivilStatus
 
     @Override
     public ResponseEntity<PageResponseDto<CivilStatusDto>> getPaginatedCivilStatuses(
-            @NonNull CivilStatusSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull CivilStatusSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<CivilStatus> page = service.getAll(searchDto, pageIndex, pageSize);
         List<CivilStatusDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

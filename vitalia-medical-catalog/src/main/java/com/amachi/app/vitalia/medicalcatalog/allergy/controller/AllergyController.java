@@ -65,7 +65,7 @@ public class AllergyController extends BaseController implements AllergyApi {
 
     @Override
     public ResponseEntity<PageResponseDto<AllergyDto>> getPaginatedAllergies(
-            @NonNull AllergySearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull AllergySearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Allergy> page = service.getAll(searchDto, pageIndex, pageSize);
         List<AllergyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

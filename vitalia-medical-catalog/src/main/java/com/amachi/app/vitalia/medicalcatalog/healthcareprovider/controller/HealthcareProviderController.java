@@ -67,7 +67,7 @@ public class HealthcareProviderController extends BaseController implements Heal
 
     @Override
     public ResponseEntity<PageResponseDto<HealthcareProviderDto>> getPaginatedProviders(
-            @NonNull HealthcareProviderSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull HealthcareProviderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<HealthcareProvider> page = service.getAll(searchDto, pageIndex, pageSize);
         List<HealthcareProviderDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -3,19 +3,18 @@ package com.amachi.app.core.geography.address.controller;
 import com.amachi.app.core.common.controller.BaseController;
 import com.amachi.app.core.common.dto.PageResponseDto;
 import com.amachi.app.core.geography.address.dto.AddressDto;
+import com.amachi.app.core.geography.address.dto.search.AddressSearchDto;
 import com.amachi.app.core.geography.address.entity.Address;
 import com.amachi.app.core.geography.address.mapper.AddressMapper;
 import com.amachi.app.core.geography.address.service.impl.AddressServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,21 +28,20 @@ public class AddressController extends BaseController implements AddressApi {
     private final AddressMapper mapper;
 
     @Override
-    @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AddressDto> getAddressById(@PathVariable Long id) {
+    public ResponseEntity<AddressDto> getAddressById(@NonNull @PathVariable Long id) {
         Address entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
-    public ResponseEntity<AddressDto> createAddress(AddressDto dto) {
+    public ResponseEntity<AddressDto> createAddress(@Valid @RequestBody @NonNull AddressDto dto) {
         Address entity = mapper.toEntity(dto);
         Address savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<AddressDto> updateAddress(Long id, AddressDto dto) {
+    public ResponseEntity<AddressDto> updateAddress(@NonNull Long id, @Valid @RequestBody @NonNull AddressDto dto) {
         Address existingEntity = service.getById(id);
         mapper.updateEntityFromDto(dto, existingEntity);
         Address updatedEntity = service.update(id, existingEntity);
@@ -51,7 +49,7 @@ public class AddressController extends BaseController implements AddressApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteAddress(Long id) {
+    public ResponseEntity<Void> deleteAddress(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -60,15 +58,14 @@ public class AddressController extends BaseController implements AddressApi {
     public ResponseEntity<List<AddressDto>> getAllAddresses() {
         List<Address> entities = service.getAll();
         List<AddressDto> dtos = entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PageResponseDto<AddressDto>> getPaginatedAddresses(
-            com.amachi.app.core.geography.address.dto.search.AddressSearchDto searchDto, Integer pageIndex,
-            Integer pageSize) {
+            @NonNull AddressSearchDto searchDto,
+            Integer pageIndex, Integer pageSize) {
         Page<Address> page = service.getAll(searchDto, pageIndex,
                 pageSize);
         List<AddressDto> dtos = page.getContent()

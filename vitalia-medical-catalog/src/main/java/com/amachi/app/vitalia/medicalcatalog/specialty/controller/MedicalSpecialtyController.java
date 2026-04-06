@@ -65,7 +65,7 @@ public class MedicalSpecialtyController extends BaseController implements Medica
 
     @Override
     public ResponseEntity<PageResponseDto<MedicalSpecialtyDto>> getPaginatedSpecialties(
-            @NonNull MedicalSpecialtySearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull MedicalSpecialtySearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<MedicalSpecialty> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicalSpecialtyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

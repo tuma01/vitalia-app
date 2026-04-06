@@ -65,7 +65,7 @@ public class IdentificationTypeController extends BaseController implements Iden
 
     @Override
     public ResponseEntity<PageResponseDto<IdentificationTypeDto>> getPaginatedIdentificationTypes(
-            @NonNull IdentificationTypeSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
+            @NonNull IdentificationTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<IdentificationType> page = service.getAll(searchDto, pageIndex, pageSize);
         List<IdentificationTypeDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

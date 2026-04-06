@@ -7,15 +7,14 @@ import com.amachi.app.core.geography.country.dto.search.CountrySearchDto;
 import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.geography.country.mapper.CountryMapper;
 import com.amachi.app.core.geography.country.service.impl.CountryServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,20 +28,20 @@ public class CountryController extends BaseController implements CountryApi {
     private final CountryMapper mapper;
 
     @Override
-    public ResponseEntity<CountryDto> getCountryById(Long id) {
+    public ResponseEntity<CountryDto> getCountryById(@NonNull Long id) {
         Country entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
-    public ResponseEntity<CountryDto> createCountry(CountryDto dto) {
+    public ResponseEntity<CountryDto> createCountry(@Valid @RequestBody @NonNull CountryDto dto) {
         Country entity = mapper.toEntity(dto);
         Country savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<CountryDto> updateCountry(Long id, CountryDto dto) {
+    public ResponseEntity<CountryDto> updateCountry(@NonNull Long id, @Valid @RequestBody @NonNull CountryDto dto) {
         Country existingEntity = service.getById(id);
         mapper.updateEntityFromDto(dto, existingEntity);
         Country updatedEntity = service.update(id, existingEntity);
@@ -50,7 +49,7 @@ public class CountryController extends BaseController implements CountryApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteCountry(Long id) {
+    public ResponseEntity<Void> deleteCountry(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -59,18 +58,17 @@ public class CountryController extends BaseController implements CountryApi {
     public ResponseEntity<List<CountryDto>> getAllCountries() {
         List<Country> entities = service.getAll();
         List<CountryDto> dtos = entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PageResponseDto<CountryDto>> getPaginatedCountries(CountrySearchDto countrySearchDto,
-            Integer pageIndex, Integer pageSize) {
+    public ResponseEntity<PageResponseDto<CountryDto>> getPaginatedCountries(
+            @NonNull CountrySearchDto countrySearchDto, Integer pageIndex, Integer pageSize) {
         Page<Country> page = service.getAll(countrySearchDto, pageIndex, pageSize);
         List<CountryDto> dtos = page.getContent()
                 .stream()
-                .map(country -> mapper.toDto(country)).toList();
+                .map(mapper::toDto).toList();
 
         PageResponseDto<CountryDto> response = PageResponseDto.<CountryDto>builder()
                 .content(dtos)
