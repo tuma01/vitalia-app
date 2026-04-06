@@ -1,45 +1,78 @@
 package com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto;
 
+import com.amachi.app.core.geography.address.dto.AddressDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
-@Validated
-@Getter @Setter
+import java.io.Serializable;
+
+/**
+ * Healthcare Provider (Insurance/Payer) Data Transfer Object (SaaS Elite Tier).
+ */
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
-@Schema(name = "HealthcareProvider", description = "Schema to hold Healthcare Provider (Payer/Insurance) information")
-public class HealthcareProviderDto {
+@Builder
+@ToString
+@Schema(name = "HealthcareProvider", description = "Schema to hold Healthcare Provider information")
+public class HealthcareProviderDto implements Serializable {
 
-    @Schema(description = "Identificador único", example = "1")
+    private static final long serialVersionUID = 1L;
+
+    @JsonProperty("id")
+    @Schema(description = "Unique identifier", example = "5")
     private Long id;
 
-    @NotBlank(message = "Provider Code cannot be empty")
-    @Size(max = 20, message = "Code must be at most 20 characters")
-    @Schema(description = "Official Provider Code", example = "EPS001")
+    @JsonProperty("code")
+    @NotBlank(message = "Code {err.mandatory}")
+    @Size(max = 20)
+    @Schema(description = "Standardized alphanumeric code", example = "EPS-001")
     private String code;
 
-    @NotBlank(message = "Provider Name cannot be empty")
-    @Size(max = 200, message = "Name must be at most 200 characters")
-    @Schema(description = "Provider Name", example = "SURA EPS")
+    @JsonProperty("name")
+    @NotBlank(message = "Name {err.mandatory}")
+    @Size(max = 250)
+    @Schema(description = "Official trade name or legal entity name", example = "SURA EPS")
     private String name;
 
-    @NotBlank(message = "Tax ID cannot be empty")
-    @Size(max = 50, message = "Tax ID must be at most 50 characters")
-    @Schema(description = "Tax Identification Number (NIT/RUT/DNI)", example = "860066942-7")
+    @JsonProperty("taxId")
+    @NotBlank(message = "Tax ID {err.mandatory}")
+    @Size(max = 50)
+    @Schema(description = "Official tax identification (NIT, RUC, VAT)", example = "860066942-7")
     private String taxId;
 
-    @Email(message = "Invalid email format")
-    @Schema(description = "Official Contact Email", example = "contact@sura.com")
-    private String email;
+    @JsonProperty("officialEmail")
+    @Email(message = "Format {err.invalid}")
+    @Schema(description = "Institutional email address", example = "claims@sura.com")
+    private String officialEmail;
 
-    @Schema(description = "Official Contact Phone", example = "+573000000000")
-    private String phone;
+    @JsonProperty("officialPhone")
+    @Schema(description = "Institutional phone number", example = "+576013000000")
+    private String officialPhone;
 
-    @Schema(description = "Status of the provider", example = "true")
+    @JsonProperty("emergencyPhone")
+    @Schema(description = "24/7 emergency assistance line", example = "+57018000519111")
+    private String emergencyPhone;
+
+    @JsonProperty("website")
+    @Schema(description = "Institutional website portal", example = "https://www.segurossura.com.co")
+    private String website;
+
+    @JsonProperty("logoUrl")
+    @Schema(description = "Public URL for institutional logo", example = "/assets/catalog/logos/sura.png")
+    private String logoUrl;
+
+    @JsonProperty("hqAddress")
+    @Valid
+    @Schema(description = "Physical address of the main administrative headquarters")
+    private AddressDto hqAddress;
+
+    @JsonProperty("active")
+    @Schema(description = "Status of the record", example = "true")
     private Boolean active;
 }

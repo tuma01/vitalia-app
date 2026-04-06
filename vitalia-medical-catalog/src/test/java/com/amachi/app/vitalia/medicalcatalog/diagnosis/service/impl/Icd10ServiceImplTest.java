@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.diagnosis.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.diagnosis.dto.search.Icd10SearchDto;
@@ -29,6 +30,9 @@ class Icd10ServiceImplTest extends AbstractTestSupport {
     @Mock
     private Icd10Repository repository;
 
+    @Mock
+    private DomainEventPublisher eventPublisher;
+
     @InjectMocks
     private Icd10ServiceImpl service;
 
@@ -40,7 +44,7 @@ class Icd10ServiceImplTest extends AbstractTestSupport {
         List<Icd10> result = service.getAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCode()).isEqualTo("A00.0");
+        assertThat(result.getFirst().getCode()).isEqualTo("A00.0");
         verify(repository, times(1)).findAll();
     }
 
@@ -79,12 +83,15 @@ class Icd10ServiceImplTest extends AbstractTestSupport {
     @Test
     void create_ShouldSaveEntity() {
         Icd10 entity = loadJson("data/diagnosis/icd10-entity.json", Icd10.class);
+        when(repository.existsByCode(anyString())).thenReturn(false);
         when(repository.save(any(Icd10.class))).thenReturn(entity);
+        // El publish no lanza error si el mock está presente
 
         Icd10 result = service.create(entity);
 
         assertThat(result.getCode()).isEqualTo("A00.0");
         verify(repository, times(1)).save(entity);
+        verify(eventPublisher, times(1)).publish(any());
     }
 
     @Test

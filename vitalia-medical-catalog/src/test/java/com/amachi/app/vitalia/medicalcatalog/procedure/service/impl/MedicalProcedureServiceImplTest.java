@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.procedure.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.procedure.dto.search.MedicalProcedureSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.procedure.entity.MedicalProcedure;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -28,6 +27,9 @@ class MedicalProcedureServiceImplTest extends AbstractTestSupport {
 
     @Mock
     private MedicalProcedureRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private MedicalProcedureServiceImpl service;
@@ -40,7 +42,7 @@ class MedicalProcedureServiceImplTest extends AbstractTestSupport {
         List<MedicalProcedure> result = service.getAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getCode()).isEqualTo("90.3.8.01");
+        assertThat(result.getFirst().getCode()).isEqualTo("90.3.8.01");
     }
 
     @Test
@@ -69,11 +71,13 @@ class MedicalProcedureServiceImplTest extends AbstractTestSupport {
     @Test
     void create_ShouldSave() {
         MedicalProcedure entity = loadJson("data/procedure/procedure-entity.json", MedicalProcedure.class);
+        when(repository.existsByCode(anyString())).thenReturn(false);
         when(repository.save(any())).thenReturn(entity);
 
         MedicalProcedure result = service.create(entity);
 
         assertThat(result.getCode()).isEqualTo("90.3.8.01");
+        verify(eventPublisher, times(1)).publish(any());
     }
 
     @Test

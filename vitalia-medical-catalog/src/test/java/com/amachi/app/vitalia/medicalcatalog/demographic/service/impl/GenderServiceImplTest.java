@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.demographic.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.vitalia.medicalcatalog.demographic.dto.search.GenderSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.Gender;
 import com.amachi.app.vitalia.medicalcatalog.demographic.repository.GenderRepository;
@@ -11,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -26,6 +27,9 @@ class GenderServiceImplTest {
 
     @Mock
     private GenderRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private GenderServiceImpl service;
@@ -44,10 +48,9 @@ class GenderServiceImplTest {
     @Test
     void getAll_WithFilters_ShouldReturnPage() {
         GenderSearchDto searchDto = new GenderSearchDto();
-        PageRequest pageRequest = PageRequest.of(0, 10);
         Page<Gender> entityPage = new PageImpl<>(List.of(entity));
 
-        when(repository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(entityPage);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(entityPage);
 
         Page<Gender> result = service.getAll(searchDto, 0, 10);
 

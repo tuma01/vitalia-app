@@ -7,34 +7,34 @@ import com.amachi.app.vitalia.medicalcatalog.specialty.dto.search.MedicalSpecial
 import com.amachi.app.vitalia.medicalcatalog.specialty.entity.MedicalSpecialty;
 import com.amachi.app.vitalia.medicalcatalog.specialty.mapper.MedicalSpecialtyMapper;
 import com.amachi.app.vitalia.medicalcatalog.specialty.service.impl.MedicalSpecialtyServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
-@RequestMapping("/mdm/medical-specialty")
-@AllArgsConstructor
+@RequestMapping("/mdm/specialty")
+@RequiredArgsConstructor
 public class MedicalSpecialtyController extends BaseController implements MedicalSpecialtyApi {
 
-    MedicalSpecialtyServiceImpl service;
-    MedicalSpecialtyMapper mapper;
+    private final MedicalSpecialtyServiceImpl service;
+    private final MedicalSpecialtyMapper mapper;
 
     @Override
-    public ResponseEntity<MedicalSpecialtyDto> getSpecialtyById(Long id) {
+    public ResponseEntity<MedicalSpecialtyDto> getSpecialtyById(@NonNull Long id) {
         MedicalSpecialty entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalSpecialtyDto> createSpecialty(MedicalSpecialtyDto dto) {
+    public ResponseEntity<MedicalSpecialtyDto> createSpecialty(@Valid @RequestBody @NonNull MedicalSpecialtyDto dto) {
         MedicalSpecialty entity = mapper.toEntity(dto);
         MedicalSpecialty savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class MedicalSpecialtyController extends BaseController implements Medica
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalSpecialtyDto> updateSpecialty(Long id, MedicalSpecialtyDto dto) {
+    public ResponseEntity<MedicalSpecialtyDto> updateSpecialty(@NonNull Long id, @Valid @RequestBody @NonNull MedicalSpecialtyDto dto) {
         MedicalSpecialty existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         MedicalSpecialty savedEntity = service.update(id, existing);
@@ -51,7 +51,7 @@ public class MedicalSpecialtyController extends BaseController implements Medica
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteSpecialty(Long id) {
+    public ResponseEntity<Void> deleteSpecialty(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +65,7 @@ public class MedicalSpecialtyController extends BaseController implements Medica
 
     @Override
     public ResponseEntity<PageResponseDto<MedicalSpecialtyDto>> getPaginatedSpecialties(
-            MedicalSpecialtySearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull MedicalSpecialtySearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<MedicalSpecialty> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicalSpecialtyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.identity.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.vitalia.medicalcatalog.identity.dto.search.IdentificationTypeSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.identity.entity.IdentificationType;
 import com.amachi.app.vitalia.medicalcatalog.identity.repository.IdentificationTypeRepository;
@@ -11,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +28,9 @@ class IdentificationTypeServiceImplTest {
 
     @Mock
     private IdentificationTypeRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private IdentificationTypeServiceImpl service;
@@ -46,7 +51,7 @@ class IdentificationTypeServiceImplTest {
         IdentificationTypeSearchDto searchDto = new IdentificationTypeSearchDto();
         Page<IdentificationType> entityPage = new PageImpl<>(List.of(entity));
 
-        when(repository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(entityPage);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(entityPage);
 
         Page<IdentificationType> result = service.getAll(searchDto, 0, 10);
 
@@ -66,13 +71,16 @@ class IdentificationTypeServiceImplTest {
 
     @Test
     void create_ShouldReturnEntity() {
+        when(repository.existsByCode(anyString())).thenReturn(false);
         when(repository.save(any(IdentificationType.class))).thenReturn(entity);
+        // eventPublisher mock ensures no NPE
 
         IdentificationType result = service.create(entity);
 
         assertNotNull(result);
         assertEquals("CC", result.getCode());
         verify(repository).save(any());
+        verify(eventPublisher).publish(any());
     }
 
     @Test

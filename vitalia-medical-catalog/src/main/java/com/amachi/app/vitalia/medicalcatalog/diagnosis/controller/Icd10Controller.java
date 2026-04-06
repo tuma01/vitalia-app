@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.diagnosis.dto.search.Icd10SearchDto
 import com.amachi.app.vitalia.medicalcatalog.diagnosis.entity.Icd10;
 import com.amachi.app.vitalia.medicalcatalog.diagnosis.mapper.Icd10Mapper;
 import com.amachi.app.vitalia.medicalcatalog.diagnosis.service.impl.Icd10ServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/diagnosis")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Icd10Controller extends BaseController implements Icd10Api {
 
-    Icd10ServiceImpl service;
-    Icd10Mapper mapper;
+    private final Icd10ServiceImpl service;
+    private final Icd10Mapper mapper;
 
     @Override
-    public ResponseEntity<Icd10Dto> getIcd10ById(Long id) {
+    public ResponseEntity<Icd10Dto> getIcd10ById(@NonNull Long id) {
         Icd10 entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Icd10Dto> createIcd10(Icd10Dto dto) {
+    public ResponseEntity<Icd10Dto> createIcd10(@Valid @RequestBody @NonNull Icd10Dto dto) {
         Icd10 entity = mapper.toEntity(dto);
         Icd10 savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class Icd10Controller extends BaseController implements Icd10Api {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Icd10Dto> updateIcd10(Long id, Icd10Dto dto) {
+    public ResponseEntity<Icd10Dto> updateIcd10(@NonNull Long id, @Valid @RequestBody @NonNull Icd10Dto dto) {
         Icd10 existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Icd10 savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class Icd10Controller extends BaseController implements Icd10Api {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteIcd10(Long id) {
+    public ResponseEntity<Void> deleteIcd10(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class Icd10Controller extends BaseController implements Icd10Api {
 
     @Override
     public ResponseEntity<PageResponseDto<Icd10Dto>> getPaginatedIcd10(
-            Icd10SearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull Icd10SearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Icd10> page = service.getAll(searchDto, pageIndex, pageSize);
         List<Icd10Dto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

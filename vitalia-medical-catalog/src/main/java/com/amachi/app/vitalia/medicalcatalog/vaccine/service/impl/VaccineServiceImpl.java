@@ -1,73 +1,72 @@
 package com.amachi.app.vitalia.medicalcatalog.vaccine.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.dto.search.VaccineSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.entity.Vaccine;
+import com.amachi.app.vitalia.medicalcatalog.vaccine.event.VaccineCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.repository.VaccineRepository;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.specification.VaccineSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class VaccineServiceImpl implements GenericService<Vaccine, VaccineSearchDto> {
+@RequiredArgsConstructor
+public class VaccineServiceImpl extends BaseService<Vaccine, VaccineSearchDto> {
 
-    VaccineRepository vaccineRepository;
+    private final VaccineRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Vaccine> getAll() {
-        return vaccineRepository.findAll();
+    protected CommonRepository<Vaccine, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<Vaccine> getAll(VaccineSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        return vaccineRepository.findAll(
-                new VaccineSpecification(searchDto),
-                PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name")));
+    protected Specification<Vaccine> buildSpecification(VaccineSearchDto searchDto) {
+        return new VaccineSpecification(searchDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Vaccine getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return vaccineRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Vaccine.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(Vaccine entity) {
+        eventPublisher.publish(new VaccineCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(Vaccine entity) {
+        // No update event yet
     }
 
     @Override
     public Vaccine create(Vaccine entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(vaccineRepository.save(entity));
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        boolean exists = repository.existsByCode(entity.getCode().trim().toUpperCase());
+
+        if (exists) {
+            throw new BusinessException("Vaccine code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public Vaccine update(Long id, Vaccine entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        vaccineRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Vaccine.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(vaccineRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        vaccineRepository.delete(getById(id));
+        return super.update(id, entity);
     }
 }

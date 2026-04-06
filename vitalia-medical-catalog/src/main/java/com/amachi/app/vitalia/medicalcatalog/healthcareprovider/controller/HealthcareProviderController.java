@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto.search.Healt
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.entity.HealthcareProvider;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.mapper.HealthcareProviderMapper;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.service.impl.HealthcareProviderServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/healthcare-provider")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HealthcareProviderController extends BaseController implements HealthcareProviderApi {
 
-    HealthcareProviderServiceImpl service;
-    HealthcareProviderMapper mapper;
+    private final HealthcareProviderServiceImpl service;
+    private final HealthcareProviderMapper mapper;
 
     @Override
-    public ResponseEntity<HealthcareProviderDto> getProviderById(Long id) {
+    public ResponseEntity<HealthcareProviderDto> getProviderById(@NonNull Long id) {
         HealthcareProvider entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<HealthcareProviderDto> createProvider(HealthcareProviderDto dto) {
+    public ResponseEntity<HealthcareProviderDto> createProvider(@Valid @RequestBody @NonNull HealthcareProviderDto dto) {
         HealthcareProvider entity = mapper.toEntity(dto);
         HealthcareProvider savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class HealthcareProviderController extends BaseController implements Heal
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<HealthcareProviderDto> updateProvider(Long id, HealthcareProviderDto dto) {
+    public ResponseEntity<HealthcareProviderDto> updateProvider(@NonNull Long id, @Valid @RequestBody @NonNull HealthcareProviderDto dto) {
         HealthcareProvider existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         HealthcareProvider savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class HealthcareProviderController extends BaseController implements Heal
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteProvider(Long id) {
+    public ResponseEntity<Void> deleteProvider(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class HealthcareProviderController extends BaseController implements Heal
 
     @Override
     public ResponseEntity<PageResponseDto<HealthcareProviderDto>> getPaginatedProviders(
-            HealthcareProviderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull HealthcareProviderSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<HealthcareProvider> page = service.getAll(searchDto, pageIndex, pageSize);
         List<HealthcareProviderDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

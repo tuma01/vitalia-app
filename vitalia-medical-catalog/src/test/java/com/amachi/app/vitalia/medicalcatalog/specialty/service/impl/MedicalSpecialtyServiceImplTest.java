@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.specialty.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.specialty.dto.search.MedicalSpecialtySearchDto;
 import com.amachi.app.vitalia.medicalcatalog.specialty.entity.MedicalSpecialty;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -28,6 +27,9 @@ class MedicalSpecialtyServiceImplTest extends AbstractTestSupport {
 
     @Mock
     private MedicalSpecialtyRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private MedicalSpecialtyServiceImpl service;
@@ -40,7 +42,7 @@ class MedicalSpecialtyServiceImplTest extends AbstractTestSupport {
         List<MedicalSpecialty> result = service.getAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("Cardiología");
+        assertThat(result.getFirst().getName()).isEqualTo("Cardiología");
     }
 
     @Test
@@ -69,11 +71,13 @@ class MedicalSpecialtyServiceImplTest extends AbstractTestSupport {
     @Test
     void create_ShouldSave() {
         MedicalSpecialty entity = loadJson("data/specialty/specialty-entity.json", MedicalSpecialty.class);
+        when(repository.existsByCode(anyString())).thenReturn(false);
         when(repository.save(any())).thenReturn(entity);
 
         MedicalSpecialty result = service.create(entity);
 
         assertThat(result.getName()).isEqualTo("Cardiología");
+        verify(eventPublisher, times(1)).publish(any());
     }
 
     @Test

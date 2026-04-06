@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.vaccine.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.dto.search.VaccineSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.entity.Vaccine;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.repository.VaccineRepository;
@@ -11,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -26,6 +27,9 @@ class VaccineServiceImplTest {
 
     @Mock
     private VaccineRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private VaccineServiceImpl service;
@@ -46,7 +50,7 @@ class VaccineServiceImplTest {
         VaccineSearchDto searchDto = new VaccineSearchDto();
         Page<Vaccine> entityPage = new PageImpl<>(List.of(entity));
 
-        when(repository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(entityPage);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(entityPage);
 
         Page<Vaccine> result = service.getAll(searchDto, 0, 10);
 

@@ -1,75 +1,73 @@
 package com.amachi.app.vitalia.medicalcatalog.allergy.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto;
 import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
+import com.amachi.app.vitalia.medicalcatalog.allergy.event.AllergyCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.allergy.repository.AllergyRepository;
 import com.amachi.app.vitalia.medicalcatalog.allergy.specification.AllergySpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class AllergyServiceImpl implements GenericService<Allergy, AllergySearchDto> {
+@RequiredArgsConstructor
+public class AllergyServiceImpl extends BaseService<Allergy, AllergySearchDto> {
 
-    AllergyRepository allergyRepository;
+    private final AllergyRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Allergy> getAll() {
-        return allergyRepository.findAll();
+    protected CommonRepository<Allergy, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<Allergy> getAll(AllergySearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
-        Specification<Allergy> specification = new AllergySpecification(searchDto);
-        return allergyRepository.findAll(specification, pageable);
+    protected Specification<Allergy> buildSpecification(AllergySearchDto searchDto) {
+        return new AllergySpecification(searchDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Allergy getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return allergyRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(Allergy entity) {
+        eventPublisher.publish(new AllergyCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(Allergy entity) {
+        // No update event yet
     }
 
     @Override
     public Allergy create(Allergy entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(allergyRepository.save(entity));
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        // No filtramos por TenantContext porque el catálogo es único para la plataforma.
+        boolean exists = repository.existsByCode(entity.getCode().trim().toUpperCase());
+
+        if (exists) {
+            throw new BusinessException("Allergy code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public Allergy update(Long id, Allergy entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        allergyRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Allergy.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(allergyRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        allergyRepository.delete(getById(id));
+        return super.update(id, entity);
     }
 }

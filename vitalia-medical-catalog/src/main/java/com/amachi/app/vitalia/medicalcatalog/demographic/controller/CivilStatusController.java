@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.demographic.dto.search.CivilStatusS
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.CivilStatus;
 import com.amachi.app.vitalia.medicalcatalog.demographic.mapper.CivilStatusMapper;
 import com.amachi.app.vitalia.medicalcatalog.demographic.service.impl.CivilStatusServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/demographic/civil-status")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CivilStatusController extends BaseController implements CivilStatusApi {
 
-    CivilStatusServiceImpl service;
-    CivilStatusMapper mapper;
+    private final CivilStatusServiceImpl service;
+    private final CivilStatusMapper mapper;
 
     @Override
-    public ResponseEntity<CivilStatusDto> getCivilStatusById(Long id) {
+    public ResponseEntity<CivilStatusDto> getCivilStatusById(@NonNull Long id) {
         CivilStatus entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<CivilStatusDto> createCivilStatus(CivilStatusDto dto) {
+    public ResponseEntity<CivilStatusDto> createCivilStatus(@Valid @RequestBody @NonNull CivilStatusDto dto) {
         CivilStatus entity = mapper.toEntity(dto);
         CivilStatus savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class CivilStatusController extends BaseController implements CivilStatus
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<CivilStatusDto> updateCivilStatus(Long id, CivilStatusDto dto) {
+    public ResponseEntity<CivilStatusDto> updateCivilStatus(@NonNull Long id, @Valid @RequestBody @NonNull CivilStatusDto dto) {
         CivilStatus existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         CivilStatus savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class CivilStatusController extends BaseController implements CivilStatus
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteCivilStatus(Long id) {
+    public ResponseEntity<Void> deleteCivilStatus(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class CivilStatusController extends BaseController implements CivilStatus
 
     @Override
     public ResponseEntity<PageResponseDto<CivilStatusDto>> getPaginatedCivilStatuses(
-            CivilStatusSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull CivilStatusSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<CivilStatus> page = service.getAll(searchDto, pageIndex, pageSize);
         List<CivilStatusDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -1,30 +1,31 @@
 -- ============================================================
--- Script: V9_4__create_medication.sql
+-- Script: V9_5__create_cat_medication.sql
 -- Módulo: vitalia-medical-catalog
--- Descripción: Creación de la tabla CAT_MEDICATION.
--- Autor: Juan Amachi
--- Fecha: 2026-01-04
+-- Descripción: Creación de la tabla CAT_MEDICATION (SaaS Elite Tier).
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS CAT_MEDICATION (
-    ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    CODE VARCHAR(20) NOT NULL,
+    ID          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TENANT_ID   VARCHAR(50)  NOT NULL,
+    EXTERNAL_ID VARCHAR(36)  NOT NULL,
+    CODE        VARCHAR(20)  NOT NULL,
     GENERIC_NAME VARCHAR(250) NOT NULL,
     COMMERCIAL_NAME VARCHAR(250),
     CONCENTRATION VARCHAR(100),
     PHARMACEUTICAL_FORM VARCHAR(100),
     PRESENTATION VARCHAR(250),
-    ACTIVE BOOLEAN NOT NULL DEFAULT TRUE,
+    ACTIVE      BOOLEAN      NOT NULL DEFAULT TRUE,
+    VERSION     BIGINT       NOT NULL DEFAULT 0,
 
     -- Auditoría
-    CREATED_BY VARCHAR(100) NOT NULL,
-    CREATED_DATE TIMESTAMP NOT NULL,
-    LAST_MODIFIED_BY VARCHAR(100),
+    CREATED_BY        VARCHAR(100) NOT NULL,
+    CREATED_DATE      TIMESTAMP    NOT NULL,
+    LAST_MODIFIED_BY  VARCHAR(100),
     LAST_MODIFIED_DATE TIMESTAMP,
 
-    -- ===============================
-    -- Restricciones
-    -- ===============================
-    CONSTRAINT UK_MEDICATION_CODE UNIQUE (CODE),
-    INDEX IX_MEDICATION_GENERIC (GENERIC_NAME)
+    -- Constraints
+    CONSTRAINT UK_MEDICATION_EXTERNAL_ID UNIQUE (EXTERNAL_ID),
+    CONSTRAINT UK_MEDICATION_CODE_TENANT UNIQUE (CODE, TENANT_ID),
+    INDEX IDX_MEDICATION_TENANT (TENANT_ID),
+    INDEX IDX_MEDICATION_GENERIC (GENERIC_NAME)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

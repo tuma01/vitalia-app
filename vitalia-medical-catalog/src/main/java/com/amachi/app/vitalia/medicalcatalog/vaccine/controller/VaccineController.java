@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.vaccine.dto.search.VaccineSearchDto
 import com.amachi.app.vitalia.medicalcatalog.vaccine.entity.Vaccine;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.mapper.VaccineMapper;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.service.impl.VaccineServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/vaccine")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class VaccineController extends BaseController implements VaccineApi {
 
-    VaccineServiceImpl service;
-    VaccineMapper mapper;
+    private final VaccineServiceImpl service;
+    private final VaccineMapper mapper;
 
     @Override
-    public ResponseEntity<VaccineDto> getVaccineById(Long id) {
+    public ResponseEntity<VaccineDto> getVaccineById(@NonNull Long id) {
         Vaccine entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<VaccineDto> createVaccine(VaccineDto dto) {
+    public ResponseEntity<VaccineDto> createVaccine(@Valid @RequestBody @NonNull VaccineDto dto) {
         Vaccine entity = mapper.toEntity(dto);
         Vaccine savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class VaccineController extends BaseController implements VaccineApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<VaccineDto> updateVaccine(Long id, VaccineDto dto) {
+    public ResponseEntity<VaccineDto> updateVaccine(@NonNull Long id, @Valid @RequestBody @NonNull VaccineDto dto) {
         Vaccine existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Vaccine savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class VaccineController extends BaseController implements VaccineApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteVaccine(Long id) {
+    public ResponseEntity<Void> deleteVaccine(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class VaccineController extends BaseController implements VaccineApi {
 
     @Override
     public ResponseEntity<PageResponseDto<VaccineDto>> getPaginatedVaccines(
-            VaccineSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull VaccineSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Vaccine> page = service.getAll(searchDto, pageIndex, pageSize);
         List<VaccineDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

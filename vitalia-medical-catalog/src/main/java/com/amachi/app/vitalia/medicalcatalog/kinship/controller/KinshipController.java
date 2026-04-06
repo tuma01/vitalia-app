@@ -7,34 +7,34 @@ import com.amachi.app.vitalia.medicalcatalog.kinship.dto.search.KinshipSearchDto
 import com.amachi.app.vitalia.medicalcatalog.kinship.entity.Kinship;
 import com.amachi.app.vitalia.medicalcatalog.kinship.mapper.KinshipMapper;
 import com.amachi.app.vitalia.medicalcatalog.kinship.service.impl.KinshipServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/mdm/kinship")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KinshipController extends BaseController implements KinshipApi {
 
-    KinshipServiceImpl service;
-    KinshipMapper mapper;
+    private final KinshipServiceImpl service;
+    private final KinshipMapper mapper;
 
     @Override
-    public ResponseEntity<KinshipDto> getKinshipById(Long id) {
+    public ResponseEntity<KinshipDto> getKinshipById(@NonNull Long id) {
         Kinship entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> createKinship(KinshipDto dto) {
+    public ResponseEntity<KinshipDto> createKinship(@Valid @RequestBody @NonNull KinshipDto dto) {
         Kinship entity = mapper.toEntity(dto);
         Kinship savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class KinshipController extends BaseController implements KinshipApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<KinshipDto> updateKinship(Long id, KinshipDto dto) {
+    public ResponseEntity<KinshipDto> updateKinship(@NonNull Long id, @Valid @RequestBody @NonNull KinshipDto dto) {
         Kinship existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Kinship savedEntity = service.update(id, existing);
@@ -51,7 +51,7 @@ public class KinshipController extends BaseController implements KinshipApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteKinship(Long id) {
+    public ResponseEntity<Void> deleteKinship(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +65,7 @@ public class KinshipController extends BaseController implements KinshipApi {
 
     @Override
     public ResponseEntity<PageResponseDto<KinshipDto>> getPaginatedKinships(
-            KinshipSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull KinshipSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Kinship> page = service.getAll(searchDto, pageIndex, pageSize);
         List<KinshipDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

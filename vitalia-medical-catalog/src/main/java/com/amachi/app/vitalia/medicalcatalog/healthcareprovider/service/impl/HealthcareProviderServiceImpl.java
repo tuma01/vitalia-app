@@ -1,74 +1,83 @@
 package com.amachi.app.vitalia.medicalcatalog.healthcareprovider.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import static java.util.Objects.requireNonNull;
+
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto.search.HealthcareProviderSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.entity.HealthcareProvider;
+import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.event.HealthcareProviderCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.repository.HealthcareProviderRepository;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.specification.HealthcareProviderSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class HealthcareProviderServiceImpl implements GenericService<HealthcareProvider, HealthcareProviderSearchDto> {
+@RequiredArgsConstructor
+public class HealthcareProviderServiceImpl extends BaseService<HealthcareProvider, HealthcareProviderSearchDto> {
 
-    HealthcareProviderRepository healthcareProviderRepository;
+    private final HealthcareProviderRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    public List<HealthcareProvider> getAll() {
-        return healthcareProviderRepository.findAll();
+    protected CommonRepository<HealthcareProvider, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    public Page<HealthcareProvider> getAll(HealthcareProviderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Specification<HealthcareProvider> specification = new HealthcareProviderSpecification(searchDto);
-        return healthcareProviderRepository.findAll(specification, pageable);
+    protected Specification<HealthcareProvider> buildSpecification(HealthcareProviderSearchDto searchDto) {
+        return new HealthcareProviderSpecification(searchDto);
     }
 
     @Override
-    public HealthcareProvider getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return healthcareProviderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HealthcareProvider.class.getName(),
-                        "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(HealthcareProvider entity) {
+        requireNonNull(entity, "Entity cannot be null for event publication");
+        eventPublisher.publish(new HealthcareProviderCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName(),
+                entity.getTaxId()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(HealthcareProvider entity) {
+        // No update event yet
     }
 
     @Override
     public HealthcareProvider create(HealthcareProvider entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(healthcareProviderRepository.save(entity));
+        requireNonNull(entity, "HealthcareProvider entity must not be null");
+        
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        
+        // 1. Validar código único en el Catálogo Global
+        if (repository.existsByCode(entity.getCode().trim().toUpperCase())) {
+            throw new BusinessException("Provider code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // 2. Validar Tax ID único en el Catálogo Global
+        if (repository.existsByTaxId(entity.getTaxId().trim().toUpperCase())) {
+            throw new BusinessException("Tax ID '" + entity.getTaxId() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public HealthcareProvider update(Long id, HealthcareProvider entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        healthcareProviderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HealthcareProvider.class.getName(),
-                        "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(healthcareProviderRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        HealthcareProvider healthcareProvider = healthcareProviderRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(HealthcareProvider.class.getName(),
-                        "error.resource.not.found", id));
-        healthcareProviderRepository.delete(healthcareProvider);
+        return super.update(id, entity);
     }
 }
