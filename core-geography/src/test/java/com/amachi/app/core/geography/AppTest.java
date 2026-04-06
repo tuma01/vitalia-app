@@ -1,4 +1,4 @@
-package com.amachi.app.vitalia;
+package com.amachi.app.core.geography;
 
 import com.amachi.app.core.geography.AppGeography;
 import org.junit.jupiter.api.Test;

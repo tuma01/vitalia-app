@@ -1,14 +1,13 @@
 package com.amachi.app.core.geography.departamento.repository;
 
+import com.amachi.app.core.common.repository.CommonRepository;
 import com.amachi.app.core.geography.departamento.entity.Departamento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DepartamentoRepository extends JpaRepository<Departamento, Long>, JpaSpecificationExecutor<Departamento> {
+public interface DepartamentoRepository extends CommonRepository<Departamento, Long> {
 
     /**
      * Busca países por nombre utilizando una búsqueda por patrón.

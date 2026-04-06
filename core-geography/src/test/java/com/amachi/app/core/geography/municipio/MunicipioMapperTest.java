@@ -1,7 +1,8 @@
-package com.amachi.app.core.geography.municipio.mapper;
+package com.amachi.app.core.geography.municipio;
 
 import com.amachi.app.core.geography.municipio.dto.MunicipioDto;
 import com.amachi.app.core.geography.municipio.entity.Municipio;
+import com.amachi.app.core.geography.municipio.mapper.MunicipioMapper;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

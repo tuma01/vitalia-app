@@ -47,19 +47,19 @@ public class Address extends Auditable<String> implements Model {
     @Column(name = "LOCATION", length = 100)
     private String location;
 
-    @ManyToOne
-    @JoinColumn(name = "FK_ID_COUNTRY", foreignKey = @ForeignKey(name = "FK_ADDRESS_COUNTRY"), referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_COUNTRY", foreignKey = @ForeignKey(name = "FK_ADDRESS_COUNTRY"))
     private Country country;
 
-    @ManyToOne
-    @JoinColumn(name = "FK_ID_DEPARTAMENTO", foreignKey = @ForeignKey(name = "FK_ADDRESS_DEPARTAMENTO"), referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_DEPARTAMENTO", foreignKey = @ForeignKey(name = "FK_ADDRESS_DEPARTAMENTO"))
     private Departamento departamento;
 
-    @ManyToOne
-    @JoinColumn(name = "FK_ID_PROVINCIA", foreignKey = @ForeignKey(name = "FK_ADDRESS_PROVINCIA"), referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_PROVINCIA", foreignKey = @ForeignKey(name = "FK_ADDRESS_PROVINCIA"))
     private Provincia provincia;
 
-    @ManyToOne
-    @JoinColumn(name = "FK_ID_MUNICIPIO", foreignKey = @ForeignKey(name = "FK_ADDRESS_MUNICIPIO"), referencedColumnName = "ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_MUNICIPIO", foreignKey = @ForeignKey(name = "FK_ADDRESS_MUNICIPIO"))
     private Municipio municipio;
 }

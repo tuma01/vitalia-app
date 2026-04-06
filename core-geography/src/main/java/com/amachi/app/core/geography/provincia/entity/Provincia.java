@@ -21,14 +21,9 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "GEO_PROVINCIA", uniqueConstraints = {
-                @UniqueConstraint(name = "UK_NOMBRE_PROVINCIA", columnNames = { "NOMBRE" })
+                @UniqueConstraint(name = "UK_NOMBRE_PROVINCIA_DEPARTAMENTO", columnNames = { "NOMBRE", "FK_ID_DEPARTAMENTO" })
 })
 public class Provincia extends Auditable<String> implements Model {
-
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "ID")
-        private Long id;
 
         @NotBlank(message = "El nombre de la Provincia no puede ser nulo o vacío.")
         @Column(name = "NOMBRE", nullable = false, length = 100)

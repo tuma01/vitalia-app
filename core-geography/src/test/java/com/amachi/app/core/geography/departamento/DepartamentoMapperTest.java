@@ -1,7 +1,8 @@
-package com.amachi.app.core.geography.departamento.mapper;
+package com.amachi.app.core.geography.departamento;
 
 import com.amachi.app.core.geography.departamento.dto.DepartamentoDto;
 import com.amachi.app.core.geography.departamento.entity.Departamento;
+import com.amachi.app.core.geography.departamento.mapper.DepartamentoMapper;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
