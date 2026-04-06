@@ -5,49 +5,67 @@ import com.amachi.app.core.common.entity.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a country entity with ISO codes and related metadata.
+ * Entidad Country (SaaS Elite Tier).
+ * Modelo de referencia del Module Implementation Guide, restaurado con Lombok.
  */
-@Getter @Setter
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "GEO_COUNTRY", uniqueConstraints = {
+@Table(
+    name = "GEO_COUNTRY",
+    uniqueConstraints = {
         @UniqueConstraint(name = "UK_ISO_COUNTRY", columnNames = {"ISO"}),
         @UniqueConstraint(name = "UK_NAME_COUNTRY", columnNames = {"NAME"})
-})
+    },
+    indexes = {
+        @Index(name = "IDX_COUNTRY_ISO", columnList = "ISO"),
+        @Index(name = "IDX_COUNTRY_NAME", columnList = "NAME"),
+    }
+)
 public class Country extends Auditable<String> implements Model {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private Long id;
-
-    @NotNull(message = "ISO code shouldn't be null")
-    @Column(name = "ISO", nullable = false, length = 2, unique = true)
+    @NotBlank(message = "ISO code {err.mandatory}")
+    @Size(min = 2, max = 2)
+    @Column(name = "ISO", nullable = false, length = 2)
     private String iso;
 
-    @NotBlank(message = "Name of Country cannot be empty")
-    @Column(name = "NAME", nullable = false, unique = true, length = 100)
+    @NotBlank(message = "Nombre {err.mandatory}")
+    @Size(max = 100)
+    @Column(name = "NAME", nullable = false, length = 100)
     private String name;
 
-    @NotBlank(message = "Nice Name of Country cannot be empty")
-    @Column(name = "NICE_NAME", length = 100)
+    @Size(max = 100)
+    @Column(name = "NICE_NAME")
     private String niceName;
 
+    @Size(min = 3, max = 3)
     @Column(name = "ISO3", length = 3)
     private String iso3;
 
     @Column(name = "NUM_CODE")
     private Integer numCode;
 
-    @NotNull(message = "Phone code shouldn't be null")
+    @NotNull(message = "Phone code {err.mandatory}")
     @Column(name = "PHONE_CODE", nullable = false)
     private Integer phoneCode;
+
+    // ✅ Normalización Automática (Enterprise Best Practice)
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (iso != null) iso = iso.trim().toUpperCase();
+        if (iso3 != null) iso3 = iso3.trim().toUpperCase();
+        if (name != null) name = name.trim();
+        if (niceName != null) niceName = niceName.trim();
+    }
 }

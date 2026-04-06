@@ -1,7 +1,8 @@
-package com.amachi.app.core.geography.country.mapper;
+package com.amachi.app.core.geography.country;
 
 import com.amachi.app.core.geography.country.dto.CountryDto;
 import com.amachi.app.core.geography.country.entity.Country;
+import com.amachi.app.core.geography.country.mapper.CountryMapper;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
