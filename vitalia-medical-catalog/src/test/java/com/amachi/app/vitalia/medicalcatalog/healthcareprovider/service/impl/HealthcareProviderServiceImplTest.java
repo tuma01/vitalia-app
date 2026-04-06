@@ -1,10 +1,13 @@
 package com.amachi.app.vitalia.medicalcatalog.healthcareprovider.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
+import com.amachi.app.core.common.context.TenantContext;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto.search.HealthcareProviderSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.entity.HealthcareProvider;
 import com.amachi.app.vitalia.medicalcatalog.healthcareprovider.repository.HealthcareProviderRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -29,8 +31,21 @@ class HealthcareProviderServiceImplTest extends AbstractTestSupport {
     @Mock
     private HealthcareProviderRepository repository;
 
+    @Mock
+    private DomainEventPublisher eventPublisher;
+
     @InjectMocks
     private HealthcareProviderServiceImpl service;
+
+    @BeforeEach
+    void setUp() {
+        TenantContext.setTenant("test-tenant");
+    }
+
+    @AfterEach
+    void tearDown() {
+        TenantContext.clear();
+    }
 
     @Test
     void getAll_ShouldReturnList() {
@@ -40,7 +55,7 @@ class HealthcareProviderServiceImplTest extends AbstractTestSupport {
         List<HealthcareProvider> result = service.getAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getName()).isEqualTo("SURA EPS");
+        assertThat(result.getFirst().getName()).isEqualTo("SURA EPS");
     }
 
     @Test
@@ -70,10 +85,13 @@ class HealthcareProviderServiceImplTest extends AbstractTestSupport {
     void create_ShouldSave() {
         HealthcareProvider entity = loadJson("data/provider/provider-entity.json", HealthcareProvider.class);
         when(repository.save(any())).thenReturn(entity);
+        when(repository.existsByCode(anyString())).thenReturn(false);
+        when(repository.existsByTaxId(anyString())).thenReturn(false);
 
         HealthcareProvider result = service.create(entity);
 
         assertThat(result.getName()).isEqualTo("SURA EPS");
+        verify(eventPublisher, times(1)).publish(any());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.kinship.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.kinship.entity.Kinship;
 import com.amachi.app.vitalia.medicalcatalog.kinship.repository.KinshipRepository;
@@ -16,8 +17,12 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class KinshipServiceImplTest extends AbstractTestSupport {
-    @Mock private KinshipRepository repository;
-    @InjectMocks private KinshipServiceImpl service;
+    @Mock
+    private KinshipRepository repository;
+    @Mock
+    private DomainEventPublisher eventPublisher;
+    @InjectMocks
+    private KinshipServiceImpl service;
 
     @Test
     void getById_ShouldReturnEntity() {

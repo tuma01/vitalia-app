@@ -1,6 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.medication.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.test.util.AbstractTestSupport;
 import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -28,6 +27,9 @@ class MedicationServiceImplTest extends AbstractTestSupport {
 
     @Mock
     private MedicationRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private MedicationServiceImpl service;
@@ -40,7 +42,7 @@ class MedicationServiceImplTest extends AbstractTestSupport {
         List<Medication> result = service.getAll();
 
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).getGenericName()).isEqualTo("Paracetamol");
+        assertThat(result.getFirst().getGenericName()).isEqualTo("Paracetamol");
     }
 
     @Test
@@ -69,11 +71,13 @@ class MedicationServiceImplTest extends AbstractTestSupport {
     @Test
     void create_ShouldSave() {
         Medication entity = loadJson("data/medication/medication-entity.json", Medication.class);
+        when(repository.existsByCode(anyString())).thenReturn(false);
         when(repository.save(any())).thenReturn(entity);
 
         Medication result = service.create(entity);
 
         assertThat(result.getGenericName()).isEqualTo("Paracetamol");
+        verify(eventPublisher, times(1)).publish(any());
     }
 
     @Test

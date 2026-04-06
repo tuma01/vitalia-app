@@ -1,24 +1,28 @@
 package com.amachi.app.vitalia.medicalcatalog.medication.specification;
 
+import com.amachi.app.core.common.specification.BaseSpecification;
 import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
-public class MedicationSpecification implements Specification<Medication> {
-    private transient MedicationSearchDto criteria;
+public class MedicationSpecification extends BaseSpecification<Medication> {
+    private final MedicationSearchDto criteria;
+
+    public MedicationSpecification(MedicationSearchDto criteria) {
+        this.criteria = criteria;
+    }
 
     @Override
-    public Predicate toPredicate(Root<Medication> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        List<Predicate> predicates = new ArrayList<>();
+    public Predicate toPredicate(@NonNull Root<Medication> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
+        List<Predicate> predicates = new ArrayList<>(buildBasePredicates(root, cb)); // ✅ Isolation
 
         // Filtrar por ID exacto
         if (criteria.getId() != null) {
@@ -27,8 +31,8 @@ public class MedicationSpecification implements Specification<Medication> {
 
         // Filtrar por nombre genérico del medicamento (LIKE)
         if (criteria.getGenericName() != null && !criteria.getGenericName().isBlank()) {
-            predicates.add(
-                    cb.like(cb.lower(root.get("genericName")), "%" + criteria.getGenericName().toLowerCase() + "%"));
+            predicates.add(cb.like(cb.lower(root.get("genericName")), 
+                    "%" + criteria.getGenericName().toLowerCase() + "%"));
         }
 
         // Filtrar por nombre comercial del medicamento (LIKE)

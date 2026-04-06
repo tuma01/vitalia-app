@@ -1,73 +1,72 @@
 package com.amachi.app.vitalia.medicalcatalog.identity.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.identity.dto.search.IdentificationTypeSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.identity.entity.IdentificationType;
+import com.amachi.app.vitalia.medicalcatalog.identity.event.IdentificationTypeCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.identity.repository.IdentificationTypeRepository;
 import com.amachi.app.vitalia.medicalcatalog.identity.specification.IdentificationTypeSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class IdentificationTypeServiceImpl implements GenericService<IdentificationType, IdentificationTypeSearchDto> {
+@RequiredArgsConstructor
+public class IdentificationTypeServiceImpl extends BaseService<IdentificationType, IdentificationTypeSearchDto> {
 
-    IdentificationTypeRepository identificationTypeRepository;
+    private final IdentificationTypeRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<IdentificationType> getAll() {
-        return identificationTypeRepository.findAll();
+    protected CommonRepository<IdentificationType, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<IdentificationType> getAll(IdentificationTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        return identificationTypeRepository.findAll(
-                new IdentificationTypeSpecification(searchDto),
-                PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name")));
+    protected Specification<IdentificationType> buildSpecification(IdentificationTypeSearchDto searchDto) {
+        return new IdentificationTypeSpecification(searchDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public IdentificationType getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return identificationTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(IdentificationType.class.getName(),
-                        "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(IdentificationType entity) {
+        eventPublisher.publish(new IdentificationTypeCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(IdentificationType entity) {
+        // No update event yet
     }
 
     @Override
     public IdentificationType create(IdentificationType entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(identificationTypeRepository.save(entity));
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        boolean exists = repository.existsByCode(entity.getCode().trim().toUpperCase());
+
+        if (exists) {
+            throw new BusinessException("Identification type code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public IdentificationType update(Long id, IdentificationType entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        identificationTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(IdentificationType.class.getName(),
-                        "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(identificationTypeRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        identificationTypeRepository.delete(getById(id));
+        return super.update(id, entity);
     }
 }

@@ -8,35 +8,40 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a Blood Type catalog entry (Master Data).
+ * Represents a Blood Type catalog entry (Global Master Data).
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "CAT_BLOOD_TYPE", uniqueConstraints = {
+@Table(
+    name = "CAT_BLOOD_TYPE",
+    uniqueConstraints = {
         @UniqueConstraint(name = "UK_BLOOD_TYPE_CODE", columnNames = { "CODE" })
-})
+    }
+)
 public class BloodType extends Auditable<String> implements Model {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private Long id;
-
-    @NotBlank(message = "Blood Type Code cannot be empty")
-    @Column(name = "CODE", nullable = false, unique = true, length = 20)
+    @NotBlank(message = "Code {err.mandatory}")
+    @Column(name = "CODE", nullable = false, length = 20)
     private String code; // e.g., A+, O-, B+
 
-    @NotBlank(message = "Blood Type Name cannot be empty")
+    @NotBlank(message = "Name {err.mandatory}")
     @Column(name = "NAME", nullable = false, length = 50)
     private String name; // e.g., A Positivo, O Negativo
 
-    @Column(name = "ACTIVE", nullable = false)
     @Builder.Default
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (this.code != null) this.code = this.code.trim().toUpperCase();
+        if (this.name != null) this.name = this.name.trim();
+    }
 }

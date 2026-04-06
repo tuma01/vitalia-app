@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.allergy.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto;
 import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
 import com.amachi.app.vitalia.medicalcatalog.allergy.repository.AllergyRepository;
@@ -11,7 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -26,6 +27,9 @@ class AllergyServiceImplTest {
 
     @Mock
     private AllergyRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private AllergyServiceImpl service;
@@ -47,7 +51,7 @@ class AllergyServiceImplTest {
         AllergySearchDto searchDto = new AllergySearchDto();
         Page<Allergy> entityPage = new PageImpl<>(List.of(entity));
 
-        when(repository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(entityPage);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(entityPage);
 
         Page<Allergy> result = service.getAll(searchDto, 0, 10);
 

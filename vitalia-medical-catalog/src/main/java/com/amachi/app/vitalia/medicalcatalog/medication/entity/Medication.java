@@ -8,26 +8,32 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a Medication catalog entry (Vademecum).
+ * Medication (Vademecum) Entity (Global Catalog).
  */
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "CAT_MEDICATION", uniqueConstraints = {
+@Table(
+    name = "CAT_MEDICATION",
+    uniqueConstraints = {
         @UniqueConstraint(name = "UK_MEDICATION_CODE", columnNames = { "CODE" })
-})
+    },
+    indexes = {
+        @Index(name = "IDX_MEDICATION_CODE", columnList = "CODE")
+    }
+)
 public class Medication extends Auditable<String> implements Model {
 
-    @NotBlank(message = "Medication Code cannot be empty")
-    @Column(name = "CODE", nullable = false, unique = true, length = 20)
+    @NotBlank(message = "Code {err.mandatory}")
+    @Column(name = "CODE", nullable = false, length = 20)
     private String code;
 
-    @NotBlank(message = "Generic Name cannot be empty")
+    @NotBlank(message = "Generic Name {err.mandatory}")
     @Column(name = "GENERIC_NAME", nullable = false, length = 250)
     private String genericName;
 
@@ -35,15 +41,23 @@ public class Medication extends Auditable<String> implements Model {
     private String commercialName;
 
     @Column(name = "CONCENTRATION", length = 100)
-    private String concentration; // e.g., 500mg, 10mg/5ml
+    private String concentration;
 
     @Column(name = "PHARMACEUTICAL_FORM", length = 100)
-    private String pharmaceuticalForm; // e.g., TABLET, SYRUP, INHALER
+    private String pharmaceuticalForm;
 
     @Column(name = "PRESENTATION", length = 250)
-    private String presentation; // e.g., BOX X 30 TABLETS
+    private String presentation;
 
-    @Column(name = "ACTIVE", nullable = false)
     @Builder.Default
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (this.code != null) this.code = this.code.trim().toUpperCase();
+        if (this.genericName != null) this.genericName = this.genericName.trim();
+        if (this.commercialName != null) this.commercialName = this.commercialName.trim();
+    }
 }

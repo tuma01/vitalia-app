@@ -1,75 +1,72 @@
 package com.amachi.app.vitalia.medicalcatalog.specialty.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.specialty.dto.search.MedicalSpecialtySearchDto;
 import com.amachi.app.vitalia.medicalcatalog.specialty.entity.MedicalSpecialty;
+import com.amachi.app.vitalia.medicalcatalog.specialty.event.MedicalSpecialtyCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.specialty.repository.MedicalSpecialtyRepository;
 import com.amachi.app.vitalia.medicalcatalog.specialty.specification.MedicalSpecialtySpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class MedicalSpecialtyServiceImpl implements GenericService<MedicalSpecialty, MedicalSpecialtySearchDto> {
+@RequiredArgsConstructor
+public class MedicalSpecialtyServiceImpl extends BaseService<MedicalSpecialty, MedicalSpecialtySearchDto> {
 
-    MedicalSpecialtyRepository medicalSpecialtyRepository;
+    private final MedicalSpecialtyRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<MedicalSpecialty> getAll() {
-        return medicalSpecialtyRepository.findAll();
+    protected CommonRepository<MedicalSpecialty, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<MedicalSpecialty> getAll(MedicalSpecialtySearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Specification<MedicalSpecialty> specification = new MedicalSpecialtySpecification(searchDto);
-        return medicalSpecialtyRepository.findAll(specification, pageable);
+    protected Specification<MedicalSpecialty> buildSpecification(MedicalSpecialtySearchDto searchDto) {
+        return new MedicalSpecialtySpecification(searchDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public MedicalSpecialty getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return medicalSpecialtyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(MedicalSpecialty.class.getName(),
-                        "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(MedicalSpecialty entity) {
+        eventPublisher.publish(new MedicalSpecialtyCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(MedicalSpecialty entity) {
+        // No update event yet
     }
 
     @Override
     public MedicalSpecialty create(MedicalSpecialty entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(medicalSpecialtyRepository.save(entity));
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        boolean exists = repository.existsByCode(entity.getCode().trim().toUpperCase());
+
+        if (exists) {
+            throw new BusinessException("Medical specialty code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public MedicalSpecialty update(Long id, MedicalSpecialty entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        medicalSpecialtyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(MedicalSpecialty.class.getName(),
-                        "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(medicalSpecialtyRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        medicalSpecialtyRepository.delete(getById(id));
+        return super.update(id, entity);
     }
 }

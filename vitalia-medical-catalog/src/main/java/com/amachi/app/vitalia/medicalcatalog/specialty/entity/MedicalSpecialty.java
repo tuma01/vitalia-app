@@ -8,43 +8,51 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a Medical Specialty catalog entry (Master Data).
- * Can be targeted to Doctors, Nurses, or Both.
+ * Medical Specialty Catalog Entity (Global Catalog).
  */
-@Getter @Setter
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "CAT_MEDICAL_SPECIALTY", uniqueConstraints = {
-        @UniqueConstraint(name = "UK_SPECIALTY_CODE", columnNames = {"CODE"})
-})
+@Table(
+        name = "CAT_MEDICAL_SPECIALTY",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "UK_SPECIALTY_CODE", columnNames = {"CODE"})
+        },
+        indexes = {
+                @Index(name = "IDX_SPECIALTY_CODE", columnList = "CODE")
+        }
+)
 public class MedicalSpecialty extends Auditable<String> implements Model {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private Long id;
-
-    @NotBlank(message = "Specialty Code cannot be empty")
-    @Column(name = "CODE", nullable = false, unique = true, length = 20)
+    @NotBlank(message = "Code {err.mandatory}")
+    @Column(name = "CODE", nullable = false, length = 20)
     private String code;
 
-    @NotBlank(message = "Specialty Name cannot be empty")
+    @NotBlank(message = "Name {err.mandatory}")
     @Column(name = "NAME", nullable = false, length = 150)
     private String name;
 
     @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
-    @NotBlank(message = "Target Profession cannot be empty")
-    @Column(name = "TARGET_PROFESSION", nullable = false, length = 20)
+    @NotBlank(message = "Profession {err.mandatory}")
     @Builder.Default
+    @Column(name = "TARGET_PROFESSION", nullable = false, length = 20)
     private String targetProfession = "BOTH"; // DOCTOR, NURSE, BOTH
 
-    @Column(name = "ACTIVE", nullable = false)
     @Builder.Default
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (this.code != null) this.code = this.code.trim().toUpperCase();
+        if (this.name != null) this.name = this.name.trim();
+    }
 }

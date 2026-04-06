@@ -1,24 +1,37 @@
 package com.amachi.app.vitalia.medicalcatalog.healthcareprovider.dto.search;
 
 import com.amachi.app.core.common.dto.BaseSearchDto;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Getter
-@Setter
+/**
+ * Enterprise Search Engine for Healthcare Providers (SaaS Elite Tier).
+ */
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Hidden
+@Schema(name = "HealthcareProviderSearch", description = "Search criteria for filtering Healthcare Provider records")
 public final class HealthcareProviderSearchDto implements BaseSearchDto {
-    private Long id;
-    private String code;
-    private String name;
-    private String taxId;
-    private Boolean active;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
+    @JsonProperty("id")
+    @Schema(description = "Unique identifier of the provider", example = "1")
+    private Long id;
+
+    @JsonProperty("code")
+    @Schema(description = "Provider code filter", example = "EPS-001")
+    private String code;
+
+    @JsonProperty("name")
+    @Schema(description = "Provider name filter (partial match)", example = "SURA")
+    private String name;
+
+    @JsonProperty("taxId")
+    @Schema(description = "Tax ID filter", example = "860066942-7")
+    private String taxId;
+
+    @JsonProperty("active")
+    @Schema(description = "Filter by active status", example = "true")
+    private Boolean active;
 }

@@ -1,75 +1,72 @@
 package com.amachi.app.vitalia.medicalcatalog.kinship.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.vitalia.medicalcatalog.kinship.dto.search.KinshipSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.kinship.entity.Kinship;
+import com.amachi.app.vitalia.medicalcatalog.kinship.event.KinshipCreatedEvent;
 import com.amachi.app.vitalia.medicalcatalog.kinship.repository.KinshipRepository;
 import com.amachi.app.vitalia.medicalcatalog.kinship.specification.KinshipSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class KinshipServiceImpl implements GenericService<Kinship, KinshipSearchDto> {
+@RequiredArgsConstructor
+public class KinshipServiceImpl extends BaseService<Kinship, KinshipSearchDto> {
 
-    KinshipRepository kinshipRepository;
+    private final KinshipRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Kinship> getAll() {
-        return kinshipRepository.findAll();
+    protected CommonRepository<Kinship, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Page<Kinship> getAll(KinshipSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.ASC, "name"));
-        Specification<Kinship> specification = new KinshipSpecification(searchDto);
-        return kinshipRepository.findAll(specification, pageable);
+    protected Specification<Kinship> buildSpecification(KinshipSearchDto searchDto) {
+        return new KinshipSpecification(searchDto);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Kinship getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return kinshipRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(Kinship entity) {
+        eventPublisher.publish(new KinshipCreatedEvent(
+                entity.getId(), 
+                entity.getCode(), 
+                entity.getName()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(Kinship entity) {
+        // No update event yet
     }
 
     @Override
     public Kinship create(Kinship entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return requireNonNull(kinshipRepository.save(entity));
+        // Al tratarse de una ENTIDAD GLOBAL (Catálogo), validamos unicidad transversal
+        boolean exists = repository.existsByCode(entity.getCode().trim().toUpperCase());
+
+        if (exists) {
+            throw new BusinessException("Kinship code '" + entity.getCode() + "' already exists in Global Catalog");
+        }
+
+        // Forzamos el Tenant ID a GLOBAL para evitar asociación accidental a un hospital
+        entity.setTenantId("GLOBAL");
+        
+        return super.create(entity);
     }
 
     @Override
     public Kinship update(Long id, Kinship entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        kinshipRepository.findById(id)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(Kinship.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
-        return requireNonNull(kinshipRepository.save(entity));
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        kinshipRepository.delete(getById(id));
+        return super.update(id, entity);
     }
 }

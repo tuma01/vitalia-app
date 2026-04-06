@@ -7,37 +7,34 @@ import com.amachi.app.vitalia.medicalcatalog.bloodtype.dto.search.BloodTypeSearc
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.entity.BloodType;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.mapper.BloodTypeMapper;
 import com.amachi.app.vitalia.medicalcatalog.bloodtype.service.impl.BloodTypeServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/mdm/blood-type")
 @RequiredArgsConstructor
-@Slf4j
 public class BloodTypeController extends BaseController implements BloodTypeApi {
 
     private final BloodTypeServiceImpl service;
     private final BloodTypeMapper mapper;
 
     @Override
-    public ResponseEntity<BloodTypeDto> getBloodTypeById(Long id) {
+    public ResponseEntity<BloodTypeDto> getBloodTypeById(@NonNull Long id) {
         BloodType entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<BloodTypeDto> createBloodType(BloodTypeDto dto) {
+    public ResponseEntity<BloodTypeDto> createBloodType(@Valid @RequestBody @NonNull BloodTypeDto dto) {
         BloodType entity = mapper.toEntity(dto);
         BloodType savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -45,7 +42,7 @@ public class BloodTypeController extends BaseController implements BloodTypeApi 
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<BloodTypeDto> updateBloodType(Long id, BloodTypeDto dto) {
+    public ResponseEntity<BloodTypeDto> updateBloodType(@NonNull Long id, @Valid @RequestBody @NonNull BloodTypeDto dto) {
         BloodType existingEntity = service.getById(id);
         mapper.updateEntityFromDto(dto, existingEntity);
         BloodType updatedEntity = service.update(id, existingEntity);
@@ -54,7 +51,7 @@ public class BloodTypeController extends BaseController implements BloodTypeApi 
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteBloodType(Long id) {
+    public ResponseEntity<Void> deleteBloodType(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -63,17 +60,17 @@ public class BloodTypeController extends BaseController implements BloodTypeApi 
     public ResponseEntity<List<BloodTypeDto>> getAllBloodTypes() {
         List<BloodType> entities = service.getAll();
         List<BloodTypeDto> dtos = entities.stream()
-                .map(entity -> mapper.toDto(entity)).toList();
+                .map(mapper::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
 
     @Override
     public ResponseEntity<PageResponseDto<BloodTypeDto>> getPaginatedBloodTypes(
-            BloodTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull BloodTypeSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<BloodType> page = service.getAll(searchDto, pageIndex, pageSize);
         List<BloodTypeDto> dtos = page.getContent()
                 .stream()
-                .map(bloodType -> mapper.toDto(bloodType)).toList();
+                .map(mapper::toDto).toList();
 
         PageResponseDto<BloodTypeDto> response = PageResponseDto.<BloodTypeDto>builder()
                 .content(dtos)

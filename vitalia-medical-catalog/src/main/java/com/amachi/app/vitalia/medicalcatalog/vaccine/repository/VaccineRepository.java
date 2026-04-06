@@ -1,10 +1,21 @@
 package com.amachi.app.vitalia.medicalcatalog.vaccine.repository;
 
+import com.amachi.app.core.common.repository.CommonRepository;
 import com.amachi.app.vitalia.medicalcatalog.vaccine.entity.Vaccine;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface VaccineRepository extends JpaRepository<Vaccine, Long>, JpaSpecificationExecutor<Vaccine> {
+public interface VaccineRepository extends CommonRepository<Vaccine, Long> {
+    
+    /**
+     * ✅ GLOBAL: busca una vacuna por su código único en toda la plataforma.
+     */
+    Optional<Vaccine> findByCode(String code);
+
+    /**
+     * 🔥 GLOBAL: Verificador de existencia transversal.
+     */
+    boolean existsByCode(String code);
 }

@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.medication.dto.search.MedicationSea
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
 import com.amachi.app.vitalia.medicalcatalog.medication.mapper.MedicationMapper;
 import com.amachi.app.vitalia.medicalcatalog.medication.service.impl.MedicationServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/medication")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MedicationController extends BaseController implements MedicationApi {
 
-    MedicationServiceImpl service;
-    MedicationMapper mapper;
+    private final MedicationServiceImpl service;
+    private final MedicationMapper mapper;
 
     @Override
-    public ResponseEntity<MedicationDto> getMedicationById(Long id) {
+    public ResponseEntity<MedicationDto> getMedicationById(@NonNull Long id) {
         Medication entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> createMedication(MedicationDto dto) {
+    public ResponseEntity<MedicationDto> createMedication(@Valid @RequestBody @NonNull MedicationDto dto) {
         Medication entity = mapper.toEntity(dto);
         Medication savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class MedicationController extends BaseController implements MedicationAp
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicationDto> updateMedication(Long id, MedicationDto dto) {
+    public ResponseEntity<MedicationDto> updateMedication(@NonNull Long id, @Valid @RequestBody @NonNull MedicationDto dto) {
         Medication existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Medication savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class MedicationController extends BaseController implements MedicationAp
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteMedication(Long id) {
+    public ResponseEntity<Void> deleteMedication(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class MedicationController extends BaseController implements MedicationAp
 
     @Override
     public ResponseEntity<PageResponseDto<MedicationDto>> getPaginatedMedications(
-            MedicationSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull MedicationSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Medication> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicationDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -7,34 +7,34 @@ import com.amachi.app.vitalia.medicalcatalog.allergy.dto.search.AllergySearchDto
 import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
 import com.amachi.app.vitalia.medicalcatalog.allergy.mapper.AllergyMapper;
 import com.amachi.app.vitalia.medicalcatalog.allergy.service.impl.AllergyServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/mdm/allergy")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AllergyController extends BaseController implements AllergyApi {
 
-    AllergyServiceImpl service;
-    AllergyMapper mapper;
+    private final AllergyServiceImpl service;
+    private final AllergyMapper mapper;
 
     @Override
-    public ResponseEntity<AllergyDto> getAllergyById(Long id) {
+    public ResponseEntity<AllergyDto> getAllergyById(@NonNull Long id) {
         Allergy entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<AllergyDto> createAllergy(AllergyDto dto) {
+    public ResponseEntity<AllergyDto> createAllergy(@Valid @RequestBody @NonNull AllergyDto dto) {
         Allergy entity = mapper.toEntity(dto);
         Allergy savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class AllergyController extends BaseController implements AllergyApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<AllergyDto> updateAllergy(Long id, AllergyDto dto) {
+    public ResponseEntity<AllergyDto> updateAllergy(@NonNull Long id, @Valid @RequestBody @NonNull AllergyDto dto) {
         Allergy existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Allergy savedEntity = service.update(id, existing);
@@ -51,7 +51,7 @@ public class AllergyController extends BaseController implements AllergyApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteAllergy(Long id) {
+    public ResponseEntity<Void> deleteAllergy(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +65,7 @@ public class AllergyController extends BaseController implements AllergyApi {
 
     @Override
     public ResponseEntity<PageResponseDto<AllergyDto>> getPaginatedAllergies(
-            AllergySearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull AllergySearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Allergy> page = service.getAll(searchDto, pageIndex, pageSize);
         List<AllergyDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

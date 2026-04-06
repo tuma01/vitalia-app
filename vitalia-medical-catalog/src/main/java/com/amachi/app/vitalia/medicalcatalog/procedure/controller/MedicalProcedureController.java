@@ -7,11 +7,13 @@ import com.amachi.app.vitalia.medicalcatalog.procedure.dto.search.MedicalProcedu
 import com.amachi.app.vitalia.medicalcatalog.procedure.entity.MedicalProcedure;
 import com.amachi.app.vitalia.medicalcatalog.procedure.mapper.MedicalProcedureMapper;
 import com.amachi.app.vitalia.medicalcatalog.procedure.service.impl.MedicalProcedureServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +22,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/mdm/procedure")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MedicalProcedureController extends BaseController implements MedicalProcedureApi {
 
-    MedicalProcedureServiceImpl service;
-    MedicalProcedureMapper mapper;
+    private final MedicalProcedureServiceImpl service;
+    private final MedicalProcedureMapper mapper;
 
     @Override
-    public ResponseEntity<MedicalProcedureDto> getProcedureById(Long id) {
+    public ResponseEntity<MedicalProcedureDto> getProcedureById(@NonNull Long id) {
         MedicalProcedure entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalProcedureDto> createProcedure(MedicalProcedureDto dto) {
+    public ResponseEntity<MedicalProcedureDto> createProcedure(@Valid @RequestBody @NonNull MedicalProcedureDto dto) {
         MedicalProcedure entity = mapper.toEntity(dto);
         MedicalProcedure savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +44,7 @@ public class MedicalProcedureController extends BaseController implements Medica
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<MedicalProcedureDto> updateProcedure(Long id, MedicalProcedureDto dto) {
+    public ResponseEntity<MedicalProcedureDto> updateProcedure(@NonNull Long id, @Valid @RequestBody @NonNull MedicalProcedureDto dto) {
         MedicalProcedure existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         MedicalProcedure savedEntity = service.update(id, existing);
@@ -51,7 +53,7 @@ public class MedicalProcedureController extends BaseController implements Medica
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteProcedure(Long id) {
+    public ResponseEntity<Void> deleteProcedure(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +67,7 @@ public class MedicalProcedureController extends BaseController implements Medica
 
     @Override
     public ResponseEntity<PageResponseDto<MedicalProcedureDto>> getPaginatedProcedures(
-            MedicalProcedureSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull MedicalProcedureSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<MedicalProcedure> page = service.getAll(searchDto, pageIndex, pageSize);
         List<MedicalProcedureDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -8,37 +8,46 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Represents a Medical Procedure or Laboratory Test catalog entry.
+ * Medical Procedure Entity (Global Catalog).
  */
-@Getter @Setter
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "CAT_MEDICAL_PROCEDURE", uniqueConstraints = {
+@Table(
+    name = "CAT_MEDICAL_PROCEDURE",
+    uniqueConstraints = {
         @UniqueConstraint(name = "UK_PROCEDURE_CODE", columnNames = {"CODE"})
-})
+    },
+    indexes = {
+        @Index(name = "IDX_PROC_CODE", columnList = "CODE")
+    }
+)
 public class MedicalProcedure extends Auditable<String> implements Model {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private Long id;
-
-    @NotBlank(message = "Procedure Code cannot be empty")
-    @Column(name = "CODE", nullable = false, unique = true, length = 20)
+    @NotBlank(message = "Code {err.mandatory}")
+    @Column(name = "CODE", nullable = false, length = 20)
     private String code;
 
-    @NotBlank(message = "Procedure Name cannot be empty")
+    @NotBlank(message = "Name {err.mandatory}")
     @Column(name = "NAME", nullable = false, length = 500)
     private String name;
 
     @Column(name = "TYPE", length = 50)
     private String type; // e.g., LABORATORY, SURGERY, IMAGING, CONSULTATION
 
-    @Column(name = "ACTIVE", nullable = false)
     @Builder.Default
+    @Column(name = "ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (this.code != null) this.code = this.code.trim().toUpperCase();
+        if (this.name != null) this.name = this.name.trim();
+    }
 }

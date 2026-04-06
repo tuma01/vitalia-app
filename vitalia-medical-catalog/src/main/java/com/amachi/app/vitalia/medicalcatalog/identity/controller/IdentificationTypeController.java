@@ -7,34 +7,34 @@ import com.amachi.app.vitalia.medicalcatalog.identity.dto.search.IdentificationT
 import com.amachi.app.vitalia.medicalcatalog.identity.entity.IdentificationType;
 import com.amachi.app.vitalia.medicalcatalog.identity.mapper.IdentificationTypeMapper;
 import com.amachi.app.vitalia.medicalcatalog.identity.service.impl.IdentificationTypeServiceImpl;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RestController
-@RequestMapping("/mdm/identification-type")
-@AllArgsConstructor
+@RequestMapping("/mdm/identity/type")
+@RequiredArgsConstructor
 public class IdentificationTypeController extends BaseController implements IdentificationTypeApi {
 
-    IdentificationTypeServiceImpl service;
-    IdentificationTypeMapper mapper;
+    private final IdentificationTypeServiceImpl service;
+    private final IdentificationTypeMapper mapper;
 
     @Override
-    public ResponseEntity<IdentificationTypeDto> getIdentificationTypeById(Long id) {
+    public ResponseEntity<IdentificationTypeDto> getIdentificationTypeById(@NonNull Long id) {
         IdentificationType entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<IdentificationTypeDto> createIdentificationType(IdentificationTypeDto dto) {
+    public ResponseEntity<IdentificationTypeDto> createIdentificationType(@Valid @RequestBody @NonNull IdentificationTypeDto dto) {
         IdentificationType entity = mapper.toEntity(dto);
         IdentificationType savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class IdentificationTypeController extends BaseController implements Iden
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<IdentificationTypeDto> updateIdentificationType(Long id, IdentificationTypeDto dto) {
+    public ResponseEntity<IdentificationTypeDto> updateIdentificationType(@NonNull Long id, @Valid @RequestBody @NonNull IdentificationTypeDto dto) {
         IdentificationType existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         IdentificationType savedEntity = service.update(id, existing);
@@ -51,7 +51,7 @@ public class IdentificationTypeController extends BaseController implements Iden
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteIdentificationType(Long id) {
+    public ResponseEntity<Void> deleteIdentificationType(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +65,7 @@ public class IdentificationTypeController extends BaseController implements Iden
 
     @Override
     public ResponseEntity<PageResponseDto<IdentificationTypeDto>> getPaginatedIdentificationTypes(
-            IdentificationTypeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull IdentificationTypeSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<IdentificationType> page = service.getAll(searchDto, pageIndex, pageSize);
         List<IdentificationTypeDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

@@ -1,5 +1,7 @@
 {
     "id": 1,
+    "tenantId": "test-tenant",
+    "code": "MED001",
     "genericName": "Paracetamol",
     "commercialName": "Tylenol",
     "concentration": "500mg",

@@ -4,7 +4,7 @@
 -- Descripción: Inserción de Aseguradoras / EPS estándar.
 -- ============================================================
 
-INSERT INTO CAT_HEALTHCARE_PROVIDER (CODE, NAME, TAX_ID, EMAIL, PHONE, CREATED_BY, CREATED_DATE) VALUES
+INSERT INTO CAT_HEALTHCARE_PROVIDER (CODE, NAME, TAX_ID, OFFICIAL_EMAIL, OFFICIAL_PHONE, CREATED_BY, CREATED_DATE) VALUES
 ('EPS-001', 'Sanitas EPS', '800.123.456-1', 'contact@sanitas.com', '018000919100', 'SYSTEM', CURRENT_TIMESTAMP),
 ('EPS-002', 'Sura EPS', '800.987.654-2', 'servicio@sura.com.co', '018000519519', 'SYSTEM', CURRENT_TIMESTAMP),
 ('EPS-003', 'Salud Total EPS', '800.555.444-3', 'info@saludtotal.com', '018000114563', 'SYSTEM', CURRENT_TIMESTAMP),

@@ -7,34 +7,35 @@ import com.amachi.app.vitalia.medicalcatalog.demographic.dto.search.GenderSearch
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.Gender;
 import com.amachi.app.vitalia.medicalcatalog.demographic.mapper.GenderMapper;
 import com.amachi.app.vitalia.medicalcatalog.demographic.service.impl.GenderServiceImpl;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/mdm/demographic/gender")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GenderController extends BaseController implements GenderApi {
 
-    GenderServiceImpl service;
-    GenderMapper mapper;
+    private final GenderServiceImpl service;
+    private final GenderMapper mapper;
 
     @Override
-    public ResponseEntity<GenderDto> getGenderById(Long id) {
+    public ResponseEntity<GenderDto> getGenderById(@NonNull Long id) {
         Gender entity = service.getById(id);
         return ResponseEntity.ok(mapper.toDto(entity));
     }
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<GenderDto> createGender(GenderDto dto) {
+    public ResponseEntity<GenderDto> createGender(@Valid @RequestBody @NonNull GenderDto dto) {
         Gender entity = mapper.toEntity(dto);
         Gender savedEntity = service.create(entity);
         return new ResponseEntity<>(mapper.toDto(savedEntity), HttpStatus.CREATED);
@@ -42,7 +43,7 @@ public class GenderController extends BaseController implements GenderApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<GenderDto> updateGender(Long id, GenderDto dto) {
+    public ResponseEntity<GenderDto> updateGender(@NonNull Long id, @Valid @RequestBody @NonNull GenderDto dto) {
         Gender existing = service.getById(id);
         mapper.updateEntityFromDto(dto, existing);
         Gender savedEntity = service.update(id, existing);
@@ -51,7 +52,7 @@ public class GenderController extends BaseController implements GenderApi {
 
     @Override
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> deleteGender(Long id) {
+    public ResponseEntity<Void> deleteGender(@NonNull Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -65,7 +66,7 @@ public class GenderController extends BaseController implements GenderApi {
 
     @Override
     public ResponseEntity<PageResponseDto<GenderDto>> getPaginatedGenders(
-            GenderSearchDto searchDto, Integer pageIndex, Integer pageSize) {
+            @NonNull GenderSearchDto searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize) {
         Page<Gender> page = service.getAll(searchDto, pageIndex, pageSize);
         List<GenderDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
 

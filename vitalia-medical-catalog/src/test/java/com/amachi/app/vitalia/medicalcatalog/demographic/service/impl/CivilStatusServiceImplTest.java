@@ -1,5 +1,6 @@
 package com.amachi.app.vitalia.medicalcatalog.demographic.service.impl;
 
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.vitalia.medicalcatalog.demographic.dto.search.CivilStatusSearchDto;
 import com.amachi.app.vitalia.medicalcatalog.demographic.entity.CivilStatus;
 import com.amachi.app.vitalia.medicalcatalog.demographic.repository.CivilStatusRepository;
@@ -26,6 +27,9 @@ class CivilStatusServiceImplTest {
 
     @Mock
     private CivilStatusRepository repository;
+
+    @Mock
+    private DomainEventPublisher eventPublisher;
 
     @InjectMocks
     private CivilStatusServiceImpl service;
