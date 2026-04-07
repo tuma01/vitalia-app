@@ -1,13 +1,14 @@
 package com.amachi.app.core.management.tenantconfig.repository;
 
-import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.management.tenantconfig.entity.TenantConfig;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import com.amachi.app.core.common.repository.CommonRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface TenantConfigRepository extends JpaRepository<TenantConfig, Long>, JpaSpecificationExecutor<TenantConfig> {
+@Repository
+public interface TenantConfigRepository extends CommonRepository<TenantConfig, Long> {
     Optional<TenantConfig> findByTenant_Code(String tenantCode);
     Optional<TenantConfig> findByTenant_Id(Long tenantId);
+    boolean existsByTenant_Id(Long tenantId);
 }

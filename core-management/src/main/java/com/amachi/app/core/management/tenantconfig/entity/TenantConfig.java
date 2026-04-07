@@ -1,9 +1,8 @@
 package com.amachi.app.core.management.tenantconfig.entity;
 
-import com.amachi.app.core.common.entity.Auditable;
-import com.amachi.app.core.common.entity.Model;
-import com.amachi.app.core.domain.tenant.entity.Tenant;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.enums.SubscriptionPlan;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,12 +16,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class TenantConfig extends Auditable<String> implements Model {
-
-    // ID heredado de Auditable/BaseEntity
+public class TenantConfig extends BaseTenantEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
-    @JoinColumn(name = "TENANT_ID", nullable = false, foreignKey = @ForeignKey(name = "FK_TENANTCONFIG_TENANT"))
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "CODE", nullable = false, foreignKey = @ForeignKey(name = "FK_TENANTCONFIG_TENANT"))
     private Tenant tenant;
 
     @Column(name = "FALLBACK_HEADER", length = 100)
@@ -64,4 +61,16 @@ public class TenantConfig extends Auditable<String> implements Model {
 
     @Column(name = "EXTRA_JSON", columnDefinition = "TEXT")
     private String extraJson;
+
+    // ==========================================
+    // 🧠 Lógica de Normalización (Elite Standard)
+    // ==========================================
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeConfig() {
+        if (this.tenant != null && getTenantId() == null) {
+            setTenantId(this.tenant.getCode());
+        }
+    }
 }

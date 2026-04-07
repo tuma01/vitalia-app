@@ -2,61 +2,70 @@ package com.amachi.app.core.management.tenantconfig.service.impl;
 
 import com.amachi.app.core.auth.config.multiTenant.TenantCache;
 import com.amachi.app.core.common.context.TenantContext;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.exception.BadRequestException;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
+import com.amachi.app.core.domain.tenant.repository.TenantRepository;
 import com.amachi.app.core.management.tenantconfig.dto.search.TenantConfigSearchDto;
 import com.amachi.app.core.management.tenantconfig.entity.TenantConfig;
+import com.amachi.app.core.management.tenantconfig.event.TenantConfigCreatedEvent;
 import com.amachi.app.core.management.tenantconfig.repository.TenantConfigRepository;
+import com.amachi.app.core.management.tenantconfig.service.TenantConfigService;
 import com.amachi.app.core.management.tenantconfig.specification.TenantConfigSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class TenantConfigServiceImpl implements GenericService<TenantConfig, TenantConfigSearchDto> {
+@RequiredArgsConstructor
+public class TenantConfigServiceImpl extends BaseService<TenantConfig, TenantConfigSearchDto> implements TenantConfigService {
 
-    private final TenantConfigRepository tenantConfigRepository;
-    private final com.amachi.app.core.auth.config.multiTenant.TenantCache tenantCache;
-    private final com.amachi.app.core.domain.tenant.repository.TenantRepository tenantRepository;
+    private final TenantConfigRepository repository;
+    private final TenantCache tenantCache;
+    private final TenantRepository tenantRepository;
     private final com.amachi.app.core.domain.hospital.service.HospitalService hospitalService;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    public List<TenantConfig> getAll() {
-        return tenantConfigRepository.findAll();
+    protected CommonRepository<TenantConfig, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    public Page<TenantConfig> getAll(TenantConfigSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC,"createdDate"));
-        Specification<TenantConfig> specification = new TenantConfigSpecification(searchDto);
-        return tenantConfigRepository.findAll(specification, pageable);
+    protected Specification<TenantConfig> buildSpecification(TenantConfigSearchDto searchDto) {
+        return new TenantConfigSpecification(searchDto);
     }
 
     @Override
-    public TenantConfig getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return tenantConfigRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(TenantConfig entity) {
+        eventPublisher.publish(new TenantConfigCreatedEvent(
+                entity.getId(),
+                entity.getTenant() != null ? entity.getTenant().getCode() : null,
+                entity.getSubscriptionPlan()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(TenantConfig entity) {
+        // Evento lanzado al actualizar una TenantConfig si aplica
     }
 
     public TenantConfig getByCurrentTenant() {
-        String tenantCode = TenantContext.getTenantCode()
-                .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.tenant.context_missing", "UNKNOWN"));
+        String tenantCode = TenantContext.getTenant();
+        if (tenantCode == null) {
+            throw new ResourceNotFoundException("TenantConfig", "error.tenant.context_missing", "UNKNOWN");
+        }
 
-        return tenantConfigRepository.findByTenant_Code(tenantCode)
+        return repository.findByTenant_Code(tenantCode)
                 .orElseGet(() -> {
                     Tenant tenant = tenantCache.getTenant(tenantCode);
                     if (tenant == null) {
@@ -74,34 +83,32 @@ public class TenantConfigServiceImpl implements GenericService<TenantConfig, Ten
                             .requireEmailVerification(false)
                             .build();
 
-                    return tenantConfigRepository.save(newConfig);
+                    return this.create(newConfig);
                 });
     }
 
     @Override
+    @Transactional
     public TenantConfig create(TenantConfig entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return tenantConfigRepository.save(entity);
+        if (entity.getTenant() != null && repository.existsByTenant_Id(entity.getTenant().getId())) {
+            throw new BadRequestException("Configuration for this tenant already exists.");
+        }
+        return super.create(entity);
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public TenantConfig update(Long id, TenantConfig entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
+        TenantConfig existingConfig = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("TenantConfig", "error.resource.not.found", id));
 
-        // 1. Load Existing Config & Tenant
-        TenantConfig existingConfig = tenantConfigRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.resource.not.found", id));
-        
         var tenant = existingConfig.getTenant();
         if (tenant == null) {
             throw new BadRequestException("error.tenant.not_found");
         }
 
-        // 2. Specialized Validation & Save (Senior Approach)
+        // Specialized Validation for Hospitals
         if (tenant instanceof com.amachi.app.core.domain.hospital.entity.Hospital hospital) {
-            // Business Rule: Medical License is mandatory for Hospitals
             if (hospital.getMedicalLicense() == null || hospital.getMedicalLicense().isBlank()) {
                 throw new BadRequestException("error.hospital.medical_license_required");
             }
@@ -110,18 +117,7 @@ public class TenantConfigServiceImpl implements GenericService<TenantConfig, Ten
             tenantRepository.save(tenant);
         }
 
-        // 3. Address/Geo synchronization could go here if needed per implementation-guide.md
-
-        // 4. Save Technical Config
         entity.setId(id);
-        return tenantConfigRepository.save(entity);
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        TenantConfig country = tenantConfigRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(TenantConfig.class.getName(), "error.resource.not.found", id));
-        tenantConfigRepository.delete(country);
+        return super.update(id, entity);
     }
 }

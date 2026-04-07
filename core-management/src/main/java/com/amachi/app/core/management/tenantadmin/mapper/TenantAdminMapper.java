@@ -1,10 +1,8 @@
 package com.amachi.app.core.management.tenantadmin.mapper;
 
 import com.amachi.app.core.auth.mapper.UserMapper;
-import com.amachi.app.core.common.mapper.AuditableIgnoreConfig;
 import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
-import com.amachi.app.core.geography.address.entity.Address;
 import com.amachi.app.core.domain.mapper.PersonTenantMapper;
 
 import com.amachi.app.core.domain.tenant.mapper.TenantMapper;
@@ -37,7 +35,6 @@ public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAd
         @Mapping(target = "createdDate", ignore = true)
         @Mapping(target = "lastModifiedBy", ignore = true)
         @Mapping(target = "lastModifiedDate", ignore = true)
-        @Mapping(target = "deleted", ignore = true)
         TenantAdmin toEntity(TenantAdminDto dto);
 
         @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
@@ -47,7 +44,6 @@ public interface TenantAdminMapper extends EntityDtoMapper<TenantAdmin, TenantAd
         @Mapping(target = "createdDate", ignore = true)
         @Mapping(target = "lastModifiedBy", ignore = true)
         @Mapping(target = "lastModifiedDate", ignore = true)
-        @Mapping(target = "deleted", ignore = true)
         void updateEntityFromDto(TenantAdminDto dto, @MappingTarget TenantAdmin entity);
 
         @Override

@@ -14,7 +14,6 @@ import com.amachi.app.core.common.utils.AppConstants;
 import com.amachi.app.core.domain.entity.PersonTenant;
 import com.amachi.app.core.domain.repository.PersonRepository;
 import com.amachi.app.core.domain.theme.entity.Theme;
-import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.management.superadmin.entity.SuperAdmin;
 import com.amachi.app.core.management.tenantadmin.entity.TenantAdmin;
 import com.amachi.app.core.domain.tenant.repository.TenantRepository;
@@ -189,8 +188,8 @@ public class BootstrapService {
 
                 // 2. Build SuperAdmin (Person)
                 SuperAdmin superAdmin = SuperAdmin.builder()
-                                .nombre(config.getFirstName())
-                                .apellidoPaterno(config.getLastName())
+                                .firstName(config.getFirstName())
+                                .lastName(config.getLastName())
                                 .level(SuperAdminLevel.LEVEL_1)
                                 .globalAccess(true)
                                 .user(user) // 🟢 Inlined User
@@ -272,8 +271,8 @@ public class BootstrapService {
 
                 // 2. Build TenantAdmin
                 TenantAdmin tenantAdmin = TenantAdmin.builder()
-                                .nombre(config.getFirstName())
-                                .apellidoPaterno(config.getLastName())
+                                .firstName(config.getFirstName())
+                                .lastName(config.getLastName())
                                 .adminLevel(TenantAdminLevel.LEVEL_1)
                                 .tenant(tenant) // TenantAdmin specific
                                 .user(user) // 🟢 Inlined User

@@ -1,5 +1,6 @@
 package com.amachi.app.core.management.tenantadmin.specification;
 
+import com.amachi.app.core.common.specification.BaseSpecification;
 import com.amachi.app.core.management.tenantadmin.dto.search.TenantAdminSearchDto;
 import com.amachi.app.core.management.tenantadmin.entity.TenantAdmin;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -7,41 +8,35 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class TenantAdminSpecification implements Specification<TenantAdmin> {
-    private transient TenantAdminSearchDto criteria;
+public class TenantAdminSpecification extends BaseSpecification<TenantAdmin> {
+    private final TenantAdminSearchDto criteria;
 
     @Override
     public Predicate toPredicate(Root<TenantAdmin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-        List<Predicate> predicates = new ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>(buildBasePredicates(root, cb)); // ✅ Multi-tenant + Soft delete
 
         if (criteria.getId() != null) {
             predicates.add(cb.equal(root.get("id"), criteria.getId()));
         }
 
-        if (criteria.getTenantCode() != null && !criteria.getTenantCode().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("tenantCode")), "%" + criteria.getTenantCode().toLowerCase() + "%"));
-        }
-
         if (criteria.getEmail() != null && !criteria.getEmail().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("email")), "%" + criteria.getEmail().toLowerCase() + "%"));
+            predicates.add(cb.like(cb.lower(root.get("email")), 
+                    "%" + criteria.getEmail().toLowerCase() + "%"));
         }
 
-        if (criteria.getNombre() != null && !criteria.getNombre().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("nombre")), "%" + criteria.getNombre().toLowerCase() + "%"));
+        if (criteria.getFirstName() != null && !criteria.getFirstName().isBlank()) {
+            predicates.add(cb.like(cb.lower(root.get("firstName")), 
+                    "%" + criteria.getFirstName().toLowerCase() + "%"));
         }
 
-        if (criteria.getApellidoPaterno() != null && !criteria.getApellidoPaterno().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("apellidoPaterno")), "%" + criteria.getApellidoPaterno().toLowerCase() + "%"));
-        }
-
-        if (criteria.getEnabled() != null) {
-            predicates.add(cb.equal(root.get("enabled"), criteria.getEnabled()));
+        if (criteria.getLastName() != null && !criteria.getLastName().isBlank()) {
+            predicates.add(cb.like(cb.lower(root.get("lastName")), 
+                    "%" + criteria.getLastName().toLowerCase() + "%"));
         }
 
         return cb.and(predicates.toArray(new Predicate[0]));

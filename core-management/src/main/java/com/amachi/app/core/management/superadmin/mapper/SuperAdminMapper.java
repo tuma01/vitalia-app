@@ -1,7 +1,6 @@
 package com.amachi.app.core.management.superadmin.mapper;
 
 import com.amachi.app.core.auth.mapper.UserMapper;
-import com.amachi.app.core.common.mapper.AuditableIgnoreConfig;
 import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.core.geography.address.mapper.AddressMapper;
@@ -24,7 +23,6 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
-    @Mapping(target = "deleted", ignore = true)
     SuperAdmin toEntity(SuperAdminDto dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
@@ -34,7 +32,6 @@ public interface SuperAdminMapper extends EntityDtoMapper<SuperAdmin, SuperAdmin
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
-    @Mapping(target = "deleted", ignore = true)
     void updateEntityFromDto(SuperAdminDto dto, @MappingTarget SuperAdmin entity);
 
     @Override

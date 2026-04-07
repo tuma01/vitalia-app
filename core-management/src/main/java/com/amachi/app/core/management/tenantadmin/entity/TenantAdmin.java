@@ -25,10 +25,22 @@ public class TenantAdmin extends Person {
     private TenantAdminLevel adminLevel;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "TENANT_CODE", referencedColumnName = "CODE", nullable = false)
+    @JoinColumn(name = "TENANT_ID", referencedColumnName = "CODE", nullable = false)
     private Tenant tenant;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID", nullable = false, unique = true)
     private User user;
+
+    // ==========================================
+    // 🧠 Lógica de Normalización (Elite Standard)
+    // ==========================================
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeAdmin() {
+        if (this.tenant != null && getTenantId() == null) {
+            setTenantId(this.tenant.getCode());
+        }
+    }
 }
