@@ -28,6 +28,5 @@ public interface ThemeMapper extends EntityDtoMapper<Theme, ThemeDto> {
     @Mapping(target = "logoUrl", ignore = true)
     @Mapping(target = "faviconUrl", ignore = true)
     @Mapping(target = "customCss", ignore = true)
-    @Mapping(target = "version", ignore = true)
     void updateEntityFromDto(ThemeDto dto, @MappingTarget Theme theme);
 }

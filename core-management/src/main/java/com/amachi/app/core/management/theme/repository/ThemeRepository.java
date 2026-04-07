@@ -1,14 +1,13 @@
 package com.amachi.app.core.management.theme.repository;
 
 import com.amachi.app.core.domain.theme.entity.Theme;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import com.amachi.app.core.common.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ThemeRepository extends JpaRepository<Theme, Long>, JpaSpecificationExecutor<Theme> {
+public interface ThemeRepository extends CommonRepository<Theme, Long> {
 
     Optional<Theme> findByCode(String defaultTheme);
 
