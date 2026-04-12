@@ -1,7 +1,7 @@
 package com.amachi.app.core.domain.tenant.entity;
 
 import com.amachi.app.core.common.enums.TenantType;
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.theme.entity.Theme;
 
@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("GLOBAL")
-public class Tenant extends Auditable<String> implements Model {
+public class Tenant extends BaseTenantEntity implements Model {
 
     // ID heredado de BaseEntity
 
@@ -39,7 +39,7 @@ public class Tenant extends Auditable<String> implements Model {
     @Column(name = "TYPE", nullable = false, length = 20, insertable = false, updatable = false)
     private TenantType type;// Ej: HOSPITAL, CLINIC, LABORATORY, PHARMACY, GLOBAL
 
-    @Column(name = "IS_ACTIVE", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    @Column(name = "IS_ACTIVE", nullable = false)
     @Builder.Default
     private Boolean isActive = true;
 
@@ -58,4 +58,23 @@ public class Tenant extends Auditable<String> implements Model {
 
     @Column(name = "FAVICON_URL")
     private String faviconUrl;
+
+    // ==========================================
+    // 🧠 Lógica de Normalización (Elite Standard)
+    // ==========================================
+
+    @PrePersist
+    @PreUpdate
+    private void normalize() {
+        if (this.code != null) {
+            this.code = this.code.trim().toUpperCase();
+        }
+        if (this.name != null) {
+            this.name = this.name.trim();
+        }
+        // Force SYSTEM as default parent tenant for platform level tenants
+        if (getTenantId() == null) {
+            setTenantId("SYSTEM");
+        }
+    }
 }

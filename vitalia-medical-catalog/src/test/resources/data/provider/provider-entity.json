@@ -1,6 +1,5 @@
 {
     "id": 1,
-    "tenantId": "test-tenant",
     "code": "EPS001",
     "name": "SURA EPS",
     "taxId": "860066942-7",
@@ -8,5 +7,7 @@
     "officialPhone": "+573000000000",
     "active": true,
     "createdBy": "system",
-    "createdDate": "2024-01-01T10:00:00"
+    "createdDate": "2024-01-01T10:00:00",
+    "version": 0,
+    "externalId": "44d0016f-d3b3-4c14-ba58-ae618fb33676"
 }

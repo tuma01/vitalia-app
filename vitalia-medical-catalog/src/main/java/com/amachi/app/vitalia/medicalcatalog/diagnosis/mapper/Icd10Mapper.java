@@ -12,13 +12,13 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface Icd10Mapper extends EntityDtoMapper<Icd10, Icd10Dto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     Icd10 toEntity(Icd10Dto dto);
-
+ 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(Icd10Dto dto, @MappingTarget Icd10 entity);

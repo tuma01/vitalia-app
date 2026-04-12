@@ -20,6 +20,13 @@ public class ResourceNotFoundException extends RuntimeException {
         this.entityName = entityName;
     }
 
+    public ResourceNotFoundException(String message) {
+        super(message);
+        this.key = "error.generic.not_found";
+        this.entityName = "Unknown";
+        this.args = new Object[]{message};
+    }
+
 //    public ResourceNotFoundException(String key, String field, Object... args) {
 //        super(key);
 //        this.key = key;

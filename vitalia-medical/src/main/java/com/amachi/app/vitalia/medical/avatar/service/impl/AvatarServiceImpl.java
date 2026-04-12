@@ -46,7 +46,7 @@ public class AvatarServiceImpl implements AvatarService, GenericService<Avatar, 
     @Transactional(readOnly = true)
     public Page<Avatar> getAll(@NonNull AvatarSearchDto searchDto, @NonNull Integer pageIndex,
             @NonNull Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<Avatar> specification = new AvatarSpecification(searchDto);
         return avatarRepository.findAll(specification, pageable);
     }
@@ -75,7 +75,7 @@ public class AvatarServiceImpl implements AvatarService, GenericService<Avatar, 
     public Avatar update(@NonNull Long id, @NonNull Avatar entity) {
         requireNonNull(id, ID_MUST_NOT_BE_NULL);
         requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        Avatar existing = avatarRepository.findById(id)
+        avatarRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(Avatar.class.getName(), "error.resource.not.found", id));
         entity.setId(id);
@@ -94,15 +94,15 @@ public class AvatarServiceImpl implements AvatarService, GenericService<Avatar, 
 
     @Override
     @Transactional
-    public void createDefaultAvatar(Long userId, String tenantCode) {
-        log.info("Creating default avatar for user [{}] in tenant [{}]", userId, tenantCode);
-        if (avatarRepository.findByUserIdAndTenantCode(userId, tenantCode).isEmpty()) {
+    public void createDefaultAvatar(Long userId, String tenantId) {
+        log.info("Creating default avatar for user [{}] in tenant [{}]", userId, tenantId);
+        if (avatarRepository.findByUserIdAndTenantId(userId, tenantId).isEmpty()) {
             Avatar defaultAvatar = Avatar.builder()
                     .userId(userId)
-                    .tenantCode(tenantCode)
+                    .tenantId(tenantId)
                     .filename("default-avatar.png")
                     .mimeType("image/png")
-                    .content(new byte[0]) // Placeholder
+                    .content(new byte[0])
                     .size(0L)
                     .build();
             avatarRepository.save(defaultAvatar);
@@ -111,11 +111,11 @@ public class AvatarServiceImpl implements AvatarService, GenericService<Avatar, 
 
     @Override
     @Transactional
-    public void updateAvatar(Long userId, String tenantCode, MultipartFile file) {
-        log.info("Updating avatar for user [{}] in tenant [{}]", userId, tenantCode);
+    public void updateAvatar(Long userId, String tenantId, MultipartFile file) {
+        log.info("Updating avatar for user [{}] in tenant [{}]", userId, tenantId);
         try {
-            Avatar avatar = avatarRepository.findByUserIdAndTenantCode(userId, tenantCode)
-                    .orElse(Avatar.builder().userId(userId).tenantCode(tenantCode).build());
+            Avatar avatar = avatarRepository.findByUserIdAndTenantId(userId, tenantId)
+                    .orElse(Avatar.builder().userId(userId).tenantId(tenantId).build());
 
             avatar.setFilename(file.getOriginalFilename());
             avatar.setMimeType(file.getContentType());
@@ -131,15 +131,15 @@ public class AvatarServiceImpl implements AvatarService, GenericService<Avatar, 
 
     @Override
     @Transactional
-    public void deleteAvatar(Long userId, String tenantCode) {
-        log.info("Deleting avatar for user [{}] in tenant [{}]", userId, tenantCode);
-        avatarRepository.deleteByUserIdAndTenantCode(userId, tenantCode);
+    public void deleteAvatar(Long userId, String tenantId) {
+        log.info("Deleting avatar for user [{}] in tenant [{}]", userId, tenantId);
+        avatarRepository.deleteByUserIdAndTenantId(userId, tenantId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public byte[] getAvatar(Long userId, String tenantCode) {
-        return avatarRepository.findByUserIdAndTenantCode(userId, tenantCode)
+    public byte[] getAvatar(Long userId, String tenantId) {
+        return avatarRepository.findByUserIdAndTenantId(userId, tenantId)
                 .map(Avatar::getContent)
                 .orElse(null);
     }

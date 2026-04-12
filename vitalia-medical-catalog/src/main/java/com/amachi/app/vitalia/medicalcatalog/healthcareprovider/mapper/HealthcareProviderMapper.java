@@ -14,13 +14,13 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(config = BaseMapperConfig.class, uses = { AddressMapper.class }, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, uses = { AddressMapper.class }, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface HealthcareProviderMapper extends EntityDtoMapper<HealthcareProvider, HealthcareProviderDto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     HealthcareProvider toEntity(HealthcareProviderDto dto);
-
+ 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(HealthcareProviderDto dto, @MappingTarget HealthcareProvider entity);

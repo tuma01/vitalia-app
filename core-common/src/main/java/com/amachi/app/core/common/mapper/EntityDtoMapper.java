@@ -15,11 +15,17 @@ public interface EntityDtoMapper<E, D> {
 
     D toDto(E entity);
 
+    void updateEntityFromDto(D dto, @org.mapstruct.MappingTarget E entity);
+
     default List<D> toDTOs(Collection<E> entityList) {
         if (entityList == null) {
             return new ArrayList<>();
         }
         return entityList.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    default List<D> toDtoList(Collection<E> entityList) {
+        return toDTOs(entityList);
     }
 
     default List<E> toEntities(Collection<D> modelList) {

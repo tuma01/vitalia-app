@@ -1,115 +1,106 @@
 package com.amachi.app.vitalia.medical.employee.entity;
 
 import com.amachi.app.core.auth.entity.User;
-import com.amachi.app.core.domain.tenant.entity.Tenant;
+import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.EmployeeStatus;
 import com.amachi.app.core.common.enums.EmployeeType;
-import com.amachi.app.core.common.enums.RelationStatus;
 import com.amachi.app.core.domain.entity.Person;
-import com.amachi.app.core.domain.entity.PersonTenant;
+import com.amachi.app.vitalia.medical.doctor.entity.Doctor;
+import com.amachi.app.vitalia.medical.infrastructure.entity.DepartmentUnit;
+import com.amachi.app.vitalia.medical.nurse.entity.Nurse;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-@PrimaryKeyJoinColumn(name = "ID")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@SuperBuilder
+/**
+ * Gestión administrativa y laboral del personal hospitalario (SaaS Elite Tier).
+ * Centraliza la nómina y adscripción departamental del staff.
+ */
 @Entity
-@Table(name = "CLI_EMPLOYEE")
-public class Employee extends Person {
+@Table(name = "MED_EMPLOYEE",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UK_EMP_TENANT_CODE", columnNames = {"TENANT_ID", "EMPLOYEE_CODE"})
+    },
+    indexes = {
+        @Index(name = "IDX_EMP_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_EMP_CODE", columnList = "EMPLOYEE_CODE")
+    }
+)
+@PrimaryKeyJoinColumn(name = "ID")
+@DiscriminatorValue("EMPLOYEE")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@SuperBuilder
+@Audited
+@Schema(description = "Perfil administrativo de personal hospitalario — SaaS Elite Tier")
+@EqualsAndHashCode(callSuper = true)
+public class Employee extends Person implements SoftDeletable {
 
-    // -------------------------------------------------------
-    // TIPO DE EMPLEADO (Administrativo, Médico, Enfermero…)
-    // -------------------------------------------------------
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Column(name = "EMPLOYEE_CODE", length = 50)
+    private String employeeCode;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "EMPLOYEE_TYPE", nullable = false, length = 40)
     private EmployeeType employeeType;
 
-    // -------------------------------------------------------
-    // ESTATUS LABORAL DENTRO DEL SISTEMA (Activo, Suspendido…)
-    // -------------------------------------------------------
     @Enumerated(EnumType.STRING)
     @Column(name = "EMPLOYEE_STATUS", nullable = false, length = 30)
     private EmployeeStatus employeeStatus;
 
-    // -------------------------------------------------------
-    // RELACIÓN CON EL USUARIO DEL SISTEMA
-    // -------------------------------------------------------
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ID_USER",
-            foreignKey = @ForeignKey(name = "FK_CLI_EMPLOYEE_USER"))
+    @JoinColumn(name = "FK_ID_USER", foreignKey = @ForeignKey(name = "FK_MED_EMP_USER"))
     private User user;
 
-    // -------------------------------------------------------
-    // DATOS LABORALES
-    // -------------------------------------------------------
-    @Size(max = 150)
-    @Column(name = "PROFESION")
-    private String profesion; // Ej: Médico General, Cirujano
+    @Column(name = "JOB_POSITION", length = 120)
+    private String jobPosition;
 
-    @Size(max = 120)
-    @Column(name = "PUESTO")
-    private String puesto; // Ej: Jefe de Emergencias
+    @Column(name = "HIRE_DATE")
+    private LocalDate hireDate;
 
-    @Size(max = 120)
-    @Column(name = "CARGO")
-    private String cargo; // Ej: Responsable de Unidad
+    @Column(name = "IS_ACTIVE")
+    @Builder.Default
+    private Boolean active = true;
 
-    @Size(max = 50)
-    @Column(name = "NRO_COLEGIO_MEDICO")
-    private String nroColegioMedico; // Opcional, solo para médicos
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_DEPT_UNIT", foreignKey = @ForeignKey(name = "FK_MED_EMP_DEPT_UNIT"))
+    private DepartmentUnit departmentUnit;
 
-    @Size(max = 50)
-    @Column(name = "MATRICULA_PROFESIONAL")
-    private String matriculaProfesional;
+    @Column(name = "SALARY", precision = 12, scale = 2)
+    private BigDecimal salary;
 
-    @Size(max = 20)
-    @Column(name = "CODIGO_EMPLEADO")
-    private String codigoEmpleado;
+    @Column(name = "EMPLOYMENT_TYPE", length = 50)
+    private String employmentType;
 
-    // -------------------------------------------------------
-    // FECHAS LABORALES
-    // -------------------------------------------------------
-    @Column(name = "FECHA_INGRESO")
-    private LocalDate fechaIngreso;
+    @Column(name = "WORK_SHIFT", length = 50)
+    private String workShift;
 
-    @Column(name = "FECHA_SALIDA")
-    private LocalDate fechaSalida;
+    @Column(name = "EMP_EMERGENCY_CONTACT", length = 200)
+    private String emergencyContact;
 
-    // -------------------------------------------------------
-    // METODOS DE UTILIDAD
-    // -------------------------------------------------------
+    @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)
+    private Doctor doctorProfile;
 
-    /**
-     * Obtiene todos los tenants donde trabaja el empleado.
-     * (Hereda personTenants de Person)
-     */
-    @Transient
-    public Set<Tenant> getTenants() {
-        return getPersonTenants().stream()
-                .map(PersonTenant::getTenant)
-                .collect(Collectors.toSet());
+    @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)
+    private Nurse nurseProfile;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
     }
 
-    @Transient
-    public boolean belongsToTenant(Long tenantId) {
-        return getPersonTenants() != null && getPersonTenants().stream()
-                .anyMatch(pt ->
-                        pt.getTenant() != null &&
-                                pt.getTenant().getId() != null &&
-                                pt.getTenant().getId().equals(tenantId) &&
-                                pt.getRelationStatus() == RelationStatus.ACTIVE
-                );
+    @PrePersist
+    @PreUpdate
+    private void normalizeEmployee() {
+        if (this.employeeCode != null) this.employeeCode = this.employeeCode.trim().toUpperCase();
+        if (this.jobPosition != null) this.jobPosition = this.jobPosition.trim();
     }
 }

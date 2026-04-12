@@ -29,19 +29,19 @@ public class UserRegisterRequest {
     private String password;
 
     // --- Datos de la Persona (Person) ---
-    @NotBlank(message = "validation.required")
-    @Size(max = 50, message = "El nombre no puede exceder los 50 caracteres")
-    private String nombre;
+    @NotBlank(message = "First name is required")
+    @Size(max = 50, message = "First name cannot exceed 50 characters")
+    private String firstName;
 
-    @Size(max = 50, message = "El segundo nombre no puede exceder los 50 caracteres")
-    private String segundoNombre;
+    @Size(max = 50, message = "Middle name cannot exceed 50 characters")
+    private String middleName;
 
-    @NotBlank(message = "validation.required")
-    @Size(max = 50, message = "El apellido paterno no puede exceder los 50 caracteres")
-    private String apellidoPaterno;
+    @NotBlank(message = "Last name is required")
+    @Size(max = 50, message = "Last name cannot exceed 50 characters")
+    private String lastName;
 
-    @Size(max = 50, message = "El apellido materno no puede exceder los 50 caracteres")
-    private String apellidoMaterno;
+    @Size(max = 50, message = "Second last name cannot exceed 50 characters")
+    private String secondLastName;
 
     @NotNull(message = "El tipo de persona es obligatorio")
     private PersonType personType;

@@ -1,30 +1,30 @@
--- ============================================================
 -- Script: V9_9__create_cat_medical_specialty.sql
 -- Módulo: vitalia-medical-catalog
--- Descripción: Creación de la tabla CAT_MEDICAL_SPECIALTY (SaaS Elite Tier).
+-- Descripción: Creación de la tabla CAT_MEDICAL_SPECIALTY (POOL GLOBAL PURO).
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS CAT_MEDICAL_SPECIALTY (
     ID              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    TENANT_ID       VARCHAR(50)  NOT NULL,
-    EXTERNAL_ID     VARCHAR(36)  NOT NULL,
-    CODE            VARCHAR(20)  NOT NULL,
+    CODE            VARCHAR(20)  NOT NULL UNIQUE,
     NAME            VARCHAR(150) NOT NULL,
     DESCRIPTION     VARCHAR(500),
-    TARGET_PROFESSION VARCHAR(20) NOT NULL DEFAULT 'BOTH',
-    ACTIVE          BOOLEAN      NOT NULL DEFAULT TRUE,
-    VERSION         BIGINT       NOT NULL DEFAULT 0,
+    TARGET_PROFESSION VARCHAR(20) DEFAULT 'BOTH',
+    ACTIVE          BOOLEAN      DEFAULT TRUE,
+
+    -- Concurrencia e ID Externo (Tier Elite)
+    VERSION BIGINT NOT NULL DEFAULT 0,
+    EXTERNAL_ID VARCHAR(36)  NOT NULL UNIQUE,
 
     -- Auditoría
-    CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        TIMESTAMP    NOT NULL,
-    LAST_MODIFIED_BY    VARCHAR(100),
-    LAST_MODIFIED_DATE  TIMESTAMP,
+    CREATED_BY VARCHAR(100) NOT NULL,
+    CREATED_DATE TIMESTAMP NOT NULL,
+    LAST_MODIFIED_BY VARCHAR(100),
+    LAST_MODIFIED_DATE TIMESTAMP,
 
-    -- Constraints
-    CONSTRAINT UK_SPECIALTY_EXTERNAL_ID UNIQUE (EXTERNAL_ID),
-    CONSTRAINT UK_SPECIALTY_CODE_TENANT UNIQUE (CODE, TENANT_ID),
-    INDEX IDX_SPECIALTY_TENANT (TENANT_ID),
+    -- Auditoría (Si se desea global, se omiten tenant y external ids)
+    INDEX IDX_SPECIALTY_CODE (CODE),
     INDEX IDX_SPECIALTY_NAME (NAME),
     CONSTRAINT CHK_SPECIALTY_TARGET CHECK (TARGET_PROFESSION IN ('DOCTOR', 'NURSE', 'BOTH'))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+COMMIT;

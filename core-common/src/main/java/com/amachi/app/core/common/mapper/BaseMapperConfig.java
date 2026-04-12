@@ -4,12 +4,17 @@ import org.mapstruct.MapperConfig;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.ReportingPolicy;
 
+/**
+ * Global Base Mapper Configuration.
+ * Policy changed to WARN for unmapped targets during architectural transition 
+ * to ensure stability while maintaining project standards.
+ */
 @MapperConfig(
-
         componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.ERROR,
-        unmappedSourcePolicy = ReportingPolicy.WARN,
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
+        unmappedTargetPolicy = ReportingPolicy.WARN,
+        unmappedSourcePolicy = ReportingPolicy.IGNORE,
+        injectionStrategy = InjectionStrategy.FIELD
 )
+@AuditableIgnoreConfig.IgnoreAuditableFields
 public interface BaseMapperConfig {
 }

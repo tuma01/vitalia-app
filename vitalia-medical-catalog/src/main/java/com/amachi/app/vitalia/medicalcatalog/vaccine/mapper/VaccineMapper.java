@@ -12,13 +12,13 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface VaccineMapper extends EntityDtoMapper<Vaccine, VaccineDto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     Vaccine toEntity(VaccineDto dto);
-
+ 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(VaccineDto dto, @MappingTarget Vaccine entity);

@@ -37,9 +37,6 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- Processor -->
-
-
         <!-- Validación para DTOs -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

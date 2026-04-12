@@ -8,6 +8,7 @@ import com.amachi.app.core.common.error.ErrorDetail;
 import com.amachi.app.core.common.http.HttpStatusCode;
 import com.amachi.app.core.common.i18n.Translator;
 import com.amachi.app.core.common.exception.BadRequestException;
+import com.amachi.app.core.common.exception.BusinessException;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
@@ -146,6 +147,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 null,
                 Map.of("info", ex.getMostSpecificCause().getMessage()));
 
+        return buildErrorResponse(HttpStatusCode.CONFLICT, detail, request);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex,
+            HttpServletRequest request) {
+        ErrorDetail detail = ErrorDetail.from(
+                ErrorCode.BUS_RULE_VIOLATION,
+                Translator.toLocale(ex.getMessage(), null),
+                null, 
+                Map.of("category", "BUSINESS_RULE"));
         return buildErrorResponse(HttpStatusCode.CONFLICT, detail, request);
     }
 

@@ -38,7 +38,7 @@ public class TokenServiceImpl implements TokenService {
         // Guardar refresh token en base de datos
         refreshTokenService.createRefreshToken(
                 user.getId(),
-                tenant.getId(),
+                tenant.getCode(),
                 tokenPair.getRefreshToken());
 
         return tokenPair;
@@ -85,8 +85,8 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     @Transactional
-    public void invalidateUserTokens(Long userId, Long tenantId) {
-        refreshTokenService.deleteByUserIdAndTenantId(userId, tenantId);
+    public void invalidateUserTokens(Long userId, String tenantCode) {
+        refreshTokenService.deleteByUserIdAndTenantId(userId, tenantCode);
     }
 
     @Override

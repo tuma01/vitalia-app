@@ -81,11 +81,11 @@ public class InvitationResponse {
      * First name captured during invitation.
      */
     @Schema(description = "Invitee's first name.", example = "Juan")
-    private String nombre;
+    private String firstName;
 
     /**
      * Paternal last name captured during invitation.
      */
     @Schema(description = "Invitee's paternal last name.", example = "Pérez")
-    private String apellidoPaterno;
+    private String lastName;
 }

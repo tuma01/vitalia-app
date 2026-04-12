@@ -1,6 +1,6 @@
 package com.amachi.app.core.auth.entity;
 
-import com.amachi.app.core.common.entity.BaseEntity;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,11 +21,11 @@ import java.time.Instant;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class RefreshToken extends BaseEntity {
+public class RefreshToken extends BaseTenantEntity {
 
     // ID heredado de BaseEntity
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "TOKEN", nullable = false, unique = true)
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -33,7 +33,14 @@ public class RefreshToken extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "TENANT_ID", nullable = false, foreignKey = @ForeignKey(name = "FK_REFRESH_TOKEN_TENANT"))
+    @JoinColumn(
+        name = "TENANT_ID",
+        referencedColumnName = "CODE",
+        nullable = false,
+        insertable = false,
+        updatable = false,
+        foreignKey = @ForeignKey(name = "FK_REFRESH_TOKEN_TENANT")
+    )
     private Tenant tenant;
 
     @Column(name = "EXPIRY_DATE", nullable = false)
@@ -51,5 +58,9 @@ public class RefreshToken extends BaseEntity {
     public void prePersist() {
         if (createdAt == null)
             createdAt = Instant.now();
+    }
+
+    public boolean isValid() {
+        return !revoked && expiryDate != null && expiryDate.isAfter(Instant.now());
     }
 }

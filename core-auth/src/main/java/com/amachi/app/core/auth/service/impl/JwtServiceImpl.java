@@ -122,7 +122,7 @@ public class JwtServiceImpl implements JwtService {
                 .userId(claims.get(CLAIM_USER_ID, Long.class))
                 .email(claims.getSubject())
                 .tenantCode(claims.get(CLAIM_TENANT_CODE, String.class))
-                .roles(claims.get(CLAIM_ROLES, java.util.List.class))
+                .roles(extractRoles(token))
                 .build();
     }
 
@@ -148,7 +148,6 @@ public class JwtServiceImpl implements JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<String> extractRoles(String token) {
         Object rolesObj = extractAllClaims(token).get("roles");

@@ -1,21 +1,24 @@
 package com.amachi.app.vitalia.medical.employee.controller;
 
+import com.amachi.app.core.common.controller.BaseController;
+import com.amachi.app.core.common.dto.PageResponseDto;
 import com.amachi.app.vitalia.medical.employee.dto.EmployeeDto;
 import com.amachi.app.vitalia.medical.employee.dto.search.EmployeeSearchDto;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
 import com.amachi.app.vitalia.medical.employee.mapper.EmployeeMapper;
 import com.amachi.app.vitalia.medical.employee.service.EmployeeService;
-import com.amachi.app.core.common.controller.BaseController;
-import com.amachi.app.core.common.dto.PageResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
+/**
+ * Controlador homogeneo para personal administrativo de Vitalia.
+ */
 @RestController
+@RequestMapping("/personal/employees")
 @RequiredArgsConstructor
 public class EmployeeController extends BaseController implements EmployeeApi {
 
@@ -47,19 +50,10 @@ public class EmployeeController extends BaseController implements EmployeeApi {
     }
 
     @Override
-    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        return ResponseEntity.ok(service.getAll().stream().map(mapper::toDto).toList());
-    }
-
-    @Override
-    public ResponseEntity<PageResponseDto<EmployeeDto>> getPaginatedEmployees(
-            EmployeeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        
+    public ResponseEntity<PageResponseDto<EmployeeDto>> getPaginatedEmployees(EmployeeSearchDto searchDto, Integer pageIndex, Integer pageSize) {
         Page<Employee> page = service.getAll(searchDto, pageIndex, pageSize);
-        List<EmployeeDto> dtos = page.getContent().stream().map(mapper::toDto).toList();
-
         return ResponseEntity.ok(PageResponseDto.<EmployeeDto>builder()
-                .content(dtos)
+                .content(mapper.toDTOs(page.getContent()))
                 .totalElements(page.getTotalElements())
                 .pageIndex(page.getNumber())
                 .pageSize(page.getSize())

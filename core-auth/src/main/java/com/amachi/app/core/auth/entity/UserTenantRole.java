@@ -1,6 +1,6 @@
 package com.amachi.app.core.auth.entity;
 
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import jakarta.persistence.*;
@@ -16,18 +16,25 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 @Table(name = "AUT_USER_TENANT_ROLE", uniqueConstraints = {
-        @UniqueConstraint(name = "UK_USER_TENANT_ROLE", columnNames = { "FK_ID_USER", "FK_ID_TENANT", "FK_ID_ROLE" })
+        @UniqueConstraint(name = "UK_USER_TENANT_ROLE", columnNames = { "FK_ID_USER", "TENANT_ID", "FK_ID_ROLE" })
 })
-public class UserTenantRole extends Auditable<String> implements Model {
+public class UserTenantRole extends BaseTenantEntity implements Model {
 
-    // ID heredado de Auditable/BaseEntity
+    // ID heredado de BaseTenantEntity
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_USER", nullable = false, foreignKey = @ForeignKey(name = "FK_USERTENANTROLE_USER"))
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ID_TENANT", nullable = false, foreignKey = @ForeignKey(name = "FK_USERTENANTROLE_TENANT"))
+    @JoinColumn(
+        name = "TENANT_ID", 
+        referencedColumnName = "CODE", 
+        nullable = false, 
+        insertable = false, 
+        updatable = false,
+        foreignKey = @ForeignKey(name = "FK_USERTENANTROLE_TENANT")
+    )
     private Tenant tenant;
 
     @ManyToOne(fetch = FetchType.LAZY)

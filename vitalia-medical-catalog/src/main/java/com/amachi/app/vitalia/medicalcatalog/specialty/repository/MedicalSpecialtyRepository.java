@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface MedicalSpecialtyRepository extends CommonRepository<MedicalSpecialty, Long> {
-    
+
     /**
      * ✅ GLOBAL: busca una especialidad por su código único en toda la plataforma.
      */

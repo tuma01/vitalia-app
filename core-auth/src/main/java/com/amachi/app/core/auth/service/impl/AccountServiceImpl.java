@@ -10,10 +10,9 @@ import com.amachi.app.core.auth.repository.*;
 import com.amachi.app.core.auth.service.AccountService;
 import com.amachi.app.core.auth.service.JwtService;
 import com.amachi.app.core.common.context.TenantContext;
-import com.amachi.app.core.common.dto.*;
-//import com.amachi.app.core.common.service.EmailService;
-import com.amachi.app.core.domain.tenant.entity.Tenant;
+import com.amachi.app.core.common.dto.UserSummaryDto;
 import com.amachi.app.core.common.error.ErrorCode;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +40,6 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    // private final EmailService emailService;
 
     private static final Duration RESET_TOKEN_VALIDITY = Duration.ofMinutes(30);
 
@@ -49,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
     public void activateAccount(ActivationRequest request) {
         JwtUserDto userDto = jwtService.extractUserDto(request.getToken());
         User user = userRepository.findById(userDto.getUserId())
-                .orElseThrow(() -> new SecurityException("User not found: " + userDto.getUserId()));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_USER_NOT_FOUND, "error.resource.not.found", userDto.getUserId().toString()));
 
         user.setEnabled(true);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -59,21 +57,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     public void requestPasswordReset(PasswordResetRequest request) {
-
-        // Validar que el tenant existe
         tenantBridge.findByCode(request.getTenantCode());
 
-        // Buscar UserAccount por email y tenant
         User user = userAccountRepository
                 .findByUserEmailAndTenantCode(request.getEmail(), request.getTenantCode())
                 .map(UserAccount::getUser)
-                .orElseThrow(() -> new SecurityException(
-                        "User not found with email: " + request.getEmail() + " in tenant: " + request.getTenantCode()));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_USER_NOT_FOUND,
+                        "security.user.not_found_in_tenant", request.getEmail()));
 
-        // Eliminar tokens anteriores del mismo usuario
         passwordResetTokenRepository.deleteByUser(user);
 
-        // Generar token JWT para reset
         JwtUserDto jwtUserDto = JwtUserDto.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
@@ -86,38 +79,29 @@ public class AccountServiceImpl implements AccountService {
                 .token(resetToken)
                 .user(user)
                 .expirationDate(Instant.now().plus(RESET_TOKEN_VALIDITY))
-                .user(user)
                 .build();
 
         passwordResetTokenRepository.save(tokenEntity);
-
-        // Enviar correo
-        // emailService.sendPasswordResetEmail(user.getEmail(), resetToken,
-        // request.getTenantCode());
         log.info("📩 Password reset token generated for {} in tenant {}", user.getEmail(), request.getTenantCode());
     }
 
     @Override
     @Transactional
     public void resetPassword(PasswordResetConfirmationRequest request) {
-        log.info("🔄 Restableciendo contraseña para token: {}", request.getToken());
+        log.info("🔄 Restableciendo contraseña para token");
 
         PasswordResetToken tokenEntity = passwordResetTokenRepository.findByToken(request.getToken())
-                .orElseThrow(() -> new SecurityException("Invalid or expired reset token"));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_INVALID_TOKEN, "security.invitation.not_found"));
 
         if (tokenEntity.isInvalid() || !jwtService.isPasswordResetToken(tokenEntity.getToken())) {
-            throw new SecurityException("Token inválido o ya usado");
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_TOKEN, "security.invitation.expired");
         }
         User user = tokenEntity.getUser();
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
 
-        tokenEntity.setUsed(true); // marcar como usado
+        tokenEntity.setUsed(true);
         passwordResetTokenRepository.save(tokenEntity);
-
-        // Invalidar token en JWTService (opcional)
-        // Token marcado como usado en DB, no es necesario invalidar JWT statelessmente
-        // jwtService.invalidateToken(tokenEntity.getToken());
 
         log.info("✅ Contraseña restablecida correctamente para usuario: {}", user.getEmail());
     }
@@ -125,10 +109,10 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void changePassword(ChangePasswordRequest request, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new SecurityException("User not found: " + userId));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_USER_NOT_FOUND, "error.resource.not.found", userId.toString()));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new SecurityException("Current password is incorrect");
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_CREDENTIALS, "security.password.incorrect");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -139,9 +123,9 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void deleteAccount(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new SecurityException("User not found: " + userId));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_USER_NOT_FOUND, "error.resource.not.found", userId.toString()));
 
-        user.setEnabled(false); // Soft delete / Deactivate
+        user.setEnabled(false);
         userRepository.save(user);
         log.warn("⛔ Account deactivated (soft delete) for user ID: {}", userId);
     }
@@ -149,34 +133,25 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     public UserSummaryDto getProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new SecurityException("User not found: " + userId));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_USER_NOT_FOUND, "error.resource.not.found", userId.toString()));
 
-        // Obtener tenant del contexto (ThreadLocal)
-        Long tenantId = TenantContext.getTenantId().orElse(null);
-        Tenant tenant = null;
-        if (tenantId != null) {
-            tenant = tenantBridge.findById(tenantId);
-        }
+        String tenantCode = TenantContext.getTenant();
+        Tenant tenant = (tenantCode != null) ? tenantBridge.findByCode(tenantCode) : null;
 
-        String tenantCode = tenant != null ? tenant.getCode() : null;
         String tenantName = tenant != null ? tenant.getName() : null;
+        Long tenantId = tenant != null ? tenant.getId() : null;
 
         List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user, tenantCode);
 
         return UserSummaryDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .personName(user.getPerson() != null ? user.getPerson().getNombreCompleto() : null)
+                .personName(user.getPerson() != null ? user.getPerson().getFullName() : null)
                 .personType(user.getPerson() != null ? user.getPerson().getPersonType() : null)
                 .tenantId(tenantId)
                 .tenantCode(tenantCode)
                 .tenantName(tenantName)
                 .roles(roles)
                 .build();
-    }
-
-    private String getCurrentTenantCode() {
-        // Implementar según tu lógica de contexto de tenant
-        return "default-tenant"; // Placeholder
     }
 }

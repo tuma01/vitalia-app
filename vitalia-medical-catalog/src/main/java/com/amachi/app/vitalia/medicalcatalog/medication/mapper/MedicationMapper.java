@@ -5,14 +5,9 @@ import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.vitalia.medicalcatalog.medication.dto.MedicationDto;
 import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Builder;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface MedicationMapper extends EntityDtoMapper<Medication, MedicationDto> {
 
     @Override
@@ -24,6 +19,5 @@ public interface MedicationMapper extends EntityDtoMapper<Medication, Medication
     void updateEntityFromDto(MedicationDto dto, @MappingTarget Medication entity);
 
     @Override
-    @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     MedicationDto toDto(Medication entity);
 }

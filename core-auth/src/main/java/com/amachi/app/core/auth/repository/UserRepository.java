@@ -1,14 +1,13 @@
 package com.amachi.app.core.auth.repository;
 
 import com.amachi.app.core.auth.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import com.amachi.app.core.common.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends CommonRepository<User, Long> {
 
     /**
      * Busca un usuario por su email.

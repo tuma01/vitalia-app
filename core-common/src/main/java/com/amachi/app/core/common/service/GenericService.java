@@ -2,26 +2,24 @@ package com.amachi.app.core.common.service;
 
 import com.amachi.app.core.common.dto.BaseSearchDto;
 import org.springframework.data.domain.Page;
-import org.springframework.lang.NonNull;
 
 import java.util.List;
 
+/**
+ * Interface Core para servicios de la aplicación.
+ * PUBLIC para ser visible desde todos los módulos (core-geography, etc).
+ */
 public interface GenericService<E, F extends BaseSearchDto> {
 
-    @NonNull
     List<E> getAll();
 
-    @NonNull
-    Page<E> getAll(@NonNull F searchDto, @NonNull Integer pageIndex, @NonNull Integer pageSize);
+    Page<E> getAll(F searchDto, Integer pageIndex, Integer pageSize);
 
-    @NonNull
-    E getById(@NonNull Long id);
+    E getById(Long id);
 
-    @NonNull
-    E create(@NonNull E entity);
+    E create(E entity);
 
-    @NonNull
-    E update(@NonNull Long id, @NonNull E entity);
+    E update(Long id, E entity);
 
-    void delete(@NonNull Long id);
+    void delete(Long id);
 }

@@ -1,32 +1,37 @@
--- ============================================
--- Script: V3_2__create_dmn_tenant.sql
--- Tabla: DMN_TENANT
--- ============================================
+-- Script: V3_3__create_dmn_tenant.sql
+-- Módulo: core-domain
+-- Descripción: Creación de la tabla DMN_TENANT (SaaS Elite Tier).
+-- ============================================================
 
 CREATE TABLE IF NOT EXISTS DMN_TENANT (
     ID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    TENANT_ID VARCHAR(50) NOT NULL DEFAULT 'SYSTEM',
+    EXTERNAL_ID VARCHAR(36) UNIQUE,
+    VERSION BIGINT DEFAULT 0 NOT NULL,
+    
     CODE VARCHAR(100) NOT NULL,
     NAME VARCHAR(100) NOT NULL,
     TYPE VARCHAR(20) NOT NULL,
     IS_ACTIVE TINYINT(1) NOT NULL DEFAULT 1,
+    IS_DELETED TINYINT(1) NOT NULL DEFAULT 0,
     DESCRIPTION TEXT,
     
-    -- MGT_THEME Relation (Mapped directly here)
-    THEME_ID BIGINT NULL,
     ADDRESS_ID BIGINT NULL,
+    LOGO_URL VARCHAR(255) NULL,
+    FAVICON_URL VARCHAR(255) NULL,
+    THEME_ID BIGINT NULL,
 
-    -- Auditoría
+    -- Auditoría Profesional
     CREATED_BY VARCHAR(100) NOT NULL,
     CREATED_DATE TIMESTAMP NOT NULL,
     LAST_MODIFIED_BY VARCHAR(100),
     LAST_MODIFIED_DATE TIMESTAMP,
 
-    -- Constraints
-    CONSTRAINT UK_TENANT_CODE  UNIQUE (CODE),
+    -- Constraints Biyectivas
+    CONSTRAINT UK_TENANT_CODE UNIQUE (CODE),
+    CONSTRAINT UK_TENANT_EXTERNAL UNIQUE (EXTERNAL_ID),
     CONSTRAINT FK_TENANT_THEME FOREIGN KEY (THEME_ID) REFERENCES DMN_THEME(ID)
-    ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Índices adicionales
 CREATE INDEX IDX_TENANT_NAME ON DMN_TENANT(NAME);
 COMMIT;

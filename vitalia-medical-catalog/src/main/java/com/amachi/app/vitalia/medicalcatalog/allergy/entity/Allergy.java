@@ -2,6 +2,7 @@ package com.amachi.app.vitalia.medicalcatalog.allergy.entity;
 
 import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 /**
  * Entidad Allergy (SaaS Elite Tier).
- * Catálogo médico multi-tenant.
+ * Catálogo médico Global (Pure Pool).
  */
 @Getter
 @Setter
@@ -27,6 +28,8 @@ import lombok.experimental.SuperBuilder;
 )
 public class Allergy extends Auditable<String> implements Model {
 
+
+
     @NotBlank(message = "Code {err.mandatory}")
     @Column(name = "CODE", nullable = false, length = 20)
     private String code;
@@ -41,6 +44,10 @@ public class Allergy extends Auditable<String> implements Model {
 
     @Column(name = "DESCRIPTION", length = 250)
     private String description;
+
+    @Column(name = "CRITICALITY", length = 50)
+    @Schema(description = "Nivel de severidad o criticidad esperada (ALTA, MEDIA, BAJA)", example = "ALTA")
+    private String severity;
 
     @Builder.Default
     @Column(name = "ACTIVE", nullable = false)

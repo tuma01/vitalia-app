@@ -1,73 +1,67 @@
 package com.amachi.app.core.domain.hospital.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.exception.BusinessException;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.core.domain.hospital.dto.search.HospitalSearchDto;
 import com.amachi.app.core.domain.hospital.entity.Hospital;
+import com.amachi.app.core.domain.hospital.event.HospitalCreatedEvent;
 import com.amachi.app.core.domain.hospital.repository.HospitalRepository;
-import com.amachi.app.core.domain.hospital.service.HospitalService;
 import com.amachi.app.core.domain.hospital.specification.HospitalSpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class HospitalServiceImpl implements HospitalService {
+@RequiredArgsConstructor
+public class HospitalServiceImpl extends BaseService<Hospital, HospitalSearchDto> {
 
-    private final HospitalRepository hospitalRepository;
+    private final HospitalRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    public List<Hospital> getAll() {
-        return hospitalRepository.findAll();
+    protected CommonRepository<Hospital, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    public Page<Hospital> getAll(HospitalSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Specification<Hospital> specification = new HospitalSpecification(searchDto);
-        return hospitalRepository.findAll(specification, pageable);
+    protected Specification<Hospital> buildSpecification(HospitalSearchDto searchDto) {
+        return new HospitalSpecification(searchDto);
     }
 
     @Override
-    public Hospital getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return hospitalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Hospital.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
+    }
+
+    @Override
+    protected void publishCreatedEvent(Hospital entity) {
+        eventPublisher.publish(new HospitalCreatedEvent(
+                entity.getId(),
+                entity.getCode(),
+                entity.getLegalName(),
+                entity.getTaxId()
+        ));
+    }
+
+    @Override
+    protected void publishUpdatedEvent(Hospital entity) {
+        // No update event for hospital yet
     }
 
     @Override
     public Hospital create(Hospital entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return hospitalRepository.save(entity);
+        // Validar Tax ID único para evitar hospitales duplicados en la plataforma
+        if (entity.getTaxId() != null && repository.existsByTaxId(entity.getTaxId().trim().toUpperCase())) {
+            throw new BusinessException("Hospital with Tax ID '" + entity.getTaxId() + "' already exists in the platform");
+        }
+        return super.create(entity);
     }
 
     @Override
     public Hospital update(Long id, Hospital entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        
-        hospitalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Hospital.class.getName(), "error.resource.not.found", id));
-        
         entity.setId(id);
-        return hospitalRepository.save(entity);
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Hospital hospital = hospitalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Hospital.class.getName(), "error.resource.not.found", id));
-        hospitalRepository.delete(hospital);
+        return super.update(id, entity);
     }
 }
