@@ -4,6 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum PatientStatus {
+    ACTIVE("Paciente activo"),
+    INACTIVE("Paciente inactivo"),
     ADMITTED("Paciente admitido"),
     DISCHARGED("Paciente dado de alta"),
     IN_TREATMENT("Paciente en tratamiento"),

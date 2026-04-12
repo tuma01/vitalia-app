@@ -19,4 +19,5 @@ public class TokenPairDto {
     private Instant accessTokenExpiresAt;
     private String refreshToken;
     private Instant refreshTokenExpiresAt;
+    private Long expiresIn; // Duración en segundos del access token
 }

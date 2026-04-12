@@ -1,12 +1,19 @@
 package com.amachi.app.vitalia.medical.patient.entity;
 
+import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.PatientStatus;
-import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.domain.entity.Person;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.amachi.app.vitalia.medicalcatalog.allergy.entity.Allergy;
+import com.amachi.app.vitalia.medicalcatalog.medication.entity.Medication;
+import com.amachi.app.vitalia.medical.history.entity.MedicalHistory;
+import com.amachi.app.vitalia.medical.history.entity.Encounter;
+import com.amachi.app.vitalia.medical.hospitalization.entity.Hospitalization;
+import com.amachi.app.vitalia.medical.infrastructure.entity.Bed;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,85 +21,132 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-// @Entity
-// @Table(name = "PATIENT")
-// @DiscriminatorValue("PATIENT")
+/**
+ * Enterprise Patient Entity (SaaS Elite Tier).
+ * Inherits identity from Person (JOINED).
+ */
+@Entity
+@Table(
+    name = "MED_PATIENT",
+    indexes = {
+        @Index(name = "IDX_PATIENT_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_PATIENT_NHC", columnList = "NHC")
+    },
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UK_MED_PAT_TENANT_NHC", columnNames = {"TENANT_ID", "NHC"})
+    }
+)
+@PrimaryKeyJoinColumn(name = "ID")
+@DiscriminatorValue("PATIENT")
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class Patient extends Person {
+@EqualsAndHashCode(callSuper = true, exclude = {"medicalHistories", "encounters", "hospitalizations", "allergies", "activeMedications"})
+@Audited
+@Schema(description = "Registro integral del paciente — SaaS Elite Tier")
+public class Patient extends Person implements SoftDeletable {
 
-//    @Column(name = "ID_CARD", unique = true, length = 100)
-//    private String idCard;
-//
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "PATIENT_STATUS", nullable = false)
-//    private PatientStatus patientStatus;
-//
-//    @Column(name = "OCCUPATION", length = 100)
-//    private String occupation;
-//
-//    @Column(name = "NATIONALITY", length = 100)
-//    private String nationality;
-//
-//    @Column(name = "DEGREE_OF_INSTRUCTION", length = 100)
-//    private String degreeOfInstruction;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "FK_ID_COUNTRY")
-//    private Country countryOfBirth;
-//
-//    @JoinColumn(name = "FK_ID_ROOM")
-//    private Long roomId;
-//
-//    @Lob
-//    @Column(name = "PHOTO")
-//    private byte[] photo;
-//
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "FK_ID_NURSE")
-//    private Nurse nurse;
-//
-//    @Column(name = "ADDITIONAL_REMARKS", columnDefinition = "TEXT")
-//    private String additionalRemarks;
-//
-//    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JsonManagedReference
-//    private Set<PatientVisit> visits = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private Set<Hospitalizacion> hospitalizaciones = new HashSet<>();
-//
-//    // ≡ƒö╣ Agrupamos biom├⌐tricos y otros detalles
-//    @Embedded
-//    private PatientDetails patientDetails;
-//
-//    // ≡ƒö╣ Multi-tenant: relaci├│n a trav├⌐s de PersonTenant
-//    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<PersonTenant> patientTenants = new HashSet<>();
-//
-//    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<MedicalHistory> medicalHistories = new ArrayList<>();
-//
-//    @Embedded
-//    private EmergencyContact emergencyContact;
-//
-//    @Column(name = "FECHA_REGISTRO_PACIENTE", nullable = false, updatable = false)
-//    private LocalDateTime fechaRegistroPaciente;
-//
-//    @Column(name = "FECHA_ACTUALIZACION_PACIENTE")
-//    private LocalDateTime fechaActualizacionPaciente;
-//
-//    @PrePersist
-//    public void prePersist() {
-//        this.fechaRegistroPaciente = LocalDateTime.now();
-//        this.fechaActualizacionPaciente = LocalDateTime.now();
-//    }
-//
-//    @PreUpdate
-//    public void preUpdate() {
-//        this.fechaActualizacionPaciente = LocalDateTime.now();
-//    }
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Column(name = "NHC", nullable = false, length = 50)
+    private String nhc;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS", nullable = false, length = 30)
+    @Builder.Default
+    private PatientStatus patientStatus = PatientStatus.ACTIVE;
+
+    @Column(name = "PREFERRED_LANGUAGE", length = 20)
+    private String preferredLanguage;
+
+    @Column(name = "REGISTRATION_DATE", nullable = false)
+    private LocalDateTime registrationDate;
+
+    @Column(name = "OCCUPATION", length = 100)
+    private String occupation;
+
+    @Column(name = "NATIONALITY", length = 100)
+    private String nationality;
+
+    @Column(name = "EDUCATION_LEVEL", length = 100)
+    private String educationLevel;
+
+    @Column(name = "ALLERGY_SUMMARY", length = 1000)
+    private String allergySummary;
+
+    @Embedded
+    private PatientDetails patientDetails;
+
+    @Embedded
+    private EmergencyContact emergencyContact;
+
+    @Lob
+    @Column(name = "PHOTO")
+    private byte[] photo;
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<MedicalHistory> medicalHistories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Encounter> encounters = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Hospitalization> hospitalizations = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "MED_PATIENT_ALLERGY_MAP", joinColumns = @JoinColumn(name = "ID_PATIENT"), inverseJoinColumns = @JoinColumn(name = "ID_ALLERGY"))
+    @Builder.Default
+    private Set<Allergy> allergies = new HashSet<>();
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Medication> activeMedications = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_CURRENT_HOSPITAL", foreignKey = @ForeignKey(name = "FK_MED_PAT_CUR_HOSP"))
+    private Hospitalization currentHospitalization;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "FK_ID_CURRENT_BED", foreignKey = @ForeignKey(name = "FK_MED_PATIENT_BED"))
+    private Bed currentBed;
+
+    @Column(name = "IS_ACTIVE")
+    @Builder.Default
+    private Boolean active = true;
+
+    @Column(name = "ADDITIONAL_REMARKS", columnDefinition = "TEXT")
+    private String additionalRemarks;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizePatient() {
+        if (this.nhc != null) this.nhc = this.nhc.trim().toUpperCase();
+        if (this.occupation != null) this.occupation = this.occupation.trim();
+        if (this.nationality != null) this.nationality = this.nationality.trim();
+        if (this.registrationDate == null) this.registrationDate = LocalDateTime.now();
+    }
+
+    /**
+     * Helper clínico para obtener el historial médico único del paciente.
+     */
+    public MedicalHistory getMedicalHistory() {
+        if (this.medicalHistories == null || this.medicalHistories.isEmpty()) {
+            return null;
+        }
+        // Retorna la historia actual o la primera en la lista (SaaS Elite logic)
+        return this.medicalHistories.stream()
+                .filter(mh -> Boolean.TRUE.equals(mh.getIsCurrent()))
+                .findFirst()
+                .orElse(this.medicalHistories.get(0));
+    }
 }

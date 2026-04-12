@@ -5,13 +5,13 @@ import com.amachi.app.core.auth.entity.RefreshToken;
 import java.util.Optional;
 
 public interface RefreshTokenService {
-    RefreshToken createRefreshToken(Long userId, Long tenantId, String token);
+    RefreshToken createRefreshToken(Long userId, String tenantCode, String token);
 
     Optional<RefreshToken> findByToken(String token);
 
     void verifyExpiration(RefreshToken token);
 
-    void deleteByUserIdAndTenantId(Long userId, Long tenantId);
+    void deleteByUserIdAndTenantId(Long userId, String tenantCode);
 
     void deleteExpiredTokens();
 

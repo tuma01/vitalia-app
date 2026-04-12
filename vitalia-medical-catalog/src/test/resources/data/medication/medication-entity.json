@@ -1,6 +1,5 @@
 {
     "id": 1,
-    "tenantId": "test-tenant",
     "code": "MED001",
     "genericName": "Paracetamol",
     "commercialName": "Tylenol",
@@ -9,5 +8,7 @@
     "presentation": "BOX X 30 TABLETS",
     "active": true,
     "createdBy": "system",
-    "createdDate": "2024-01-01T10:00:00"
+    "createdDate": "2024-01-01T10:00:00",
+    "version": 0,
+    "externalId": "50abe51b-95a1-43cf-9b34-69b37464872c"
 }

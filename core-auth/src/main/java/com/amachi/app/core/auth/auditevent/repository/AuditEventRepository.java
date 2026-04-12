@@ -2,11 +2,11 @@ package com.amachi.app.core.auth.auditevent.repository;
 
 import com.amachi.app.core.auth.auditevent.entity.AuditEvent;
 import com.amachi.app.core.common.enums.AuditEventType;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.amachi.app.core.common.repository.CommonRepository;
 
 import java.util.List;
 
-public interface AuditEventRepository extends JpaRepository<AuditEvent, Long> {
+public interface AuditEventRepository extends CommonRepository<AuditEvent, Long> {
 
     List<AuditEvent> findByTenantId(Long tenantId);
 

@@ -1,34 +1,21 @@
 package com.amachi.app.core.auth.entity;
 
 import com.amachi.app.core.auth.enums.InvitationStatus;
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 /**
- * Represents a user invitation sent by a TenantAdmin to onboard a new staff member.
- *
- * <p>When a TenantAdmin assigns a user in the IAM module, an invitation record is persisted
- * here and a secure one-time link is dispatched via email. The invited person uses the link
- * to complete their own profile and credentials (self-onboarding flow).
- *
- * <p>Lifecycle:
- * <pre>
- *   PENDING  →  ACCEPTED  (user completed registration)
- *   PENDING  →  EXPIRED   (token TTL exceeded without acceptance)
- *   PENDING  →  CANCELLED (admin revoked the invitation manually)
- * </pre>
- *
- * @see InvitationStatus
+ * Represents a user invitation sent by a TenantAdmin to onboard a new staff member (Elite Tier).
+ * Posee aislamiento nativo multi-tenant y resiliencia estructural.
  */
 @Getter
 @Setter
@@ -45,11 +32,11 @@ import java.time.LocalDateTime;
     },
     indexes = {
         @Index(name = "IDX_INVITATION_STATUS",  columnList = "STATUS"),
-        @Index(name = "IDX_INVITATION_TENANT",  columnList = "FK_ID_TENANT"),
+        @Index(name = "IDX_INVITATION_TENANT",  columnList = "TENANT_ID"),
         @Index(name = "IDX_INVITATION_USER",    columnList = "FK_ID_USER")
     }
 )
-public class UserInvitation extends Auditable<String> implements Model {
+public class UserInvitation extends BaseTenantEntity implements Model {
 
     // ──────────────────────────────────────────────
     // Relation to the pre-created User
@@ -81,7 +68,8 @@ public class UserInvitation extends Auditable<String> implements Model {
     @NotNull(message = "validation.invitation.tenant.required")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-        name = "FK_ID_TENANT",
+        name = "TENANT_ID",
+        referencedColumnName = "CODE",
         nullable = false,
         foreignKey = @ForeignKey(name = "FK_INVITATION_TENANT")
     )
@@ -110,7 +98,7 @@ public class UserInvitation extends Auditable<String> implements Model {
      * Unique across the whole system.
      */
     @NotBlank(message = "validation.invitation.token.required")
-    @Column(name = "TOKEN", nullable = false, unique = true, length = 255)
+    @Column(name = "TOKEN", nullable = false, unique = true)
     private String token;
 
     /**

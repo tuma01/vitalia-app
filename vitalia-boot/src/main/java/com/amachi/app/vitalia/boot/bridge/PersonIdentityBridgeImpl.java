@@ -3,12 +3,15 @@ package com.amachi.app.vitalia.boot.bridge;
 import com.amachi.app.core.auth.bridge.PersonIdentityBridge;
 import com.amachi.app.core.auth.entity.User;
 import com.amachi.app.core.common.enums.PersonType;
+import com.amachi.app.core.common.enums.EmployeeType;
+import com.amachi.app.core.common.enums.EmployeeStatus;
+import com.amachi.app.core.common.enums.SuperAdminLevel;
+import com.amachi.app.core.common.enums.TenantAdminLevel;
 import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.core.management.superadmin.entity.SuperAdmin;
 import com.amachi.app.core.management.tenantadmin.entity.TenantAdmin;
 import com.amachi.app.core.management.util.PersonTypeValidator;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
-import com.amachi.app.core.common.enums.*;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
@@ -31,7 +34,7 @@ public class PersonIdentityBridgeImpl implements PersonIdentityBridge {
             return Person.builder().build();
         }
 
-        Person person = switch (type) {
+        Person genericPerson = switch (type) {
             case SUPER_ADMIN -> SuperAdmin.builder()
                     .level(SuperAdminLevel.LEVEL_1)
                     .globalAccess(true)
@@ -57,15 +60,15 @@ public class PersonIdentityBridgeImpl implements PersonIdentityBridge {
 
         // Extract names from context if available (No more patches!)
         if (context != null) {
-            if (context.containsKey("nombre")) {
-                person.setNombre((String) context.get("nombre"));
+            if (context.containsKey("firstName")) {
+                genericPerson.setFirstName((String) context.get("firstName"));
             }
-            if (context.containsKey("apellidoPaterno")) {
-                person.setApellidoPaterno((String) context.get("apellidoPaterno"));
+            if (context.containsKey("lastName")) {
+                genericPerson.setLastName((String) context.get("lastName"));
             }
         }
         
-        return person;
+        return genericPerson;
     }
 
     @Override

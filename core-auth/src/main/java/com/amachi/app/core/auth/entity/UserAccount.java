@@ -1,38 +1,63 @@
 package com.amachi.app.core.auth.entity;
 
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Entidad UserAccount (SaaS Elite Tier).
+ * Vincula una identidad global (User) con un contexto específico (Tenant).
+ */
 @Entity
-@Table(name = "AUT_USER_ACCOUNT")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(
+    name = "AUT_USER_ACCOUNT",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UK_USER_TENANT_ACCOUNT", columnNames = {"USER_ID", "TENANT_ID"})
+    },
+    indexes = {
+        @Index(name = "IDX_USER_ACCOUNT_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_USER_ACCOUNT_PERSON", columnList = "PERSON_ID")
+    }
+)
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
-public class UserAccount extends Auditable<String> implements Model {
-
-    // ID heredado de Auditable/BaseEntity
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user; // 🔹 credenciales
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "Link between global user identity and specific tenant context")
+public class UserAccount extends BaseTenantEntity implements Model {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PERSON_ID", nullable = false)
+    @JoinColumn(name = "USER_ID", nullable = false, foreignKey = @ForeignKey(name = "FK_USER_ACCOUNT_USER"))
+    private User user;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PERSON_ID", nullable = false, foreignKey = @ForeignKey(name = "FK_USER_ACCOUNT_PERSON"))
     private Person person;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "TENANT_ID", nullable = false)
-    private Tenant tenant;
+    @JoinColumn(
+        name = "TENANT_ID", 
+        referencedColumnName = "CODE", 
+        nullable = false, 
+        insertable = false, 
+        updatable = false,
+        foreignKey = @ForeignKey(name = "FK_USER_ACCOUNT_TENANT")
+    )
+    private Tenant tenant; // Reference to the actual Tenant entity for business logic
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeAccount() {
+        if (this.tenant != null && getTenantId() == null) {
+            // Geographic standard: propaga el código del tenant al campo de aislamiento sistémico
+            setTenantId(this.tenant.getCode());
+        }
+    }
 
     public Long getUserId() {
         return user != null ? user.getId() : null;
@@ -42,7 +67,7 @@ public class UserAccount extends Auditable<String> implements Model {
         return person != null ? person.getId() : null;
     }
 
-    public Long getTenantId() {
+    public Long getTenantPk() {
         return tenant != null ? tenant.getId() : null;
     }
 }

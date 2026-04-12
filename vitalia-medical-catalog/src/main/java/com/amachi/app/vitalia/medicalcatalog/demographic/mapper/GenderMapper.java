@@ -12,13 +12,13 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface GenderMapper extends EntityDtoMapper<Gender, GenderDto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     Gender toEntity(GenderDto dto);
-
+ 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(GenderDto dto, @MappingTarget Gender entity);

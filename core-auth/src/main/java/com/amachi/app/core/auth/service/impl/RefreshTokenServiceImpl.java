@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
@@ -24,21 +23,22 @@ import java.util.Optional;
 public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final com.amachi.app.core.auth.bridge.TenantBridge tenantBridge;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional
-    public RefreshToken createRefreshToken(Long userId, Long tenantId, String token) {
+    public RefreshToken createRefreshToken(Long userId, String tenantCode, String token) {
         User userRef = entityManager.getReference(User.class, userId);
-        Tenant tenantRef = entityManager.getReference(Tenant.class, tenantId);
+        Tenant tenantRef = tenantBridge.findByCode(tenantCode);
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(userRef)
-                .tenant(tenantRef)
+                .tenantId(tenantCode)
                 .token(token)
-                .expiryDate(Instant.now().plus(7, ChronoUnit.DAYS))
+                .expiryDate(Instant.now().plus(7, java.time.temporal.ChronoUnit.DAYS))
                 .revoked(false)
                 .build();
 
@@ -54,7 +54,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     @Transactional
     public void verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().isBefore(Instant.now())) {
+        if (!token.isValid()) {
             refreshTokenRepository.delete(token);
             throw new TokenException("Refresh token expired. Please sign in again.", "REFRESH_TOKEN_EXPIRED");
         }
@@ -62,8 +62,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     @Transactional
-    public void deleteByUserIdAndTenantId(Long userId, Long tenantId) {
-        refreshTokenRepository.deleteByUserIdAndTenantId(userId, tenantId);
+    public void deleteByUserIdAndTenantId(Long userId, String tenantCode) {
+        refreshTokenRepository.deleteByUserIdAndTenantId(userId, tenantCode);
     }
 
     @Override

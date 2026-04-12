@@ -8,7 +8,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Medical Specialty Catalog Entity (Global Catalog).
+ * Catálogo de Especialidades Médicas (Global Pool).
+ * SaaS Elite Tier.
  */
 @Getter
 @Setter
@@ -19,15 +20,14 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(
-        name = "CAT_MEDICAL_SPECIALTY",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "UK_SPECIALTY_CODE", columnNames = {"CODE"})
-        },
-        indexes = {
-                @Index(name = "IDX_SPECIALTY_CODE", columnList = "CODE")
-        }
+    name = "CAT_MEDICAL_SPECIALTY",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UK_SPECIALTY_CODE", columnNames = {"CODE"})
+    }
 )
 public class MedicalSpecialty extends Auditable<String> implements Model {
+
+
 
     @NotBlank(message = "Code {err.mandatory}")
     @Column(name = "CODE", nullable = false, length = 20)
@@ -40,9 +40,8 @@ public class MedicalSpecialty extends Auditable<String> implements Model {
     @Column(name = "DESCRIPTION", length = 500)
     private String description;
 
-    @NotBlank(message = "Profession {err.mandatory}")
+    @Column(name = "TARGET_PROFESSION", length = 20)
     @Builder.Default
-    @Column(name = "TARGET_PROFESSION", nullable = false, length = 20)
     private String targetProfession = "BOTH"; // DOCTOR, NURSE, BOTH
 
     @Builder.Default

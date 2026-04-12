@@ -48,7 +48,11 @@
             <artifactId>mapstruct</artifactId>
         </dependency>
 
-        <!-- MapStruct Processor -->
+        <!-- Hibernate Envers (Auditoría en el Core) -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-envers</artifactId>
+        </dependency>
 
     </dependencies>
 

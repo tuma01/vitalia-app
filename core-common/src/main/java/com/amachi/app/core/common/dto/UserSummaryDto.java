@@ -40,5 +40,9 @@ public class UserSummaryDto {
     @Schema(description = "Roles del usuario dentro del tenant actual")
     private List<String> roles;
 
-    private boolean enabled; // ✅ agregado
+    @Schema(description = "Estado de habilitación de la cuenta")
+    private boolean enabled;
+
+    @Schema(description = "Fecha y hora del último acceso exitoso")
+    private java.time.LocalDateTime lastLogin;
 }

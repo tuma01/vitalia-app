@@ -7,7 +7,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -25,8 +24,8 @@ public class MultiTenantFilter extends OncePerRequestFilter {
     private final TenantCache tenantCache;
     private final Translator translator;
 
-    public MultiTenantFilter(TenantResolver tenantResolver, 
-                              @Lazy TenantCache tenantCache, 
+    public MultiTenantFilter(TenantResolver tenantResolver,
+                              @Lazy TenantCache tenantCache,
                               Translator translator) {
         this.tenantResolver = tenantResolver;
         this.tenantCache = tenantCache;
@@ -47,16 +46,9 @@ public class MultiTenantFilter extends OncePerRequestFilter {
             // 1️⃣ Resolver tenantCode (fuente única)
             String tenantCode = tenantResolver.resolveTenant(request);
 
-            // 2️⃣ Establecer Contexto (Crucial para evitar bucles en TenantFilterAspect)
-            TenantContext.setTenantCode(tenantCode);
-            try {
-                com.amachi.app.core.domain.tenant.entity.Tenant tenant = tenantCache.getTenant(tenantCode);
-                if (tenant != null) {
-                    TenantContext.setTenantId(tenant.getId());
-                }
-            } catch (Exception e) {
-                log.warn("⚠️ No se pudo cargar el ID del tenant [{}] en el contexto inicial", tenantCode);
-            }
+            // 2️⃣ Establecer Contexto String para Aislamiento de BD
+            TenantContext.setTenant(tenantCode);
+
 
             // 3️⃣ Propagar a request
             request.setAttribute("tenantCode", tenantCode);

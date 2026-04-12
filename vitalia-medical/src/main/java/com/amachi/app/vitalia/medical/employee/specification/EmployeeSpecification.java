@@ -1,52 +1,64 @@
 package com.amachi.app.vitalia.medical.employee.specification;
 
+import com.amachi.app.core.common.specification.BaseSpecification;
 import com.amachi.app.vitalia.medical.employee.dto.search.EmployeeSearchDto;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import org.springframework.data.jpa.domain.Specification;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.criteria.Root;
+
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
-public class EmployeeSpecification implements Specification<Employee> {
+/**
+ * Motor de búsqueda avanzada para Staff Administrativo (SaaS Elite Tier).
+ * Garantiza el aislamiento multitenant y filtrado por estado laboral.
+ */
+public class EmployeeSpecification extends BaseSpecification<Employee> {
 
-    private final EmployeeSearchDto searchDto;
+    private final EmployeeSearchDto criteria;
+
+    public EmployeeSpecification(EmployeeSearchDto criteria) {
+        this.criteria = criteria;
+    }
 
     @Override
-    public jakarta.persistence.criteria.Predicate toPredicate(
-            jakarta.persistence.criteria.Root<Employee> root,
-            jakarta.persistence.criteria.CriteriaQuery<?> query,
-            jakarta.persistence.criteria.CriteriaBuilder cb) {
-        
+    public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
 
-        if (searchDto.getNombre() != null && !searchDto.getNombre().isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("nombre")), "%" + searchDto.getNombre().toLowerCase() + "%"));
+        // 🛡️ Filtros Base Automáticos (TENANT_ID e IS_DELETED) via BaseSpecification
+        predicates.addAll(buildBasePredicates(root, cb));
+
+        if (criteria == null) return cb.and(predicates.toArray(new Predicate[0]));
+
+        if (criteria.getQuery() != null && !criteria.getQuery().isBlank()) {
+            String q = "%" + criteria.getQuery().toLowerCase() + "%";
+            predicates.add(cb.or(
+                cb.like(cb.lower(root.get("firstName")), q),
+                cb.like(cb.lower(root.get("lastName")), q)
+            ));
         }
 
-        if (searchDto.getApellidoPaterno() != null && !searchDto.getApellidoPaterno().isEmpty()) {
-            predicates.add(cb.like(cb.lower(root.get("apellidoPaterno")), "%" + searchDto.getApellidoPaterno().toLowerCase() + "%"));
+        if (criteria.getEmployeeCode() != null && !criteria.getEmployeeCode().isBlank()) {
+            predicates.add(cb.equal(root.get("employeeCode"), criteria.getEmployeeCode()));
         }
 
-        if (searchDto.getNationalId() != null && !searchDto.getNationalId().isEmpty()) {
-            predicates.add(cb.equal(root.get("nationalId"), searchDto.getNationalId()));
+        if (criteria.getNationalId() != null && !criteria.getNationalId().isBlank()) {
+            predicates.add(cb.equal(root.get("nationalId"), criteria.getNationalId()));
         }
 
-        if (searchDto.getEmployeeType() != null) {
-            predicates.add(cb.equal(root.get("employeeType"), searchDto.getEmployeeType()));
+        if (criteria.getEmployeeType() != null) {
+            predicates.add(cb.equal(root.get("employeeType"), criteria.getEmployeeType()));
         }
 
-        if (searchDto.getEmployeeStatus() != null) {
-            predicates.add(cb.equal(root.get("employeeStatus"), searchDto.getEmployeeStatus()));
+        if (criteria.getEmployeeStatus() != null) {
+            predicates.add(cb.equal(root.get("employeeStatus"), criteria.getEmployeeStatus()));
         }
 
-        if (searchDto.getCodigoEmpleado() != null && !searchDto.getCodigoEmpleado().isEmpty()) {
-            predicates.add(cb.equal(root.get("codigoEmpleado"), searchDto.getCodigoEmpleado()));
+        if (criteria.getDepartmentUnitId() != null) {
+            predicates.add(cb.equal(root.get("departmentUnit").get("id"), criteria.getDepartmentUnitId()));
         }
-
-        // Soft Delete filter (if not handled by @Filter)
-        predicates.add(cb.equal(root.get("deleted"), false));
 
         return cb.and(predicates.toArray(new Predicate[0]));
     }

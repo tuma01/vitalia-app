@@ -6,5 +6,7 @@
     "targetProfession": "DOCTOR",
     "active": true,
     "createdBy": "system",
-    "createdDate": "2024-01-01T10:00:00"
+    "createdDate": "2024-01-01T10:00:00",
+    "version": 0,
+    "externalId": "18efeb13-5d5c-4817-bd76-f7fc329b2776"
 }

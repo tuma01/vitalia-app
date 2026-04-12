@@ -12,13 +12,13 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
+@Mapper(config = BaseMapperConfig.class, unmappedTargetPolicy = ReportingPolicy.IGNORE, builder = @Builder(disableBuilder = true))
 public interface CivilStatusMapper extends EntityDtoMapper<CivilStatus, CivilStatusDto> {
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     CivilStatus toEntity(CivilStatusDto dto);
-
+ 
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(CivilStatusDto dto, @MappingTarget CivilStatus entity);

@@ -1,34 +1,36 @@
 package com.amachi.app.vitalia.medical.avatar.entity;
 
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
+import com.amachi.app.core.common.entity.SoftDeletable;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
-
+/**
+ * Almacenamiento binario y metadata de avatares (SaaS Elite Tier).
+ */
 @Entity
-@Table(name = "MGT_AVATAR", indexes = {
-        @Index(name = "IDX_AVATAR_USER", columnList = "USER_ID"),
-        @Index(name = "IDX_AVATAR_TENANT", columnList = "TENANT_ID")
+@Table(name = "MED_AVATAR", indexes = {
+    @Index(name = "IDX_AVATAR_USER", columnList = "USER_ID"),
+    @Index(name = "IDX_AVATAR_TENANT", columnList = "TENANT_ID")
 })
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
-public class Avatar extends Auditable<String> implements Model {
+@EqualsAndHashCode(callSuper = true)
+@Audited
+@Schema(description = "Gestión de avatares y recursos multimedia — SaaS Elite Tier")
+public class Avatar extends BaseTenantEntity implements Model, SoftDeletable {
 
-    // ID heredado de Auditable/BaseEntity
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
 
     @Column(name = "USER_ID", nullable = false)
     private Long userId;
-
-    @Column(name = "TENANT_CODE", nullable = false, length = 100)
-    private String tenantCode;
 
     @Column(name = "FILENAME", length = 255)
     private String filename;
@@ -40,6 +42,11 @@ public class Avatar extends Auditable<String> implements Model {
     @Column(name = "CONTENT", columnDefinition = "LONGBLOB")
     private byte[] content;
 
-    @Column(name = "SIZE")
+    @Column(name = "CONTENT_SIZE")
     private Long size;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
 }

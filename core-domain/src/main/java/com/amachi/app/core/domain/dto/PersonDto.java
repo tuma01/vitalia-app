@@ -5,7 +5,6 @@ import com.amachi.app.core.common.enums.EstadoCivilEnum;
 import com.amachi.app.core.common.enums.GeneroEnum;
 import com.amachi.app.core.common.enums.PersonType;
 import com.amachi.app.core.geography.address.dto.AddressDto;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -40,56 +39,55 @@ public abstract class PersonDto {
         @Schema(description = "Tipo de Persona", example = "PATIENT")
         private PersonType personType;
 
-        @NotBlank(message = "Nombre {err.mandatory}")
+        @NotBlank(message = "First Name {err.mandatory}")
         @Schema(description = "Nombre de la Persona", example = "Eric")
-        private String nombre;
+        private String firstName;
 
         @Valid
         @JsonProperty
         @Schema(description = "Segundo nombre de la Persona", example = "Juan")
-        private String segundoNombre;
+        private String middleName;
 
         @Valid
         @JsonProperty
-        @NotBlank(message = "Apellido Paterno {err.mandatory}")
+        @NotBlank(message = "Last Name {err.mandatory}")
         @Schema(description = "Apellido Paterno de la Persona", example = "Bouchard")
-        private String apellidoPaterno;
+        private String lastName;
 
         @Valid
         @JsonProperty
         @Schema(description = "Apellido Materno de la Persona", example = "Larico")
-        private String apellidoMaterno;
+        private String secondLastName;
 
         @Valid
         @JsonProperty
-//        @JsonFormat(pattern = "yyyy-MM-dd")
         @Schema(description = "La fecha de nacimiento de la Persona", example = "24-06-2000")
-        private LocalDate fechaNacimiento;
+        private LocalDate birthDate;
 
         @Valid
         @Builder.Default
         @JsonProperty
-        private EstadoCivilEnum estadoCivil = EstadoCivilEnum.SOLTERO;
+        private EstadoCivilEnum maritalStatus = EstadoCivilEnum.SOLTERO;
 
         @Valid
         @Builder.Default
         @JsonProperty
-        private GeneroEnum genero = GeneroEnum.FEMENINO;
+        private GeneroEnum gender = GeneroEnum.FEMENINO;
 
         @Valid
         @JsonProperty
-        @Schema(description = "Objeto Direcci├│n Completo (Para creaci├│n inline)")
+        @Schema(description = "Objeto Dirección Completo (Para creación inline)")
         private AddressDto address;
 
         @JsonProperty
         @Schema(description = "Telefono de la Persona", example = "514 2367944")
         @NotBlank(message = "Telephone {err.required}")
-        private String telefono;
+        private String phoneNumber;
 
         @Valid
         @JsonProperty
         @Schema(description = "Celular de la Persona", example = "514 236 7944")
-        private String celular;
+        private String mobileNumber;
 
         @Builder.Default
         private Set<Long> personTenantsIds = new HashSet<>();

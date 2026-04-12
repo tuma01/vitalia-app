@@ -2,97 +2,67 @@ package com.amachi.app.core.auth.service.impl;
 
 import com.amachi.app.core.auth.dto.search.RoleSearchDto;
 import com.amachi.app.core.auth.entity.Role;
+import com.amachi.app.core.auth.event.RoleCreatedEvent;
 import com.amachi.app.core.auth.repository.RoleRepository;
+import com.amachi.app.core.auth.service.RoleService;
 import com.amachi.app.core.auth.specification.RoleSpecification;
+import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.amachi.app.core.common.utils.AppConstants.Roles.ROLE_SUPER_ADMIN;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
 @Service
-public class RoleServiceImpl implements GenericService<Role, RoleSearchDto> {
+@RequiredArgsConstructor
+@Slf4j
+public class RoleServiceImpl extends BaseService<Role, RoleSearchDto> implements RoleService {
 
-    RoleRepository roleRepository;
+    private final RoleRepository repository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    public List<Role> getAll() {
-        List<Role> roles = roleRepository.findAll();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
-        boolean isSuperAdmin = auth != null && auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals(ROLE_SUPER_ADMIN));
-
-        if (!isSuperAdmin) {
-            return roles.stream()
-                    .filter(role -> !role.getName().equals(ROLE_SUPER_ADMIN))
-                    .collect(Collectors.toList());
-        }
-        return roles;
+    protected CommonRepository<Role, Long> getRepository() {
+        return repository;
     }
 
     @Override
-    public Page<Role> getAll(RoleSearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Specification<Role> specification = new RoleSpecification(searchDto);
-        return roleRepository.findAll(specification, pageable);
+    protected Specification<Role> buildSpecification(RoleSearchDto searchDto) {
+        return new RoleSpecification(searchDto);
     }
 
     @Override
-    public Role getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Role.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
     }
 
     @Override
-    public Role create(Role entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return roleRepository.save(entity);
+    protected void publishCreatedEvent(Role entity) {
+        eventPublisher.publish(new RoleCreatedEvent(entity.getId(), entity.getName()));
     }
 
     @Override
-    public Role update(Long id, Role entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        // Verificar que el Role exista
-        Role existing = roleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Role.class.getName(), "error.resource.not.found", id));
-        entity.setId(id);
-        return roleRepository.save(entity);
+    protected void publishUpdatedEvent(Role entity) {
+        // Roles are global catalogs; an update event is not required in the current
+        // event-driven flow. Method must be implemented to satisfy BaseService contract.
+        log.debug("Role updated: id={}, name={}", entity.getId(), entity.getName());
     }
 
     @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Role.class.getName(), "error.resource.not.found", id));
-        roleRepository.delete(role);
-    }
-
-    // Helper methods for internal use (found in Repo)
+    @Transactional(readOnly = true)
     public List<Role> findByNames(List<String> names) {
-        return roleRepository.findByNameIn(names);
+        return repository.findByNameIn(names);
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public Role findByName(String name) {
-        return roleRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(Role.class.getName(), "error.resource.not.found.by.name", name));
+        return repository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "error.role_not_found", name));
     }
 }

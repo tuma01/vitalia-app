@@ -7,11 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-/**
- * Medication (Vademecum) Entity (Global Catalog).
- */
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
@@ -22,12 +18,11 @@ import lombok.experimental.SuperBuilder;
     name = "CAT_MEDICATION",
     uniqueConstraints = {
         @UniqueConstraint(name = "UK_MEDICATION_CODE", columnNames = { "CODE" })
-    },
-    indexes = {
-        @Index(name = "IDX_MEDICATION_CODE", columnList = "CODE")
     }
 )
 public class Medication extends Auditable<String> implements Model {
+
+
 
     @NotBlank(message = "Code {err.mandatory}")
     @Column(name = "CODE", nullable = false, length = 20)

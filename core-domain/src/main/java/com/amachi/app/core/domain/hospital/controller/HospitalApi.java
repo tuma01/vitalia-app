@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface HospitalApi extends GenericApi<HospitalDto> {
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<HospitalDto> getHospitalById(
             @Parameter(description = "ID of the " + NAME_API + " to retrieve", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -49,7 +50,7 @@ public interface HospitalApi extends GenericApi<HospitalDto> {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<HospitalDto> createHospital(
             @Parameter(description = "Details of the " + NAME_API + " to create.", required = true)
-            @Valid @RequestBody HospitalDto dto
+            @Valid @RequestBody @NonNull HospitalDto dto
     );
 
     @Operation(
@@ -65,9 +66,9 @@ public interface HospitalApi extends GenericApi<HospitalDto> {
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<HospitalDto> updateHospital(
             @Parameter(description = "ID of the " + NAME_API + " to update.", required = true)
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NonNull Long id,
             @Parameter(description = "New details of the " + NAME_API + ".", required = true)
-            @Valid @RequestBody HospitalDto dto
+            @Valid @RequestBody @NonNull HospitalDto dto
     );
 
     @Operation(
@@ -83,7 +84,7 @@ public interface HospitalApi extends GenericApi<HospitalDto> {
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteHospital(
             @Parameter(description = "ID of the " + NAME_API + " to delete.", required = true)
-            @PathVariable("id") Long id
+            @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
@@ -107,8 +108,9 @@ public interface HospitalApi extends GenericApi<HospitalDto> {
             }
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PageResponseDto<HospitalDto>> getPaginatedHospitals(HospitalSearchDto searchDto,
-                    @Parameter(description = "Page index to retrieve.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) final Integer pageIndex,
-                    @Parameter(description = "Page size.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) final Integer pageSize
+    ResponseEntity<PageResponseDto<HospitalDto>> getPaginatedHospitals(
+            @NonNull HospitalSearchDto searchDto,
+            @Parameter(description = "Page index to retrieve.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+            @Parameter(description = "Page size.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }

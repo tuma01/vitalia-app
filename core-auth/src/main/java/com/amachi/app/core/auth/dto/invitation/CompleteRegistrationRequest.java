@@ -77,40 +77,40 @@ public class CompleteRegistrationRequest {
     /**
      * Legal first name of the person.
      */
-    @NotBlank(message = "validation.registration.nombre.required")
-    @Size(min = 2, max = 50, message = "validation.registration.nombre.size")
+    @NotBlank(message = "validation.registration.firstName.required")
+    @Size(min = 2, max = 50, message = "validation.registration.firstName.size")
     @Schema(description = "Legal first name.", example = "María", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String nombre;
+    private String firstName;
 
     /**
      * Optional second given name.
      */
-    @Size(max = 50, message = "validation.registration.segundoNombre.maxLength")
+    @Size(max = 50, message = "validation.registration.middleName.maxLength")
     @Schema(description = "Optional second given name.", example = "Alejandra")
-    private String segundoNombre;
+    private String middleName;
 
     /**
      * Legal paternal surname.
      */
-    @NotBlank(message = "validation.registration.apellidoPaterno.required")
-    @Size(min = 2, max = 50, message = "validation.registration.apellidoPaterno.size")
+    @NotBlank(message = "validation.registration.lastName.required")
+    @Size(min = 2, max = 50, message = "validation.registration.lastName.size")
     @Schema(description = "Paternal surname.", example = "García", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String apellidoPaterno;
+    private String lastName;
 
     /**
      * Optional maternal surname.
      */
-    @Size(max = 50, message = "validation.registration.apellidoMaterno.maxLength")
+    @Size(max = 50, message = "validation.registration.secondLastName.maxLength")
     @Schema(description = "Maternal surname.", example = "López")
-    private String apellidoMaterno;
+    private String secondLastName;
 
     /**
      * Mobile phone number. Used for contact purposes within the system — not for authentication.
      */
-    @Size(max = 50, message = "validation.registration.telefono.maxLength")
-    @Pattern(regexp = "^[+]?[0-9\\s\\-()]{7,20}$", message = "validation.registration.telefono.pattern")
+    @Size(max = 50, message = "validation.registration.phoneNumber.maxLength")
+    @Pattern(regexp = "^[+]?[0-9\\s\\-()]{7,20}$", message = "validation.registration.phoneNumber.pattern")
     @Schema(description = "Mobile or office phone number.", example = "+591 70000000")
-    private String telefono;
+    private String phoneNumber;
 
     /**
      * Personal email address stored in the {@code Person} entity as contact detail.

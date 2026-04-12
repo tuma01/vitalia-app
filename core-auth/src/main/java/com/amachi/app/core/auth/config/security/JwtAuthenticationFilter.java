@@ -119,13 +119,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                                 // 🔹 ESTABLECER CONTEXTO DE TENANT (THREAD-LOCAL)
                                 try {
-                                        TenantContext.setTenantCode(tenantCode);
-                                        Tenant tenant = tenantCache.getTenant(tenantCode);
-                                        if (tenant != null) {
-                                                TenantContext.setTenantId(tenant.getId());
-                                                log.trace("🏗️ TenantContext initialized with ID: {} and Code: {}", 
-                                                        tenant.getId(), tenantCode);
-                                        }
+                                        TenantContext.setTenant(tenantCode);
+                                        log.trace("🏗️ TenantContext initialized with Code: {}", tenantCode);
                                 } catch (Exception e) {
                                         log.warn("⚠️ Could not set TenantContext for code {}: {}", tenantCode, e.getMessage());
                                 }

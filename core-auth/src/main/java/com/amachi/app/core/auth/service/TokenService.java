@@ -10,7 +10,7 @@ public interface TokenService {
 
     TokenPairDto refreshTokenPair(String refreshToken);
 
-    void invalidateUserTokens(Long userId, Long tenantId);
+    void invalidateUserTokens(Long userId, String tenantCode);
 
     boolean validateRefreshToken(String refreshToken);
 

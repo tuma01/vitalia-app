@@ -4,7 +4,7 @@ import com.amachi.app.core.auth.entity.UserInvitation;
 import com.amachi.app.core.auth.enums.InvitationStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.amachi.app.core.common.repository.CommonRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,11 +16,11 @@ import java.util.Optional;
 /**
  * Spring Data JPA repository for {@link UserInvitation}.
  *
- * <p>Provides all standard CRUD operations inherited from {@link JpaRepository},
+ * <p>Provides all standard CRUD operations inherited from {@link CommonRepository},
  * plus domain-specific finders required by the invitation lifecycle.
  */
 @Repository
-public interface UserInvitationRepository extends JpaRepository<UserInvitation, Long> {
+public interface UserInvitationRepository extends CommonRepository<UserInvitation, Long> {
 
     /**
      * Finds an invitation by its one-time token.

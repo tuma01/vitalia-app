@@ -75,19 +75,19 @@ public class InvitationRequest {
      * First name of the person being invited.
      * Required to satisfy the Person entity constraints in the hybrid model.
      */
-    @NotBlank(message = "validation.invitation.nombre.required")
+    @NotBlank(message = "validation.invitation.firstName.required")
     @Schema(description = "First name of the invitee.",
             example = "Juan",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String nombre;
+    private String firstName;
 
     /**
      * Last name (father's side) of the person being invited.
      * Required to satisfy the Person entity constraints in the hybrid model.
      */
-    @NotBlank(message = "validation.invitation.apellidoPaterno.required")
+    @NotBlank(message = "validation.invitation.lastName.required")
     @Schema(description = "Last name of the invitee.",
             example = "Pérez",
             requiredMode = Schema.RequiredMode.REQUIRED)
-    private String apellidoPaterno;
+    private String lastName;
 }

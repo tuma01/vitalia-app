@@ -1,6 +1,6 @@
 package com.amachi.app.core.auth.entity;
 
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.domain.entity.Person;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Entidad principal que representa la cuenta del usuario en el sistema.
- * Hereda el ID de BaseEntity y la funcionalidad de auditoría de Auditable.
+ * Entidad principal que representa la cuenta del usuario en el sistema (Elite Tier).
+ * Posee aislamiento nativo multi-tenant y resiliencia estructural.
  */
 @Entity
 @Table(name = "AUT_USER")
@@ -29,7 +29,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class User extends Auditable<String> implements UserDetails, Principal {
+public class User extends BaseTenantEntity implements UserDetails, Principal {
 
     // ID heredado de Auditable/BaseEntity
 
@@ -59,11 +59,26 @@ public class User extends Auditable<String> implements UserDetails, Principal {
     @Builder.Default
     private Set<UserAccount> userAccounts = new HashSet<>();
 
+    // ==========================================
+    // 🧠 Lógica de Normalización (Elite Standard)
+    // ==========================================
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeUser() {
+        if (this.email != null) {
+            this.email = this.email.toLowerCase().trim();
+        }
+        // Identidad Global reside en 'SYSTEM'
+        if (getTenantId() == null) {
+            setTenantId("SYSTEM");
+        }
+    }
+
     // Métodos de seguridad
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // TODO🔹 Ahora debes mapear authorities dinámicamente desde UserTenantRole
         return Collections.emptyList();
     }
 

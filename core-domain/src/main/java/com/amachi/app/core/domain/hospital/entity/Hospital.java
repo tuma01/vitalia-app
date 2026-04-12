@@ -70,9 +70,21 @@ public class Hospital extends Tenant {
     @Column(name = "SOCIAL_LINKS", columnDefinition = "TEXT")
     private String socialLinks;
 
-    public String getSocialLinks() { return socialLinks; }
-    public void setSocialLinks(String socialLinks) { this.socialLinks = socialLinks; }
-
     @Column(name = "SEAL_URL", length = 255)
     private String sealUrl;
+
+    // ==========================================
+    // 🧠 Lógica de Normalización (Elite Standard)
+    // ==========================================
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeHospital() {
+        if (this.taxId != null) {
+            this.taxId = this.taxId.trim().toUpperCase();
+        }
+        if (this.legalName != null) {
+            this.legalName = this.legalName.trim();
+        }
+    }
 }

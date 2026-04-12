@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * <p>Security:
  * <ul>
- *     <li>{@code GET  /auth/invitations}        - protected (TENANT_ADMIN role required).</li>
- *     <li>{@code POST /auth/invitations}        - protected (TENANT_ADMIN role required).</li>
+ *     <li>{@code GET  /auth/invitations}             - protected (TENANT_ADMIN role required).</li>
+ *     <li>{@code POST /auth/invitations}             - protected (TENANT_ADMIN role required).</li>
  *     <li>{@code POST /auth/invitations/{id}/resend} - protected (TENANT_ADMIN role required).</li>
- *     <li>{@code GET  /auth/invitations/validate} - public (no auth required).</li>
- *     <li>{@code POST /auth/invitations/accept}  - public (no auth required).</li>
+ *     <li>{@code GET  /auth/invitations/validate}    - public (no auth required).</li>
+ *     <li>{@code POST /auth/invitations/accept}      - public (no auth required).</li>
  * </ul>
  */
 @RestController

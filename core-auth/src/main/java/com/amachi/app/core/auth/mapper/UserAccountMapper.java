@@ -2,7 +2,6 @@ package com.amachi.app.core.auth.mapper;
 
 import com.amachi.app.core.auth.dto.UserAccountDto;
 import com.amachi.app.core.auth.entity.UserAccount;
-import com.amachi.app.core.common.mapper.AuditableIgnoreConfig;
 import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import org.mapstruct.BeanMapping;
@@ -15,7 +14,6 @@ import org.mapstruct.ReportingPolicy;
 public interface UserAccountMapper extends EntityDtoMapper<UserAccount, UserAccountDto> {
 
     @Override
-    @AuditableIgnoreConfig.IgnoreAuditableFields
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "person", ignore = true)
@@ -24,9 +22,17 @@ public interface UserAccountMapper extends EntityDtoMapper<UserAccount, UserAcco
 
     @Override
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "person", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    void updateEntityFromDto(UserAccountDto dto, @org.mapstruct.MappingTarget UserAccount entity);
+
+    @Override
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "personId", source = "person.id")
     @Mapping(target = "tenantId", source = "tenant.id")
     @Mapping(target = "tenantName", source = "tenant.name")
+    @Mapping(target = "tenantCode", source = "tenant.code")
     UserAccountDto toDto(UserAccount entity);
 }

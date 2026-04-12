@@ -20,6 +20,7 @@ public enum ErrorCode {
     BUS_INVALID_STATE("BUS_003", "Invalid business state"),
     BUS_INSUFFICIENT_PERMISSIONS("BUS_004", "Insufficient permissions"),
     BUS_OPERATION_NOT_ALLOWED("BUS_005", "Operation not allowed"),
+    BUS_RULE_VIOLATION("BUS_006", "Business rule violation"),
 
     // --- SYSTEM ERRORS ---
     SYS_INTERNAL_ERROR("SYS_001", "Internal server error"),

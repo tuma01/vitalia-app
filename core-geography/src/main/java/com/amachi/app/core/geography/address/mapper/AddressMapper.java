@@ -5,6 +5,13 @@ import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.core.geography.address.dto.AddressDto;
 import com.amachi.app.core.geography.address.entity.Address;
+import com.amachi.app.core.geography.country.repository.CountryRepository;
+import com.amachi.app.core.geography.departamento.entity.Departamento;
+import com.amachi.app.core.geography.departamento.repository.DepartamentoRepository;
+import com.amachi.app.core.geography.municipio.entity.Municipio;
+import com.amachi.app.core.geography.municipio.repository.MunicipioRepository;
+import com.amachi.app.core.geography.provincia.entity.Provincia;
+import com.amachi.app.core.geography.provincia.repository.ProvinciaRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,13 +19,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AddressMapper implements EntityDtoMapper<Address, AddressDto> {
 
     @Autowired
-    protected com.amachi.app.core.geography.country.repository.CountryRepository countryRepository;
+    protected CountryRepository countryRepository;
+
     @Autowired
-    protected com.amachi.app.core.geography.departamento.repository.DepartamentoRepository departamentoRepository;
+    protected DepartamentoRepository departamentoRepository;
+
     @Autowired
-    protected com.amachi.app.core.geography.provincia.repository.ProvinciaRepository provinciaRepository;
+    protected ProvinciaRepository provinciaRepository;
+
     @Autowired
-    protected com.amachi.app.core.geography.municipio.repository.MunicipioRepository municipioRepository;
+    protected MunicipioRepository municipioRepository;
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
@@ -50,19 +60,19 @@ public abstract class AddressMapper implements EntityDtoMapper<Address, AddressD
     }
 
     @Named("loadDepartamento")
-    protected com.amachi.app.core.geography.departamento.entity.Departamento loadDepartamento(Long id) {
+    protected Departamento loadDepartamento(Long id) {
         if (id == null) return null;
         return departamentoRepository.findById(id).orElse(null);
     }
 
     @Named("loadProvincia")
-    protected com.amachi.app.core.geography.provincia.entity.Provincia loadProvincia(Long id) {
+    protected Provincia loadProvincia(Long id) {
         if (id == null) return null;
         return provinciaRepository.findById(id).orElse(null);
     }
 
     @Named("loadMunicipio")
-    protected com.amachi.app.core.geography.municipio.entity.Municipio loadMunicipio(Long id) {
+    protected Municipio loadMunicipio(Long id) {
         if (id == null) return null;
         return municipioRepository.findById(id).orElse(null);
     }
