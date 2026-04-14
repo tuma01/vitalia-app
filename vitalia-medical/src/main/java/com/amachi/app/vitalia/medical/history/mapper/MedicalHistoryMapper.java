@@ -16,15 +16,17 @@ public interface MedicalHistoryMapper extends EntityDtoMapper<MedicalHistory, Me
     @Override
     @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @Mapping(target = "patient.id", source = "patientId")
+    @Mapping(target = "responsibleDoctor.id", source = "responsibleDoctorId")
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "person", ignore = true)
-    @Mapping(target = "responsibleDoctor", ignore = true)
     @Mapping(target = "encounters", ignore = true)
     MedicalHistory toEntity(MedicalHistoryDto dto);
 
     @Override
     @Mapping(target = "patientId", source = "patient.id")
     @Mapping(target = "patientFullName", source = "patient.fullName")
+    @Mapping(target = "responsibleDoctorId", source = "responsibleDoctor.id")
+    @Mapping(target = "responsibleDoctorName", source = "responsibleDoctor.fullName")
     @Mapping(target = "externalId", source = "externalId")
     MedicalHistoryDto toDto(MedicalHistory entity);
 
@@ -32,9 +34,9 @@ public interface MedicalHistoryMapper extends EntityDtoMapper<MedicalHistory, Me
     @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "patient.id", source = "patientId")
+    @Mapping(target = "responsibleDoctor.id", source = "responsibleDoctorId")
     @Mapping(target = "isDeleted", ignore = true)
     @Mapping(target = "person", ignore = true)
-    @Mapping(target = "responsibleDoctor", ignore = true)
     @Mapping(target = "encounters", ignore = true)
     void updateEntityFromDto(MedicalHistoryDto dto, @MappingTarget MedicalHistory entity);
 }

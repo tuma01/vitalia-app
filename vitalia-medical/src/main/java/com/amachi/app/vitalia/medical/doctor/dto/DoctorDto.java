@@ -63,8 +63,11 @@ public class DoctorDto {
     @Schema(description = "Número de proveedor RAMQ (Fidelidad Canadá/Billing)", example = "123456")
     private String providerNumber;
 
-    @Schema(description = "Especialidad médica principal", example = "CARDIOLOGÍA INFANTIL")
+    @Schema(description = "Especialidad médica principal (Resumen)", example = "CARDIOLOGÍA INFANTIL")
     private String specialtiesSummary;
+
+    @Schema(description = "IDs de las especialidades vinculadas del catálogo global", example = "[1, 2, 5]")
+    private java.util.Set<Long> specialtyIds;
 
     @Schema(description = "Trayectoria resumida (Bio)", example = "15 años en cirugía cardiovascular.")
     private String bio;

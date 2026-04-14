@@ -1,6 +1,7 @@
 package com.amachi.app.vitalia.medical.doctor.entity;
 
 import com.amachi.app.core.auth.entity.User;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.vitalia.medicalcatalog.specialty.entity.MedicalSpecialty;
 import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.vitalia.medical.common.enums.DoctorAvailabilityStatus;
@@ -24,22 +25,31 @@ import java.util.Set;
 
 /**
  * Entidad Doctor (SaaS Elite Tier).
- * Hereda multi-tenant isolation via Person -> BaseTenantEntity.
+ * Rol con Aislamiento por Tenant + Vínculo a Identidad Global.
  */
 @Entity
-@Table(name = "MED_DOCTOR", indexes = {
-    @Index(name = "IDX_DOCTOR_TENANT", columnList = "TENANT_ID"),
-    @Index(name = "IDX_DOCTOR_LICENSE", columnList = "LICENSE_NUMBER")
-})
-@PrimaryKeyJoinColumn(name = "ID")
-@DiscriminatorValue("DOCTOR")
+@Table(name = "MED_DOCTOR", 
+    uniqueConstraints = {
+        @UniqueConstraint(name = "UK_DOCTOR_IDENTITY_TENANT", columnNames = {"FK_ID_PERSON", "TENANT_ID", "IS_DELETED"}),
+        @UniqueConstraint(name = "UK_DOCTOR_TENANT_LICENSE", columnNames = {"TENANT_ID", "LICENSE_NUMBER", "IS_DELETED"})
+    },
+    indexes = {
+        @Index(name = "IDX_DOCTOR_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_DOCTOR_PERSON", columnList = "FK_ID_PERSON"),
+        @Index(name = "IDX_DOCTOR_LICENSE", columnList = "LICENSE_NUMBER")
+    }
+)
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"professionalInfos", "assignments", "medicalHistories", "encounters"})
 @Audited
 @Schema(description = "Perfil integral facultativo — SaaS Elite Tier")
-public class Doctor extends Person implements SoftDeletable {
+public class Doctor extends BaseTenantEntity implements SoftDeletable {
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_DOC_PERSON"))
+    private Person person;
 
     @Column(name = "IS_DELETED", nullable = false)
     @Builder.Default
@@ -57,11 +67,11 @@ public class Doctor extends Person implements SoftDeletable {
     private List<ProfessionalInfo> professionalInfos = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-    @JoinTable(name = "MED_DOCTOR_SPECIALITY_MAP",
+    @JoinTable(name = "MED_DOCTOR_SPECIALTY_MAP",
             joinColumns = @JoinColumn(name = "ID_DOCTOR", referencedColumnName = "ID"),
-            inverseJoinColumns = @JoinColumn(name = "ID_SPECIALITY", referencedColumnName = "ID"))
+            inverseJoinColumns = @JoinColumn(name = "ID_SPECIALTY", referencedColumnName = "ID"))
     @Builder.Default
-    private Set<MedicalSpecialty> specialities = new HashSet<>();
+    private Set<MedicalSpecialty> specialties = new HashSet<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -122,10 +132,6 @@ public class Doctor extends Person implements SoftDeletable {
     @Column(name = "HIRE_DATE")
     private java.time.LocalDate hireDate;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ID_EMPLOYEE", foreignKey = @ForeignKey(name = "FK_MED_DOCTOR_HR"))
-    private Employee employee;
-
     @Column(name = "RAMQ_PROVIDER_NUMBER", length = 50)
     private String providerNumber;
 
@@ -139,6 +145,12 @@ public class Doctor extends Person implements SoftDeletable {
     @Builder.Default
     private Set<String> clinicalProcedures = new HashSet<>();
 
+    // --- Temporary Bridge Methods (Deprecated) ---
+    @Transient @Deprecated
+    public String getFirstName() { return person != null ? person.getFirstName() : null; }
+    @Transient @Deprecated
+    public String getLastName() { return person != null ? person.getLastName() : null; }
+
     @Override
     public void delete() {
         this.isDeleted = true;
@@ -151,4 +163,3 @@ public class Doctor extends Person implements SoftDeletable {
         if (this.officeNumber != null) this.officeNumber = this.officeNumber.trim();
         if (this.providerNumber != null) this.providerNumber = this.providerNumber.trim().toUpperCase();
     }
-}

@@ -1,8 +1,10 @@
 package com.amachi.app.vitalia.medical.nurse.entity;
 
 import com.amachi.app.core.auth.entity.User;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.domain.entity.Person;
+import com.amachi.app.vitalia.medical.doctor.entity.DoctorHospitalAssignment;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
 import com.amachi.app.vitalia.medical.infrastructure.entity.DepartmentUnit;
 import com.amachi.app.vitalia.medical.professional.entity.ProfessionalInfo;
@@ -22,28 +24,31 @@ import java.util.Set;
 
 /**
  * Entidad Nurse (SaaS Elite Tier).
- * Representa al personal de enfermería y staff asistencial técnico.
- * Hereda multi-tenant isolation via Person -> BaseTenantEntity.
+ * Identidad heredada de Person (GLOBAL) + Aislamiento por Tenant (LOCAL).
  */
 @Entity
 @Table(name = "MED_NURSE", 
     uniqueConstraints = {
-        @UniqueConstraint(name = "UK_NURSE_TENANT_LICENSE", columnNames = {"TENANT_ID", "NURSE_LICENSE"})
+        @UniqueConstraint(name = "UK_NURSE_TENANT_LICENSE", columnNames = {"TENANT_ID", "NURSE_LICENSE", "IS_DELETED"}),
+        @UniqueConstraint(name = "UK_NURSE_IDENTITY_TENANT", columnNames = {"FK_ID_PERSON", "TENANT_ID", "IS_DELETED"})
     },
     indexes = {
         @Index(name = "IDX_NURSE_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_NURSE_PERSON", columnList = "FK_ID_PERSON"),
         @Index(name = "IDX_NURSE_LICENSE", columnList = "NURSE_LICENSE")
     }
 )
-@PrimaryKeyJoinColumn(name = "ID")
-@DiscriminatorValue("NURSE")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @Audited
 @Schema(description = "Inpatient and clinical nursing staff profile — SaaS Elite Tier")
 @EqualsAndHashCode(callSuper = true, exclude = {"specialities", "professionalInfos", "clinicalSkills"})
-public class Nurse extends Person implements SoftDeletable {
+public class Nurse extends BaseTenantEntity implements SoftDeletable {
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_NURSE_PERSON"))
+    private Person person;
 
     @Column(name = "IS_DELETED", nullable = false)
     @Builder.Default
@@ -101,15 +106,17 @@ public class Nurse extends Person implements SoftDeletable {
     @JoinColumn(name = "FK_ID_USER", foreignKey = @ForeignKey(name = "FK_MED_NURSE_USER"))
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FK_ID_EMPLOYEE", foreignKey = @ForeignKey(name = "FK_MED_NURSE_HR"))
-    private Employee employee;
-
     @ElementCollection
     @CollectionTable(name = "MED_NURSE_SKILLS", joinColumns = @JoinColumn(name = "ID_NURSE"))
     @Column(name = "SKILL")
     @Builder.Default
     private Set<String> clinicalSkills = new HashSet<>();
+
+    // --- Temporary Bridge Methods (Deprecated) ---
+    @Transient @Deprecated
+    public String getFirstName() { return person != null ? person.getFirstName() : null; }
+    @Transient @Deprecated
+    public String getLastName() { return person != null ? person.getLastName() : null; }
 
     @Override
     public void delete() {

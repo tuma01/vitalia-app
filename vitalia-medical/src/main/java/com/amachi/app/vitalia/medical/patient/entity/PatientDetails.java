@@ -20,7 +20,7 @@ public class PatientDetails {
     @Schema(description = "Grupo sanguíneo vinculado al catálogo")
     private BloodType bloodType;
 
-    @Schema(description = "Peso en kilogramos", example = "75.5")
+    @Schema(description = "Peso en kilogramos", example = "75.50")
     @Column(name = "WEIGHT", precision = 5, scale = 2)
     private BigDecimal weight;
 

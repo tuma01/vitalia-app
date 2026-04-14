@@ -24,7 +24,7 @@ import java.time.OffsetDateTime;
 @Table(name = "MED_MEDICATION_REQUEST", indexes = {
     @Index(name = "IDX_MED_REQ_TENANT", columnList = "TENANT_ID"),
     @Index(name = "IDX_MED_REQ_PATIENT", columnList = "FK_ID_PATIENT"),
-    @Index(name = "IDX_MED_REQ_DOC", columnList = "FK_ID_PRACTITIONER")
+    @Index(name = "IDX_MED_REQ_DOC", columnList = "FK_ID_DOCTOR")
 })
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -47,8 +47,8 @@ public class MedicationRequest extends BaseTenantEntity implements Model, SoftDe
     private Encounter encounter;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "FK_ID_PRACTITIONER", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_REQ_DOC"))
-    private Doctor practitioner;
+    @JoinColumn(name = "FK_ID_DOCTOR", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_REQ_DOC"))
+    private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_MEDICATION", foreignKey = @ForeignKey(name = "FK_MED_REQ_MED"))

@@ -4,6 +4,7 @@ import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
+import com.amachi.app.vitalia.medicalcatalog.infrastructure.entity.MedicalUnitType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,8 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Unidad física o servicio dentro de un hospital (ej: Ala A - Piso 3 - Pediatría).
- * Es el bloque organizativo maestro de jerarquía hospitalaria (SaaS Elite Tier).
+ * Physical unit or service within a hospital (e.g., Wing A - Floor 3 - Pediatrics).
+ * Master organizational block of the hospital hierarchy (SaaS Elite Tier).
  */
 @Entity
 @Table(name = "MED_DEPARTMENT_UNIT", 
@@ -38,48 +39,48 @@ public class DepartmentUnit extends BaseTenantEntity implements Model, SoftDelet
     private Boolean isDeleted = false;
 
     /**
-     * Especialidad clínica de la unidad (ej: Cardiología).
+     * Clinical specialty or category of the unit (e.g., Cardiology).
      */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FK_ID_UNIT_TYPE", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_UNIT_TYPE"))
-    private DepartmentUnitType unitType;
+    private MedicalUnitType unitType;
 
     @Column(name = "NAME", nullable = false, length = 150)
-    @Schema(description = "Nombre descriptivo de la unidad", example = "Pabellón de Lactancia")
+    @Schema(description = "Descriptive name of the unit", example = "Pediatric Wing")
     private String name;
 
     @Column(name = "CODE", nullable = false, length = 50)
-    @Schema(description = "Código funcional de la unidad", example = "ICU-01")
+    @Schema(description = "Functional code of the unit", example = "ICU-01")
     private String code;
 
     /**
-     * Jefe o responsable operativo (Empleado activo del hospital).
+     * Operational head or manager (Active employee of the hospital).
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_EMPLOYEE", foreignKey = @ForeignKey(name = "FK_MED_UNIT_HEAD"))
-    private Employee headOfEmployee;
+    private Employee unitHead;
 
     /**
-     * Habitaciones vinculadas físicamente a esta unidad.
+     * Rooms physically linked to this unit.
      */
     @Builder.Default
     @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms = new HashSet<>();
 
     /**
-     * Piso físico donde se ubica la unidad (ej: "Sótano", "Piso 4").
+     * Physical floor where the unit is located (e.g., "Basement", "Floor 4").
      */
     @Column(name = "FLOOR", length = 50)
     private String floor;
 
     /**
-     * Número telefónico o extensión interna de la unidad.
+     * Contact phone number or internal extension.
      */
     @Column(name = "CONTACT_PHONE", length = 50)
     private String contactPhone;
 
     /**
-     * Descripción adicional de la unidad.
+     * Additional details or equipment notes.
      */
     @Column(name = "DESCRIPTION", length = 500)
     private String description;
@@ -88,17 +89,17 @@ public class DepartmentUnit extends BaseTenantEntity implements Model, SoftDelet
     @Builder.Default
     private Boolean active = true;
 
-    // --- Jerarquía Organizacional ---
+    // --- Organizational Hierarchy ---
 
     /**
-     * Unidad superior o departamento padre (jerarquía).
+     * Upper-level unit or parent entity (hierarchy).
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_PARENT_UNIT", foreignKey = @ForeignKey(name = "FK_MED_UNIT_PARENT"))
     private DepartmentUnit parentUnit;
 
     /**
-     * Sub-unidades o dependencias vinculadas.
+     * Linked subunits or dependencies.
      */
     @OneToMany(mappedBy = "parentUnit", cascade = CascadeType.ALL)
     @Builder.Default
@@ -127,3 +128,4 @@ public class DepartmentUnit extends BaseTenantEntity implements Model, SoftDelet
         if (this.floor != null) this.floor = this.floor.trim();
     }
 }
+

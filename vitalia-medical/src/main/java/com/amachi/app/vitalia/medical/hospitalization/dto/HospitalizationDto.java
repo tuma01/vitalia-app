@@ -94,14 +94,14 @@ public class HospitalizationDto {
     private String dischargeReason;
 
     @NotNull(message = "Admission Date {err.mandatory}")
-    @Schema(description = "Exact date and time of hospital admission", example = "2026-03-24T10:00:00")
-    private LocalDateTime admissionDate;
+    @Schema(description = "Exact date and time of hospital admission", example = "2026-03-24T10:00:00Z")
+    private java.time.OffsetDateTime admissionDate;
 
-    @Schema(description = "Estimated discharge date (Planning)", example = "2026-03-28T14:30:00")
-    private LocalDateTime estimatedDischargeDate;
+    @Schema(description = "Estimated discharge date (Planning)", example = "2026-03-28T14:30:00Z")
+    private java.time.OffsetDateTime estimatedDischargeDate;
 
-    @Schema(description = "Actual clinical discharge date and time", example = "2026-03-28T14:30:00")
-    private LocalDateTime dischargeDate;
+    @Schema(description = "Actual clinical discharge date and time", example = "2026-03-28T14:30:00Z")
+    private java.time.OffsetDateTime dischargeDate;
 
     @Schema(description = "Scheduled follow-up date", example = "2026-04-05")
     private java.time.LocalDate followUpDate;

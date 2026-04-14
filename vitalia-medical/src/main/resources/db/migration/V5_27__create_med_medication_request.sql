@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_27__create_med_medication_request.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_MEDICATION_REQUEST (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_MEDICATION_REQUEST (
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS MED_MEDICATION_REQUEST (
     -- ==========================================
     FK_ID_PATIENT       BIGINT NOT NULL,
     FK_ID_ENCOUNTER     BIGINT,
-    FK_ID_PRACTITIONER  BIGINT NOT NULL,
+    FK_ID_DOCTOR        BIGINT NOT NULL,
     FK_ID_MEDICATION    BIGINT,
 
     -- ==========================================
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS MED_MEDICATION_REQUEST (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 
@@ -49,7 +49,8 @@ CREATE TABLE IF NOT EXISTS MED_MEDICATION_REQUEST (
     -- ==========================================
     CONSTRAINT FK_MED_REQ_PATIENT FOREIGN KEY (FK_ID_PATIENT) REFERENCES MED_PATIENT(ID),
     CONSTRAINT FK_MED_REQ_ENC     FOREIGN KEY (FK_ID_ENCOUNTER) REFERENCES MED_ENCOUNTER(ID),
-    CONSTRAINT FK_MED_REQ_DOC     FOREIGN KEY (FK_ID_PRACTITIONER) REFERENCES MED_DOCTOR(ID),
+    CONSTRAINT FK_MED_REQ_DOC     FOREIGN KEY (FK_ID_DOCTOR) REFERENCES MED_DOCTOR(ID),
+    CONSTRAINT FK_MED_REQ_MED     FOREIGN KEY (FK_ID_MEDICATION) REFERENCES CAT_MEDICATION(ID),
     
     INDEX IDX_MED_REQ_TENANT  (TENANT_ID),
     INDEX IDX_MED_REQ_PATIENT (FK_ID_PATIENT),

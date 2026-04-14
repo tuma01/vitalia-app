@@ -13,8 +13,8 @@ import org.hibernate.envers.Audited;
 import java.time.LocalDate;
  
 /**
- * Registro de consumo de sustancias y hábitos perjudiciales/riesgos de salud (SaaS Elite Tier).
- * Alineado con el estándar de evaluación de riesgos conductuales.
+ * Record of substance consumption and harmful habits/health risks (SaaS Elite Tier).
+ * Aligned with behavioral risk assessment standards.
  */
 @Entity
 @Table(
@@ -29,7 +29,7 @@ import java.time.LocalDate;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Audited
-@Schema(description = "Evaluación de consumo de sustancias tóxicas (Clinical Tier)")
+@Schema(description = "Behavioral risk and substance consumption assessment (Clinical Tier)")
 public class ToxicHabit extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)

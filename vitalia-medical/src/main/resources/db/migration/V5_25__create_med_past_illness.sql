@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_25__create_med_past_illness.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_PAST_ILLNESS (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_PAST_ILLNESS (
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS MED_PAST_ILLNESS (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

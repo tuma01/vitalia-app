@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_16__create_med_physiological_habit.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_PHYSIOLOGICAL_HABIT (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_PHYSIOLOGICAL_HABIT (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS MED_PHYSIOLOGICAL_HABIT (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

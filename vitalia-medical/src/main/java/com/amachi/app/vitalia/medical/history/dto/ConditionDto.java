@@ -47,11 +47,11 @@ public class ConditionDto {
     private String name;
 
     @NotNull(message = "Médico {err.mandatory}")
-    @Schema(description = "ID del facultativo diagnosticador", example = "2001")
-    private Long practitionerId;
+    @Schema(description = "ID del facultativo que diagnostica", example = "2001")
+    private Long doctorId;
 
-    @Schema(description = "Nombre del médico (Solo lectura)", example = "DR. MARCOS SOLIZ", accessMode = Schema.AccessMode.READ_ONLY)
-    private String practitionerFullName;
+    @Schema(description = "Nombre completo del médico (Solo lectura)", example = "DR. MARCOS SOLIZ", accessMode = Schema.AccessMode.READ_ONLY)
+    private String doctorFullName;
 
     @NotNull(message = "Estado Clínico {err.mandatory}")
     @Schema(description = "Estado actual de la patología (ACTIVE, RECURRENCE, RELAPSE, INACTIVE, REMISSION, RESOLVED)", example = "ACTIVE")

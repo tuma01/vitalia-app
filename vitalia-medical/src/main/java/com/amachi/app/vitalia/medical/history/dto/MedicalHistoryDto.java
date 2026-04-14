@@ -26,17 +26,22 @@ public class MedicalHistoryDto {
     @NotNull(message = "Número de Historia {err.mandatory}")
     @Schema(description = "Código funcional de la historia clínica", example = "HC-2026-X001")
     private String historyNumber;
-
     @Schema(description = "UUID Global del documento", example = "550e8400-e29b-41d4-a716-446655440000")
     private String documentUuid;
 
     // --- Identidad y Contexto ---
     @NotNull(message = "Paciente {err.mandatory}")
-    @Schema(description = "ID del paciente titular", example = "5001")
+    @Schema(description = "ID del paciente propietario", example = "5001")
     private Long patientId;
 
-    @Schema(description = "Nombre completo del paciente (Solo lectura)", example = "JUAN CARLOS PEREZ GARCIA")
+    @Schema(description = "Nombre completo del paciente (Solo lectura)", example = "JUAN PEREZ")
     private String patientFullName;
+
+    @Schema(description = "ID del médico responsable principal", example = "2001")
+    private Long responsibleDoctorId;
+
+    @Schema(description = "Nombre del médico responsable (Solo lectura)", example = "DR. MARIO SOLIZ")
+    private String responsibleDoctorName;
 
     @Schema(description = "ID del Tenant/SaaS", example = "1")
     private Long tenantId;

@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_11__create_med_appointment.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_APPOINTMENT (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_APPOINTMENT (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS MED_APPOINTMENT (
     NO_SHOW             BOOLEAN DEFAULT FALSE NOT NULL,
 
     -- ==========================================
-    -- Lifecycle Lifecycle
+    -- Lifecycle
     -- ==========================================
     CHECKED_IN_AT       DATETIME(6),
     COMPLETED_AT        DATETIME(6),
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS MED_APPOINTMENT (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS MED_APPOINTMENT (
     -- ==========================================
     CONSTRAINT FK_MED_APP_PATIENT   FOREIGN KEY (FK_ID_PATIENT)   REFERENCES MED_PATIENT(ID),
     CONSTRAINT FK_MED_APP_DOCTOR    FOREIGN KEY (FK_ID_DOCTOR)    REFERENCES MED_DOCTOR(ID),
-    CONSTRAINT FK_MED_APP_ENCOUNTER FOREIGN KEY (FK_ID_ENCOUNTER) REFERENCES MED_PATIENT_VISIT(ID),
+    CONSTRAINT FK_MED_APP_ENCOUNTER FOREIGN KEY (FK_ID_ENCOUNTER) REFERENCES MED_ENCOUNTER(ID),
     
     INDEX IDX_APP_TENANT  (TENANT_ID),
     INDEX IDX_APP_PATIENT (FK_ID_PATIENT),

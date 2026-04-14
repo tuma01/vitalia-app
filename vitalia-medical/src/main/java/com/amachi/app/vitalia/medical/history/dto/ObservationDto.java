@@ -37,10 +37,10 @@ public class ObservationDto {
 
     @NotNull(message = "Médico {err.mandatory}")
     @Schema(description = "ID del facultativo que registra la medición", example = "2001")
-    private Long practitionerId;
+    private Long doctorId;
 
     @Schema(description = "Nombre del médico (Solo lectura)", example = "DR. MARCOS SOLIZ", accessMode = Schema.AccessMode.READ_ONLY)
-    private String practitionerFullName;
+    private String doctorFullName;
 
     @NotNull(message = "Estado {err.mandatory}")
     @Schema(description = "Estado de la medición (REGISTERED, PRELIMINARY, FINAL, AMENDED, CANCELLED)", example = "FINAL")

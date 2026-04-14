@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_22__create_med_condition.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_CONDITION (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_CONDITION (
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS MED_CONDITION (
     FK_ID_MEDICAL_HISTORY   BIGINT NOT NULL,
     FK_ID_ENCOUNTER         BIGINT,
     FK_ID_ICD10             BIGINT,                      -- Referencia al catálogo global de diagnósticos
-    FK_ID_PRACTITIONER      BIGINT NOT NULL,             -- Médico que diagnóstica
+    FK_ID_DOCTOR            BIGINT NOT NULL,             -- Médico que diagnóstica
     FK_ID_EPISODE_OF_CARE   BIGINT,
 
     -- ==========================================
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS MED_CONDITION (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS MED_CONDITION (
     CONSTRAINT FK_MED_COND_PATIENT FOREIGN KEY (FK_ID_PATIENT) REFERENCES MED_PATIENT(ID),
     CONSTRAINT FK_MED_COND_HIST    FOREIGN KEY (FK_ID_MEDICAL_HISTORY) REFERENCES MED_MEDICAL_HISTORY(ID),
     CONSTRAINT FK_MED_COND_ENC     FOREIGN KEY (FK_ID_ENCOUNTER) REFERENCES MED_ENCOUNTER(ID),
-    CONSTRAINT FK_MED_COND_DOC     FOREIGN KEY (FK_ID_PRACTITIONER) REFERENCES MED_DOCTOR(ID),
+    CONSTRAINT FK_MED_COND_DOC     FOREIGN KEY (FK_ID_DOCTOR) REFERENCES MED_DOCTOR(ID),
 
     INDEX IDX_COND_TENANT  (TENANT_ID),
     INDEX IDX_COND_PATIENT (FK_ID_PATIENT),
