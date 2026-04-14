@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
+import com.amachi.app.core.common.entity.SoftDeletable;
 
 /**
  * Theme Entity (Tenant-specific UI Configuration).
@@ -20,7 +21,16 @@ import com.amachi.app.core.common.entity.Model;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "DMN_THEME")
-public class Theme extends BaseTenantEntity implements Model {
+public class Theme extends BaseTenantEntity implements Model, SoftDeletable {
+
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
 
     @Column(name = "CODE", length = 50, nullable = false)
     private String code;

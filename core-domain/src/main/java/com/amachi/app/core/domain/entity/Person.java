@@ -1,7 +1,8 @@
 package com.amachi.app.core.domain.entity;
 
-import com.amachi.app.core.common.entity.BaseTenantEntity;
+import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
+import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.*;
 import com.amachi.app.core.geography.address.entity.Address;
 import org.hibernate.envers.Audited;
@@ -19,7 +20,8 @@ import java.util.Set;
 
 /**
  * Entidad Person (Elite Tier Standard).
- * Base para todas las identidades humanas del sistema (Patient, Doctor, Nurse, etc).
+ * Base de Identidad Global (Shared Identity Pattern).
+ * Esta entidad NO posee TENANT_ID ya que la identidad es universal en la plataforma.
  */
 @Entity
 @Table(name = "DMN_PERSON")
@@ -28,10 +30,20 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true, exclude = {"personTenants"})
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "PERSON_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Audited
-public class Person extends BaseTenantEntity implements Model {
+public class Person extends Auditable<String> implements Model, SoftDeletable {
+
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
 
     @Column(name = "NATIONAL_ID", length = 100, unique = true)
     private String nationalId;
@@ -49,38 +61,38 @@ public class Person extends BaseTenantEntity implements Model {
 
     @NotBlank(message = "{err.required}")
     @Size(min = 2, max = 50)
-    @Column(name = "NOMBRE", nullable = false) 
+    @Column(name = "FIRST_NAME", nullable = false) 
     private String firstName;
 
-    @Column(name = "SEGUNDO_NOMBRE", length = 50)
+    @Column(name = "MIDDLE_NAME", length = 50)
     private String middleName;
 
     @NotBlank(message = "{err.required}")
-    @Column(name = "APELLIDO_PATERNO", length = 50, nullable = false)
+    @Column(name = "LAST_NAME", length = 50, nullable = false)
     private String lastName;
 
-    @Column(name = "APELLIDO_MATERNO", length = 50)
+    @Column(name = "SECOND_LAST_NAME", length = 50)
     private String secondLastName;
 
-    @Column(name = "FECHA_NACIMIENTO")
+    @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ESTADO_CIVIL")
-    private EstadoCivilEnum maritalStatus;
+    @Column(name = "MARITAL_STATUS")
+    private CivilStatus maritalStatus;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "GENERO")
-    private GeneroEnum gender;
+    @Column(name = "GENDER")
+    private Gender gender;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_ADDRESS", foreignKey = @ForeignKey(name = "FK_PERSON_ADDRESS"))
     private Address address;
 
-    @Column(name = "TELEFONO", length = 50)
+    @Column(name = "PHONE_NUMBER", length = 50)
     private String phoneNumber;
 
-    @Column(name = "CELULAR", length = 50)
+    @Column(name = "MOBILE_NUMBER", length = 50)
     private String mobileNumber;
 
     @Column(name = "EMAIL", length = 100)

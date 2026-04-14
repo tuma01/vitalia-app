@@ -16,11 +16,11 @@ import org.mapstruct.ReportingPolicy;
 public interface HospitalMapper extends EntityDtoMapper<Hospital, HospitalDto> {
 
     @Override
-    @AuditableIgnoreConfig.IgnoreAuditableFields
+    @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     Hospital toEntity(HospitalDto dto);
 
-    @AuditableIgnoreConfig.IgnoreAuditableFields
+    @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
     void updateEntityFromDto(HospitalDto dto, @MappingTarget Hospital entity);
 

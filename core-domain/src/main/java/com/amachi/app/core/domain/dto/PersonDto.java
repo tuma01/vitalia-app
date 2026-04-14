@@ -1,8 +1,8 @@
 package com.amachi.app.core.domain.dto;
 
 import com.amachi.app.core.common.enums.DocumentType;
-import com.amachi.app.core.common.enums.EstadoCivilEnum;
-import com.amachi.app.core.common.enums.GeneroEnum;
+import com.amachi.app.core.common.enums.CivilStatus;
+import com.amachi.app.core.common.enums.Gender;
 import com.amachi.app.core.common.enums.PersonType;
 import com.amachi.app.core.geography.address.dto.AddressDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -67,12 +67,12 @@ public abstract class PersonDto {
         @Valid
         @Builder.Default
         @JsonProperty
-        private EstadoCivilEnum maritalStatus = EstadoCivilEnum.SOLTERO;
+        private CivilStatus maritalStatus = CivilStatus.SINGLE;
 
         @Valid
         @Builder.Default
         @JsonProperty
-        private GeneroEnum gender = GeneroEnum.FEMENINO;
+        private Gender gender = Gender.FEMALE;
 
         @Valid
         @JsonProperty

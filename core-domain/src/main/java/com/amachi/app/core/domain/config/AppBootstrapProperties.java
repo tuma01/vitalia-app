@@ -90,9 +90,9 @@ public class AppBootstrapProperties {
         private String numero;
         private String direccion;
         private String ciudad;
-        private Long departamentoId;
-        private Long provinciaId;
-        private Long municipioId;
+        private Long stateId;
+        private Long provinceId;
+        private Long municipalityId;
         private Long paisId;
         private String telefono;
     }
@@ -107,3 +107,4 @@ public class AppBootstrapProperties {
         private String personType;
     }
 }
+
