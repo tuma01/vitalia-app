@@ -18,99 +18,99 @@ import java.util.List;
 
 import static com.amachi.app.core.common.controller.BaseController.*;
 
-@Tag(name = "Country", description = "REST API para gestionar detalles de países: crear, actualizar, obtener y eliminar.")
+@Tag(name = "Country", description = "REST API to manage country details: create, update, fetch and delete.")
 public interface CountryApi extends GenericApi<CountryDto> {
     String NAME_API = "Country";
 
     @Operation(
-            summary = "Obtener un " + NAME_API + " por ID",
-            description = "Devuelve un objeto " + NAME_API + " por ID especificado.",
+            summary = "Get a " + NAME_API + " by ID",
+            description = "Returns a " + NAME_API + " object by the specified ID.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = NAME_API + " encontrado con éxito."),
-                    @ApiResponse(responseCode = "400", description = "Solicitud inválida: ID nulo o datos incompletos."),
-                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                    @ApiResponse(responseCode = "200", description = NAME_API + " found successfully."),
+                    @ApiResponse(responseCode = "400", description = "Invalid request: Null ID or incomplete data."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " not found."),
+                    @ApiResponse(responseCode = "500", description = "Internal server error.")
             }
     )
     @GetMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<CountryDto> getCountryById(
-            @Parameter(description = "ID del " + NAME_API + " a recuperar", required = true)
+            @Parameter(description = "ID of the " + NAME_API + " to retrieve", required = true)
             @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
-            summary = "Crear un " + NAME_API,
-            description = "Crea un nuevo " + NAME_API + " usando los datos proporcionados en el cuerpo de la solicitud.",
+            summary = "Create a " + NAME_API,
+            description = "Creates a new " + NAME_API + " using the provided data in the request body.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = NAME_API + " creado con éxito."),
-                    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos."),
-                    @ApiResponse(responseCode = "500", description = "Error del servidor.")
+                    @ApiResponse(responseCode = "201", description = NAME_API + " created successfully."),
+                    @ApiResponse(responseCode = "400", description = "Invalid input data."),
+                    @ApiResponse(responseCode = "500", description = "Server error.")
             }
     )
     @PostMapping( produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<CountryDto> createCountry(
-            @Parameter(description = "Detalles del " + NAME_API + " a crear.", required = true)
+            @Parameter(description = "Details of the " + NAME_API + " to create.", required = true)
             @Valid @RequestBody @NonNull CountryDto dto
     );
 
     @Operation(
-            summary = "Actualizar un " + NAME_API + " por ID",
-            description = "Actualiza un " + NAME_API + "  existente usando su ID y los datos proporcionados.",
+            summary = "Update a " + NAME_API + " by ID",
+            description = "Updates an existing " + NAME_API + " using its ID and provided data.",
             responses = {
-                    @ApiResponse(responseCode = "200", description = NAME_API + " actualizado con éxito."),
-                    @ApiResponse(responseCode = "400", description = "Solicitud inválida: ID nulo o datos incompletos."),
-                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                    @ApiResponse(responseCode = "200", description = NAME_API + " updated successfully."),
+                    @ApiResponse(responseCode = "400", description = "Invalid request: Null ID or incomplete data."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " not found."),
+                    @ApiResponse(responseCode = "500", description = "Internal server error.")
             }
     )
     @PutMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<CountryDto> updateCountry(
-            @Parameter(description = "ID del " + NAME_API + " a actualizar.", required = true)
+            @Parameter(description = "ID of the " + NAME_API + " to update.", required = true)
             @PathVariable("id") @NonNull Long id,
-            @Parameter(description = "Nuevos detalles del " + NAME_API + ".", required = true)
+            @Parameter(description = "New details of the " + NAME_API + ".", required = true)
             @Valid @RequestBody @NonNull CountryDto dto
     );
 
     @Operation(
-            summary = NAME_API + " a eliminar por ID",
-            description = "Elimina un " + NAME_API + " existente usando su ID.",
+            summary = "Delete a " + NAME_API + " by ID",
+            description = "Deletes an existing " + NAME_API + " using its ID.",
             responses = {
-                    @ApiResponse(responseCode = "204", description = NAME_API + " eliminado con éxito (sin contenido)."),
-                    @ApiResponse(responseCode = "400", description = "Solicitud inválida: ID nulo o no válido."),
-                    @ApiResponse(responseCode = "404", description = NAME_API + " no encontrado."),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                    @ApiResponse(responseCode = "204", description = NAME_API + " deleted successfully (no content)."),
+                    @ApiResponse(responseCode = "400", description = "Invalid request: Null or invalid ID."),
+                    @ApiResponse(responseCode = "404", description = NAME_API + " not found."),
+                    @ApiResponse(responseCode = "500", description = "Internal server error.")
             }
     )
     @DeleteMapping(value = ID, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> deleteCountry(
-            @Parameter(description = "ID del " + NAME_API + " a eliminar.", required = true)
+            @Parameter(description = "ID of the " + NAME_API + " to delete.", required = true)
             @PathVariable("id") @NonNull Long id
     );
 
     @Operation(
-            summary = "Obtiene todos los " + NAME_API,
-            description = "Devuelve la lista completa de " + NAME_API,
+            summary = "Get all " + NAME_API + "s",
+            description = "Returns the complete list of " + NAME_API + "s",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API + " recuperada con éxito."),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                    @ApiResponse(responseCode = "200", description = "List of " + NAME_API + "s retrieved successfully."),
+                    @ApiResponse(responseCode = "500", description = "Internal server error.")
             }
     )
     @GetMapping(value = ALL, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<CountryDto>> getAllCountries();
 
     @Operation(
-            summary = "Obtiene una lista paginada de " + NAME_API,
-            description = "Devuelve una lista paginada de " + NAME_API,
+            summary = "Get a paginated list of " + NAME_API + "s",
+            description = "Returns a paginated list of " + NAME_API + "s",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de " + NAME_API + " recuperada con éxito."),
-                    @ApiResponse(responseCode = "400", description = "Parámetros de paginación inválidos."),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
+                    @ApiResponse(responseCode = "200", description = "List of " + NAME_API + "s retrieved successfully."),
+                    @ApiResponse(responseCode = "400", description = "Invalid pagination parameters."),
+                    @ApiResponse(responseCode = "500", description = "Internal server error.")
             }
     )
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PageResponseDto<CountryDto>> getPaginatedCountries(
                     @NonNull CountrySearchDto searchDto,
-                    @Parameter(description = "Índice de la página a recuperar.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
-                    @Parameter(description = "Tamaño de la página.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
+                    @Parameter(description = "Index of the page to retrieve.", example = "0") @RequestParam(value = "pageIndex", defaultValue = "0", required = false) Integer pageIndex,
+                    @Parameter(description = "Size of the page.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }

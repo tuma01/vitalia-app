@@ -5,13 +5,14 @@ import com.amachi.app.core.common.mapper.BaseMapperConfig;
 import com.amachi.app.core.common.mapper.EntityDtoMapper;
 import com.amachi.app.core.geography.address.dto.AddressDto;
 import com.amachi.app.core.geography.address.entity.Address;
+import com.amachi.app.core.geography.country.entity.Country;
 import com.amachi.app.core.geography.country.repository.CountryRepository;
-import com.amachi.app.core.geography.departamento.entity.Departamento;
-import com.amachi.app.core.geography.departamento.repository.DepartamentoRepository;
-import com.amachi.app.core.geography.municipio.entity.Municipio;
-import com.amachi.app.core.geography.municipio.repository.MunicipioRepository;
-import com.amachi.app.core.geography.provincia.entity.Provincia;
-import com.amachi.app.core.geography.provincia.repository.ProvinciaRepository;
+import com.amachi.app.core.geography.state.entity.State;
+import com.amachi.app.core.geography.state.repository.StateRepository;
+import com.amachi.app.core.geography.municipality.entity.Municipality;
+import com.amachi.app.core.geography.municipality.repository.MunicipalityRepository;
+import com.amachi.app.core.geography.province.entity.Province;
+import com.amachi.app.core.geography.province.repository.ProvinceRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,58 +23,61 @@ public abstract class AddressMapper implements EntityDtoMapper<Address, AddressD
     protected CountryRepository countryRepository;
 
     @Autowired
-    protected DepartamentoRepository departamentoRepository;
+    protected StateRepository stateRepository;
 
     @Autowired
-    protected ProvinciaRepository provinciaRepository;
+    protected ProvinceRepository provinceRepository;
 
     @Autowired
-    protected MunicipioRepository municipioRepository;
+    protected MunicipalityRepository municipalityRepository;
 
     @Override
     @AuditableIgnoreConfig.IgnoreAuditableFields
     @Mapping(target = "country", source = "countryId", qualifiedByName = "loadCountry")
-    @Mapping(target = "departamento", source = "departamentoId", qualifiedByName = "loadDepartamento")
-    @Mapping(target = "provincia", source = "provinciaId", qualifiedByName = "loadProvincia")
-    @Mapping(target = "municipio", source = "municipioId", qualifiedByName = "loadMunicipio")
+    @Mapping(target = "state", source = "stateId", qualifiedByName = "loadState")
+    @Mapping(target = "province", source = "provinceId", qualifiedByName = "loadProvince")
+    @Mapping(target = "municipality", source = "municipalityId", qualifiedByName = "loadMunicipality")
     public abstract Address toEntity(AddressDto dto);
 
     @Override
+    @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "countryId", source = "country.id")
-    @Mapping(target = "departamentoId", source = "departamento.id")
-    @Mapping(target = "provinciaId", source = "provincia.id")
-    @Mapping(target = "municipioId", source = "municipio.id")
+    @Mapping(target = "stateId", source = "state.id")
+    @Mapping(target = "provinceId", source = "province.id")
+    @Mapping(target = "municipalityId", source = "municipality.id")
     public abstract AddressDto toDto(Address entity);
 
+    @Override
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @AuditableIgnoreConfig.IgnoreAuditableFields
+    @Mapping(target = "id", source = "id", ignore = true)
     @Mapping(target = "country", source = "countryId", qualifiedByName = "loadCountry")
-    @Mapping(target = "departamento", source = "departamentoId", qualifiedByName = "loadDepartamento")
-    @Mapping(target = "provincia", source = "provinciaId", qualifiedByName = "loadProvincia")
-    @Mapping(target = "municipio", source = "municipioId", qualifiedByName = "loadMunicipio")
+    @Mapping(target = "state", source = "stateId", qualifiedByName = "loadState")
+    @Mapping(target = "province", source = "provinceId", qualifiedByName = "loadProvince")
+    @Mapping(target = "municipality", source = "municipalityId", qualifiedByName = "loadMunicipality")
     public abstract void updateEntityFromDto(AddressDto dto, @MappingTarget Address entity);
 
     @Named("loadCountry")
-    protected com.amachi.app.core.geography.country.entity.Country loadCountry(Long id) {
+    protected Country loadCountry(Long id) {
         if (id == null) return null;
         return countryRepository.findById(id).orElse(null);
     }
 
-    @Named("loadDepartamento")
-    protected Departamento loadDepartamento(Long id) {
+    @Named("loadState")
+    protected State loadState(Long id) {
         if (id == null) return null;
-        return departamentoRepository.findById(id).orElse(null);
+        return stateRepository.findById(id).orElse(null);
     }
 
-    @Named("loadProvincia")
-    protected Provincia loadProvincia(Long id) {
+    @Named("loadProvince")
+    protected Province loadProvince(Long id) {
         if (id == null) return null;
-        return provinciaRepository.findById(id).orElse(null);
+        return provinceRepository.findById(id).orElse(null);
     }
 
-    @Named("loadMunicipio")
-    protected Municipio loadMunicipio(Long id) {
+    @Named("loadMunicipality")
+    protected Municipality loadMunicipality(Long id) {
         if (id == null) return null;
-        return municipioRepository.findById(id).orElse(null);
+        return municipalityRepository.findById(id).orElse(null);
     }
 }

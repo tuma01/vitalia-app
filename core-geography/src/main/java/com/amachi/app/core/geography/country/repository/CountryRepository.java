@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 public interface CountryRepository extends CommonRepository<Country, Long> {
 
     /**
-     * Busca países por nombre utilizando una búsqueda por patrón.
+     * Search countries by name using pattern matching.
      *
-     * @param name Nombre del país a buscar.
-     * @param pageable Paginación.
-     * @return Página con los resultados filtrados por nombre.
+     * @param name     Name of the country to search.
+     * @param pageable Pagination details.
+     * @return Page of results filtered by name.
      */
     Page<Country> findByNameContainingIgnoreCase(String name, Pageable pageable);
 

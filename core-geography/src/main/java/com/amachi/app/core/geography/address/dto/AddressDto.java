@@ -10,49 +10,49 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Builder
-@Schema(name = "Address", description = "Schema to hold Address information")
+@Schema(name = "Address", description = "Schema to hold address information.")
 public class AddressDto {
 
-        @Schema(description = "Id Address de Address", example = "1")
-        private Long id;
+    @Schema(description = "ID of the address.", example = "1")
+    private Long id;
 
-        @Schema(description = "Numero de la Direccion", example = "11957")
-        private String numero;
+    @Schema(description = "Street number.", example = "123")
+    private String streetNumber;
 
-        @NotBlank(message = "Direccion {err.required}")
-        @Schema(description = "Direccion principal de address", example = "calle Jean Talon")
-        private String direccion;
+    @NotBlank(message = "Street name {err.required}")
+    @Schema(description = "Street name or main address line.", example = "Av. 16 de Julio")
+    private String streetName;
 
-        @Schema(description = "Bloque al que pertenece el address", example = "Bloque A")
-        private String bloque;
+    @Schema(description = "Block or building identifier.", example = "Block A")
+    private String block;
 
-        @Schema(description = "Piso del address", example = "1")
-        private Integer piso;
+    @Schema(description = "Floor number.", example = "3")
+    private Integer floor;
 
-        @Schema(description = "Numero de departamento de la Direccion")
-        private String numeroDepartamento;
+    @Schema(description = "Apartment or suite number.")
+    private String apartmentNumber;
 
-        @Schema(description = "medidor de la Direccion")
-        private String medidor;
+    @Schema(description = "Utility meter number.")
+    private String meterNumber;
 
-        @Schema(description = "Casilla Postal de Address")
-        private String casillaPostal;
+    @Schema(description = "Postal code / Zip code.")
+    private String zipCode;
 
-        @Schema(description = "Ciudad de Address", example = "La Paz")
-        private String ciudad;
+    @Schema(description = "City name.", example = "La Paz")
+    private String city;
 
-        @Schema(description = "Geometry data with spatial index")
-        private String location;
+    @Schema(description = "Geometry data or coordinates.")
+    private String location;
 
-        @Schema(description = "Pais del Address", example = "4")
-        private Long countryId;
+    @Schema(description = "Country ID.", example = "26")
+    private Long countryId;
 
-        @Schema(description = "El departamento de la Direccion", example = "2")
-        private Long departamentoId;
+    @Schema(description = "State ID.", example = "8")
+    private Long stateId;
 
-        @Schema(description = "La provincia de la Direccion", example = "3")
-        private Long provinciaId;
+    @Schema(description = "Province ID.", example = "1")
+    private Long provinceId;
 
-        @Schema(description = "El municipio de la Direccion", example = "5")
-        private Long municipioId;
+    @Schema(description = "Municipality ID.", example = "1")
+    private Long municipalityId;
 }

@@ -6,56 +6,50 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AddressSpecification implements Specification<Address> {
 
-    private transient AddressSearchDto criteria;
+    private final AddressSearchDto criteria;
 
     @Override
-    public Predicate toPredicate(Root<Address> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+    public Predicate toPredicate(@NonNull Root<Address> root, @NonNull CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
 
-        // Filtro por ID del país
-        if (criteria.getId() != null) {
-            predicates.add(cb.equal(root.get("id"), criteria.getId()));
+        if (criteria.getAddressLine() != null && !criteria.getAddressLine().isEmpty()) {
+            predicates.add(cb.like(cb.upper(root.get("streetName")), "%" + criteria.getAddressLine().toUpperCase() + "%"));
         }
 
-        if (criteria.getDireccion() != null && !criteria.getDireccion().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("direccion")), "%" + criteria.getDireccion() + "%"));
+        if (criteria.getCity() != null && !criteria.getCity().isEmpty()) {
+            predicates.add(cb.like(cb.upper(root.get("city")), "%" + criteria.getCity().toUpperCase() + "%"));
         }
 
-        if (criteria.getCiudad() != null && !criteria.getCiudad().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("ciudad")), "%" + criteria.getCiudad() + "%"));
+        if (criteria.getZipCode() != null && !criteria.getZipCode().isEmpty()) {
+            predicates.add(cb.equal(root.get("zipCode"), criteria.getZipCode()));
         }
 
-        if (criteria.getCasillaPostal() != null && !criteria.getCasillaPostal().isBlank()) {
-            predicates.add(cb.like(cb.lower(root.get("casillaPostal")), "%" + criteria.getCasillaPostal() + "%"));
-        }
-
-        // Filtros por Jerarquía Geográfica
         if (criteria.getCountryId() != null) {
             predicates.add(cb.equal(root.get("country").get("id"), criteria.getCountryId()));
         }
 
-        if (criteria.getDepartamentoId() != null) {
-            predicates.add(cb.equal(root.get("departamento").get("id"), criteria.getDepartamentoId()));
+        if (criteria.getStateId() != null) {
+            predicates.add(cb.equal(root.get("state").get("id"), criteria.getStateId()));
         }
 
-        if (criteria.getProvinciaId() != null) {
-            predicates.add(cb.equal(root.get("provincia").get("id"), criteria.getProvinciaId()));
+        if (criteria.getProvinceId() != null) {
+            predicates.add(cb.equal(root.get("province").get("id"), criteria.getProvinceId()));
         }
 
-        if (criteria.getMunicipioId() != null) {
-            predicates.add(cb.equal(root.get("municipio").get("id"), criteria.getMunicipioId()));
+        if (criteria.getMunicipalityId() != null) {
+            predicates.add(cb.equal(root.get("municipality").get("id"), criteria.getMunicipalityId()));
         }
 
-        // Retornar todas las condiciones combinadas
         return cb.and(predicates.toArray(new Predicate[0]));
     }
 }

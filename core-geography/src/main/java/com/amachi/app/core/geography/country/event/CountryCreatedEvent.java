@@ -4,17 +4,17 @@ import com.amachi.app.core.common.event.DomainEvent;
 import lombok.Getter;
 
 /**
- * Evento disparado cuando se crea un nuevo país en la plataforma.
+ * Event fired when a new country is created.
  */
 @Getter
 public class CountryCreatedEvent extends DomainEvent {
 
     private final Long countryId;
-    private final String countryIso;
+    private final String name;
 
-    public CountryCreatedEvent(Long countryId, String countryIso) {
+    public CountryCreatedEvent(Long countryId, String name) {
         super();
         this.countryId = countryId;
-        this.countryIso = countryIso;
+        this.name = name;
     }
 }
