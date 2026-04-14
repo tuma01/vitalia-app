@@ -1,6 +1,7 @@
 package com.amachi.app.vitalia.medical.employee.entity;
 
 import com.amachi.app.core.auth.entity.User;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.EmployeeStatus;
 import com.amachi.app.core.common.enums.EmployeeType;
@@ -19,27 +20,31 @@ import java.time.LocalDate;
 
 /**
  * Gestión administrativa y laboral del personal hospitalario (SaaS Elite Tier).
- * Centraliza la nómina y adscripción departamental del staff.
+ * Identidad heredada de Person (GLOBAL) + Aislamiento por Tenant (LOCAL).
  */
 @Entity
 @Table(name = "MED_EMPLOYEE",
     uniqueConstraints = {
-        @UniqueConstraint(name = "UK_EMP_TENANT_CODE", columnNames = {"TENANT_ID", "EMPLOYEE_CODE"})
+        @UniqueConstraint(name = "UK_EMP_TENANT_CODE", columnNames = {"TENANT_ID", "EMPLOYEE_CODE", "IS_DELETED"}),
+        @UniqueConstraint(name = "UK_EMP_IDENTITY_TENANT", columnNames = {"FK_ID_PERSON", "TENANT_ID", "IS_DELETED"})
     },
     indexes = {
         @Index(name = "IDX_EMP_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_EMP_PERSON", columnList = "FK_ID_PERSON"),
         @Index(name = "IDX_EMP_CODE", columnList = "EMPLOYEE_CODE")
     }
 )
-@PrimaryKeyJoinColumn(name = "ID")
-@DiscriminatorValue("EMPLOYEE")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @Audited
 @Schema(description = "Perfil administrativo de personal hospitalario — SaaS Elite Tier")
 @EqualsAndHashCode(callSuper = true)
-public class Employee extends Person implements SoftDeletable {
+public class Employee extends BaseTenantEntity implements SoftDeletable {
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_EMP_PERSON"))
+    private Person person;
 
     @Column(name = "IS_DELETED", nullable = false)
     @Builder.Default
@@ -86,11 +91,11 @@ public class Employee extends Person implements SoftDeletable {
     @Column(name = "EMP_EMERGENCY_CONTACT", length = 200)
     private String emergencyContact;
 
-    @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)
-    private Doctor doctorProfile;
-
-    @OneToOne(mappedBy = "employee", fetch = FetchType.LAZY)
-    private Nurse nurseProfile;
+    // --- Temporary Bridge Methods (Deprecated) ---
+    @Transient @Deprecated
+    public String getFirstName() { return person != null ? person.getFirstName() : null; }
+    @Transient @Deprecated
+    public String getLastName() { return person != null ? person.getLastName() : null; }
 
     @Override
     public void delete() {

@@ -36,11 +36,11 @@ public class MedicationRequestDto {
     private Long encounterId;
 
     @NotNull(message = "Médico {err.mandatory}")
-    @Schema(description = "ID del profesional prescriptor", example = "2001")
-    private Long practitionerId;
+    @Schema(description = "ID del médico prescriptor", example = "2001")
+    private Long doctorId;
 
     @Schema(description = "Nombre del médico (Solo lectura)", example = "DR. MARCOS SOLIZ", accessMode = Schema.AccessMode.READ_ONLY)
-    private String practitionerFullName;
+    private String doctorFullName;
 
     @Schema(description = "ID del medicamento (Catálogo maestro)", example = "10")
     private Long medicationId;

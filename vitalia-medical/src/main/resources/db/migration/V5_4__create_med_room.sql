@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_4__create_med_room.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_ROOM (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_ROOM (
@@ -15,15 +15,19 @@ CREATE TABLE IF NOT EXISTS MED_ROOM (
     IS_DELETED          BOOLEAN DEFAULT FALSE NOT NULL,
 
     -- ==========================================
+    -- Jerarquía
+    -- ==========================================
+    FK_ID_DEPT_UNIT     BIGINT NOT NULL,
+
+    -- ==========================================
     -- Datos de la Habitación
     -- ==========================================
-    FK_ID_DEPT_UNIT     BIGINT NOT NULL,                 -- Unidad operacional
-    ROOM_NUMBER         VARCHAR(50) NOT NULL,            -- Identificador (301, BOX-A)
-    ROOM_TYPE           VARCHAR(50) NOT NULL,            -- ESTANDAR, VIP, etc.
-    IS_PRIVATE          BOOLEAN DEFAULT FALSE,
+    ROOM_NUMBER         VARCHAR(50) NOT NULL,
     BLOCK_CODE          VARCHAR(50),
     BLOCK_FLOOR         INT,
-    CLEANING_STATUS     VARCHAR(30),
+    IS_PRIVATE          BOOLEAN DEFAULT FALSE NOT NULL,
+    ROOM_TYPE           VARCHAR(50) NOT NULL,            -- STANDARD, PRIVATE, SUITE, ICU, etc.
+    CLEANING_STATUS     VARCHAR(30) DEFAULT 'CLEAN',     -- CLEAN, DIRTY, IN_PROGRESS
     DESCRIPTION         VARCHAR(500),
     IS_ACTIVE           BOOLEAN DEFAULT TRUE,
 
@@ -31,7 +35,7 @@ CREATE TABLE IF NOT EXISTS MED_ROOM (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

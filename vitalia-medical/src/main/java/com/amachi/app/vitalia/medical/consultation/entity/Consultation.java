@@ -6,13 +6,14 @@ import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.vitalia.medical.doctor.entity.Doctor;
 import com.amachi.app.vitalia.medical.history.entity.MedicalHistory;
 import com.amachi.app.vitalia.medical.patient.entity.Patient;
+import com.amachi.app.vitalia.medicalcatalog.consultation.entity.MedicalConsultationType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Entidad Consultation (SaaS Elite Tier).
@@ -53,10 +54,10 @@ public class Consultation extends BaseTenantEntity implements Model, SoftDeletab
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_CONSULTATION_TYPE", foreignKey = @ForeignKey(name = "FK_MED_CONS_TYPE"))
-    private ConsultationType type;
+    private MedicalConsultationType type;
 
     @Column(name = "VISIT_DATETIME", nullable = false)
-    private LocalDateTime consultationDate;
+    private OffsetDateTime consultationDate;
 
     @Column(name = "VISIT_STATUS", nullable = false, length = 50)
     private String status;

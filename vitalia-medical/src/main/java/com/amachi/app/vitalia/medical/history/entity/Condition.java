@@ -54,8 +54,8 @@ public class Condition extends BaseTenantEntity implements Model, SoftDeletable 
     private Icd10 icd10;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "FK_ID_PRACTITIONER", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_COND_DOC"))
-    private Doctor practitioner;
+    @JoinColumn(name = "FK_ID_DOCTOR", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_COND_DR"))
+    private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_EPISODE_OF_CARE", foreignKey = @ForeignKey(name = "FK_MED_COND_EPI"))

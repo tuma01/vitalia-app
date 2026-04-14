@@ -34,10 +34,10 @@ public class EpisodeOfCareDto {
 
     @NotNull(message = "Responsable {err.mandatory}")
     @Schema(description = "ID del médico responsable del episodio", example = "2001")
-    private Long managingPractitionerId;
+    private Long managingDoctorId;
 
     @Schema(description = "Nombre del médico responsable (Solo lectura)", example = "DR. MARCOS SOLIZ", accessMode = Schema.AccessMode.READ_ONLY)
-    private String managingPractitionerFullName;
+    private String managingDoctorFullName;
 
     @NotNull(message = "Estado {err.mandatory}")
     @Schema(description = "Estado del episodio (PLANNED, ACTIVE, ONHOLD, FINISHED, CANCELLED)", example = "ACTIVE")
@@ -47,11 +47,11 @@ public class EpisodeOfCareDto {
     private String typeDescription;
 
     @NotNull(message = "Inicio {err.mandatory}")
-    @Schema(description = "Fecha de inicio del episodio", example = "2026-03-30T10:00:00")
-    private LocalDateTime periodStart;
+    @Schema(description = "Fecha de inicio del episodio", example = "2026-03-30T10:00:00Z")
+    private java.time.OffsetDateTime periodStart;
 
-    @Schema(description = "Fecha de finalización del episodio", example = "2026-12-30T10:00:00")
-    private LocalDateTime periodEnd;
+    @Schema(description = "Fecha de finalización del episodio", example = "2026-12-30T10:00:00Z")
+    private java.time.OffsetDateTime periodEnd;
 
     @Schema(description = "Objetivos clínicos del episodio", example = "Control prenatal completo y parto seguro")
     private String goals;

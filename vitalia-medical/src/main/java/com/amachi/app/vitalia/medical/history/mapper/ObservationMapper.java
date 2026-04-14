@@ -18,7 +18,7 @@ public interface ObservationMapper extends EntityDtoMapper<Observation, Observat
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "patient.id", source = "patientId")
     @Mapping(target = "encounter.id", source = "encounterId")
-    @Mapping(target = "practitioner.id", source = "practitionerId")
+    @Mapping(target = "doctor.id", source = "doctorId")
     Observation toEntity(ObservationDto dto);
 
     @Override
@@ -26,8 +26,8 @@ public interface ObservationMapper extends EntityDtoMapper<Observation, Observat
     @Mapping(target = "patientId", source = "patient.id")
     @Mapping(target = "patientFullName", source = "patient.fullName")
     @Mapping(target = "encounterId", source = "encounter.id")
-    @Mapping(target = "practitionerId", source = "practitioner.id")
-    @Mapping(target = "practitionerFullName", source = "practitioner.fullName")
+    @Mapping(target = "doctorId", source = "doctor.id")
+    @Mapping(target = "doctorFullName", source = "doctor.fullName")
     @Mapping(target = "externalId", source = "externalId")
     ObservationDto toDto(Observation entity);
 
@@ -36,6 +36,6 @@ public interface ObservationMapper extends EntityDtoMapper<Observation, Observat
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "patient.id", source = "patientId")
     @Mapping(target = "encounter.id", source = "encounterId")
-    @Mapping(target = "practitioner.id", source = "practitionerId")
+    @Mapping(target = "doctor.id", source = "doctorId")
     void updateEntityFromDto(ObservationDto dto, @MappingTarget Observation entity);
 }

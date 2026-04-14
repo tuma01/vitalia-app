@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_15__create_med_family_history.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_FAMILY_HISTORY (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_FAMILY_HISTORY (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS MED_FAMILY_HISTORY (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

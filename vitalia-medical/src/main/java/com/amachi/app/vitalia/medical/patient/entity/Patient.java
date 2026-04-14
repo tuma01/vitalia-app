@@ -1,5 +1,5 @@
-package com.amachi.app.vitalia.medical.patient.entity;
-
+import com.amachi.app.core.common.entity.BaseTenantEntity;
+import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.PatientStatus;
 import com.amachi.app.core.domain.entity.Person;
@@ -15,7 +15,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,28 +23,32 @@ import java.util.Set;
 
 /**
  * Enterprise Patient Entity (SaaS Elite Tier).
- * Inherits identity from Person (JOINED).
+ * Rol Clínico con Aislamiento por Tenant + Vínculo a Identidad Global.
  */
 @Entity
 @Table(
     name = "MED_PATIENT",
     indexes = {
         @Index(name = "IDX_PATIENT_TENANT", columnList = "TENANT_ID"),
+        @Index(name = "IDX_PATIENT_PERSON", columnList = "FK_ID_PERSON"),
         @Index(name = "IDX_PATIENT_NHC", columnList = "NHC")
     },
     uniqueConstraints = {
-        @UniqueConstraint(name = "UK_MED_PAT_TENANT_NHC", columnNames = {"TENANT_ID", "NHC"})
+        @UniqueConstraint(name = "UK_MED_PAT_IDENTITY_TENANT", columnNames = {"FK_ID_PERSON", "TENANT_ID", "IS_DELETED"}),
+        @UniqueConstraint(name = "UK_MED_PAT_TENANT_NHC", columnNames = {"TENANT_ID", "NHC", "IS_DELETED"})
     }
 )
-@PrimaryKeyJoinColumn(name = "ID")
-@DiscriminatorValue("PATIENT")
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"medicalHistories", "encounters", "hospitalizations", "allergies", "activeMedications"})
 @Audited
 @Schema(description = "Registro integral del paciente — SaaS Elite Tier")
-public class Patient extends Person implements SoftDeletable {
+public class Patient extends BaseTenantEntity implements Model, SoftDeletable {
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_PAT_PERSON"))
+    private Person person;
 
     @Column(name = "IS_DELETED", nullable = false)
     @Builder.Default
@@ -62,20 +66,9 @@ public class Patient extends Person implements SoftDeletable {
     private String preferredLanguage;
 
     @Column(name = "REGISTRATION_DATE", nullable = false)
-    private LocalDateTime registrationDate;
+    private OffsetDateTime registrationDate;
 
-    @Column(name = "OCCUPATION", length = 100)
-    private String occupation;
-
-    @Column(name = "NATIONALITY", length = 100)
-    private String nationality;
-
-    @Column(name = "EDUCATION_LEVEL", length = 100)
-    private String educationLevel;
-
-    @Column(name = "ALLERGY_SUMMARY", length = 1000)
-    private String allergySummary;
-
+    // --- Embedded Components ---
     @Embedded
     private PatientDetails patientDetails;
 
@@ -86,7 +79,8 @@ public class Patient extends Person implements SoftDeletable {
     @Column(name = "PHOTO")
     private byte[] photo;
 
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    // --- Relationships ---
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<MedicalHistory> medicalHistories = new ArrayList<>();
 
@@ -122,6 +116,16 @@ public class Patient extends Person implements SoftDeletable {
     @Column(name = "ADDITIONAL_REMARKS", columnDefinition = "TEXT")
     private String additionalRemarks;
 
+    // --- Temporary Bridge Methods (Deprecated - Move to Mapper) ---
+    @Transient @Deprecated
+    public String getFirstName() { return person != null ? person.getFirstName() : null; }
+    @Transient @Deprecated
+    public String getLastName() { return person != null ? person.getLastName() : null; }
+    @Transient @Deprecated
+    public String getFullName() { return person != null ? person.getFullName() : null; }
+    @Transient @Deprecated
+    public String getNationalId() { return person != null ? person.getNationalId() : null; }
+
     @Override
     public void delete() {
         this.isDeleted = true;
@@ -131,19 +135,11 @@ public class Patient extends Person implements SoftDeletable {
     @PreUpdate
     private void normalizePatient() {
         if (this.nhc != null) this.nhc = this.nhc.trim().toUpperCase();
-        if (this.occupation != null) this.occupation = this.occupation.trim();
-        if (this.nationality != null) this.nationality = this.nationality.trim();
-        if (this.registrationDate == null) this.registrationDate = LocalDateTime.now();
+        if (this.registrationDate == null) this.registrationDate = OffsetDateTime.now();
     }
 
-    /**
-     * Helper clínico para obtener el historial médico único del paciente.
-     */
     public MedicalHistory getMedicalHistory() {
-        if (this.medicalHistories == null || this.medicalHistories.isEmpty()) {
-            return null;
-        }
-        // Retorna la historia actual o la primera en la lista (SaaS Elite logic)
+        if (this.medicalHistories == null || this.medicalHistories.isEmpty()) return null;
         return this.medicalHistories.stream()
                 .filter(mh -> Boolean.TRUE.equals(mh.getIsCurrent()))
                 .findFirst()

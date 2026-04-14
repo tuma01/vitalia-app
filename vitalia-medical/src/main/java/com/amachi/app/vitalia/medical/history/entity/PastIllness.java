@@ -11,8 +11,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
 /**
- * Registro histórico descriptivo de enfermedades y antecedentes clínicos (SaaS Elite Tier).
- * Permite documentar patologías crónicas que no están en fase aguda pero son relevantes.
+ * Descriptive historical record of diseases and clinical conditions (SaaS Elite Tier).
+ * Allows documentation of chronic pathologies that are not in the acute phase but are relevant.
  */
 @Entity
 @Table(
@@ -27,7 +27,7 @@ import org.hibernate.envers.Audited;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Audited
-@Schema(description = "Registro detallado de patología crónica o histórica — SaaS Elite Tier")
+@Schema(description = "Detailed record of chronic or historical pathology — SaaS Elite Tier")
 public class PastIllness extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)

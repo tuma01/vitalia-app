@@ -11,8 +11,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
  
 /**
- * Evaluación de funciones biológicas básicas y estilo de vida físico (SaaS Elite Tier).
- * Registro de hábitos sistémicos del paciente.
+ * Evaluation of basic biological functions and physical lifestyle (SaaS Elite Tier).
+ * Record of systemic patient habits.
  */
 @Entity
 @Table(
@@ -27,7 +27,7 @@ import org.hibernate.envers.Audited;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Audited
-@Schema(description = "Evaluación de funciones fisiológicas del paciente (Clinical Tier)")
+@Schema(description = "Evaluation of patient physiological functions (Clinical Tier)")
 public class PhysiologicalHabit extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)

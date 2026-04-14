@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_31__create_med_user_experience.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_USER_EXPERIENCE (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_USER_EXPERIENCE (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS MED_USER_EXPERIENCE (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

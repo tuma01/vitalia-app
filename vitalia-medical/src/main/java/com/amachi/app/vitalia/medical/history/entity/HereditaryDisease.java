@@ -13,7 +13,7 @@ import org.hibernate.envers.Audited;
 import java.time.LocalDate;
 
 /**
- * Registro individual de patologías hereditarias dentro del núcleo familiar. (SaaS Elite Tier)
+ * Individual record of hereditary pathologies within the family core (SaaS Elite Tier).
  */
 @Entity
 @Table(
@@ -28,7 +28,7 @@ import java.time.LocalDate;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Audited
-@Schema(description = "Registro de enfermedad hereditaria (Pro level)")
+@Schema(description = "Hereditary disease record (Clinical Tier)")
 public class HereditaryDisease extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)
@@ -36,20 +36,20 @@ public class HereditaryDisease extends BaseTenantEntity implements Model, SoftDe
     private Boolean isDeleted = false;
 
     @Column(name = "NAME", nullable = false, length = 150)
-    @Schema(description = "Nombre de la patología hereditaria", example = "Hemofilia A")
+    @Schema(description = "Name of the hereditary pathology", example = "Hemophilia A")
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FK_ID_KINSHIP", foreignKey = @ForeignKey(name = "FK_MED_ENF_HERED_KINSHIP"))
-    @Schema(description = "Parentesco o vínculo familiar afectado")
+    @Schema(description = "Kinship or family link affected")
     private Kinship kinship;
 
     @Column(name = "REMARK", length = 500)
-    @Schema(description = "Observaciones clínicas de la patología")
+    @Schema(description = "Clinical observations of the pathology")
     private String remark;
 
     @Column(name = "DIAGNOSIS_DATE")
-    @Schema(description = "Fecha aproximada del diagnóstico familiar")
+    @Schema(description = "Approximate date of family diagnosis")
     private LocalDate diagnosisDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

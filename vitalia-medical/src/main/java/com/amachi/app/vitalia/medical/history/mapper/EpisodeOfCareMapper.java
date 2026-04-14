@@ -17,15 +17,15 @@ public interface EpisodeOfCareMapper extends EntityDtoMapper<EpisodeOfCare, Epis
     @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "patient.id", source = "patientId")
-    @Mapping(target = "managingPractitioner.id", source = "managingPractitionerId")
+    @Mapping(target = "managingDoctor.id", source = "managingDoctorId")
     EpisodeOfCare toEntity(EpisodeOfCareDto dto);
 
     @Override
     @BeanMapping(unmappedSourcePolicy = ReportingPolicy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "patientId", source = "patient.id")
     @Mapping(target = "patientFullName", source = "patient.fullName")
-    @Mapping(target = "managingPractitionerId", source = "managingPractitioner.id")
-    @Mapping(target = "managingPractitionerFullName", source = "managingPractitioner.fullName")
+    @Mapping(target = "managingDoctorId", source = "managingDoctor.id")
+    @Mapping(target = "managingDoctorFullName", source = "managingDoctor.fullName")
     @Mapping(target = "externalId", source = "externalId")
     EpisodeOfCareDto toDto(EpisodeOfCare entity);
 
@@ -33,6 +33,6 @@ public interface EpisodeOfCareMapper extends EntityDtoMapper<EpisodeOfCare, Epis
     @AuditableIgnoreConfig.IgnoreTenantAuditableFields
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, unmappedTargetPolicy = ReportingPolicy.IGNORE)
     @Mapping(target = "patient.id", source = "patientId")
-    @Mapping(target = "managingPractitioner.id", source = "managingPractitionerId")
+    @Mapping(target = "managingDoctor.id", source = "managingDoctorId")
     void updateEntityFromDto(EpisodeOfCareDto dto, @MappingTarget EpisodeOfCare entity);
 }

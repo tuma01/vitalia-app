@@ -13,8 +13,8 @@ import org.hibernate.envers.Audited;
 import java.time.LocalDate;
 
 /**
- * Registro ejecutivo de enfermedades activas detectadas en el paciente. (SaaS Elite Tier)
- * Permite el seguimiento terapéutico y la trazabilidad de síntomas actuales.
+ * Executive record of active diseases detected in the patient (SaaS Elite Tier).
+ * Enables therapeutic tracking and traceability of current symptoms.
  */
 @Entity
 @Table(
@@ -29,7 +29,7 @@ import java.time.LocalDate;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Audited
-@Schema(description = "Registro de patología activa del expediente clínico")
+@Schema(description = "Active pathology record from the clinical history")
 public class ActualIllness extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)
@@ -38,25 +38,25 @@ public class ActualIllness extends BaseTenantEntity implements Model, SoftDeleta
 
     @Size(max = 150)
     @Column(name = "DISEASE_NAME", nullable = false)
-    @Schema(description = "Nombre de la enfermedad", example = "Hipertensión Arterial")
+    @Schema(description = "Name of the disease", example = "Hypertension")
     private String name;
 
     @PastOrPresent
     @Column(name = "DIAGNOSIS_DATE")
-    @Schema(description = "Fecha de diagnóstico")
+    @Schema(description = "Date of diagnosis")
     private LocalDate diagnosisDate;
 
     @Column(name = "SYMPTOMS", length = 500)
-    @Schema(description = "Sintomatología asociada")
+    @Schema(description = "Associated symptomatology")
     private String symptoms;
 
     @Column(name = "TREATMENTS", length = 500)
-    @Schema(description = "Tratamientos previos")
+    @Schema(description = "Previous treatments")
     private String treatments;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FK_ID_MEDICAL_HISTORY", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_ENF_ACTUAL_HISTORY"))
-    @Schema(description = "Vínculo al expediente clínico")
+    @Schema(description = "Link to the medical record")
     private MedicalHistory medicalHistory;
 
     @Override

@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_21__create_med_discharge_medication.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_DISCHARGE_MEDICATION (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_DISCHARGE_MEDICATION (
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS MED_DISCHARGE_MEDICATION (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 

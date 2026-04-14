@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Evaluación de antecedentes hereditarios y salud del núcleo familiar (SaaS Elite Tier).
- * Alineado con el estándar FHIR FamilyMemberHistory.
+ * Evaluation of hereditary background and health of the family core (SaaS Elite Tier).
+ * Aligned with the FHIR FamilyMemberHistory standard.
  */
 @Entity
 @Table(
@@ -29,7 +29,7 @@ import java.util.List;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"hereditaryDiseases"})
 @Audited
-@Schema(description = "Evaluación de antecedentes familiares (Clinical Tier)")
+@Schema(description = "Family members history evaluation (Clinical Tier)")
 public class FamilyHistory extends BaseTenantEntity implements Model, SoftDeletable {
 
     @Column(name = "IS_DELETED", nullable = false)

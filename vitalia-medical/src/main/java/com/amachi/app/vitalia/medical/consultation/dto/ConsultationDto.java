@@ -1,12 +1,11 @@
 package com.amachi.app.vitalia.medical.consultation.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Medical Consultation DTO (SaaS Elite Tier).
@@ -45,17 +44,15 @@ public class ConsultationDto {
     private Long typeId;
 
     @NotNull(message = "consultation.date.error.required")
-    @JsonProperty("desde") // Compatibility for UI if needed
-    @Schema(description = "Consultation date and time", example = "2026-03-25T14:30:00")
-    private LocalDateTime consultationDate;
+    @Schema(description = "Consultation date and time", example = "2026-03-25T14:30:00Z")
+    private OffsetDateTime consultationDate;
 
     @Schema(description = "Clinical status (PENDING, COMPLETED)", example = "COMPLETED")
     private String status;
 
-    @JsonProperty("observaciones")
-    @Schema(description = "Additional clinical remarks (alias: observaciones)")
+    @Schema(description = "Additional clinical remarks and findings")
     private String notes;
 
-    @Schema(description = "Triage or urgency level", example = "URGENT")
+    @Schema(description = "Triage or urgency level (NORMAL, URGENT, EMERGENCY)", example = "URGENT")
     private String triageLevel;
 }

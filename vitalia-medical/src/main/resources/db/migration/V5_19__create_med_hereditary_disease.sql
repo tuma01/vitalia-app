@@ -1,7 +1,7 @@
+-- ============================================================
 -- Script: V5_19__create_med_hereditary_disease.sql
 -- Módulo: vitalia-medical
 -- Descripción: Creación de la tabla MED_HEREDITARY_DISEASE (SaaS Elite Tier).
--- Autor: Juan Amachi
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS MED_HEREDITARY_DISEASE (
@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS MED_HEREDITARY_DISEASE (
     -- ==========================================
     -- Relaciones
     -- ==========================================
-    FK_ID_FAMILY_HISTORY BIGINT NOT NULL,
-    FK_ID_KINSHIP       BIGINT,                          -- Vínculo al catálogo de parentesco
+    FK_ID_HIST_FAM      BIGINT NOT NULL,                 -- Vínculo a MED_FAMILY_HISTORY
+    FK_ID_KINSHIP       BIGINT,                          -- Vínculo al catálogo CAT_KINSHIP
 
     -- ==========================================
     -- Datos Clínicos (English Standard)
     -- ==========================================
-    DISEASE_NAME        VARCHAR(150) NOT NULL,
+    NAME                VARCHAR(150) NOT NULL,
     REMARK              VARCHAR(500),
     DIAGNOSIS_DATE      DATE,
 
@@ -31,16 +31,18 @@ CREATE TABLE IF NOT EXISTS MED_HEREDITARY_DISEASE (
     -- Auditoría de Operación
     -- ==========================================
     CREATED_BY          VARCHAR(100) NOT NULL,
-    CREATED_DATE        DATETIME(6) NOT NULL,
+    CREATED_DATE        DATETIME(6)  NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
     LAST_MODIFIED_DATE  DATETIME(6),
 
     -- ==========================================
     -- Constraints & Indexes
     -- ==========================================
-    CONSTRAINT FK_MED_ENFER_FAMILIAR FOREIGN KEY (FK_ID_FAMILY_HISTORY) REFERENCES MED_FAMILY_HISTORY(ID),
+    CONSTRAINT FK_MED_ENF_HERED_FAM     FOREIGN KEY (FK_ID_HIST_FAM) REFERENCES MED_FAMILY_HISTORY(ID),
+    CONSTRAINT FK_MED_ENF_HERED_KINSHIP FOREIGN KEY (FK_ID_KINSHIP)  REFERENCES CAT_KINSHIP(ID),
     
     INDEX IDX_HER_DIS_TENANT (TENANT_ID),
-    INDEX IDX_HER_DIS_FAM    (FK_ID_FAMILY_HISTORY)
+    INDEX IDX_HER_DIS_FAM    (FK_ID_HIST_FAM),
+    INDEX IDX_HER_DIS_KIN    (FK_ID_KINSHIP)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

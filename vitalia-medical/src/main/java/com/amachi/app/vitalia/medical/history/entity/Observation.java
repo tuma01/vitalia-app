@@ -47,8 +47,8 @@ public class Observation extends BaseTenantEntity implements Model, SoftDeletabl
     private Encounter encounter;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "FK_ID_PRACTITIONER", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_OBS_DOC"))
-    private Doctor practitioner;
+    @JoinColumn(name = "FK_ID_DOCTOR", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_OBS_DOC"))
+    private Doctor doctor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false, length = 30)

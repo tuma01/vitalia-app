@@ -12,7 +12,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.envers.Audited;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +46,8 @@ public class EpisodeOfCare extends BaseTenantEntity implements Model, SoftDeleta
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "FK_ID_MANAGING_PRACTITIONER", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_EPI_DOC"))
-    private Doctor managingPractitioner;
+    @JoinColumn(name = "FK_ID_MANAGING_DOCTOR", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_EPI_DR"))
+    private Doctor managingDoctor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false, length = 30)
@@ -57,10 +57,10 @@ public class EpisodeOfCare extends BaseTenantEntity implements Model, SoftDeleta
     private String typeDescription;
 
     @Column(name = "PERIOD_START", nullable = false)
-    private LocalDateTime periodStart;
+    private OffsetDateTime periodStart;
 
     @Column(name = "PERIOD_END")
-    private LocalDateTime periodEnd;
+    private OffsetDateTime periodEnd;
 
     @OneToMany(mappedBy = "episodeOfCare", cascade = CascadeType.ALL)
     @Builder.Default
@@ -86,5 +86,6 @@ public class EpisodeOfCare extends BaseTenantEntity implements Model, SoftDeleta
     private void normalize() {
         if (this.typeDescription != null) this.typeDescription = this.typeDescription.trim().toUpperCase();
         if (this.goals != null) this.goals = this.goals.trim();
+        if (this.periodStart == null) this.periodStart = OffsetDateTime.now();
     }
 }

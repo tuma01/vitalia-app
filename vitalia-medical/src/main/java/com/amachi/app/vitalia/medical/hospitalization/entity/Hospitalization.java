@@ -22,7 +22,7 @@ import org.hibernate.envers.Audited;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * Entidad canonical de Hospitalización (SaaS Elite Tier).
@@ -71,10 +71,10 @@ public class Hospitalization extends BaseTenantEntity implements Model, SoftDele
     private Bed bed;
 
     @Column(name = "ADMISSION_DATE", nullable = false)
-    private LocalDateTime admissionDate;
+    private OffsetDateTime admissionDate;
 
     @Column(name = "DISCHARGE_DATE")
-    private LocalDateTime dischargeDate;
+    private OffsetDateTime dischargeDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "HOSPITALIZATION_STATUS", nullable = false, length = 50)
@@ -112,7 +112,7 @@ public class Hospitalization extends BaseTenantEntity implements Model, SoftDele
     private String finalDiagnosis;
 
     @Column(name = "ESTIMATED_DISCHARGE_DATE")
-    private LocalDateTime estimatedDischargeDate;
+    private OffsetDateTime estimatedDischargeDate;
 
     @Column(name = "FOLLOW_UP_DATE")
     private java.time.LocalDate followUpDate;
@@ -143,7 +143,7 @@ public class Hospitalization extends BaseTenantEntity implements Model, SoftDele
     @Transient
     public long getLengthOfStayInDays() {
         if (this.admissionDate == null) return 0;
-        LocalDateTime endDate = this.dischargeDate != null ? this.dischargeDate : LocalDateTime.now();
+        OffsetDateTime endDate = (this.dischargeDate != null) ? this.dischargeDate : OffsetDateTime.now();
         return Duration.between(this.admissionDate, endDate).toDays();
     }
 
@@ -157,5 +157,6 @@ public class Hospitalization extends BaseTenantEntity implements Model, SoftDele
     private void normalize() {
         if (this.admissionReason != null) this.admissionReason = this.admissionReason.trim();
         if (this.admissionDiagnosis != null) this.admissionDiagnosis = this.admissionDiagnosis.trim();
+        if (this.admissionDate == null) this.admissionDate = OffsetDateTime.now();
     }
 }

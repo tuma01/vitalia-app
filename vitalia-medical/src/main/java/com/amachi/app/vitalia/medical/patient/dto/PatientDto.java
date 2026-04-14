@@ -126,6 +126,9 @@ public class PatientDto {
     @Schema(description = "Email del contacto de emergencia", example = "m.perez@email.com")
     private String emergencyContactEmail;
 
+    @Schema(description = "Dirección del contacto de emergencia", example = "AV. PRINCIPAL 456")
+    private String emergencyContactAddress;
+
     @Schema(description = "Indica si el paciente está activo en el sistema", example = "true")
     private Boolean active;
 

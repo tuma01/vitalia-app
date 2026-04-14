@@ -18,7 +18,7 @@ import static com.amachi.app.core.common.controller.BaseController.ID;
 /**
  * Interfaz de contrato para la gestion del personal administrativo y soporte.
  */
-@Tag(name = "Personal - Administrativos", description = "REST API para gestionar perfiles de empleados de soporte, cargos y departamentos.")
+@Tag(name = "Personal - Administrativos", description = "REST API para gestionar perfiles de empleados de soporte, cargos y states.")
 public interface EmployeeApi extends GenericApi<EmployeeDto> {
     String NAME_API = "Empleado";
 
@@ -40,7 +40,7 @@ public interface EmployeeApi extends GenericApi<EmployeeDto> {
 
     @Operation(
             summary = "Registrar nuevo personal administrativo",
-            description = "Crea un perfil de empleado con asignacion de cargo y departamento organizacional.",
+            description = "Crea un perfil de empleado con asignacion de cargo y state organizacional.",
             responses = {
                     @ApiResponse(responseCode = "201", description = NAME_API + " registrado en nomina con exito."),
                     @ApiResponse(responseCode = "400", description = "Error de validacion en datos de contrato."),
@@ -100,3 +100,4 @@ public interface EmployeeApi extends GenericApi<EmployeeDto> {
             @Parameter(description = "Registros por bloque.", example = "10") @RequestParam(value = "pageSize", defaultValue = "10", required = false) Integer pageSize
     );
 }
+
