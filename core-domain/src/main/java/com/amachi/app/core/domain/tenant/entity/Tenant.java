@@ -2,6 +2,7 @@ package com.amachi.app.core.domain.tenant.entity;
 
 import com.amachi.app.core.common.enums.TenantType;
 import com.amachi.app.core.common.entity.BaseTenantEntity;
+import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.domain.theme.entity.Theme;
 
@@ -17,11 +18,21 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("GLOBAL")
-public class Tenant extends BaseTenantEntity implements Model {
+public class Tenant extends BaseTenantEntity implements Model, SoftDeletable {
+
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
 
     // ID heredado de BaseEntity
 

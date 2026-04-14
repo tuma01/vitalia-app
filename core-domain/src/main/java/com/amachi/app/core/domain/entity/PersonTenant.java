@@ -1,14 +1,12 @@
 package com.amachi.app.core.domain.entity;
-import com.amachi.app.core.common.entity.Auditable;
+import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
+import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.core.common.enums.RelationStatus;
 import com.amachi.app.core.common.enums.RoleContext;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -18,13 +16,23 @@ import java.time.LocalDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "UK_PERSON_TENANT_ROLE_CONTEXT",
-                        columnNames = {"FK_ID_PERSON", "FK_ID_TENANT", "ROLE_CONTEXT"})
+                        columnNames = {"FK_ID_PERSON", "FK_ID_TENANT", "ROLE_CONTEXT", "IS_DELETED"})
         })
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class PersonTenant extends Auditable<String> implements Model {
+@EqualsAndHashCode(callSuper = true)
+public class PersonTenant extends BaseTenantEntity implements Model, SoftDeletable {
+
+    @Column(name = "IS_DELETED", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Override
+    public void delete() {
+        this.isDeleted = true;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
