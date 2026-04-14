@@ -13,13 +13,13 @@ import lombok.*;
 public final class AddressSearchDto implements BaseSearchDto {
 
     private Long id;
-    private String direccion;
-    private String ciudad;
-    private String casillaPostal;
+    private String addressLine;
+    private String city;
+    private String zipCode;
     private Long countryId;
-    private Long departamentoId;
-    private Long provinciaId;
-    private Long municipioId;
+    private Long stateId;
+    private Long provinceId;
+    private Long municipalityId;
 
     @Override
     public Long getId() {

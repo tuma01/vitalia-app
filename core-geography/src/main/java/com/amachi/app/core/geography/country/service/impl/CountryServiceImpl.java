@@ -1,72 +1,47 @@
 package com.amachi.app.core.geography.country.service.impl;
 
-import com.amachi.app.core.common.exception.ResourceNotFoundException;
-import com.amachi.app.core.common.service.GenericService;
+import com.amachi.app.core.common.event.DomainEventPublisher;
+import com.amachi.app.core.common.repository.CommonRepository;
+import com.amachi.app.core.common.service.BaseService;
 import com.amachi.app.core.geography.country.dto.search.CountrySearchDto;
 import com.amachi.app.core.geography.country.entity.Country;
+import com.amachi.app.core.geography.country.event.CountryCreatedEvent;
+import com.amachi.app.core.geography.country.event.CountryUpdatedEvent;
 import com.amachi.app.core.geography.country.repository.CountryRepository;
 import com.amachi.app.core.geography.country.specification.CountrySpecification;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ENTITY_MUST_NOT_BE_NULL;
-import static com.amachi.app.core.common.utils.AppConstants.ErrorMessages.ID_MUST_NOT_BE_NULL;
-import static java.util.Objects.requireNonNull;
-
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
-public class CountryServiceImpl implements GenericService<Country, CountrySearchDto> {
+public class CountryServiceImpl extends BaseService<Country, CountrySearchDto> {
 
-    CountryRepository countryRepository;
+    private final CountryRepository countryRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
-    public List<Country> getAll() {
-        return countryRepository.findAll();
+    protected CommonRepository<Country, Long> getRepository() {
+        return countryRepository;
     }
 
     @Override
-    public Page<Country> getAll(CountrySearchDto searchDto, Integer pageIndex, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC,"createdDate"));
-        Specification<Country> specification = new CountrySpecification(searchDto);
-        return countryRepository.findAll(specification, pageable);
+    protected Specification<Country> buildSpecification(CountrySearchDto searchDto) {
+        return new CountrySpecification(searchDto);
     }
 
     @Override
-    public Country getById(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        return countryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Country.class.getName(), "error.resource.not.found", id));
+    protected DomainEventPublisher getEventPublisher() {
+        return eventPublisher;
     }
 
     @Override
-    public Country create(Country entity) {
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        return countryRepository.save(entity);
+    protected void publishCreatedEvent(Country entity) {
+        eventPublisher.publish(new CountryCreatedEvent(entity.getId(), entity.getName()));
     }
 
     @Override
-    public Country update(Long id, Country entity) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        requireNonNull(entity, ENTITY_MUST_NOT_BE_NULL);
-        // Verificar que el Country exista
-        Country existing = countryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Country.class.getName(), "error.resource.not.found", id));
-        entity.setId(id);
-        return countryRepository.save(entity);
-    }
-
-    @Override
-    public void delete(Long id) {
-        requireNonNull(id, ID_MUST_NOT_BE_NULL);
-        Country country = countryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Country.class.getName(), "error.resource.not.found", id));
-        countryRepository.delete(country);
+    protected void publishUpdatedEvent(Country entity) {
+        eventPublisher.publish(new CountryUpdatedEvent(entity.getId(), entity.getName()));
     }
 }

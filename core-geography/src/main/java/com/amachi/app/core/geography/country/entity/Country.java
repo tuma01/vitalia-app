@@ -10,8 +10,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Entidad Country (SaaS Elite Tier).
- * Modelo de referencia del Module Implementation Guide, restaurado con Lombok.
+ * Country Entity (SaaS Elite Tier).
+ * Reference model for Global Catalogs, adhering to US English nomenclature.
  */
 @Getter
 @Setter
@@ -39,7 +39,7 @@ public class Country extends Auditable<String> implements Model {
     @Column(name = "ISO", nullable = false, length = 2)
     private String iso;
 
-    @NotBlank(message = "Nombre {err.mandatory}")
+    @NotBlank(message = "Name {err.mandatory}")
     @Size(max = 100)
     @Column(name = "NAME", nullable = false, length = 100)
     private String name;
@@ -59,7 +59,7 @@ public class Country extends Auditable<String> implements Model {
     @Column(name = "PHONE_CODE", nullable = false)
     private Integer phoneCode;
 
-    // ✅ Normalización Automática (Enterprise Best Practice)
+    // ✅ Automatic Normalization (Enterprise Best Practice)
     @PrePersist
     @PreUpdate
     private void normalize() {
