@@ -9,8 +9,8 @@ This document provides a comprehensive analysis of the current state of **amachi
 | **core-common** | **Elite** | 100% | The kernel is ready. BaseEntity/Service/Spec follow Tier-1 standards. |
 | **core-auth** | **Elite** | 100% | Identity management is decoupled and event-driven. |
 | **core-management** | **Elite** | 100% | Tenant and Theme management updated to standards. |
-| **core-geography** | **Elite** | 95% | Solid structure. Minor naming alignment in Departamento/Municipio. |
-| **core-domain** | **Elite** | 90% | Hospital/Organization entities updated. Minor repository checks needed. |
+| **core-geography** | **Elite** | 95% | Solid structure. Minor naming alignment in State/Municipality. |
+| **core-domain** | **Elite** | 100% | **IDENTITY LAYER REFACTORED**. Person (Global) and Hospital (Tenant) standardized. |
 | **vitalia-medical-catalog**| **High Gold** | 80% | Medication/Allergy updated. Other catalogs need BaseService migration. |
 | **vitalia-medical** | **Gold** | 60% | Functional but monolithic. Needs global refactoring and tenant isolation. |
 | **vitalia-boot** | **Solid** | 90% | Good orchestration. Needs final global filter registration. |
@@ -21,8 +21,9 @@ This document provides a comprehensive analysis of the current state of **amachi
 
 To achieve pure Elite status, every module must strictly comply with its scope:
 
-### A. Global Entities (Common Catalogs)
+### A. Global Entities (Common Catalogs & Root Identity)
 *   **Scope**: Data shared across all tenants (e.g., Countries, Provinces, Medical Standards).
+*   **Core Entity**: **`Person`** (Shared Identity Pattern). Personal biological data belongs to the human, not the hospital.
 *   **Hierarchy**: Must extend **`Auditable`** (which provides ID, Audit, Version and ExternalId).
 *   **Isolation**: No isolation. These entities **DO NOT** contain `TENANT_ID`.
 *   **Mapper Config**: Use **`@AuditableIgnoreConfig.IgnoreAuditableFields`** (Ignores Audit, Version, ExternalId).
@@ -105,7 +106,7 @@ Para datos de negocio aislados por organización. **Este template ha sido comple
 
 ### ⛔ Módulos Prohibidos para Aislamiento (REGLA DE ORO)
 Está **TERMINANTEMENTE PROHIBIDO** elevar a nivel SaaS Elite (aislamiento por `TENANT_ID`) los siguientes módulos, ya que son **CATÁLOGOS GLOBALES** estándar:
-1.  **`core-geography`**: Países, Provincias, etc.
+1.  **`core-geography`**: Países, Provinces, etc.
 2.  **`vitalia-medical-catalog`**: Alergias, CIE-10, Medicamentos, Vacunas, Procedimientos, Especialidades, Parentescos, Tipos de Identificación, Géneros y Estados Civiles.
 *   **Razón**: Estos módulos representan conocimiento médico y demográfico universal. Su fragmentación por Tenant es un error arquitectónico grave, crea redundancia masiva y dificulta el intercambio de datos (Interoperabilidad).
 
@@ -113,6 +114,11 @@ Está **TERMINANTEMENTE PROHIBIDO** elevar a nivel SaaS Elite (aislamiento por `
 1.  **Event-Driven Consistency**: Every mutating operation (Create/Update/Delete) must publish a `DomainEvent`.
 2.  **Premium Resilience**: Optimistic Locking (`@Version`) and globally unique `EXTERNAL_ID` (UUID).
 3.  **Professional Standardization**: 100% English naming for all JPA entities, services, and APIs.
+4.  **Backend Naming Convention**:
+    *   **Packages**: Always **singular** (e.g., `com.amachi.app.core.geography.country`).
+    *   **Entities**: Always **singular** (e.g., `Country.java`).
+    *   **API/Endpoints**: Always **plural** (e.g., `/api/v1/countries`).
+    *   **Controllers/Services**: Follow the entity name (singular) or purpose (e.g., `CountryController`).
 
 ### E. 🔑 Patrón Platform-as-a-Tenant (Referencia Definitiva)
 
@@ -203,6 +209,49 @@ El DTO de referencia para entidades Tenant-Scoped es `AppointmentDto`. Todo nuev
 
 ---
 
+## 5. 🛡️ Advanced Enterprise Identity: The Hardened Elastic Pattern
+
+Vitalia implementa un modelo de identidad de 3 capas (Persona -> Tenant -> Rol) con un endurecimiento estricto diseñado para redes hospitalarias enterprise.
+
+### A. Capas de Identidad
+1. **Layer 1: Universal Identity (`Person`)**: Identidad global sin `TENANT_ID`. Nombre, NationalID y Bio-data pertenecen al humano.
+2. **Layer 2: Secure Membership (`PersonTenant`)**: Vincula a una `Person` con un `Tenant`. Controla el acceso y estado operativo.
+3. **Layer 3: Operative Roles (`Patient`, `Doctor`, `Nurse`, `Employee`)**: Entidades de dominio aisladas por `TENANT_ID`. **Contrato Obligatorio**: Deben implementar la interfaz `DomainRole` (`getPerson()`, `getTenantId()`).
+
+### B. Desacoplamiento UX vs Persistencia (Hardened Rule)
+Para evitar el acoplamiento UI ↔ Dominio, el sistema impone una separación total:
+- **`RoleContext` (UX/Security)**: Define la perspectiva y navegación del usuario (ej. "Entro como DOCTOR").
+- **`DomainContext` (Backend/Persistencia)**: Define la entidad física que se gestiona en la BD.
+- **Gobernanza**: El mapeo debe ser **centralizado** (ej. `ContextMapping`). Si no hay mapeo válido (ej. GUEST), no se crea entidad de dominio.
+
+### C. Protocolo de Resolución de Identidad
+1. **Búsqueda Estricta**: 1. `nationalId` ➔ 2. `email` ➔ 3. Creación. Esto evita la fragmentación de la identidad global.
+2. **Aceptación Atómica**: El proceso de `acceptInvitation` debe resolver la identidad y crear el contexto en una única unidad de trabajo atómica.
+
+### D. Seguridad de Integridad (Collision Handling)
+Dado que MySQL no admite índices parciales nativos para estados activos, el sistema implementa la validación **`existsActive`**:
+- **Regla**: Antes de crear un contexto (`DomainContext`), el servicio `PersonContextService` **DEBE** verificar si la persona ya posee ese rol activo en el tenant.
+- **Impacto**: Previene la duplicación de registros críticos (ej. dos registros de Doctor para la misma persona) y garantiza la integridad del EHR.
+
+### E. Aislamiento de Gobernanza
+Los roles de **SuperAdmin** y **TenantAdmin** operan exclusivamente a nivel de plataforma y seguridad, sin contaminar el modelo clínico o operativo.
+
+---
+
+## 6. 🛡️ Resilience & Soft-Delete Protocol
+
+All Elite Tier entities MUST provide data safety through logical deletion.
+
+- **Interface**: `SoftDeletable`.
+- **Implementation**:
+    - Field: `isDeleted` (mapped to `IS_DELETED` TINYINT in SQL).
+    - Method: `delete()` sets `isDeleted = true`.
+- **Constraint Handling**: Unique constraints must ideally include the `IS_DELETED` column to allow re-creation of previously deleted business keys.
+
+---
+
+---
+
 ## 4. ⚠️ Risk Management: DDL Regressions
 To fulfill the user's requirement of **"Zero regressions in DDL"**:
 1.  **Table Names Stable**: JPA entities will be renamed (e.g., `@Entity(name="Consultation")`), but `@Table(name="MED_PATIENT_VISIT")` will remain consistent with existing DB structure.
@@ -211,5 +260,8 @@ To fulfill the user's requirement of **"Zero regressions in DDL"**:
 
 ---
 
-## 📅 Next Step: Infrastructure Upgrade
-Start with the creation of the Flyway migration script `V5_20` in the `vitalia-medical` module to prepare the database for the Elite Tier transition.
+## 📅 Next Step: DDL Infrastructure Upgrade (Core-Domain)
+Synchronize the physical schema with the refactored entities.
+1. Add columns for Soft-Delete and Audit consistency to `DMN_THEME` and `DMN_HOSPITAL`.
+2. Transition `DMN_PERSON` to its Global (Shared) status.
+

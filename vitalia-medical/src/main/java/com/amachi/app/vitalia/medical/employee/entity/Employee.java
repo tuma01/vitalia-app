@@ -1,10 +1,8 @@
-package com.amachi.app.vitalia.medical.employee.entity;
-
-import com.amachi.app.core.auth.entity.User;
-import com.amachi.app.core.common.entity.BaseTenantEntity;
+import com.amachi.app.core.common.entity.DomainRole;
 import com.amachi.app.core.common.entity.SoftDeletable;
 import com.amachi.app.core.common.enums.EmployeeStatus;
 import com.amachi.app.core.common.enums.EmployeeType;
+import com.amachi.app.core.common.enums.ProfessionalRoleContext;
 import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.vitalia.medical.doctor.entity.Doctor;
 import com.amachi.app.vitalia.medical.infrastructure.entity.DepartmentUnit;
@@ -40,11 +38,15 @@ import java.time.LocalDate;
 @Audited
 @Schema(description = "Perfil administrativo de personal hospitalario — SaaS Elite Tier")
 @EqualsAndHashCode(callSuper = true)
-public class Employee extends BaseTenantEntity implements SoftDeletable {
+public class Employee extends BaseTenantEntity implements SoftDeletable, DomainRole {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_EMP_PERSON"))
     private Person person;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PROFESSIONAL_ROLE_CONTEXT", length = 50)
+    private ProfessionalRoleContext professionalRoleContext;
 
     @Column(name = "IS_DELETED", nullable = false)
     @Builder.Default
@@ -90,12 +92,6 @@ public class Employee extends BaseTenantEntity implements SoftDeletable {
 
     @Column(name = "EMP_EMERGENCY_CONTACT", length = 200)
     private String emergencyContact;
-
-    // --- Temporary Bridge Methods (Deprecated) ---
-    @Transient @Deprecated
-    public String getFirstName() { return person != null ? person.getFirstName() : null; }
-    @Transient @Deprecated
-    public String getLastName() { return person != null ? person.getLastName() : null; }
 
     @Override
     public void delete() {

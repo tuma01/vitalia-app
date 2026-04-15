@@ -1,13 +1,15 @@
 package com.amachi.app.core.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+// Para confirmar el reset (token y nueva contraseña)
+// SaaS Elite: Manual implementation to troubleshoot Lombok resolution issues.
 import lombok.*;
 
 // Para confirmar el reset (token y nueva contraseña)
-@Getter @Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

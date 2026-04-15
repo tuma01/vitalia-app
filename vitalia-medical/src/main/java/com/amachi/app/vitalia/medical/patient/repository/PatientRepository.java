@@ -1,5 +1,7 @@
 package com.amachi.app.vitalia.medical.patient.repository;
 
+import com.amachi.app.core.domain.entity.Person;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.vitalia.medical.patient.entity.Patient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,4 +58,7 @@ public interface PatientRepository extends CommonRepository<Patient, Long> {
      * @return Página de pacientes.
      */
     Page<Patient> findByNombreContainingIgnoreCaseOrApellidoPaternoContainingIgnoreCase(String nombre, String apellidoPaterno, Pageable pageable);
+    
+    boolean existsByPersonAndTenant(Person person, Tenant tenant);
+    Optional<Patient> findByPersonAndTenant(Person person, Tenant tenant);
 }

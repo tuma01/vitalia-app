@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/mdm/healthcare-provider")
+@RequestMapping("/mdm/healthcare-providers")
 @RequiredArgsConstructor
 public class HealthcareProviderController extends BaseController implements HealthcareProviderApi {
 

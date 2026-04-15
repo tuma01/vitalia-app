@@ -1,6 +1,6 @@
 package com.amachi.app.core.common.dto;
 
-import com.amachi.app.core.common.enums.PersonType;
+import com.amachi.app.core.common.enums.RoleContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,8 +34,8 @@ public class UserSummaryDto {
     @Schema(description = "Nombre del tenant (hospital) actual", example = "Hospital Central")
     private String tenantName;
 
-    @Schema(description = "Tipo de persona (DOCTOR, NURSE, PATIENT, etc.)")
-    private PersonType personType;
+    @Schema(description = "Contexto operativo (DOCTOR, PATIENT, etc.) del usuario en el tenant actual")
+    private RoleContext roleContext;
 
     @Schema(description = "Roles del usuario dentro del tenant actual")
     private List<String> roles;

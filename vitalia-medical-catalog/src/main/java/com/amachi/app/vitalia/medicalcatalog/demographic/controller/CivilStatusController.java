@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/mdm/demographic/civil-status")
+@RequestMapping("/mdm/demographic/civil-statuses")
 @RequiredArgsConstructor
 public class CivilStatusController extends BaseController implements CivilStatusApi {
 

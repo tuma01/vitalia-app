@@ -1,8 +1,10 @@
 package com.amachi.app.core.auth.bridge;
 
+import com.amachi.app.core.common.enums.RoleContext;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 
 public interface TenantBridge {
     Tenant findByCode(String tenantCode);
     Tenant findById(Long tenantId);
+    RoleContext findRoleContext(Long personId, String tenantCode);
 }

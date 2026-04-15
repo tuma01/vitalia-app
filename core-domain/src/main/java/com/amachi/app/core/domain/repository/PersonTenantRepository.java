@@ -21,6 +21,7 @@ public interface PersonTenantRepository
     Page<PersonTenant> findByTenantId(Long tenantId, Pageable pageable);
 
     Optional<PersonTenant> findByPersonIdAndTenantId(Long personId, Long tenantId);
+    Optional<PersonTenant> findByPersonIdAndTenantCode(Long personId, String tenantCode);
 
     Optional<PersonTenant> findByPersonAndTenant(Person person, Tenant tenant);
 

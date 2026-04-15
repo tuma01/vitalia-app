@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,18 +18,14 @@ import java.util.Set;
 
 /**
  * Entidad principal que representa la cuenta del usuario en el sistema (Elite Tier).
- * Posee aislamiento nativo multi-tenant y resiliencia estructural.
+ * (Manual Implementation to resolve Lombok resolution bottlenecks during refactoring)
  */
 @Entity
 @Table(name = "AUT_USER")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 public class User extends BaseTenantEntity implements UserDetails, Principal {
-
-    // ID heredado de Auditable/BaseEntity
 
     @NotBlank(message = "Email {err.required}")
     @Email(message = "El email debe tener un formato válido")
@@ -45,8 +39,9 @@ public class User extends BaseTenantEntity implements UserDetails, Principal {
     @Column(name = "ACCOUNT_LOCKED", nullable = false)
     private boolean accountLocked;
 
+    @Builder.Default
     @Column(name = "ENABLED", nullable = false)
-    private boolean enabled;
+    private boolean enabled = true;
 
     @Column(name = "LAST_LOGIN")
     private LocalDateTime lastLogin;
@@ -59,23 +54,17 @@ public class User extends BaseTenantEntity implements UserDetails, Principal {
     @Builder.Default
     private Set<UserAccount> userAccounts = new HashSet<>();
 
-    // ==========================================
-    // 🧠 Lógica de Normalización (Elite Standard)
-    // ==========================================
-
     @PrePersist
     @PreUpdate
     private void normalizeUser() {
         if (this.email != null) {
             this.email = this.email.toLowerCase().trim();
         }
-        // Identidad Global reside en 'SYSTEM'
         if (getTenantId() == null) {
             setTenantId("SYSTEM");
         }
     }
 
-    // Métodos de seguridad
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -83,34 +72,19 @@ public class User extends BaseTenantEntity implements UserDetails, Principal {
     }
 
     @Override
-    public String getUsername() {
-        return this.email;
-    }
+    public String getUsername() { return this.email; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return !this.accountLocked;
-    }
+    public boolean isAccountNonLocked() { return !this.accountLocked; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    @Override
-    public String getName() {
-        return this.email;
-    }
+    public String getName() { return this.email; }
 
     public Long getPersonId() {
         return person != null ? person.getId() : null;

@@ -3,27 +3,19 @@ package com.amachi.app.core.auth.entity;
 import com.amachi.app.core.auth.enums.InvitationStatus;
 import com.amachi.app.core.common.entity.BaseTenantEntity;
 import com.amachi.app.core.common.entity.Model;
+import com.amachi.app.core.common.enums.RoleContext;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Represents a user invitation sent by a TenantAdmin to onboard a new staff member (Elite Tier).
- * Posee aislamiento nativo multi-tenant y resiliencia estructural.
+ * (Manual Implementation to ensure definitive build stability)
  */
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString(exclude = {"tenant", "role", "user"})
-@SuperBuilder
-@EqualsAndHashCode(callSuper = false, onlyExplicitlyIncluded = true)
 @Entity
 @Table(
     name = "AUT_USER_INVITATION",
@@ -38,33 +30,18 @@ import java.time.LocalDateTime;
 )
 public class UserInvitation extends BaseTenantEntity implements Model {
 
-    // ──────────────────────────────────────────────
-    // Relation to the pre-created User
-    // ──────────────────────────────────────────────
+    @NotNull(message = "validation.invitation.roleContext.required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE_CONTEXT", nullable = false, length = 30)
+    private RoleContext roleContext;
 
-    /**
-     * The user account associated with this invitation.
-     * In the hybrid model, the User (and its specific Person subtype)
-     * is created at the time of invitation to ensure data integrity
-     * and correct PERSON_TYPE discriminator assignment.
-     */
-    @NotNull(message = "validation.invitation.user.required")
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-        name = "FK_ID_USER",
-        nullable = false,
-        foreignKey = @ForeignKey(name = "FK_INVITATION_USER")
-    )
-    private User user;
+    @Column(name = "NATIONAL_ID", length = 30)
+    private String nationalId;
 
-    // ──────────────────────────────────────────────
-    // Relations
-    // ──────────────────────────────────────────────
+    @NotBlank(message = "validation.invitation.email.required")
+    @Column(name = "EMAIL", nullable = false, length = 120)
+    private String email;
 
-    /**
-     * The tenant (hospital/clinic) to which the user is being invited.
-     * Required — every invitation must be scoped to a specific tenant.
-     */
     @NotNull(message = "validation.invitation.tenant.required")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -75,71 +52,40 @@ public class UserInvitation extends BaseTenantEntity implements Model {
     )
     private Tenant tenant;
 
-    /**
-     * The security role pre-assigned by the Admin (e.g. ROLE_DOCTOR, ROLE_NURSE).
-     * After self-onboarding this role is granted to the new user account.
-     */
     @NotNull(message = "validation.invitation.role.required")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-        name = "FK_ID_ROLE",
-        nullable = false,
-        foreignKey = @ForeignKey(name = "FK_INVITATION_ROLE")
-    )
-    private Role role;
-
-    // ──────────────────────────────────────────────
-    // Security token
-    // ──────────────────────────────────────────────
-
-    /**
-     * Cryptographically secure UUID used as the one-time activation token.
-     * Embedded in the invitation URL sent via email.
-     * Unique across the whole system.
-     */
-    @NotBlank(message = "validation.invitation.token.required")
+    @NotBlank(message = "Token {err.required}")
     @Column(name = "TOKEN", nullable = false, unique = true)
     private String token;
 
-    /**
-     * Timestamp at which this invitation token expires.
-     * Default: 48 hours from creation.
-     * After this point the status should be treated as {@code EXPIRED}.
-     */
-    @NotNull(message = "validation.invitation.expiresAt.required")
     @Column(name = "EXPIRES_AT", nullable = false)
     private LocalDateTime expiresAt;
 
-    // ──────────────────────────────────────────────
-    // Lifecycle status
-    // ──────────────────────────────────────────────
-
-    /**
-     * Current state of the invitation.
-     * Defaults to {@link InvitationStatus#PENDING} at creation.
-     */
-    @NotNull(message = "validation.invitation.status.required")
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false, length = 20)
     @Builder.Default
     private InvitationStatus status = InvitationStatus.PENDING;
 
-    /**
-     * Timestamp when the invited user completed their self-onboarding.
-     * Null until the invitation is {@link InvitationStatus#ACCEPTED}.
-     */
     @Column(name = "ACCEPTED_AT")
     private LocalDateTime acceptedAt;
 
-    // ──────────────────────────────────────────────
-    // Convenience helpers
-    // ──────────────────────────────────────────────
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expiresAt);
+    }
 
-    /**
-     * Returns {@code true} if the token has not yet expired and the invitation is still PENDING.
-     */
     public boolean isValid() {
-        return InvitationStatus.PENDING.equals(this.status)
-               && LocalDateTime.now().isBefore(this.expiresAt);
+        return status == InvitationStatus.PENDING && !isExpired();
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeInvitation() {
+        if (this.email != null) {
+            this.email = this.email.toLowerCase().trim();
+        }
+        if (this.tenant != null && getTenantId() == null) {
+            setTenantId(this.tenant.getCode());
+        }
     }
 }

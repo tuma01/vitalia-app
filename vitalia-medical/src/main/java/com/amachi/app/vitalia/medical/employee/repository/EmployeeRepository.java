@@ -1,5 +1,7 @@
 package com.amachi.app.vitalia.medical.employee.repository;
 
+import com.amachi.app.core.domain.entity.Person;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.vitalia.medical.employee.entity.Employee;
 import com.amachi.app.core.common.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
@@ -35,4 +37,7 @@ public interface EmployeeRepository extends CommonRepository<Employee, Long> {
      * @return El empleado encontrado o vacío.
      */
     Optional<Employee> findByEmail(String email);
+    
+    boolean existsByPersonAndTenant(Person person, Tenant tenant);
+    Optional<Employee> findByPersonAndTenant(Person person, Tenant tenant);
 }

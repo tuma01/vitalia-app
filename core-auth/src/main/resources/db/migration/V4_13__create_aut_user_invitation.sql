@@ -22,17 +22,17 @@ CREATE TABLE IF NOT EXISTS AUT_USER_INVITATION (
 
     -- ── Token de seguridad (UUID one-time) ───────────────────
     TOKEN           VARCHAR(255)  NOT NULL,
-    EXPIRES_AT      DATETIME      NOT NULL,
+    EXPIRES_AT      DATETIME(6)   NOT NULL,
 
     -- ── Estado del ciclo de vida ─────────────────────────────
     STATUS          VARCHAR(20)   NOT NULL DEFAULT 'PENDING',
-    ACCEPTED_AT     DATETIME      NULL,
+    ACCEPTED_AT     DATETIME(6)   NULL,
 
     -- ── Auditoría (heredada de Auditable) ─────────────────────
     CREATED_BY          VARCHAR(100)     NOT NULL,
-    CREATED_DATE        TIMESTAMP       NOT NULL,
+    CREATED_DATE        DATETIME(6)     NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
-    LAST_MODIFIED_DATE  TIMESTAMP,
+    LAST_MODIFIED_DATE  DATETIME(6),
 
     -- ── Unique Constraints ────────────────────────────────────
     CONSTRAINT UK_INVITATION_TOKEN UNIQUE (TOKEN),

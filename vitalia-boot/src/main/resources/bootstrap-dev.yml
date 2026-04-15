@@ -12,9 +12,9 @@ app:
         numero: "123 DEV"
         direccion: "Calle Cochabamba DEV"
         ciudad: "San Borja (DEV)"
-        municipioId: 6   # San Borja
-        provinciaId: 3   # Jose Ballivian
-        departamentoId: 8
+        municipalityId: 6   # San Borja
+        provinceId: 3   # Jose Ballivian
+        stateId: 8
         paisId: 26
         telefono: "+591 2 1234567"
 
@@ -31,3 +31,4 @@ app:
     tenantAdmin:
       email: "admin-dev@test.com"
       password: "dev-password"
+

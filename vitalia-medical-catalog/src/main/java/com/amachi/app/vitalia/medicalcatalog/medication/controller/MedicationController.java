@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/mdm/medication")
+@RequestMapping("/mdm/medications")
 @RequiredArgsConstructor
 public class MedicationController extends BaseController implements MedicationApi {
 

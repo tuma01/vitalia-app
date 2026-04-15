@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mdm/kinship")
+@RequestMapping("/mdm/kinships")
 @RequiredArgsConstructor
 public class KinshipController extends BaseController implements KinshipApi {
 

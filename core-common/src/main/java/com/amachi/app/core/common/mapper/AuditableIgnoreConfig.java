@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 @MapperConfig
 public interface AuditableIgnoreConfig {
     /**
-     * ✅ ÚSALA EN ENTIDADES GLOBALES (País, Provincia, CIE-10, etc.)
+     * ✅ ÚSALA EN ENTIDADES GLOBALES (País, Province, CIE-10, etc.)
      * NO incluye 'tenantId' para evitar errores de compilación (Unknown Property).
      */
     @Mapping(target = "createdBy", ignore = true)
@@ -36,3 +36,4 @@ public interface AuditableIgnoreConfig {
     @Mapping(target = "deleted", ignore = true)
     @interface IgnoreSoftDelete {}
 }
+

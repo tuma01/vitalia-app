@@ -15,25 +15,26 @@ import java.util.List;
 @AllArgsConstructor
 public class SuperAdminSpecification implements Specification<SuperAdmin> {
 
-    private transient SuperAdminSearchDto provinciaSearchDto;
+    private transient SuperAdminSearchDto provinceSearchDto;
 
     @Override
     public Predicate toPredicate(Root<SuperAdmin> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (provinciaSearchDto.getId() != null) {
-            predicates.add(cb.equal(root.get("id"), provinciaSearchDto.getId()));
+        if (provinceSearchDto.getId() != null) {
+            predicates.add(cb.equal(root.get("id"), provinceSearchDto.getId()));
         }
 
-        if (provinciaSearchDto.getGlobalAccess() != null) {
-            predicates.add(cb.equal(root.get("globalAccess"), provinciaSearchDto.getGlobalAccess()));
+        if (provinceSearchDto.getGlobalAccess() != null) {
+            predicates.add(cb.equal(root.get("globalAccess"), provinceSearchDto.getGlobalAccess()));
         }
 
-        if (provinciaSearchDto.getUserId() != null) {
-            predicates.add(cb.equal(root.get("userId"), provinciaSearchDto.getUserId()));
+        if (provinceSearchDto.getUserId() != null) {
+            predicates.add(cb.equal(root.get("userId"), provinceSearchDto.getUserId()));
         }
 
         return cb.and(predicates.toArray(new Predicate[0]));
     }
 }
+

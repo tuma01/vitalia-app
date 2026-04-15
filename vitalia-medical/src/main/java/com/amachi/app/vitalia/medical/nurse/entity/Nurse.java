@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.amachi.app.core.common.entity.DomainRole;
+import com.amachi.app.core.common.entity.SoftDeletable;
+
 /**
  * Entidad Nurse (SaaS Elite Tier).
  * Identidad heredada de Person (GLOBAL) + Aislamiento por Tenant (LOCAL).
@@ -44,7 +47,7 @@ import java.util.Set;
 @Audited
 @Schema(description = "Inpatient and clinical nursing staff profile — SaaS Elite Tier")
 @EqualsAndHashCode(callSuper = true, exclude = {"specialities", "professionalInfos", "clinicalSkills"})
-public class Nurse extends BaseTenantEntity implements SoftDeletable {
+public class Nurse extends BaseTenantEntity implements SoftDeletable, DomainRole {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_NURSE_PERSON"))
@@ -111,12 +114,6 @@ public class Nurse extends BaseTenantEntity implements SoftDeletable {
     @Column(name = "SKILL")
     @Builder.Default
     private Set<String> clinicalSkills = new HashSet<>();
-
-    // --- Temporary Bridge Methods (Deprecated) ---
-    @Transient @Deprecated
-    public String getFirstName() { return person != null ? person.getFirstName() : null; }
-    @Transient @Deprecated
-    public String getLastName() { return person != null ? person.getLastName() : null; }
 
     @Override
     public void delete() {

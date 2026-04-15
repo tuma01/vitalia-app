@@ -36,9 +36,9 @@ app:
           numero: "100"
           direccion: "Calle Cochabamba"
           ciudad: "San Borja"
-          municipioId: 6   # San Borja
-          provinciaId: 3   # Jose Ballivian
-          departamentoId: 8  # Benu
+          municipalityId: 6   # San Borja
+          provinceId: 3   # Jose Ballivian
+          stateId: 8  # Benu
           paisId: 26   # Bolivia
           telefono: "+591 2 1234567"
 
@@ -64,3 +64,4 @@ app:
       firstName: "Tenant"
       lastName: "Administrator"
       personType: ADMIN
+

@@ -21,7 +21,7 @@
     "country": {
       "id": 26
     },
-    "departamento": {
+    "state": {
       "id": 2
     }
   },
@@ -39,3 +39,4 @@
     "accountLocked": false
   }
 }
+
