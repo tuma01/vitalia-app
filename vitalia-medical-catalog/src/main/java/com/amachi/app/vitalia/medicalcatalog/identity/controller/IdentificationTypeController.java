@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mdm/identity/type")
+@RequestMapping("/mdm/identity/types")
 @RequiredArgsConstructor
 public class IdentificationTypeController extends BaseController implements IdentificationTypeApi {
 

@@ -1,21 +1,25 @@
 package com.amachi.app.core.auth.service.impl;
 
+import com.amachi.app.core.common.enums.AuditEventType;
 import com.amachi.app.core.auth.auditevent.service.AuditService;
-import com.amachi.app.core.auth.bridge.*;
+import com.amachi.app.core.auth.bridge.TenantBridge;
 import com.amachi.app.core.auth.dto.AuthenticationRequest;
 import com.amachi.app.core.auth.dto.AuthenticationResponse;
 import com.amachi.app.core.auth.dto.JwtUserDto;
 import com.amachi.app.core.auth.dto.UserRegisterRequest;
-import com.amachi.app.core.auth.entity.*;
+import com.amachi.app.core.auth.entity.User;
+import com.amachi.app.core.auth.entity.UserAccount;
 import com.amachi.app.core.auth.exception.AppSecurityException;
-import com.amachi.app.core.auth.repository.*;
+import com.amachi.app.core.auth.repository.UserAccountRepository;
+import com.amachi.app.core.auth.repository.UserRepository;
+import com.amachi.app.core.auth.repository.UserTenantRoleRepository;
 import com.amachi.app.core.auth.service.*;
-import com.amachi.app.core.common.dto.*;
-import com.amachi.app.core.domain.repository.PersonTenantRepository;
-import com.amachi.app.core.domain.tenant.entity.Tenant;
-import com.amachi.app.core.common.enums.*;
+import com.amachi.app.core.common.dto.TokenPairDto;
+import com.amachi.app.core.common.dto.UserSummaryDto;
 import com.amachi.app.core.common.error.ErrorCode;
 import com.amachi.app.core.common.utils.AppConstants;
+import com.amachi.app.core.domain.repository.PersonTenantRepository;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -30,29 +34,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final UserRepository           userRepository;
-    private final UserAccountRepository    userAccountRepository;
+    private final UserRepository userRepository;
+    private final UserAccountRepository userAccountRepository;
     private final UserTenantRoleRepository userTenantRoleRepository;
-    private final TokenService             tokenService;
-    private final RefreshTokenService      refreshTokenService;
-    private final JwtService               jwtService;
-    private final PasswordEncoder          passwordEncoder;
-    private final AccountService           accountService;
-    private final AuditService             auditService;
-    private final AuthenticationManager    authenticationManager;
-    private final TenantBridge             tenantBridge;
-    private final PersonTenantRepository   personTenantRepository;
+    private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final AccountService accountService;
+    private final AuditService auditService;
+    private final AuthenticationManager authenticationManager;
+    private final TenantBridge tenantBridge;
+    private final PersonTenantRepository personTenantRepository;
 
     @PersistenceContext
-    private final EntityManager em;
+    private EntityManager em;
 
     @Override
     @Transactional

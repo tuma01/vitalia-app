@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mdm/allergy")
+@RequestMapping("/mdm/allergies")
 @RequiredArgsConstructor
 public class AllergyController extends BaseController implements AllergyApi {
 

@@ -13,7 +13,7 @@ public enum VisitTypeEnum {
     CONSULTA_EXTERNA,
 
     /**
-     * Representa una visita al Departamento de Emergencias para atenci├│n m├⌐dica urgente.
+     * Representa una visita al State de Emergencias para atenci├│n m├⌐dica urgente.
      */
     VISITA_EMERGENCIA,
 
@@ -52,3 +52,4 @@ public enum VisitTypeEnum {
      */
     OTRO
 }
+

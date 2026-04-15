@@ -19,7 +19,7 @@
         "direccion": "Jean Talon",
         "ciudad": "Cochabamba",
         "countryId": 26,
-        "departamentoId": 2
+        "stateId": 2
     },
     "tenant": {
         "id": 1,
@@ -38,3 +38,4 @@
         10
     ]
 }
+

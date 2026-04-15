@@ -65,11 +65,11 @@ public class SecurityConfig {
                                                 .requestMatchers("/super-admin/tenants/**",
                                                                 "/super-admin/tenant-admins/**")
                                                 .hasRole("SUPER_ADMIN")
-                                                .requestMatchers(HttpMethod.GET, "/countries/**", "/departamentos/**", "/provincias/**",
-                                                                "/municipios/**", "/addresses/**")
+                                                .requestMatchers(HttpMethod.GET, "/countries/**", "/states/**", "/provinces/**",
+                                                                "/municipalitys/**", "/addresses/**")
                                                 .authenticated()
-                                                .requestMatchers("/countries/**", "/departamentos/**", "/provincias/**",
-                                                                "/municipios/**", "/addresses/**")
+                                                .requestMatchers("/countries/**", "/states/**", "/provinces/**",
+                                                                "/municipalitys/**", "/addresses/**")
                                                 .hasRole("SUPER_ADMIN")
                                                 .requestMatchers("/employee/**").hasRole("ADMIN")
                                                 .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN", "SUPER_ADMIN")
@@ -128,3 +128,4 @@ public class SecurityConfig {
                 return source;
         }
 }
+

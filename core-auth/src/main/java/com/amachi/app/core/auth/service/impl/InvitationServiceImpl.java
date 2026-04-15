@@ -1,7 +1,6 @@
 package com.amachi.app.core.auth.service.impl;
 
 import com.amachi.app.core.auth.bridge.EmailBridge;
-import com.amachi.app.core.auth.bridge.PersonIdentityBridge;
 import com.amachi.app.core.auth.bridge.TenantBridge;
 import com.amachi.app.core.auth.dto.invitation.CompleteRegistrationRequest;
 import com.amachi.app.core.auth.dto.invitation.InvitationRequest;
@@ -12,19 +11,21 @@ import com.amachi.app.core.auth.enums.InvitationStatus;
 import com.amachi.app.core.auth.exception.AppSecurityException;
 import com.amachi.app.core.auth.repository.*;
 import com.amachi.app.core.auth.service.InvitationService;
-import com.amachi.app.core.auth.service.UserTenantRoleService;
-import com.amachi.app.core.auth.specification.UserInvitationSpecification;
+import com.amachi.app.core.common.enums.RoleContext;
 import com.amachi.app.core.common.error.ErrorCode;
-import com.amachi.app.core.common.event.DomainEventPublisher;
 import com.amachi.app.core.common.repository.CommonRepository;
 import com.amachi.app.core.common.service.BaseService;
+import com.amachi.app.core.common.service.DomainEventPublisher;
+import com.amachi.app.core.common.utils.ContextMapping;
 import com.amachi.app.core.domain.entity.Person;
+import com.amachi.app.core.domain.person.service.IdentityResolutionService;
+import com.amachi.app.core.domain.person.service.PersonContextService;
 import com.amachi.app.core.domain.repository.PersonRepository;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,32 +37,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
+import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvitationSearchDto>
         implements InvitationService {
 
     private final UserInvitationRepository invitationRepository;
-    private final UserRepository           userRepository;
-    private final RoleRepository           roleRepository;
-    private final UserAccountRepository    userAccountRepository;
-    private final PersonRepository         personRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserAccountRepository userAccountRepository;
+    private final PersonRepository personRepository;
 
-    private final TenantBridge           tenantBridge;
-    private final EmailBridge            emailBridge;
-    private final PasswordEncoder        passwordEncoder;
-    private final PersonIdentityBridge   personIdentityBridge;
-    private final UserTenantRoleService  userTenantRoleService;
-    private final DomainEventPublisher   eventPublisher;
+    private final TenantBridge tenantBridge;
+    private final EmailBridge emailBridge;
+    private final PasswordEncoder passwordEncoder;
+    private final UserTenantRoleRepository userTenantRoleRepository;
+    private final DomainEventPublisher eventPublisher;
+
+    private final IdentityResolutionService identityResolutionService;
+    private final PersonContextService personContextService;
+    private final ContextMapping contextMapping;
 
     @PersistenceContext
-    private final EntityManager em;
+    private EntityManager em;
 
     @Value("${mailing.frontend.base-url}")
     private String frontendBaseUrl;
@@ -110,47 +112,23 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
 
         Tenant tenant = tenantBridge.findByCode(request.getTenantCode());
         if (Boolean.FALSE.equals(tenant.getIsActive())) {
-            throw new AppSecurityException(ErrorCode.SEC_TENANT_DISABLED,
-                    "security.tenant.disabled", tenant.getCode());
+            throw new AppSecurityException(ErrorCode.SEC_TENANT_DISABLED, "security.tenant.disabled", tenant.getCode());
         }
 
         Role role = roleRepository.findByName(request.getRoleName())
-                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION,
-                        "security.role.not_found", request.getRoleName()));
+                .orElseThrow(() -> new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.role.not_found", request.getRoleName()));
 
         if (invitationRepository.existsPendingInvitation(request.getEmail(), request.getTenantCode(), LocalDateTime.now())) {
-            throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION,
-                    "security.invitation.already_pending", request.getEmail());
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.invitation.already_pending", request.getEmail());
         }
-
-        Map<String, Object> context = new HashMap<>();
-        context.put("tenant", tenant);
-        context.put("firstName", request.getFirstName());
-        context.put("lastName", request.getLastName());
-
-        Person person = personIdentityBridge.createPerson(request.getPersonType(), context);
-        person.setEmail(request.getEmail());
-        person.setPersonType(request.getPersonType());
-        person.setCreatedBy("INVITATION_FLOW");
-        person.setCreatedDate(LocalDateTime.now());
-
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode("changeMe"))
-                .enabled(false)
-                .accountLocked(false)
-                .person(person)
-                .tenantId(tenant.getCode())
-                .build();
-
-        personIdentityBridge.linkUser(person, user);
-        user = userRepository.save(user);
 
         String token = UUID.randomUUID().toString();
         LocalDateTime expiresAt = LocalDateTime.now().plusHours(tokenTtlHours);
 
         UserInvitation invitation = UserInvitation.builder()
-                .user(user)
+                .email(request.getEmail())
+                .nationalId(request.getNationalId())
+                .roleContext(request.getRoleContext())
                 .tenant(tenant)
                 .tenantId(tenant.getCode())
                 .role(role)
@@ -162,7 +140,8 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
         invitationRepository.save(invitation);
         
         String activationUrl = frontendBaseUrl + invitationPath + "?token=" + token;
-        emailBridge.sendInvitationEmail(request.getEmail(), tenant.getName(), activationUrl, request.getFirstName(), request.getLastName());
+        emailBridge.sendInvitationEmail(request.getEmail(), tenant.getName(), activationUrl, 
+                request.getFirstName(), request.getLastName());
 
         return toResponse(invitation);
     }
@@ -176,7 +155,7 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
     @Override
     @Transactional
     public void acceptInvitation(CompleteRegistrationRequest request) {
-        log.info("🎉 Accepting invitation — loginEmail='{}'", request.getLoginEmail());
+        log.info("🎉 Accepting invitation phase 1 — loginEmail='{}'", request.getLoginEmail());
 
         UserInvitation invitation = findValidInvitation(request.getToken());
 
@@ -184,30 +163,58 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
             throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "validation.invitation.tenant.mismatch");
         }
 
-        if (!invitation.getUser().getEmail().equals(request.getLoginEmail()) && userRepository.existsByEmail(request.getLoginEmail())) {
+        if (userRepository.existsByEmail(request.getLoginEmail())) {
             throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "validation.email.already_in_use", request.getLoginEmail());
         }
 
         Tenant tenant = invitation.getTenant();
-        Role   role   = invitation.getRole();
-        User   user   = invitation.getUser();
-        Person person = user.getPerson();
+        Role role = invitation.getRole();
+        DomainContext domainContext = contextMapping.toDomain(invitation.getRoleContext());
 
-        person.setFirstName(request.getFirstName());
-        person.setMiddleName(request.getMiddleName());
-        person.setLastName(request.getLastName());
-        person.setSecondLastName(request.getSecondLastName());
-        person.setPhoneNumber(request.getPhoneNumber());
-        person.setEmail(request.getPersonalEmail());
-        person.setLastModifiedBy(user.getEmail());
-        person.setLastModifiedDate(LocalDateTime.now());
-        personRepository.save(person);
+        // 1. Resolve Global Identity
+        Person personData = Person.builder()
+                .firstName(request.getFirstName())
+                .middleName(request.getMiddleName())
+                .lastName(request.getLastName())
+                .secondLastName(request.getSecondLastName())
+                .phoneNumber(request.getPhoneNumber())
+                .email(request.getPersonalEmail())
+                .build();
 
-        user.setEmail(request.getLoginEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setEnabled(true);
-        userRepository.save(user);
+        Person person = identityResolutionService.resolveOrCreateIdentity(
+                invitation.getNationalId(), 
+                invitation.getEmail(), 
+                personData
+        );
 
+        // 2. Hardening: Validation of operational identity existence (Elite Rule)
+        if (domainContext != null && personContextService.existsActiveContext(person, tenant, domainContext)) {
+            log.warn("⚠️ Operational identity collision: Person {} already has active context {} in Tenant {}", 
+                    person.getId(), domainContext, tenant.getCode());
+            throw new AppSecurityException(ErrorCode.SEC_INVALID_OPERATION, "security.identity.collision", domainContext.name());
+        }
+
+        // 3. Create Global Security User linked to Person
+        User user = User.builder()
+                .email(request.getLoginEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .enabled(true)
+                .accountLocked(false)
+                .person(person)
+                .tenantId("SYSTEM") // Global users are in SYSTEM context
+                .build();
+        
+        user = userRepository.save(user);
+
+        // 4. Create Context (PersonTenant + Domain Entity) - Atomic Operation
+        personContextService.createContext(
+                person,
+                tenant,
+                invitation.getRoleContext(),
+                domainContext
+        );
+
+        // 5. Link User to Tenant (Operational Account)
         UserAccount userAccount = UserAccount.builder()
                 .user(user)
                 .tenant(tenant)
@@ -216,11 +223,15 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
                 .build();
         userAccountRepository.save(userAccount);
 
-        userTenantRoleService.assignRolesToUserAndTenant(user, tenant, Set.of(role));
+        // 6. Assign Security Roles (UX/Navigation)
+        userTenantRoleRepository.assignRolesToUserAndTenant(user.getId(), tenant.getCode(), Set.of(role.getName()));
 
+        // 7. Close Invitation
         invitation.setStatus(InvitationStatus.ACCEPTED);
         invitation.setAcceptedAt(LocalDateTime.now());
         invitationRepository.save(invitation);
+
+        log.info("✅ Invitation accepted successfully for User: {} in Tenant: {}", user.getEmail(), tenant.getCode());
     }
 
     @Override
@@ -255,8 +266,8 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
         invitationRepository.save(invitation);
 
         String activationUrl = frontendBaseUrl + invitationPath + "?token=" + newToken;
-        emailBridge.sendInvitationEmail(invitation.getUser().getEmail(), invitation.getTenant().getName(), activationUrl, 
-                invitation.getUser().getPerson().getFirstName(), invitation.getUser().getPerson().getLastName());
+        emailBridge.sendInvitationEmail(invitation.getEmail(), invitation.getTenant().getName(), activationUrl, 
+                "Invitado", "");
 
         return toResponse(invitation);
     }
@@ -272,24 +283,17 @@ public class InvitationServiceImpl extends BaseService<UserInvitation, UserInvit
         return invitation;
     }
 
-    /**
-     * Maps a {@code UserInvitation} entity to the safe {@link InvitationResponse} DTO.
-     * The token is intentionally NOT included in the response.
-     */
     private InvitationResponse toResponse(UserInvitation invitation) {
-        Person person = invitation.getUser().getPerson();
         return InvitationResponse.builder()
                 .id(invitation.getId())
-                .email(invitation.getUser().getEmail())
+                .email(invitation.getEmail())
                 .roleName(invitation.getRole().getName())
                 .tenantCode(invitation.getTenant().getCode())
                 .tenantName(invitation.getTenant().getName())
                 .status(invitation.getStatus())
                 .createdAt(invitation.getCreatedDate())
                 .expiresAt(invitation.getExpiresAt())
-                .personType(person.getPersonType())
-                .firstName(person.getFirstName())
-                .lastName(person.getLastName())
+                .roleContext(invitation.getRoleContext())
                 .build();
     }
 }

@@ -27,6 +27,13 @@ import java.util.Set;
  * Entidad Doctor (SaaS Elite Tier).
  * Rol con Aislamiento por Tenant + Vínculo a Identidad Global.
  */
+import com.amachi.app.core.common.entity.DomainRole;
+import com.amachi.app.core.common.entity.SoftDeletable;
+
+/**
+ * Entidad Doctor (SaaS Elite Tier).
+ * Rol con Aislamiento por Tenant + Vínculo a Identidad Global.
+ */
 @Entity
 @Table(name = "MED_DOCTOR", 
     uniqueConstraints = {
@@ -45,7 +52,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true, exclude = {"professionalInfos", "assignments", "medicalHistories", "encounters"})
 @Audited
 @Schema(description = "Perfil integral facultativo — SaaS Elite Tier")
-public class Doctor extends BaseTenantEntity implements SoftDeletable {
+public class Doctor extends BaseTenantEntity implements SoftDeletable, DomainRole {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "FK_ID_PERSON", nullable = false, foreignKey = @ForeignKey(name = "FK_MED_DOC_PERSON"))
@@ -145,12 +152,6 @@ public class Doctor extends BaseTenantEntity implements SoftDeletable {
     @Builder.Default
     private Set<String> clinicalProcedures = new HashSet<>();
 
-    // --- Temporary Bridge Methods (Deprecated) ---
-    @Transient @Deprecated
-    public String getFirstName() { return person != null ? person.getFirstName() : null; }
-    @Transient @Deprecated
-    public String getLastName() { return person != null ? person.getLastName() : null; }
-
     @Override
     public void delete() {
         this.isDeleted = true;
@@ -163,3 +164,4 @@ public class Doctor extends BaseTenantEntity implements SoftDeletable {
         if (this.officeNumber != null) this.officeNumber = this.officeNumber.trim();
         if (this.providerNumber != null) this.providerNumber = this.providerNumber.trim().toUpperCase();
     }
+}

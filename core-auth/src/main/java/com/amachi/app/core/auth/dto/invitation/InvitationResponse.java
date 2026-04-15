@@ -1,7 +1,7 @@
 package com.amachi.app.core.auth.dto.invitation;
 
 import com.amachi.app.core.auth.enums.InvitationStatus;
-import com.amachi.app.core.common.enums.PersonType;
+import com.amachi.app.core.common.enums.RoleContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -71,21 +71,8 @@ public class InvitationResponse {
     private LocalDateTime expiresAt;
 
     /**
-     * The type of person invited (ADMIN, EMPLOYEE, etc.)
-     * Extracted from the associated Person entity in the hybrid model.
+     * Functional context assigned to this invitation.
      */
-    @Schema(description = "Type of person being invited.", example = "EMPLOYEE")
-    private PersonType personType;
-
-    /**
-     * First name captured during invitation.
-     */
-    @Schema(description = "Invitee's first name.", example = "Juan")
-    private String firstName;
-
-    /**
-     * Paternal last name captured during invitation.
-     */
-    @Schema(description = "Invitee's paternal last name.", example = "Pérez")
-    private String lastName;
+    @Schema(description = "Role context for the invitee.", example = "DOCTOR")
+    private RoleContext roleContext;
 }

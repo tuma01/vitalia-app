@@ -25,7 +25,6 @@ public interface DoctorMapper extends EntityDtoMapper<Doctor, DoctorDto> {
     @Mapping(target = "person.email",                  source = "email")
     @Mapping(target = "person.phoneNumber",            source = "phoneNumber")
     
-    @Mapping(target = "employee.id",        source = "employeeId")
     @Mapping(target = "departmentUnit.id",  source = "departmentUnitId")
     @Mapping(target = "specialties",        source = "specialtyIds")
     @Mapping(target = "assignments",        ignore = true)
@@ -47,7 +46,6 @@ public interface DoctorMapper extends EntityDtoMapper<Doctor, DoctorDto> {
     @Mapping(target = "email",                         source = "person.email")
     @Mapping(target = "phoneNumber",                   source = "person.phoneNumber")
     
-    @Mapping(target = "employeeId",         source = "employee.id")
     @Mapping(target = "departmentUnitId",   source = "departmentUnit.id")
     @Mapping(target = "departmentUnitName", source = "departmentUnit.name")
     @Mapping(target = "specialtyIds",       source = "specialties")
@@ -61,7 +59,6 @@ public interface DoctorMapper extends EntityDtoMapper<Doctor, DoctorDto> {
     @Mapping(target = "person.lastName",               source = "lastName")
     @Mapping(target = "person.nationalId",             source = "nationalId")
     
-    @Mapping(target = "employee.id",        source = "employeeId")
     @Mapping(target = "departmentUnit.id",  source = "departmentUnitId")
     @Mapping(target = "specialties",        source = "specialtyIds")
     @Mapping(target = "assignments",        ignore = true)

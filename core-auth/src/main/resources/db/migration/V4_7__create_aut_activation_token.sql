@@ -14,14 +14,14 @@ CREATE TABLE IF NOT EXISTS AUT_ACTIVATION_TOKEN (
     TOKEN               VARCHAR(100)    NOT NULL,
     FK_ID_USER          BIGINT          NOT NULL,
 
-    EXPIRES_AT          DATETIME        NOT NULL,
+    EXPIRES_AT          DATETIME(6)     NOT NULL,
     USED                TINYINT(1)      DEFAULT 0 NOT NULL,
 
     -- Auditoría (heredada de Auditable)
     CREATED_BY          VARCHAR(100)    NOT NULL,
-    CREATED_DATE        TIMESTAMP       NOT NULL,
+    CREATED_DATE        DATETIME(6)     NOT NULL,
     LAST_MODIFIED_BY    VARCHAR(100),
-    LAST_MODIFIED_DATE  TIMESTAMP,
+    LAST_MODIFIED_DATE  DATETIME(6),
 
     -- Constraints
     CONSTRAINT UK_ACTIVATION_TOKEN      UNIQUE (TOKEN),

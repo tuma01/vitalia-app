@@ -2,23 +2,19 @@ package com.amachi.app.core.auth.entity;
 
 import com.amachi.app.core.common.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
+
+import lombok.*;
 
 @Entity
 @Table(name = "AUT_PASSWORD_RESET_TOKEN", indexes = {
         @Index(name = "IDX_RESET_TOKEN", columnList = "TOKEN")
 })
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@SuperBuilder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@Builder
 public class PasswordResetToken extends BaseEntity {
-
-    // ID heredado de BaseEntity
 
     @Column(name = "TOKEN", nullable = false, unique = true, length = 255)
     private String token;

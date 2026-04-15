@@ -8,6 +8,7 @@
         "direccion": "Main St",
         "ciudad": "Central City",
         "countryId": 1,
-        "departamentoId": 2
+        "stateId": 2
     }
 }
+

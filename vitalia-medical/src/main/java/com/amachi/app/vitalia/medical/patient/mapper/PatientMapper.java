@@ -8,16 +8,6 @@ import org.mapstruct.*;
 
 /**
  * Enterprise Mapper para la gestión de pacientes (SaaS Elite Tier).
- * Diseño limpio sin mapeos manuales redundantes gracias a la armonización de DTOs.
- */
-@Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))import com.amachi.app.core.common.mapper.BaseMapperConfig;
-import com.amachi.app.core.common.mapper.EntityDtoMapper;
-import com.amachi.app.vitalia.medical.patient.dto.PatientDto;
-import com.amachi.app.vitalia.medical.patient.entity.Patient;
-import org.mapstruct.*;
-
-/**
- * Enterprise Mapper para la gestión de pacientes (SaaS Elite Tier).
  * Refactorizado para soportar Composición de Identidad Elástica.
  */
 @Mapper(config = BaseMapperConfig.class, builder = @Builder(disableBuilder = true))
@@ -91,6 +81,4 @@ public interface PatientMapper extends EntityDtoMapper<Patient, PatientDto> {
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "version", ignore = true)
     void updateEntityFromDto(PatientDto dto, @MappingTarget Patient entity);
-}
-
 }

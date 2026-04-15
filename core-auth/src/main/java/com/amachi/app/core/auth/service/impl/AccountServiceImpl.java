@@ -1,20 +1,28 @@
 package com.amachi.app.core.auth.service.impl;
 
 import com.amachi.app.core.auth.bridge.TenantBridge;
-import com.amachi.app.core.auth.dto.*;
+import com.amachi.app.core.auth.dto.ActivationRequest;
+import com.amachi.app.core.auth.dto.ChangePasswordRequest;
+import com.amachi.app.core.auth.dto.JwtUserDto;
+import com.amachi.app.core.auth.dto.PasswordResetConfirmationRequest;
+import com.amachi.app.core.auth.dto.PasswordResetRequest;
 import com.amachi.app.core.auth.entity.PasswordResetToken;
 import com.amachi.app.core.auth.entity.User;
 import com.amachi.app.core.auth.entity.UserAccount;
 import com.amachi.app.core.auth.exception.AppSecurityException;
-import com.amachi.app.core.auth.repository.*;
+import com.amachi.app.core.auth.repository.PasswordResetTokenRepository;
+import com.amachi.app.core.auth.repository.UserAccountRepository;
+import com.amachi.app.core.auth.repository.UserRepository;
+import com.amachi.app.core.auth.repository.UserTenantRoleRepository;
 import com.amachi.app.core.auth.service.AccountService;
 import com.amachi.app.core.auth.service.JwtService;
 import com.amachi.app.core.common.context.TenantContext;
 import com.amachi.app.core.common.dto.UserSummaryDto;
 import com.amachi.app.core.common.error.ErrorCode;
+import com.amachi.app.core.common.enums.RoleContext;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +36,13 @@ import java.util.List;
  *
  * Implementación de la lógica de gestión de cuentas (activación, perfil,
  * contraseñas).
+ * (SaaS Elite Identity Hardened - Manual implementation for reliability)
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
+
     private final UserRepository userRepository;
     private final UserAccountRepository userAccountRepository;
     private final TenantBridge tenantBridge;
@@ -40,8 +50,6 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
-    private static final Duration RESET_TOKEN_VALIDITY = Duration.ofMinutes(30);
 
     @Transactional
     public void activateAccount(ActivationRequest request) {
@@ -143,11 +151,17 @@ public class AccountServiceImpl implements AccountService {
 
         List<String> roles = userTenantRoleRepository.findActiveRolesByUserAndTenantCode(user, tenantCode);
 
+        // Resolve RoleContext via Bridge (Hardened Elite modularity)
+        RoleContext activeRoleContext = null;
+        if (tenantCode != null && user.getPerson() != null) {
+            activeRoleContext = tenantBridge.findRoleContext(user.getPerson().getId(), tenantCode);
+        }
+
         return UserSummaryDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .personName(user.getPerson() != null ? user.getPerson().getFullName() : null)
-                .personType(user.getPerson() != null ? user.getPerson().getPersonType() : null)
+                .roleContext(activeRoleContext)
                 .tenantId(tenantId)
                 .tenantCode(tenantCode)
                 .tenantName(tenantName)

@@ -1,54 +1,34 @@
 package com.amachi.app.core.auth.dto;
 
-import com.amachi.app.core.common.enums.PersonType;
+import com.amachi.app.core.common.enums.RoleContext;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+/**
+ * Petición de registro de nuevo usuario (SaaS Elite Tier).
+ * (Manual Implementation to resolve Lombok resolution issues)
+ */
 import lombok.*;
 
 /**
- * DTO utilizado para el registro inicial de un nuevo usuario en un tenant específico.
- * Contiene información de credenciales (User) y de identidad (Person).
+ * Petición de registro de nuevo usuario (SaaS Elite Tier).
  */
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRegisterRequest {
 
-    // --- Datos de la Cuenta (User) ---
-    @NotBlank(message = "validation.required")
-    @Email(message = "validation.email")
-    @Size(max = 100, message = "El email no puede exceder los 100 caracteres")
+    @NotBlank(message = "Email is mandatory")
+    @Email(message = "Email format is invalid")
     private String email;
 
-    @NotBlank(message = "validation.required")
-    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    // --- Datos de la Persona (Person) ---
-    @NotBlank(message = "First name is required")
-    @Size(max = 50, message = "First name cannot exceed 50 characters")
-    private String firstName;
-
-    @Size(max = 50, message = "Middle name cannot exceed 50 characters")
-    private String middleName;
-
-    @NotBlank(message = "Last name is required")
-    @Size(max = 50, message = "Last name cannot exceed 50 characters")
-    private String lastName;
-
-    @Size(max = 50, message = "Second last name cannot exceed 50 characters")
-    private String secondLastName;
-
-    @NotNull(message = "El tipo de persona es obligatorio")
-    private PersonType personType;
-
-    // --- Datos del Contexto (Tenant) ---
-    @NotBlank(message = "validation.required")
-    @Size(max = 50, message = "El código del tenant no puede exceder los 50 caracteres")
-    private String tenantCode;
-
+    @NotNull(message = "Role context is mandatory")
+    private RoleContext roleContext;
 }

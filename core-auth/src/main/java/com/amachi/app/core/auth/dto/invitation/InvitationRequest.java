@@ -1,93 +1,87 @@
 package com.amachi.app.core.auth.dto.invitation;
 
-import com.amachi.app.core.common.enums.PersonType;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.amachi.app.core.common.enums.RoleContext;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * DTO used by the TenantAdmin to send an invitation to a new staff member.
- *
- * <p>The Admin provides only the minimum required data:
- * the recipient's current email, the role to pre-assign,
- * and the tenant context. The invited person will supply
- * their full personal details during self-onboarding.
+ * (Manual Implementation to ensure build stability)
  */
-@Validated
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder(toBuilder = true)
-@Schema(name = "InvitationRequest",
-        description = "Payload for a TenantAdmin to invite a new user to the hospital portal.")
 public class InvitationRequest {
-
-    /**
-     * Email address to which the invitation link will be sent.
-     * Can be the user's personal or professional email — the invited
-     * person chooses their definitive login email during onboarding.
-     */
     @NotBlank(message = "validation.invitation.email.required")
     @Email(message = "validation.invitation.email.invalid")
     @Size(max = 100, message = "validation.invitation.email.maxLength")
-    @Schema(description = "Recipient email for the invitation link.",
-            example = "maria.garcia@gmail.com",
-            requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
 
-    /**
-     * Name of the role to pre-assign once the user completes onboarding.
-     * Must match an existing role available in the tenant
-     * (ROLE_DOCTOR, ROLE_NURSE, ROLE_ADMIN, ROLE_EMPLOYEE, ROLE_PATIENT).
-     */
     @NotBlank(message = "validation.invitation.role.required")
-    @Schema(description = "Role name to assign to the user after onboarding.",
-            example = "ROLE_DOCTOR",
-            requiredMode = Schema.RequiredMode.REQUIRED)
     private String roleName;
 
-    /**
-     * Code of the tenant (hospital/clinic) the user is being invited to join.
-     * Must correspond to an active tenant registered in the platform.
-     */
     @NotBlank(message = "validation.invitation.tenant.required")
-    @Schema(description = "Code of the target tenant.",
-            example = "hospital-san-borja",
-            requiredMode = Schema.RequiredMode.REQUIRED)
     private String tenantCode;
 
-    /**
-     * The type of person being invited (ADMIN, EMPLOYEE, PATIENT, etc.).
-     * This determines which specific Person subclass will be instantiated.
-     */
-    @NotNull(message = "validation.invitation.personType.required")
-    @Schema(description = "Type of person being invited.",
-            example = "ADMIN",
-            requiredMode = Schema.RequiredMode.REQUIRED)
-    private PersonType personType;
+    @NotNull(message = "validation.invitation.roleContext.required")
+    private RoleContext roleContext;
 
-    /**
-     * First name of the person being invited.
-     * Required to satisfy the Person entity constraints in the hybrid model.
-     */
+    private String nationalId;
+
     @NotBlank(message = "validation.invitation.firstName.required")
-    @Schema(description = "First name of the invitee.",
-            example = "Juan",
-            requiredMode = Schema.RequiredMode.REQUIRED)
     private String firstName;
 
-    /**
-     * Last name (father's side) of the person being invited.
-     * Required to satisfy the Person entity constraints in the hybrid model.
-     */
     @NotBlank(message = "validation.invitation.lastName.required")
-    @Schema(description = "Last name of the invitee.",
-            example = "Pérez",
-            requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
+
+    public InvitationRequest() {}
+
+    public InvitationRequest(String email, String roleName, String tenantCode, RoleContext roleContext, String nationalId, String firstName, String lastName) {
+        this.email = email;
+        this.roleName = roleName;
+        this.tenantCode = tenantCode;
+        this.roleContext = roleContext;
+        this.nationalId = nationalId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getRoleName() { return roleName; }
+    public void setRoleName(String roleName) { this.roleName = roleName; }
+    public String getTenantCode() { return tenantCode; }
+    public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
+    public RoleContext getRoleContext() { return roleContext; }
+    public void setRoleContext(RoleContext roleContext) { this.roleContext = roleContext; }
+    public String getNationalId() { return nationalId; }
+    public void setNationalId(String nationalId) { this.nationalId = nationalId; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public static InvitationRequestBuilder builder() {
+        return new InvitationRequestBuilder();
+    }
+
+    public static class InvitationRequestBuilder {
+        private String email;
+        private String roleName;
+        private String tenantCode;
+        private RoleContext roleContext;
+        private String nationalId;
+        private String firstName;
+        private String lastName;
+
+        public InvitationRequestBuilder email(String email) { this.email = email; return this; }
+        public InvitationRequestBuilder roleName(String roleName) { this.roleName = roleName; return this; }
+        public InvitationRequestBuilder tenantCode(String tenantCode) { this.tenantCode = tenantCode; return this; }
+        public InvitationRequestBuilder roleContext(RoleContext roleContext) { this.roleContext = roleContext; return this; }
+        public InvitationRequestBuilder nationalId(String nationalId) { this.nationalId = nationalId; return this; }
+        public InvitationRequestBuilder firstName(String firstName) { this.firstName = firstName; return this; }
+        public InvitationRequestBuilder lastName(String lastName) { this.lastName = lastName; return this; }
+        public InvitationRequest build() {
+            return new InvitationRequest(email, roleName, tenantCode, roleContext, nationalId, firstName, lastName);
+        }
+    }
 }

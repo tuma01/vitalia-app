@@ -1,5 +1,7 @@
 package com.amachi.app.vitalia.medical.doctor.repository;
 
+import com.amachi.app.core.domain.entity.Person;
+import com.amachi.app.core.domain.tenant.entity.Tenant;
 import com.amachi.app.vitalia.medical.doctor.entity.Doctor;
 import com.amachi.app.core.common.repository.CommonRepository;
 import org.springframework.stereotype.Repository;
@@ -35,4 +37,7 @@ public interface DoctorRepository extends CommonRepository<Doctor, Long> {
      * @return El médico encontrado o vacío.
      */
     Optional<Doctor> findByEmployeeId(Long employeeId);
+    
+    boolean existsByPersonAndTenant(Person person, Tenant tenant);
+    Optional<Doctor> findByPersonAndTenant(Person person, Tenant tenant);
 }

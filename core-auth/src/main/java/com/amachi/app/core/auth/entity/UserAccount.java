@@ -6,12 +6,13 @@ import com.amachi.app.core.domain.entity.Person;
 import com.amachi.app.core.domain.tenant.entity.Tenant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+
+import java.util.Objects;
 
 /**
  * Entidad UserAccount (SaaS Elite Tier).
  * Vincula una identidad global (User) con un contexto específico (Tenant).
+ * (Manual Implementation to ensure definitive build stability)
  */
 @Entity
 @Table(
@@ -27,7 +28,6 @@ import lombok.experimental.SuperBuilder;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
 @Schema(description = "Link between global user identity and specific tenant context")
 public class UserAccount extends BaseTenantEntity implements Model {
 
@@ -54,7 +54,6 @@ public class UserAccount extends BaseTenantEntity implements Model {
     @PreUpdate
     private void normalizeAccount() {
         if (this.tenant != null && getTenantId() == null) {
-            // Geographic standard: propaga el código del tenant al campo de aislamiento sistémico
             setTenantId(this.tenant.getCode());
         }
     }
@@ -69,5 +68,18 @@ public class UserAccount extends BaseTenantEntity implements Model {
 
     public Long getTenantPk() {
         return tenant != null ? tenant.getId() : null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserAccount account)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(user, account.user) && Objects.equals(person, account.person) && Objects.equals(tenant, account.tenant);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), user, person, tenant);
     }
 }

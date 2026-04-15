@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mdm/blood-type")
+@RequestMapping("/mdm/blood-types")
 @RequiredArgsConstructor
 public class BloodTypeController extends BaseController implements BloodTypeApi {
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/mdm/specialty")
+@RequestMapping("/mdm/specialties")
 @RequiredArgsConstructor
 public class MedicalSpecialtyController extends BaseController implements MedicalSpecialtyApi {
 

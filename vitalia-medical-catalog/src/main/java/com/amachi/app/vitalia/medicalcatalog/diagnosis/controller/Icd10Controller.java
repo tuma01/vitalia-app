@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/mdm/diagnosis")
+@RequestMapping("/mdm/diagnoses")
 @RequiredArgsConstructor
 public class Icd10Controller extends BaseController implements Icd10Api {
 

@@ -3,7 +3,9 @@ package com.amachi.app.core.domain.entity;
 import com.amachi.app.core.common.entity.Auditable;
 import com.amachi.app.core.common.entity.Model;
 import com.amachi.app.core.common.entity.SoftDeletable;
-import com.amachi.app.core.common.enums.*;
+import com.amachi.app.core.common.enums.CivilStatus;
+import com.amachi.app.core.common.enums.DocumentType;
+import com.amachi.app.core.common.enums.Gender;
 import com.amachi.app.core.geography.address.entity.Address;
 import org.hibernate.envers.Audited;
 
@@ -19,20 +21,16 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Entidad Person (Elite Tier Standard).
+ * Entidad Person (SaaS Elite Tier).
  * Base de Identidad Global (Shared Identity Pattern).
- * Esta entidad NO posee TENANT_ID ya que la identidad es universal en la plataforma.
+ * Esta entidad es Universal y no posee TENANT_ID.
  */
 @Entity
 @Table(name = "DMN_PERSON")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true, exclude = {"personTenants"})
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "PERSON_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Audited
 public class Person extends Auditable<String> implements Model, SoftDeletable {
 
@@ -54,10 +52,6 @@ public class Person extends Auditable<String> implements Model, SoftDeletable {
     @Enumerated(EnumType.STRING)
     @Column(name = "DOCUMENT_TYPE", length = 30)
     private DocumentType documentType;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "PERSON_TYPE", nullable = false, insertable = false, updatable = false)
-    private PersonType personType;
 
     @NotBlank(message = "{err.required}")
     @Size(min = 2, max = 50)
@@ -102,10 +96,6 @@ public class Person extends Auditable<String> implements Model, SoftDeletable {
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PersonTenant> personTenants = new HashSet<>();
 
-    // ==========================================
-    // 🧠 Lógica de Normalización (Elite Standard)
-    // ==========================================
-
     @PrePersist
     @PreUpdate
     private void normalize() {
@@ -122,6 +112,6 @@ public class Person extends Auditable<String> implements Model, SoftDeletable {
                 Optional.ofNullable(firstName).orElse(""),
                 Optional.ofNullable(middleName).orElse(""),
                 Optional.ofNullable(lastName).orElse(""),
-                Optional.ofNullable(secondLastName).orElse(""));
+                Optional.ofNullable(secondLastName).orElse("")).trim();
     }
 }
